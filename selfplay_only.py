@@ -414,6 +414,7 @@ class SelfPlayTrainer:
                             num_done_botgames += 1
 
                         elif done_idx % 2 == 0:
+                            print(f"Game {int(done_idx/2)} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
                             writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
                             selfplay_withdraw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
@@ -427,8 +428,7 @@ class SelfPlayTrainer:
                             writer.add_scalar(f"winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
                             writer.add_scalar(f"winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
                             print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack):.3f}")
-                            print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_withdraw:.3f}")
-                            print(f"match in Selfplaygame {int(done_idx/2)} \n")
+                            print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_withdraw:.3f}\n")
                             num_done_selfplaygames += 1
 
                         break
@@ -611,8 +611,6 @@ class SelfPlayTrainer:
             writer.add_scalar("charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
             writer.add_scalar("charts/update", update, global_step)
             writer.add_scalar("losses/value_loss", args.vf_coef * v_loss.item(), global_step)
-            if global_step >= 13311:
-                print("Value loss:", args.vf_coef * v_loss.item())
             writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
             writer.add_scalar("losses/kl_loss", kl_loss.item(), global_step)
             writer.add_scalar("losses/total_loss", loss.item(), global_step)
