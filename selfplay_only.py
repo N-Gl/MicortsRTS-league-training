@@ -248,16 +248,16 @@ class SelfPlayTrainer:
 
                     # critic(forward(...))
                     # # values[step] = agent.get_value(obs[step, self.indices], scalar_features[step, self.indices], z_features[step, self.indices]).flatten()
-                    # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
-                    unique_agents = agent.get_unique_agents(self.active_league_agents)
-
-                    values[step] = agent.selfplay_get_value(obs[step],
-                                                            scalar_features[step],
-                                                            z_features[step],
-                                                            num_selfplay_envs=args.num_selfplay_envs,
-                                                            num_envs=args.num_envs,
-                                                            unique_agents=unique_agents,
-                                                            only_player_0=True).flatten()
+                    values[step] = agent.get_value(obs[step][::2], scalar_features[step][::2], z_features[step][::2]).flatten()
+                    # unique_agents = agent.get_unique_agents(self.active_league_agents)
+# 
+                    # values[step] = agent.selfplay_get_value(obs[step],
+                    #                                         scalar_features[step],
+                    #                                         z_features[step],
+                    #                                         num_selfplay_envs=args.num_selfplay_envs,
+                    #                                         num_envs=args.num_envs,
+                    #                                         unique_agents=unique_agents,
+                    #                                         only_player_0=True).flatten()
                     
 
                     self.check_values(scalar_features, z_features, values, agent, step, obs=obs, flatten=True)
@@ -441,18 +441,19 @@ class SelfPlayTrainer:
         # =========================
 
             with torch.no_grad():
-                # next_value = agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)
-                unique_agents = agent.get_unique_agents(self.active_league_agents)
 
-                next_value = agent.selfplay_get_value(
-                    next_obs,
-                    scalar_features[-1],
-                    z_features[-1],
-                    num_selfplay_envs=args.num_selfplay_envs,
-                    num_envs=args.num_envs,
-                    unique_agents=unique_agents,
-                    only_player_0=True
-                ).reshape(1, -1)
+                next_value = agent.get_value(next_obs[::2], scalar_features[-1][::2], z_features[-1][::2]).reshape(1, -1)
+                # unique_agents = agent.get_unique_agents(self.active_league_agents)
+# 
+                # next_value = agent.selfplay_get_value(
+                #     next_obs,
+                #     scalar_features[-1],
+                #     z_features[-1],
+                #     num_selfplay_envs=args.num_selfplay_envs,
+                #     num_envs=args.num_envs,
+                #     unique_agents=unique_agents,
+                #     only_player_0=True
+                # ).reshape(1, -1)
 
                 self.check_values(scalar_features, z_features, next_value, agent, step, next_obs=next_obs, flatten=False)
 

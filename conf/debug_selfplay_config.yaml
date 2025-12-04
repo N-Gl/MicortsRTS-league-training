@@ -3,9 +3,9 @@ defaults:
 
 ExperimentConfig:
   selfplay: true
-  model_path: models/selfplay_test_Basis_thesis_BC/agent.pt
+  model_path: models/onlywins/agent.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: debugging_04.12.25__27_selfplay_Agents__0_Bots__selfplay_test_Basis_thesis_BC
+  exp_name: debugging_04.12.25__27_selfplay_Agents__0_Bots__onlywins
   wandb_project_name: testing_selfplay
 
   prod_mode: true
