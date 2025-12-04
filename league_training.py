@@ -812,26 +812,29 @@ class LeagueTrainer:
                 #     breakpoint()
                 # _last_scorerews = np.copy(scorerews)
 
-                winloss_tensor = torch.as_tensor(winlossrew, device=device, dtype=torch.float32)
-                done_tensor = torch.as_tensor(ds, device=device, dtype=torch.bool)
-                draw_mask = (winloss_tensor == 0) & done_tensor
-                sc = scalar_features[step]
-                own_recources = sc[:, 0]
-                opp_recources = sc[:, 1]
-                own_light = sc[:, 4]
-                own_heavy = sc[:, 5]
-                own_ranged = sc[:, 6]
-                opp_light = sc[:, 8]
-                opp_heavy = sc[:, 9]
-                opp_ranged = sc[:, 10]
-                if opp_heavy + 0.5 * (opp_light + opp_ranged) == 0:
-                    strength_ratio = 1.0
+                if args.less_draw > 0:
+                    winloss_tensor = torch.as_tensor(winlossrew, device=device, dtype=torch.float32)
+                    done_tensor = torch.as_tensor(ds, device=device, dtype=torch.bool)
+                    draw_mask = (winloss_tensor == 0) & done_tensor
+                    sc = scalar_features[step]
+                    own_recources = sc[:, 0]
+                    opp_recources = sc[:, 1]
+                    own_light = sc[:, 4]
+                    own_heavy = sc[:, 5]
+                    own_ranged = sc[:, 6]
+                    opp_light = sc[:, 8]
+                    opp_heavy = sc[:, 9]
+                    opp_ranged = sc[:, 10]
+                    if opp_heavy + 0.5 * (opp_light + opp_ranged) == 0:
+                        strength_ratio = 1.0
+                    else:
+                        strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / (opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3)
+                    less_draw_scaled = args.less_draw * strength_ratio - args.less_draw
+                    rewards_winloss[step] = winloss_tensor * winloss_weight - less_draw_scaled * draw_mask.float()
                 else:
-                    strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / (opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3)
-                less_draw_scaled = args.less_draw * strength_ratio - args.less_draw
+                    rewards_winloss[step] = torch.Tensor(winlossrew * winloss_weight).to(device)
 
                 rewards_attack[step] = torch.Tensor(attackrew * attack_weight).to(device)
-                rewards_winloss[step] = winloss_tensor * winloss_weight - less_draw_scaled * draw_mask.float()
                 rewards_score[step] = torch.Tensor(scorerew * scorew).to(device)
                 next_done = torch.Tensor(ds).to(device)
 
