@@ -383,7 +383,7 @@ class SelfPlayTrainer:
                         strength_ratio = 1.0
                     else:
                         strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / (opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3)
-                    less_draw_scaled = args.less_draw * strength_ratio - args.less_draw
+                    less_draw_scaled = min(args.less_draw * strength_ratio - args.less_draw, 6.0)
                     rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
                 else:
                     rewards_winloss[step] = torch.Tensor(winlossrew * winloss).to(device)
@@ -547,6 +547,7 @@ class SelfPlayTrainer:
             # inds: self.indices from the batch
             inds = np.arange(new_batch_size)
 
+            value_only_phase = update <= args.value_warmup_updates
             for _ in range(args.update_epochs):
                 np.random.shuffle(inds)
 
@@ -563,33 +564,39 @@ class SelfPlayTrainer:
                     # We also provide actions here
                     new_values = agent.get_value(b_obs[minibatch_ind], b_Sc[minibatch_ind], b_z[minibatch_ind]).view(-1)
 
-                    # get_action nur für logprobs und entropy, um ratio zu berechnen (um zu vergleichen, wie wahrscheinlich die Action mit dem neuen θ im Vergleich zu dem alten θ_old ist)
-                    _, newlogproba, entropy, _ = agent.get_action(
-                        b_obs[minibatch_ind],
-                        b_Sc[minibatch_ind],
-                        b_z[minibatch_ind],
-                        b_actions.long()[minibatch_ind],
-                        b_invalid_action_masks[minibatch_ind],
-                        envs,
-                    )
-                    ratio = (newlogproba - b_logprobs[minibatch_ind]).exp()
+                    if value_only_phase:
+                        pg_loss = torch.zeros((), device=device)
+                        entropy_loss = torch.zeros((), device=device)
+                        kl_loss = torch.zeros((), device=device)
+                        approx_kl = torch.zeros((), device=device)
+                    else:
+                        # get_action nur für logprobs und entropy, um ratio zu berechnen (um zu vergleichen, wie wahrscheinlich die Action mit dem neuen θ im Vergleich zu dem alten θ_old ist)
+                        _, newlogproba, entropy, _ = agent.get_action(
+                            b_obs[minibatch_ind],
+                            b_Sc[minibatch_ind],
+                            b_z[minibatch_ind],
+                            b_actions.long()[minibatch_ind],
+                            b_invalid_action_masks[minibatch_ind],
+                            envs,
+                        )
+                        ratio = (newlogproba - b_logprobs[minibatch_ind]).exp()
 
-                    # for logging
-                    approx_kl = (b_logprobs[minibatch_ind] - newlogproba).mean()
+                        # for logging
+                        approx_kl = (b_logprobs[minibatch_ind] - newlogproba).mean()
 
-                    # Policy loss L^CLIP(θ) = E ̂_t ["min" (r_t (θ)*Â_t,"clip" (r_t (θ),1-ϵ,1+ϵ)*Â_t )]
-                    # --clip-coef
-                    # pg_loss = -L^CLIP(θ) (opposite)
-                    # it is the same (but negative), because in loss1 and 2 there is a minus sign and advantages are calculated differently
-                    # geht gegen 0, wenn es keine Verbesserung mehr gibt
-                    # gibt ein Wert für die Verbesserung der Policy in der aktuellen Iteration an
-                    # < 0  ⇒ Surrogate im Mittel verbessert (guter Update) (Policy verbessert sich)
-                    # ≈ 0  ⇒ kaum/keine (geclippte) Verbesserung
-                    # > 0  ⇒ Surrogate im Mittel schlechter (schlechter Update)
-                    pg_loss1 = -mb_advantages * ratio
-                    pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - args.clip_coef, 1 + args.clip_coef)
-                    pg_loss = torch.max(pg_loss1, pg_loss2).mean()
-                    entropy_loss = entropy.mean()
+                        # Policy loss L^CLIP(θ) = E ̂_t ["min" (r_t (θ)*Â_t,"clip" (r_t (θ),1-ϵ,1+ϵ)*Â_t )]
+                        # --clip-coef
+                        # pg_loss = -L^CLIP(θ) (opposite)
+                        # it is the same (but negative), because in loss1 and 2 there is a minus sign and advantages are calculated differently
+                        # geht gegen 0, wenn es keine Verbesserung mehr gibt
+                        # gibt ein Wert für die Verbesserung der Policy in der aktuellen Iteration an
+                        # < 0  ⇒ Surrogate im Mittel verbessert (guter Update) (Policy verbessert sich)
+                        # ≈ 0  ⇒ kaum/keine (geclippte) Verbesserung
+                        # > 0  ⇒ Surrogate im Mittel schlechter (schlechter Update)
+                        pg_loss1 = -mb_advantages * ratio
+                        pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - args.clip_coef, 1 + args.clip_coef)
+                        pg_loss = torch.max(pg_loss1, pg_loss2).mean()
+                        entropy_loss = entropy.mean()
 
 
                     # Value loss Clipping
@@ -606,20 +613,23 @@ class SelfPlayTrainer:
                     else:
                         v_loss = 0.5 * ((new_values - b_returns[minibatch_ind]) ** 2)
 
-                    # KL Divergence Loss
-                    with torch.no_grad():
-                        # get_action nur für logprobs, um KL Divergenz zu berechnen
-                        _, sl_logprobs, _, _ = supervised_agent.get_action(
-                            b_obs[minibatch_ind],
-                            b_Sc[minibatch_ind],
-                            b_z[minibatch_ind],
-                            b_actions.long()[minibatch_ind],
-                            b_invalid_action_masks[minibatch_ind],
-                            envs,
+                    if value_only_phase:
+                        pass
+                    else:
+                        # KL Divergence Loss
+                        with torch.no_grad():
+                            # get_action nur für logprobs, um KL Divergenz zu berechnen
+                            _, sl_logprobs, _, _ = supervised_agent.get_action(
+                                b_obs[minibatch_ind],
+                                b_Sc[minibatch_ind],
+                                b_z[minibatch_ind],
+                                b_actions.long()[minibatch_ind],
+                                b_invalid_action_masks[minibatch_ind],
+                                envs,
+                            )
+                        kl_loss = args.kl_coeff * torch.nn.functional.kl_div(
+                            newlogproba, sl_logprobs, log_target=True, reduction="batchmean"
                         )
-                    kl_loss = args.kl_coeff * torch.nn.functional.kl_div(
-                        newlogproba, sl_logprobs, log_target=True, reduction="batchmean"
-                    )
 
                     loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss + kl_loss
 

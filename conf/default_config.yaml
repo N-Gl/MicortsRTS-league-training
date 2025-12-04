@@ -78,6 +78,7 @@ ExperimentConfig:
 
 
   dbg_no_main_agent_ppo_update: false
+  value_warmup_updates: 0        # number of initial PPO updates with value-only training
 
   num_eval_episodes: 100
   num_parallel_eval_games: 0
