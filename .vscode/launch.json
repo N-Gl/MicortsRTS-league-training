@@ -1,0 +1,142 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+
+    {
+      "name": "Python: agent_eval",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/agent_eval.py",
+      "args": ["--exp-name", "ppo", "--max-steps", "2000", "--num-eval-runs", "10", "--wandb-project-name", "Evaluation", 
+      "--prod-mode", "--cuda", "False", "--seed", "1", "--agent-model-path", "saved_models/agent_finished_basis_thesis.pt"],
+      //"args": ["--exp-name", "ppo", "--max-steps", "2000", "--num-eval-runs", "1000", "--cuda", "False", "--agent-model-path", "saved_models/19_10_2025 (good_but_with_basis_Thesis_BCagent)/agent.pt", "--prod-mode", "--wandb-project-name", "evaluation"],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+
+    // {
+    //   "type": "java",
+    //   "name": "Attach: Java (Port 5005)",
+    //   "request": "attach",
+    //   "hostName": "localhost",
+    //   "port": 5005,
+    //   "preLaunchTask": "wait-for-jdwp-5005",
+    //   "sourcePaths": [
+    //         "${workspaceFolder}/decompiled/RAISocketAI",
+    //         "/home/cookiekiller100/Uni/BA/new/MicroRTS/decompiled/RAISocketAI"
+    //       ]
+    // },
+    
+    {
+      "name": "Python: running_BC",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/running_BC.py",
+      "args": ["--render", "--render_all"],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+
+    {
+      "name": "Python: evaluation",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "evaluation_config",],
+      //"args": ["--dbg", "--num-bot-envs","2","--num-selfplay-envs","6", "--BCtraining", "False", "--model-path", "selfplay_test_Basis_thesis_BC", "--render", "--render_all", "--prod-mode", "--wandb-project-name", "debugging"],
+      //"args": ["--dbg", "--num-bot-envs","9", "--BCtraining", "False", "--total-timesteps", "50000000", "--model-path", "selfplay_test_Basis_thesis_BC", "--render", "--prod-mode", "--wandb-project-name", "selfplaytest"],
+      //"args": ["--num-bot-envs","9", "--BCtraining", "False", "--total-timesteps", "50000000", "--model-path", "selfplay_test_Basis_thesis_BC", "--prod-mode", "--wandb-project-name", "selfplaytest"],
+      //"args": ["--dbg", "--num-bot-envs", "9", "--num-main-agents","6", "--num-main-exploiters","6", "--num-league-exploiters","12", "--BCtraining","False", "--model-path","selfplay_test_Basis_thesis_BC", "--render","--render_all"],
+      //"args": ["--num-bot-envs", "9", "--num-main-agents","6", "--num-main-exploiters","6", "--num-league-exploiters","12", "--BCtraining","False", "--model-path","selfplay_test_Basis_thesis_BC", "--render","--render_all", "--prod-mode", "--wandb-project-name", "selfplaytest"],
+      //"args": ["--dbg", "--num-bot-envs","9","--num-main-agents","15", "--BCtraining", "False", "--model-path", "selfplay_test_Basis_thesis_BC"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
+      "name": "Python: selfplay",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "debug_selfplay_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
+      "name": "Python: league training",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "debug_league_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
+      "name": "Python: initial_BC",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "initial_BC_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
+      "name": "Python: finilizing_BC",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "finilizing_BC_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
+      "name": "Python: ppo",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "ppo_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    // {
+    //   "name": "Python: selfplay_ppoBC_PPO_commented (J DB)",
+    //   "type": "debugpy",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/selfplay_ppoBC_PPO_commented.py",
+    //   "args": ["--num-bot-envs","1","--num-selfplay-envs","2", "--BCtraining", "False", "--render", "--dbg"],
+    //   "console": "integratedTerminal",
+    //   "justMyCode": false
+    // }
+  ],
+  // "compounds": [
+  //   {
+  //     "name": "Python + Java (Attach)",
+  //     "configurations": ["Python: selfplay_ppoBC_PPO_commented (J DB)", "Attach: Java (Port 5005)"]
+  //   }
+  // ]
+}
+

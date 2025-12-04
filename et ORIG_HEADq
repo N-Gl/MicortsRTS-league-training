@@ -1,0 +1,65 @@
+[33mcommit f84baf948a1ee346cfda2dbfa4e93696ecb11138[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Fri Oct 10 16:18:43 2025 +0200
+
+    (running selfplay) flip actions for Player 1 in selfplay environments, ajust Directions and attack position, always_player_1=False
+
+[33mcommit e82076a3e0cf644c2c02361b605add91b3f778f6[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Fri Oct 10 14:14:46 2025 +0200
+
+    flip observations for Player 1 in selfplaying environments
+
+[33mcommit 295428d90793c1794cda3f9cb3e61f54948510b4[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Fri Oct 10 10:02:12 2025 +0200
+
+    added --render argument in agent_eval.py
+
+[33mcommit 40cf0b67d4ee71c8f7490922459113c3bb4b7855[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Thu Oct 9 15:54:22 2025 +0200
+
+    actionplane explained
+
+[33mcommit fd85cdb9361492521e38940fde13e6925d2fc97e[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Thu Oct 9 14:13:09 2025 +0200
+
+    mit --resume in PPO ein Model weiter trainieren
+
+[33mcommit ae388c89be45a74c23085e7458a0f67316fbba5d[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Thu Oct 9 11:51:30 2025 +0200
+
+    render all Envs, fix selfplay_get_action for --num-bot-envs 0, better Explanation for Loss, update launch.json
+
+[33mcommit f273434080498b46fd9a8a9b5c4a6640f625d589[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Thu Oct 9 11:15:01 2025 +0200
+
+    launch for agent_eval
+
+[33mcommit 4a795ad1afd258cd64f4e473df8c9d56d4bd645d[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Wed Oct 8 13:39:46 2025 +0200
+
+    added sourcePaths in launch.json
+
+[33mcommit ac50871771663db44188daa7d29385b45affc0ff[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Tue Oct 7 16:07:40 2025 +0200
+
+    Java Debugger
+
+[33mcommit 56598de083c8cb190aa932800b88cb1116fc9851[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Tue Oct 7 14:30:17 2025 +0200
+
+    Java Debugger on Port 5005
+
+[33mcommit 99bd3951e2b8b3a2750f28e440894dca8347eedf[m
+Author: N-Gl <cookiekiller100@Cookiekiller100.localdomain>
+Date:   Tue Oct 7 13:37:19 2025 +0200
+
+    starting with selfplay

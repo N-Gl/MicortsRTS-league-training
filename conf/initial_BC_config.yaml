@@ -1,0 +1,27 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  initial_BC: true
+  model_path: BC_Adamw
+  BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
+  exp_name:
+  wandb_project_name: new_initial_BC
+
+  resume: false
+  
+  prod_mode: true
+  seed: 1
+
+
+
+  render: false
+  render_all: false
+
+  BC_learning_rate: 1e-6
+  # BC_weight_decay: 0.0
+
+  epochs: 30                   # new (BA Parameter) 100 Epochen, BC-finetuning 70 Epochen
+  warmup_epochs: 10            # new (BA Parameter) (Over 30 epochs, α linearly decreases to zero) (changed: 10)
+  newdata: false                
+  nurwins: false 

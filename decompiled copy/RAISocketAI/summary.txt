@@ -1,0 +1,9 @@
+Summary for venv/lib/python3.9/site-packages/gym_microrts/microrts/RAISocketAI.jar
+Decompiled with CFR 0.152
+
+
+com.google.gson.internal.$Gson$Types
+----------------------------
+
+resolve(java.lang.reflect.Type java.lang.Class<?> java.lang.reflect.Type java.util.Map<java.lang.reflect.TypeVariable<?>, java.lang.reflect.Type> )
+  Unable to fully structure code

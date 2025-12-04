@@ -1,0 +1,85 @@
+ExperimentConfig:
+  model_path:
+  BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
+  wandb_project_name: test_basic
+  exp_name:
+  gym_id: MicrortsBC
+
+  initial_BC: false
+  BC_finetuning: false
+  ppo: false
+  evaluate: false
+  selfplay: false
+
+  pfsp: false
+  train_on_old_mains: false
+  league_training: false
+
+  resume: true
+
+  BC_learning_rate: 1e-6
+  BC_weight_decay: 0.0
+  PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  PPO_weight_decay: 0.0
+
+  torch_deterministic: true
+  deterministic: true
+  seed: 1                       # if None -> seed = time.time()
+  exact_seed: true
+
+  total_timesteps: 30000000     # new (BA Parameter) (Training was run for 30 million steps)
+
+  cuda: true
+
+  prod_mode: true
+  render: true
+  render_all: false
+  capture_video: false
+
+  wandb_entity:
+  create_run_id_file: false
+
+  n_minibatch: 4
+  num_bot_envs: 0              # new (BA Parameter) (number of parallel game environments = 24)
+  num_selfplay_envs: 0
+
+  num_main_agents: 0
+  num_main_exploiters: 0
+  num_league_exploiters: 0
+
+  selfplay_save_interval: 10
+  checkpoint_frequency: 10
+
+  new_hist_rewards: 0
+
+  attack_reward_weight: 0.05    # new (BA Parameter) 0.05
+
+  num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
+  gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
+  gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
+  ent_coef: 0.005               # new (BA Parameter) (Entropy coefficient η = 0.005)
+  vf_coef: 0.01                 # new (BA Parameter) (Value function coefficient β = 0.01)
+  max_grad_norm: 0.5            # new (BA Parameter) (Gradient norm threshold ω = 0.5)
+  clip_coef: 0.1                # new (BA Parameter) (Clipping coefficient = 0.1)
+  update_epochs: 4              
+  kle_stop: false               
+  kle_rollback: false           
+  target_kl: 0.03               
+  kl_coeff: 0.4                 # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
+  norm_adv: true                
+  anneal_lr: true               
+  clip_vloss: true 
+
+  epochs: 30                   # new (BA Parameter) 100 Epochen, BC-finetuning 70 Epochen
+  warmup_epochs: 20            # new (BA Parameter) (Over 30 epochs, α linearly decreases to zero) (changed: 20)
+  newdata: false                
+  nurwins: false                
+
+
+  dbg_no_main_agent_ppo_update: false
+
+  num_eval_episodes: 100
+  num_parallel_eval_games: 0
+hydra:
+  job:
+    chdir: false

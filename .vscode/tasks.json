@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "wait-for-jdwp-5005",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "\n# Wait up to 60 seconds for TCP port 5005 to become available\nfor i in {1..120}; do\n  if (echo > /dev/tcp/127.0.0.1/5005) >/dev/null 2>&1; then\n    echo 'JDWP port 5005 is open'\n    exit 0\n  fi\n  sleep 0.5\ndone\necho 'Timed out waiting for JDWP port 5005' >&2\nexit 1\n"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
