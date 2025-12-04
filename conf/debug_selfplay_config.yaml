@@ -19,7 +19,8 @@ ExperimentConfig:
 
   total_timesteps: 30000000
 
-  attack_reward_weight: 0.05 # TODO        # new (BA Parameter) 0.05
+  attack_reward_weight: 0.05    # new (BA Parameter) 0.05
+  less_draw: 0.0                # subtract from reward when a game ends in a draw
 
   PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0

@@ -24,7 +24,7 @@ ExperimentConfig:
 
   torch_deterministic: true
   deterministic: true
-  seed: 1                       # if None -> seed = time.time()
+  seed:                        # if None -> seed = time.time()
   exact_seed: true
 
   total_timesteps: 30000000     # new (BA Parameter) (Training was run for 30 million steps)
@@ -53,6 +53,7 @@ ExperimentConfig:
   new_hist_rewards: 0
 
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
+  less_draw: 0.0                # subtract from reward when a game ends in a draw (selfplay training)
 
   num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)

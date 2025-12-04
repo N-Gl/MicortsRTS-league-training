@@ -366,8 +366,23 @@ class SelfPlayTrainer:
                 #     breakpoint()
                 # _last_scorerews = np.copy(scorerews)
 
+                winloss_tensor = torch.as_tensor(winlossrew, device=device, dtype=torch.float32)
+                done_tensor = torch.as_tensor(ds, device=device, dtype=torch.bool)
+                draw_mask = (winloss_tensor == 0) & done_tensor
+                sc = scalar_features[step]
+                own_light = sc[:, 4]
+                own_heavy = sc[:, 5]
+                own_ranged = sc[:, 6]
+                opp_light = sc[:, 8]
+                opp_heavy = sc[:, 9]
+                opp_ranged = sc[:, 10]
+                strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged)) / torch.clamp(
+                    opp_heavy + 0.5 * (opp_light + opp_ranged), min=1e-6
+                )
+                less_draw_scaled = args.less_draw * strength_ratio
+
                 rewards_attack[step] = torch.Tensor(attackrew * attack).to(device)
-                rewards_winloss[step] = torch.Tensor(winlossrew * winloss).to(device) # TODO: würde hier +1 gegen viele Draws helfen?
+                rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
                 rewards_score[step] = torch.Tensor(scorerew * scorew).to(device)
                 next_done = torch.Tensor(ds).to(device)
 
@@ -649,8 +664,8 @@ class SelfPlayTrainer:
         return
         if flatten:
             if not torch.allclose(values[step, ::2], agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()[::2], rtol=1e-3, atol=1e-5):
-                print("\n\nValue mismatch at (flatten) step\n\n", step)
+                print(f"\n\nValue mismatch at (flatten) step: {step}, distance: {values[step, ::2] - agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()[::2]}\n\n")
 
         else:
             if not torch.allclose(values[0, ::2], agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
-                print("\n\nValue mismatch at (reshape) step\n\n", step)
+                print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
