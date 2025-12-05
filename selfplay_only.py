@@ -491,7 +491,14 @@ class SelfPlayTrainer:
                     only_player_0=True
                 ).reshape(1, -1)
 
-                self.check_values(scalar_features, z_features, next_value, agent, step, next_obs=next_obs, flatten=False)
+                self.check_values(
+                    scalar_features, z_features, next_value, 
+                    agent, step, 
+                    next_scalar_features=next_scalar_features, 
+                    next_z_features=next_z_features, 
+                    next_obs=next_obs, 
+                    flatten=False
+                    )
 
                 # dont update supervised_agent
                 b_next_value = next_value[:, self.indices]
@@ -699,12 +706,11 @@ class SelfPlayTrainer:
                 print(f"\n\n[supervised] max|grad|={max_abs} in {names}!!!\n\n")
 
     # TODO: Debugging (nachher entfernen)
-    def check_values(self, scalar_features, z_features, values, agent, step, obs=None, next_obs=None, flatten = False):
-        return
+    def check_values(self, scalar_features, z_features, values, agent, step, next_scalar_features=None, next_z_features=None, obs=None, next_obs=None, flatten = False):
         if flatten:
             if not torch.allclose(values[step, ::2], agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()[::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (flatten) step: {step}, distance: {values[step, ::2] - agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()[::2]}\n\n")
 
         else:
-            if not torch.allclose(values[0, ::2], agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
+            if not torch.allclose(values[0, ::2], agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
