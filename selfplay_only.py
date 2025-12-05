@@ -236,7 +236,7 @@ class SelfPlayTrainer:
                 dones[step] = next_done
 
                 with torch.no_grad():
-
+                    # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
                     unique_agents = agent.get_unique_agents(self.active_league_agents)
 
                     z_features[step] = agent.selfplay_get_z_encoded_features(
@@ -471,6 +471,7 @@ class SelfPlayTrainer:
         # PPO update
         # =========================
             
+            # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
             unique_agents = agent.get_unique_agents(self.active_league_agents)
 
             with torch.no_grad():
