@@ -5,7 +5,7 @@ ExperimentConfig:
   selfplay: true
   model_path: models/league_training_test_finished_PPO_Basis_thesis/finished_PPO_Basis_thesis.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 05_12_25__27_selfplay_Agents_0_Bots__finished_PPO_Basis_thesis__get_value_different_seed
+  exp_name: 05_12_25__next_scalar_features_next_z_features_correct_global_step_selfplay_get_z_encoded_features__get_value
   wandb_project_name: new_selfplay
 
   prod_mode: true

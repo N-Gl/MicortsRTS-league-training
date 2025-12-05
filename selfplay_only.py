@@ -237,9 +237,6 @@ class SelfPlayTrainer:
 
                 with torch.no_grad():
 
-                    # critic(forward(...))
-                    # # values[step] = agent.get_value(obs[step, self.indices], scalar_features[step, self.indices], z_features[step, self.indices]).flatten()
-                    # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
                     unique_agents = agent.get_unique_agents(self.active_league_agents)
 
                     z_features[step] = agent.selfplay_get_z_encoded_features(
@@ -258,6 +255,9 @@ class SelfPlayTrainer:
                     #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
                     # assert(torch.all(old_zFeatures == zFeatures))
 
+                    # critic(forward(...))
+                    # # values[step] = agent.get_value(obs[step, self.indices], scalar_features[step, self.indices], z_features[step, self.indices]).flatten()
+                    # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
                     values[step] = agent.selfplay_get_value(
                         obs[step],
                         scalar_features[step],
