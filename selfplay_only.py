@@ -154,8 +154,10 @@ class SelfPlayTrainer:
             self.active_league_agents.append(self.league_supervised_agent)
         for _ in range(args.num_bot_envs):
             self.active_league_agents.append(self.league_agent)
-        self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.int).to(device)
-        self.indices = torch.cat((torch.tensor(range(0, args.num_selfplay_envs, 2)).to(device), self.indices))
+        self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
+        self.indices = torch.cat(
+            (torch.tensor(range(0, args.num_selfplay_envs, 2), dtype=torch.long, device=device), self.indices)
+        )
 
     def train(self):
         args = self.args
@@ -379,11 +381,8 @@ class SelfPlayTrainer:
                     opp_light = sc[:, 8]
                     opp_heavy = sc[:, 9]
                     opp_ranged = sc[:, 10]
-                    if opp_heavy + 0.5 * (opp_light + opp_ranged) == 0:
-                        strength_ratio = 1.0
-                    else:
-                        strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / (opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3)
-                    less_draw_scaled = min(args.less_draw * strength_ratio - args.less_draw, 6.0)
+                    strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3, min=0.00001)
+                    less_draw_scaled = torch.clip(args.less_draw * strength_ratio - args.less_draw, max=6.0)
                     rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
                 else:
                     rewards_winloss[step] = torch.Tensor(winlossrew * winloss).to(device)
