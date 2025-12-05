@@ -12,7 +12,7 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  seed:
+  seed: 1
 
   num_bot_envs: 0
   num_main_agents: 27   # 1 num_main_agents == 1 env

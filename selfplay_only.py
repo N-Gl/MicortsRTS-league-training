@@ -459,15 +459,21 @@ class SelfPlayTrainer:
         # =========================
         # PPO update
         # =========================
+            
+            unique_agents = agent.get_unique_agents(self.active_league_agents)
 
             with torch.no_grad():
-                # next_value = agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)
-                unique_agents = agent.get_unique_agents(self.active_league_agents)
+                next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
+                next_z_features = agent.selfplay_get_z_encoded_features(
+                    args, device, z_features, next_obs, args.num_steps, unique_agents
+                )
+                
 
+                # next_value = agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)
                 next_value = agent.selfplay_get_value(
                     next_obs,
-                    scalar_features[-1],
-                    z_features[-1],
+                    next_scalar_features,
+                    next_z_features,
                     num_selfplay_envs=args.num_selfplay_envs,
                     num_envs=args.num_envs,
                     unique_agents=unique_agents,
