@@ -229,17 +229,6 @@ class SelfPlayTrainer:
                     else:
                         envs.render("human")
                         
-                with torch.no_grad():
-                    # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
-                    z_features[step] = agent.z_encoder(next_obs.view(args.num_envs, -1))
-
-                    # debugging
-                    # for i in range(args.num_envs):
-                    #     with torch.no_grad():
-                    #         # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
-                    #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
-                    # assert(torch.all(old_zFeatures == zFeatures))
-
                 # TODO: global_step += (args.num_main_agents) + args.num_bot_envs
                 global_step += (args.num_main_agents // 2) + args.num_bot_envs
                 obs[step] = next_obs
@@ -253,13 +242,31 @@ class SelfPlayTrainer:
                     # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
                     unique_agents = agent.get_unique_agents(self.active_league_agents)
 
-                    values[step] = agent.selfplay_get_value(obs[step],
-                                                            scalar_features[step],
-                                                            z_features[step],
-                                                            num_selfplay_envs=args.num_selfplay_envs,
-                                                            num_envs=args.num_envs,
-                                                            unique_agents=unique_agents,
-                                                            only_player_0=True).flatten()
+                    z_features[step] = agent.selfplay_get_z_encoded_features(
+                        args=args,
+                        device=device,
+                        z_features=z_features,
+                        next_obs=next_obs,
+                        step=step,
+                        unique_agents=unique_agents
+                    )
+
+                    # debugging
+                    # for i in range(args.num_envs):
+                    #     with torch.no_grad():
+                    #         # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
+                    #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
+                    # assert(torch.all(old_zFeatures == zFeatures))
+
+                    values[step] = agent.selfplay_get_value(
+                        obs[step],
+                        scalar_features[step],
+                        z_features[step],
+                        num_selfplay_envs=args.num_selfplay_envs,
+                        num_envs=args.num_envs,
+                        unique_agents=unique_agents,
+                        only_player_0=True
+                    ).flatten()
                     
 
                     self.check_values(scalar_features, z_features, values, agent, step, obs=obs, flatten=True)
@@ -274,7 +281,8 @@ class SelfPlayTrainer:
                         num_selfplay_envs=args.num_selfplay_envs,
                         num_envs=args.num_envs,
                         envs=envs,
-                        active_league_agents=self.active_league_agents
+                        active_league_agents=self.active_league_agents,
+                        unique_agents=unique_agents
                     )
 
                 # (Shape: (step, num_envs, 256 (16 * 16), action) (step, 24, 256, 7))
