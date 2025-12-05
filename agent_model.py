@@ -296,12 +296,12 @@ class Agent(nn.Module):
     def selfplay_get_z_encoded_features(self, args, device, z_features, next_obs, step, unique_agents):
         '''encode z-features per agent (main/supervised) so each policy uses its own encoder'''
         flat_next_obs = next_obs.view(args.num_envs, -1)
-        next_z_features = torch.empty_like(z_features[0])
+        next_z_features = torch.empty((args.num_envs, z_features.shape[2]), device=device)
         for cur_agent, indices in unique_agents.items():
             if not indices:
                 continue
             index_tensor = torch.as_tensor(indices, device=device)
-            encoded = cur_agent.z_encoder(flat_next_obs[index_tensor]).to(next_z_features.dtype)
+            encoded = cur_agent.z_encoder(flat_next_obs[index_tensor].view(len(index_tensor), -1))
             next_z_features[index_tensor] = encoded
             
         return next_z_features

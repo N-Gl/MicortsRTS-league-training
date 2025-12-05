@@ -3,19 +3,19 @@ defaults:
 
 ExperimentConfig:
   selfplay: true
-  model_path: models/selfplay_test_Basis_thesis_BC/agent.pt
+  model_path: models/league_training_test_finished_PPO_Basis_thesis/finished_PPO_Basis_thesis.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: debugging_04.12.25__27_selfplay_Agents__0_Bots__selfplay_test_Basis_thesis_BC
+  exp_name: debugging_05.12.25__4_selfplay_Agents__0_Bots__finished_PPO_Basis_thesis
   wandb_project_name: testing_selfplay
 
   prod_mode: true
   render: true
-  render_all: false
+  render_all: true
 
   seed: 1
 
   num_bot_envs: 0
-  num_main_agents: 10   # 1 num_main_agents == 1 env
+  num_main_agents: 4   # 1 num_main_agents == 1 env
 
   total_timesteps: 30000000
 
