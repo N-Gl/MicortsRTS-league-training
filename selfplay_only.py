@@ -528,9 +528,9 @@ class SelfPlayTrainer:
                     delta = (
                         b_rewards_winloss[t]
                         + b_rewards_attack[t]
-                        + b_rewards_score[t]
+                        # + b_rewards_score[t]
                         + args.gamma * nextvalues * nextnonterminal
-                        # - b_values[t]
+                        - b_values[t]
                     )
                     # A_t="TD-Error" + γ * λ * A_(t-1)
                     b_advantages[t] = lastgaelam = delta + args.gamma * args.gae_lambda * nextnonterminal * lastgaelam
