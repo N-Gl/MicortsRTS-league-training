@@ -229,8 +229,8 @@ class SelfPlayTrainer:
                     else:
                         envs.render("human")
                         
-                # TODO: global_step += (args.num_main_agents) + args.num_bot_envs
-                global_step += (args.num_main_agents // 2) + args.num_bot_envs
+                global_step += (args.num_main_agents) + args.num_bot_envs
+                # global_step += (args.num_main_agents // 2) + args.num_bot_envs # TODO: funktioniert die verbesserte Zählweise?
                 obs[step] = next_obs
                 scalar_features[step] = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
                 dones[step] = next_done
@@ -498,6 +498,7 @@ class SelfPlayTrainer:
                 b_values = values[:, self.indices]
                 b_rewards_attack = rewards_attack[:, self.indices]
                 b_rewards_winloss = rewards_winloss[:, self.indices]
+                # b_rewards_score = rewards_score[:, self.indices]
                 b_dones = dones[:, self.indices]
                 b_next_done = next_done[self.indices]
 
@@ -524,7 +525,13 @@ class SelfPlayTrainer:
                     # nextvalues: Critic-approximated values per environment in step t
                     # for the next step in the rollout (if not terminated)
                     # rewards_dense[t] + + rewards_dense[t] +rewards_score[t]
-                    delta = b_rewards_winloss[t] + b_rewards_attack[t] + args.gamma * nextvalues * nextnonterminal - b_values[t]
+                    delta = (
+                        b_rewards_winloss[t]
+                        + b_rewards_attack[t]
+                        + b_rewards_score[t]
+                        + args.gamma * nextvalues * nextnonterminal
+                        # - b_values[t]
+                    )
                     # A_t="TD-Error" + γ * λ * A_(t-1)
                     b_advantages[t] = lastgaelam = delta + args.gamma * args.gae_lambda * nextnonterminal * lastgaelam
                 b_returns = b_advantages + b_values
