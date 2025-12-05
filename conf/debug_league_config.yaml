@@ -30,7 +30,7 @@ ExperimentConfig:
   total_timesteps: 30000000
 
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
-  less_draw: 0.0                # subtract from reward when a game ends in a draw
+  dyn_attack_reward: 0.0                # subtract from reward when a game ends in a draw
   value_warmup_updates: 0       # number of initial PPO updates with value-only training
 
   PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)

@@ -31,7 +31,7 @@ class ExperimentConfig:
     num_main_agents: int
     new_hist_rewards: int
     attack_reward_weight: float
-    less_draw: float
+    dyn_attack_reward: float
     num_steps: int
     gamma: float
     gae_lambda: float
