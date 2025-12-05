@@ -238,11 +238,25 @@ class Agent(nn.Module):
         if action is None:
             
             invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in range(envs.num_envs)]).to(self.device)
+            # # pull mask from env; prefer true action mask over debug matrix
+            # if hasattr(envs, "get_action_mask"):
+            #     mask_np = envs.get_action_mask()
+            #     src_mask = getattr(envs, "source_unit_mask", None)
+            #     if src_mask is None:
+            #         src_mask = mask_np.any(axis=-1, keepdims=True)
+            #     else:
+            #         src_mask = src_mask.reshape(envs.num_envs, -1, 1)
+            #     mask_np = np.concatenate([src_mask, mask_np], axis=2)
+            #     invalid_action_masks = torch.as_tensor(mask_np, dtype=torch.bool, device=self.device)
+            # else:
+            #     raise AttributeError("Environment does not provide get_action_mask for action filtering.")
             
             if selfplay_envs and num_selfplay_envs > 1:
                 invalid_action_masks = invalid_action_masks.clone()
                 upper = min(num_selfplay_envs, invalid_action_masks.shape[0])
                 invalid_action_masks[1:upper:2] = invalid_action_masks[1:upper:2].flip(1, 2)
+                # flip board for player-1 selfplay envs to stay consistent with flipped observations
+                # invalid_action_masks[1:upper:2] = invalid_action_masks[1:upper:2].flip(1)
             invalid_action_masks = invalid_action_masks.view(-1, invalid_action_masks.shape[-1])
         else:
             invalid_action_masks = invalid_action_masks.to(self.device)
