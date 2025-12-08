@@ -212,12 +212,13 @@ def main(cfg: ExperimentConfig):
         args.num_bot_envs = args.num_parallel_eval_envs
 
     else:
-        if args.num_bot_envs > 16:
-            opponents = [microrts_ai.coacAI for _ in range(args.num_bot_envs-8)] + [microrts_ai.mayari for _ in range(8)]
-        elif args.num_bot_envs > 8:
-            opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2+2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2-2)]
-        else:
-            opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+    #     if args.num_bot_envs > 16:
+    #         opponents = [microrts_ai.coacAI for _ in range(args.num_bot_envs-8)] + [microrts_ai.mayari for _ in range(8)]
+    #     elif args.num_bot_envs > 8:
+    #         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2+2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2-2)]
+    #     else:
+    #         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+        opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
 
         print(f"opponents: \n{opponents}")
 

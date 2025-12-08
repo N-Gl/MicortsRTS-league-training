@@ -7,16 +7,16 @@ ExperimentConfig:
   pfsp: true
   model_path: models/league_training_test_finished_PPO_Basis_thesis/finished_PPO_Basis_thesis.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: test_dbg_no_main_agent_ppo_update
-  wandb_project_name: testing_league_training
+  exp_name: selfplay_with_league
+  wandb_project_name: new_selfplay
   prod_mode: true
   
   render: true
   render_all: false
-  seed: 1
+  seed: 
 
   num_bot_envs: 0
-  num_main_agents: 25         # 1 num_main_agents == 1 env
+  num_main_agents: 27         # 1 num_main_agents == 1 env
   num_main_exploiters: 0
   num_league_exploiters: 0
 
@@ -30,7 +30,8 @@ ExperimentConfig:
   total_timesteps: 30000000
 
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
-
+  dyn_attack_reward: 0.0                # subtract from reward when a game ends in a draw
+  value_warmup_updates: 0       # number of initial PPO updates with value-only training
 
   PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0

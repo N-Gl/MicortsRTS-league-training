@@ -5,12 +5,12 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/27.11.25_(25 selfplay Agents, 0 Bots)_(finished_PPO_Basis_thesis)/Main_agent_backups/agent_update_2170.pt"
+                          "models/06_12_25__BCagent_PPO_clip_coef_0.15_dyn_attack_reward_2.0_value_warmup_4_update_2440.pt"
                           ]
   names: [
-          "27.11.25_(25 selfplay Agents, 0 Bots)_(finished_PPO_Basis_thesis)_update_2170"
+          "06_12_25__BCagent_PPO_clip_coef_0.15_dyn_attack_reward_2.0_value_warmup_4_update_2440"
          ]
-  exp_name: "bot_27.11.25_(25 selfplay Agents, 0 Bots)_(finished_PPO_Basis_thesis)_update_2170"
+  exp_name: "06_12_25__BCagent_PPO_clip_coef_0.15_dyn_attack_reward_2.0_value_warmup_4_update_2440"
   wandb_project_name: new_Evaluation
   prod_mode: true
 

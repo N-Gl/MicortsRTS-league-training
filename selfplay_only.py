@@ -236,8 +236,8 @@ class SelfPlayTrainer:
                 dones[step] = next_done
 
                 with torch.no_grad():
-                    unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-                    # unique_agents = agent.get_unique_agents(self.active_league_agents)
+                    # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
+                    unique_agents = agent.get_unique_agents(self.active_league_agents)
 
                     z_features[step] = agent.selfplay_get_z_encoded_features(
                         args=args,
@@ -390,10 +390,13 @@ class SelfPlayTrainer:
                     opp_heavy = sc[:, 9]
                     opp_ranged = sc[:, 10]
                     # strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3, min=0.00001)
-                    strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged)) / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged), min=0.00001)
+                    strength_ratio = (
+                        (own_heavy + 0.5 * (own_light + own_ranged))
+                        / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged), min=0.00001)
+                    ) ** 1.5
                     # less_draw_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=0.1)
                     # rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
-                    attack_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=2.0, min=0.5)
+                    attack_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=2.0, min=1.0)
                     rewards_attack[step] = attack_tensor + attack * attack_scaled * (attack_tensor > 0).float()
                 else:
                     rewards_attack[step] = torch.Tensor(attackrew * attack).to(device)
@@ -466,13 +469,15 @@ class SelfPlayTrainer:
                 # =============
             # =========================
 
-            continue  # TODO: skip update for testing
+            # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
+            if args.dbg_no_main_agent_ppo_update:
+                continue
         # =========================
         # PPO update
         # =========================
             
-            unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-            # unique_agents = agent.get_unique_agents(self.active_league_agents)
+            # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
+            unique_agents = agent.get_unique_agents(self.active_league_agents)
 
             with torch.no_grad():
                 next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
