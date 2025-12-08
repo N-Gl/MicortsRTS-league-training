@@ -236,8 +236,8 @@ class SelfPlayTrainer:
                 dones[step] = next_done
 
                 with torch.no_grad():
-                    unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-                    # unique_agents = agent.get_unique_agents(self.active_league_agents)
+
+                    unique_agents = agent.get_unique_agents(self.active_league_agents)
 
                     z_features[step] = agent.selfplay_get_z_encoded_features(
                         args=args,
@@ -466,13 +466,12 @@ class SelfPlayTrainer:
                 # =============
             # =========================
 
-            continue  # TODO: skip update for testing
+
         # =========================
         # PPO update
         # =========================
             
-            unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-            # unique_agents = agent.get_unique_agents(self.active_league_agents)
+            unique_agents = agent.get_unique_agents(self.active_league_agents)
 
             with torch.no_grad():
                 next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
@@ -708,7 +707,6 @@ class SelfPlayTrainer:
 
     # TODO: Debugging (nachher entfernen)
     def check_values(self, scalar_features, z_features, values, agent, step, next_scalar_features=None, next_z_features=None, obs=None, next_obs=None, flatten = False):
-        return
         if flatten:
             if not torch.allclose(values[step, ::2], agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()[::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (flatten) step: {step}, distance: {values[step, ::2] - agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()[::2]}\n\n")

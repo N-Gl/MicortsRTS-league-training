@@ -2,26 +2,21 @@ defaults:
   - default_config
 
 ExperimentConfig:
-  selfplay: true
-  model_path: models/league_training_test_finished_PPO_Basis_thesis/finished_PPO_Basis_thesis.pt
+  ppo: true
+  model_path: models/test/agent.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 05_12_25__next_scalar_features_next_z_features_correct_global_step_selfplay_get_z_encoded_features__get_value
+  exp_name: test
   wandb_project_name: new_selfplay
 
-  prod_mode: true
+  prod_mode: false
   render: true
-  render_all: false
-
+  render_all: true
   seed: 
 
-  num_bot_envs: 0
-  num_main_agents: 27   # 1 num_main_agents == 1 env
-
-  total_timesteps: 30000000
+  total_timesteps: 40000000
+  num_bot_envs: 24
 
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
-  dyn_attack_reward: 0.0 # TODO               # add more attackreward depending on situation (0.0) # Beispiel: 2.0
-  value_warmup_updates: 0 # TODO      # number of initial PPO updates with value-only training (0)
 
   PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0
@@ -41,4 +36,3 @@ ExperimentConfig:
   norm_adv: true                
   anneal_lr: true               
   clip_vloss: true
-

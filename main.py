@@ -198,7 +198,6 @@ def main(cfg: ExperimentConfig):
         print(device)
 
     if args.deterministic:
-        args.seed = args.seed + 1 * args.initial_BC + 2 * args.BC_finetuning + 4 * args.ppo + 8 * args.evaluate + 16 * args.selfplay + 16 * args.league_training
         random.seed(args.seed)
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
@@ -221,28 +220,6 @@ def main(cfg: ExperimentConfig):
 
         print(f"opponents: \n{opponents}")
 
-        # TODO: wenn num_main_agents > 0 --> num_selfplay_envs = num_main_agents, damit die anzahl der envs = der anzahl der envs für die main Agents sind
-        # Das überreicht man dem main Agent (unten Kommentar wiederholt)
-        if args.num_main_agents > 0:
-            main_envs = MicroRTSGridModeVecEnv(
-            num_selfplay_envs=args.num_main_agents,
-            num_bot_envs=args.num_bot_envs,
-            max_steps=2000, # new (BA Parameter) (max episode length of 2000)
-            always_player_1=True,
-            bot_envs_alternate_player=False,
-            render_theme=1,
-            ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
-            # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
-            # [microrts_ai.mayari for _ in range(4)] + 
-            # [microrts_ai.mixedBot for _ in range(4)] + 
-            # [microrts_ai.izanagi for _ in range(3)] +
-            # [microrts_ai.droplet for _ in range(4)] +
-            # [microrts_ai.tiamat for _ in range(3)] +
-            # [microrts_ai.workerRushAI for _ in range(3)],
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
-            reward_weight=reward_weight,
-            )
-            main_envsT = MicroRTSSpaceTransform(main_envs)
         envs = MicroRTSGridModeVecEnv(
             num_selfplay_envs=args.num_selfplay_envs,
             num_bot_envs=args.num_bot_envs,
@@ -362,10 +339,7 @@ def main(cfg: ExperimentConfig):
     if not args.evaluate:
         # TODO: wenn num_main_agents > 0 --> num_selfplay_envs = num_main_agents, damit die anzahl der envs = der anzahl der envs für die main Agents sind
         # Das überreicht man dem main Agent (oben Kommentar wiederholt)
-        if args.num_main_agents > 0:
-            action_plane_nvec = main_envsT.action_plane_space.nvec
-        else:
-            action_plane_nvec = envsT.action_plane_space.nvec
+        action_plane_nvec = envsT.action_plane_space.nvec
 
         agent = build_agent(action_plane_nvec, device)
 

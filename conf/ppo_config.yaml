@@ -3,15 +3,15 @@ defaults:
 
 ExperimentConfig:
   ppo: true
-  model_path: anneal_lr
+  model_path: models/test/agent.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name:
-  wandb_project_name: new_PPO
+  exp_name: test
+  wandb_project_name: testing_PPO
 
   prod_mode: false
   render: true
   render_all: true
-  seed: 1
+  seed: 
 
   total_timesteps: 40000000
   num_bot_envs: 24

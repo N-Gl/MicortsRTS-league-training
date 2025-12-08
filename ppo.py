@@ -46,6 +46,8 @@ class PPOTrainer:
         self.get_scalar_features = get_scalar_features
         self.checkpoint_frequency = checkpoint_frequency
 
+
+
     def train(self):
         optimizer = optim.Adam(
             self.agent.parameters(),
