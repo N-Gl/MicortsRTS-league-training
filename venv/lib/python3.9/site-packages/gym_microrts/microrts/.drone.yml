@@ -1,0 +1,31 @@
+kind: pipeline
+name: production
+steps:
+- name: java
+  image: java:openjdk-8-alpine
+  volumes:
+  - name: cache
+    path: /tmp/cache
+  commands:
+  - sh ./build.sh
+  - apk update && apk add zip
+  - zip -r microrts.zip maps/ microrts.jar
+  - mv microrts.zip /tmp/cache/$(date +"%Y%m%d%H%M").microrts.zip
+- name: upload
+  image: plugins/s3
+  volumes:
+  - name: cache
+    path: /tmp/cache
+  settings:
+    bucket: microrts
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    source: /tmp/cache/*
+    target: /microrts/artifacts
+    strip_prefix: /tmp/cache/
+
+volumes:
+- name: cache
+  temp: {}
