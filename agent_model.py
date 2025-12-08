@@ -240,29 +240,36 @@ class Agent(nn.Module):
         # np.any([torch.where(z[i] != z[i+1])[0].shape[0] != 0 or torch.where(x[i] != x[i+1])[0].shape[0] != 0 or torch.where(sc[i] != sc[i+1])[0].shape[0] != 0 for i in range(0, num_selfplay_envs//2, 2)])
 
         if action is None:
-            if hasattr(envs, "get_action_mask"):
-                mask_np = envs.get_action_mask()
-                src_mask = getattr(envs, "source_unit_mask", None)
-                if src_mask is None:
-                    src_mask = mask_np.any(axis=-1, keepdims=True)
-                else:
-                    src_mask = src_mask.reshape(envs.num_envs, -1, 1)
-
-                if selfplay_envs and num_selfplay_envs > 1:
-                    upper = min(num_selfplay_envs, mask_np.shape[0])
-                    h, w = envs.height, envs.width
-                    mask_p1 = mask_np[1:upper:2].reshape(-1, h, w, mask_np.shape[-1])
-                    mask_p1 = np.flip(mask_p1, axis=(1, 2))
-                    mask_np[1:upper:2] = mask_p1.reshape(-1, h * w, mask_np.shape[-1])
-                    src_p1 = src_mask[1:upper:2].reshape(-1, h, w, 1)
-                    src_p1 = np.flip(src_p1, axis=(1, 2))
-                    src_mask[1:upper:2] = src_p1.reshape(-1, h * w, 1)
-
-                mask_np = np.concatenate([src_mask, mask_np], axis=2)
-                invalid_action_masks = torch.as_tensor(mask_np, dtype=torch.bool, device=self.device)
-            else:
-                raise AttributeError("Environment does not provide get_action_mask for action filtering.")
-
+            # if hasattr(envs, "get_action_mask"):
+            #     mask_np = envs.get_action_mask()
+            #     src_mask = getattr(envs, "source_unit_mask", None)
+            #     if src_mask is None:
+            #         src_mask = mask_np.any(axis=-1, keepdims=True)
+            #     else:
+            #         src_mask = src_mask.reshape(envs.num_envs, -1, 1)
+# 
+            #     if selfplay_envs and num_selfplay_envs > 1:
+            #         upper = min(num_selfplay_envs, mask_np.shape[0])
+            #         h = w = int(np.sqrt(mask_np.shape[1]))
+            #         mask_p1 = mask_np[1:upper:2].reshape(-1, h, w, mask_np.shape[-1])
+            #         mask_p1 = np.flip(mask_p1, axis=(1, 2))
+            #         mask_np[1:upper:2] = mask_p1.reshape(-1, h * w, mask_np.shape[-1])
+            #         src_p1 = src_mask[1:upper:2].reshape(-1, h, w, 1)
+            #         src_p1 = np.flip(src_p1, axis=(1, 2))
+            #         src_mask[1:upper:2] = src_p1.reshape(-1, h * w, 1)
+# 
+            #     mask_np = np.concatenate([src_mask, mask_np], axis=2)
+            #     invalid_action_masks = torch.as_tensor(mask_np, dtype=torch.bool, device=self.device)
+            # else:
+            #     raise AttributeError("Environment does not provide get_action_mask for action filtering.")
+            # =====
+            invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in range(envs.num_envs)]).to(self.device)
+            
+            if selfplay_envs and num_selfplay_envs > 1:
+                invalid_action_masks = invalid_action_masks.clone()
+                upper = min(num_selfplay_envs, invalid_action_masks.shape[0])
+                invalid_action_masks[1:upper:2] = invalid_action_masks[1:upper:2].flip(1, 2)
+            # =====
             invalid_action_masks = invalid_action_masks.view(-1, invalid_action_masks.shape[-1])
         else:
             invalid_action_masks = invalid_action_masks.to(self.device)
