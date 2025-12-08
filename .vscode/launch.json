@@ -82,6 +82,19 @@
       //"CUDA_VISIBLE_DEVICES": "1"
       //}
     },
+   
+    {
+      "name": "Python: sp league training",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "sp_league_conf",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
 
     {
       "name": "Python: initial_BC",

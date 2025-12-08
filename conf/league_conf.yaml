@@ -23,7 +23,7 @@ ExperimentConfig:
   selfplay_save_interval: 2.5e5   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
   checkpoint_frequency: 10        # (in Updates) Frequency to save main model checkpoints during training
 
-  train_against_cur_main: true
+  sp: false
   dbg_no_main_agent_ppo_update: false # TODO
 
   new_hist_rewards: 0

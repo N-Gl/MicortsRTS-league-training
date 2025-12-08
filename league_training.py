@@ -244,6 +244,8 @@ class MainPlayer(Player):
         matches against forgotten main players the agent can no longer beat
         and past main exploiters.
         If there are no forgotten players or strong exploiters, the 15% is used for self-play instead.'''
+        if self.args.sp:
+            return self._payoff.players[0], True
         # TODO (league training): es wird zu oft gegen einfache Gegner gespielt (vorallem, wenn es viele Gegner gibt) 
         # und lange Spiele mit Draws werden so stark bewertet, dass ein klarer win zu einem draw wird.
         coin_toss = np.random.random()
@@ -444,8 +446,7 @@ class League:
         # (TODO (League training): müssen die main_agents ihre Gewichte unterschiedlich updaten können, um besser gegen andere main_agents zu trainieren?
         # gerade ex nur eine Instanz als main_agent (wenn ein main_agent ein update macht, dann updaten alle main_agents ihre Gewichte gleich) 
         # (initial_agents statt initial_agent?))
-        if args.train_against_cur_main:
-            self._payoff.add_player(main_agent.checkpoint())
+        self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
 
         for _ in range(args.num_main_exploiters):
@@ -849,9 +850,9 @@ class LeagueTrainer:
 
                 if any("episode" in info for info in infos):
                     if not hasattr(writer, "recent_bot_winloss"):
-                        writer.recent_bot_winloss = deque(maxlen=200)
+                        writer.recent_bot_winloss = deque([0.0] * 200, maxlen=200)
                     if not hasattr(writer, "recent_selfplay_winloss"):
-                        writer.recent_selfplay_winloss = deque(maxlen=200)
+                        writer.recent_selfplay_winloss = deque([0.0] * 200, maxlen=200)
                     
                     where_done = torch.where(next_done.bool())
 

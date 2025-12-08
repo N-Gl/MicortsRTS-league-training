@@ -23,7 +23,7 @@ ExperimentConfig:
   selfplay_save_interval: 30000000   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
   checkpoint_frequency: 10        # (in Updates) Frequency to save main model checkpoints during training
 
-  train_against_cur_main: false
+  sp: true
   dbg_no_main_agent_ppo_update: false # TODO
 
   new_hist_rewards: 0
@@ -37,6 +37,9 @@ ExperimentConfig:
   PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0
 
+  # ent_coef größer   --> explorativer
+  # kl_coeff kleiner  --> explorativer
+  # clip_coef größer  --> explorativer
   num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
   gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
