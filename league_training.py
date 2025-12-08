@@ -685,7 +685,7 @@ class LeagueTrainer:
                     # TODO: nach dem ersten update kommen nicht mehr die gleichen Werte, wie in selfplay_only.py mit selfplay_get_value raus. 
                     # (es werden weiterhin gleiche eingaben gegeben) (Ich habe schon getestet, dass Envs nicht auf sc der anderen Envs zugreifen
                     # fehler im update der gewichte?)
-                    values[step] = agent.selfplay_get_value(next_obs, scalar_features[step], z_features[step], 
+                    values[step] = agent.selfplay_Bot_get_value(next_obs, scalar_features[step], z_features[step], 
                                                             num_selfplay_envs=args.num_selfplay_envs, num_envs=args.num_envs, 
                                                             unique_agents=unique_agents,
                                                             only_player_0=True).flatten() # critic(forward(...))
@@ -911,7 +911,7 @@ class LeagueTrainer:
                 unique_agents = agent.get_unique_agents(active_league_agents)
                 next_z_features = agent.selfplay_get_z_encoded_features(args, device, z_features, next_obs, args.num_steps, unique_agents)
 
-                last_value = agent.selfplay_get_value(
+                last_value = agent.selfplay_Bot_get_value(
                     next_obs,
                     next_scalar,
                     next_z_features,

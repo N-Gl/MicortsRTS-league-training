@@ -224,7 +224,7 @@ def main(cfg: ExperimentConfig):
 
     
         envs = MicroRTSGridModeVecEnv(
-            num_selfplay_envs=args.num_selfplay_envs,
+            num_selfplay_envs=0,
             num_bot_envs=args.num_bot_envs,
             max_steps=2000, # new (BA Parameter) (max episode length of 2000)
             always_player_1=True,
@@ -252,6 +252,37 @@ def main(cfg: ExperimentConfig):
             envs = VecVideoRecorder(envs, f'videos/{experiment_name}',
                                     record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
 
+
+    if args.selfplay or args.league_training:
+        sp_envs = MicroRTSGridModeVecEnv(
+            num_selfplay_envs=args.num_selfplay_envs,
+            num_bot_envs=0,
+            max_steps=2000, # new (BA Parameter) (max episode length of 2000)
+            always_player_1=True,
+            bot_envs_alternate_player=False,
+            render_theme=1,
+            ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
+            # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
+            # [microrts_ai.mayari for _ in range(4)] + 
+            # [microrts_ai.mixedBot for _ in range(4)] + 
+            # [microrts_ai.izanagi for _ in range(3)] +
+            # [microrts_ai.droplet for _ in range(4)] +
+            # [microrts_ai.tiamat for _ in range(3)] +
+            # [microrts_ai.workerRushAI for _ in range(3)],
+            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+            reward_weight=reward_weight,
+        )
+        sp_envsT = MicroRTSSpaceTransform(sp_envs)
+        # print(sp_envsT.__class__.mro())
+        # print(hasattr(sp_envsT, "step_async"))
+        # print(sp_envsT.step_async.__qualname__)
+        # print(sp_envsT.step_wait.__qualname__)
+    
+        sp_envsT = VecstatsMonitor(sp_envsT, args.gamma)
+        if args.capture_video:
+            sp_envs = VecVideoRecorder(sp_envs, f'videos/{experiment_name}',
+                                    record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
+        
 
 
     #def getScalarFeatures(obs, res, numenvs):
@@ -437,6 +468,7 @@ def main(cfg: ExperimentConfig):
             agent=agent,
             supervised_agent=supervised_agent,
             envs=envsT,
+            sp_envs=sp_envsT,
             args=args,
             writer=writer,
             device=device,

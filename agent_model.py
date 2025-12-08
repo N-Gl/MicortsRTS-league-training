@@ -306,8 +306,10 @@ class Agent(nn.Module):
         return action, logprob.sum(1).sum(1), entropy.sum(1).sum(1), invalid_action_masks
     
     
-    def selfplay_get_z_encoded_features(self, args, device, z_features, next_obs, step, unique_agents):
+    def selfplay_get_z_encoded_features(self, args, device, z_features, next_obs, step, unique_agents, sp_next_obs=None):
         '''encode z-features per agent (main/supervised) so each policy uses its own encoder'''
+        if sp_next_obs is not None:
+            next_obs = torch.cat([sp_next_obs, next_obs], dim=0)
         flat_next_obs = next_obs.view(args.num_envs, -1)
         next_z_features = torch.empty((args.num_envs, z_features.shape[2]), device=device)
         for cur_agent, indices in unique_agents.items():
@@ -390,7 +392,7 @@ class Agent(nn.Module):
     def get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
         return self.critic(self.forward(x, sc, z))
     
-    def selfplay_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False) -> torch.Tensor:
+    def selfplay_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False) -> torch.Tensor:
         '''
         returns value for selfplay and bot envs combined.
         Also returns value for not main Agents
