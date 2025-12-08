@@ -444,7 +444,8 @@ class League:
         # (TODO (League training): müssen die main_agents ihre Gewichte unterschiedlich updaten können, um besser gegen andere main_agents zu trainieren?
         # gerade ex nur eine Instanz als main_agent (wenn ein main_agent ein update macht, dann updaten alle main_agents ihre Gewichte gleich) 
         # (initial_agents statt initial_agent?))
-        self._payoff.add_player(main_agent.checkpoint())
+        if args.train_against_cur_main:
+            self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
 
         for _ in range(args.num_main_exploiters):

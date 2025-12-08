@@ -5,7 +5,7 @@ ExperimentConfig:
   selfplay: true
   model_path: models/04_12_25__Bots__finished_PPO_Basis_thesis/agent_update_150.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 08_12_25__04_12_25__0_num_bot_envs_27_num_main_agents__Bots__finished_PPO_Basis_thesis
+  exp_name: 08_12_25__04_12_25__4_num_bot_envs_27_num_main_agents__Bots__finished_PPO_Basis_thesis
   wandb_project_name: new_selfplay
 
   prod_mode: true
@@ -14,7 +14,7 @@ ExperimentConfig:
 
   seed: 
 
-  num_bot_envs: 0
+  num_bot_envs: 4
   num_main_agents: 27   # 1 num_main_agents == 1 env
 
   total_timesteps: 20000000
@@ -29,6 +29,9 @@ ExperimentConfig:
   dbg_no_main_agent_ppo_update: false # TODO
 
 
+  # ent_coef größer   --> explorativer
+  # kl_coeff kleiner  --> explorativer
+  # clip_coef größer  --> explorativer
   num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
   gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
