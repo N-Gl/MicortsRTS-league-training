@@ -46,6 +46,7 @@ def adjust_obs_selfplay(args, next_obs, is_new_env: bool = False):
 
             # rottate directions 180°
             for i in range(0, 4):
+                
                 # TODO: aus 25 wurde 26 funktioniert jetzt auch in League?
                 next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
                     next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
