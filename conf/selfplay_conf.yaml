@@ -12,9 +12,9 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  seed: 
+  seed: 1765220129
 
-  num_bot_envs: 2
+  num_bot_envs: 0
   num_main_agents: 27   # 1 num_main_agents == 1 env
 
   total_timesteps: 20000000
@@ -29,21 +29,21 @@ ExperimentConfig:
   dbg_no_main_agent_ppo_update: false # TODO
 
 
-  # ent_coef größer   --> explorativer
-  # kl_coeff kleiner  --> explorativer
-  # clip_coef größer  --> explorativer
+  # ent_coef größer   --> explorativer (reset)        (reset) (reset) (reset)
+  # kl_coeff kleiner  --> explorativer        (reset) (reset) (reset) (reset)
+  # clip_coef größer  --> explorativer                        (reset) (0.2)
   num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
   gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
-  ent_coef: 0.008               # new (BA Parameter) (Entropy coefficient η = 0.005)
+  ent_coef: 0.005 # currently running               # new (BA Parameter) (Entropy coefficient η = 0.005)
   vf_coef: 0.01                 # new (BA Parameter) (Value function coefficient β = 0.01)
   max_grad_norm: 0.5            # new (BA Parameter) (Gradient norm threshold ω = 0.5)
-  clip_coef: 0.15 # TODO: 0.25                # new (BA Parameter) (Clipping coefficient = 0.1)
+  clip_coef: 0.2 # TODO: 0.25                # new (BA Parameter) (Clipping coefficient = 0.1)
   update_epochs: 4              
   kle_stop: false               
   kle_rollback: false           
   target_kl: 0.03               
-  kl_coeff: 0.3                 # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
+  kl_coeff: 0.4  # currently running               # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
   norm_adv: true                
   anneal_lr: true               
   clip_vloss: true
