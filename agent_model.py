@@ -119,7 +119,7 @@ class Agent(nn.Module):
         self.mapsize = mapsize
         self.lstm_hidden = lstm_hidden
         self.lstm_layers = lstm_layers
-        self.logits = logits
+        self.sp_logits = logits
         self._values = values
         self.steps = 0
         self.checkpoint_step = 0
@@ -340,9 +340,9 @@ class Agent(nn.Module):
         '''
         # active_league_agents: all activly trained Agents (bot and selfplay Agents)
         
-        # logits = torch.zeros((num_envs, self.mapsize * self.action_dim), device=self.device)
-        if self.logits is None:
-            self.logits = torch.empty((num_envs, self.mapsize * self.action_dim), device=self.device)
+        if self.sp_logits is None:
+            # self.sp_logits = torch.empty((num_envs, self.mapsize * self.action_dim), device=self.device)
+            self.sp_logits = torch.zeros((num_selfplay_envs, self.mapsize * self.action_dim), device=self.device)
 
         if unique_agents is None:
             unique_agents = self.get_unique_agents(active_league_agents)
@@ -361,7 +361,7 @@ class Agent(nn.Module):
             if agent is not self:
                 # TODO (league training): sollte man wirklich alle non_main_agenten detatchen? (Wahrscheinlich schon) (oder sogar torch.no_grad()) (auch in selfplay_get_value?)
                 subset_logits = subset_logits.detach()
-            self.logits[indices] = subset_logits# .to(self.device)
+            self.sp_logits[indices] = subset_logits# .to(self.device)
 
         return self.get_action(
             x,
@@ -372,7 +372,7 @@ class Agent(nn.Module):
             envs=envs,
             selfplay_envs=num_selfplay_envs > 0,
             num_selfplay_envs=num_selfplay_envs,
-            logits=self.logits
+            logits=self.sp_logits[:num_selfplay_envs]
         )
     
 

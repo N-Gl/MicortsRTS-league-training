@@ -5,17 +5,18 @@ ExperimentConfig:
   selfplay: true
   model_path: models/league_training_test_finished_PPO_Basis_thesis/finished_PPO_Basis_thesis.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: debugging_05.12.25__4_selfplay_Agents__0_Bots__finished_PPO_Basis_thesis
+  exp_name: debugging_09.12.25__seperated_bots_selfplay
   wandb_project_name: testing_selfplay
 
   prod_mode: true
   render: true
-  render_all: true
+  render_all: false
 
   seed: 1
 
-  num_bot_envs: 0
-  num_main_agents: 4   # 1 num_main_agents == 1 env
+  num_bot_envs: 2
+  max_num_bot_envs: 5
+  num_main_agents: 4   # 1 num_main_agents == 2 env == 1 Game
 
   total_timesteps: 30000000
 

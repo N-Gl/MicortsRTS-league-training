@@ -44,6 +44,8 @@ def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True) -> str
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: ExperimentConfig):
     args = cfg.ExperimentConfig
+    # allow runtime fields (e.g., num_envs) to be added/updated
+    OmegaConf.set_struct(args, False)
 
     if args.seed == None:
         args.seed = int(time.time())
@@ -222,38 +224,39 @@ def main(cfg: ExperimentConfig):
 
         print(f"opponents: \n{opponents}")
 
+
+        if args.num_bot_envs > 0:
+            envs = MicroRTSGridModeVecEnv(
+                num_selfplay_envs=0,
+                num_bot_envs=args.num_bot_envs,
+                max_steps=2000, # new (BA Parameter) (max episode length of 2000)
+                always_player_1=True,
+                bot_envs_alternate_player=False,
+                render_theme=1,
+                ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
+                # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
+                # [microrts_ai.mayari for _ in range(4)] + 
+                # [microrts_ai.mixedBot for _ in range(4)] + 
+                # [microrts_ai.izanagi for _ in range(3)] +
+                # [microrts_ai.droplet for _ in range(4)] +
+                # [microrts_ai.tiamat for _ in range(3)] +
+                # [microrts_ai.workerRushAI for _ in range(3)],
+                map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+                reward_weight=reward_weight,
+            )
+            envsT = MicroRTSSpaceTransform(envs)
+            # print(envsT.__class__.mro())
+            # print(hasattr(envsT, "step_async"))
+            # print(envsT.step_async.__qualname__)
+            # print(envsT.step_wait.__qualname__)
     
-        envs = MicroRTSGridModeVecEnv(
-            num_selfplay_envs=0,
-            num_bot_envs=args.num_bot_envs,
-            max_steps=2000, # new (BA Parameter) (max episode length of 2000)
-            always_player_1=True,
-            bot_envs_alternate_player=False,
-            render_theme=1,
-            ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
-            # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
-            # [microrts_ai.mayari for _ in range(4)] + 
-            # [microrts_ai.mixedBot for _ in range(4)] + 
-            # [microrts_ai.izanagi for _ in range(3)] +
-            # [microrts_ai.droplet for _ in range(4)] +
-            # [microrts_ai.tiamat for _ in range(3)] +
-            # [microrts_ai.workerRushAI for _ in range(3)],
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
-            reward_weight=reward_weight,
-        )
-        envsT = MicroRTSSpaceTransform(envs)
-        # print(envsT.__class__.mro())
-        # print(hasattr(envsT, "step_async"))
-        # print(envsT.step_async.__qualname__)
-        # print(envsT.step_wait.__qualname__)
-    
-        envsT = VecstatsMonitor(envsT, args.gamma)
-        if args.capture_video:
-            envs = VecVideoRecorder(envs, f'videos/{experiment_name}',
-                                    record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
+            envsT = VecstatsMonitor(envsT, args.gamma)
+            if args.capture_video:
+                envs = VecVideoRecorder(envs, f'videos/{experiment_name}',
+                                        record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
 
 
-    if args.selfplay or args.league_training:
+    if (args.selfplay or args.league_training) and args.num_selfplay_envs > 0:
         sp_envs = MicroRTSGridModeVecEnv(
             num_selfplay_envs=args.num_selfplay_envs,
             num_bot_envs=0,
@@ -261,14 +264,6 @@ def main(cfg: ExperimentConfig):
             always_player_1=True,
             bot_envs_alternate_player=False,
             render_theme=1,
-            ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
-            # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
-            # [microrts_ai.mayari for _ in range(4)] + 
-            # [microrts_ai.mixedBot for _ in range(4)] + 
-            # [microrts_ai.izanagi for _ in range(3)] +
-            # [microrts_ai.droplet for _ in range(4)] +
-            # [microrts_ai.tiamat for _ in range(3)] +
-            # [microrts_ai.workerRushAI for _ in range(3)],
             map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
             reward_weight=reward_weight,
         )

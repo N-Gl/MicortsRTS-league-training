@@ -9,7 +9,7 @@ from jpype.types import JArray, JInt
 
 from agent_model import Agent
 from microrts_space_transform import MicroRTSSpaceTransform
-from microrts_vec_env import MicroRTSGridModeVecEnv
+from gym_microrts.envs.microrts_vec_env import  MicroRTSGridModeVecEnv
 from gym_microrts import microrts_ai
 
 
@@ -154,12 +154,13 @@ class SelfPlayTrainer:
         self.active_league_agents = []
         self.league_agent = Selfplay_agent(agent)
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
+        self.num_envs = args.num_envs
         for _ in range(args.num_main_agents):
             self.active_league_agents.append(self.league_agent)
             self.active_league_agents.append(self.league_supervised_agent)
         for _ in range(args.num_bot_envs):
             self.active_league_agents.append(self.league_agent)
-        self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
+        self.indices = torch.tensor(range(args.num_selfplay_envs, self.num_envs), dtype=torch.long, device=device)
         self.indices = torch.cat(
             (torch.tensor(range(0, args.num_selfplay_envs, 2), dtype=torch.long, device=device), self.indices)
         )
@@ -175,6 +176,8 @@ class SelfPlayTrainer:
         device = self.device
         # supervised_agent = self.supervised_agent or Agent(agent.action_plane_nvec, agent.device, initial_weights=agent.state_dict())
         supervised_agent = self.supervised_agent or Agent(agent.action_plane_nvec, agent.device, initial_weights=agent.state_dict())
+
+        last_bot_env_change = 0
 
         if args.render:
             if args.render_all:
@@ -193,14 +196,14 @@ class SelfPlayTrainer:
         bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape).to(device)
         bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape).to(device)
         bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
-        rewards_attack = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
-        rewards_winloss = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
-        rewards_score = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
-        dones = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
-        values = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
         bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape).to(device)
 
-        # TODO: wurden die alle richtig initialisiert?
+        rewards_attack = torch.zeros((args.num_steps, self.num_envs)).to(device)
+        rewards_winloss = torch.zeros((args.num_steps, self.num_envs)).to(device)
+        rewards_score = torch.zeros((args.num_steps, self.num_envs)).to(device)
+        dones = torch.zeros((args.num_steps, self.num_envs)).to(device)
+        values = torch.zeros((args.num_steps, self.num_envs)).to(device)
+
         sp_obs = torch.zeros((args.num_steps, args.num_selfplay_envs) + envs.single_observation_space.shape).to(device)
         sp_actions = torch.zeros((args.num_steps, args.num_selfplay_envs) + action_space_shape).to(device)
         sp_logprobs = torch.zeros((args.num_steps, args.num_selfplay_envs)).to(device)
@@ -208,7 +211,6 @@ class SelfPlayTrainer:
 
         global_step = 0
         start_time = time.time()
-        # TODO: reset sp_envs
         next_obs_np, _, bot_res = envs.reset()
 
         bot_next_obs = torch.Tensor(next_obs_np).to(device)
@@ -218,10 +220,10 @@ class SelfPlayTrainer:
         sp_next_obs = torch.Tensor(next_obs_np).to(device)
 
         adjust_obs_selfplay(args, sp_next_obs, is_new_env=True)
-        next_done = torch.zeros(args.num_envs).to(device)
+        next_done = torch.zeros(self.num_envs).to(device)
 
-        scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
-        z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long).to(device)
+        scalar_features = torch.zeros((args.num_steps, self.num_envs, 11)).to(device)
+        z_features = torch.zeros((args.num_steps, self.num_envs, 8), dtype=torch.long).to(device)
 
         num_updates = args.total_timesteps // args.batch_size
         bot_position_indices = (
@@ -257,7 +259,7 @@ class SelfPlayTrainer:
                 sp_obs[step] = sp_next_obs
                 next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)
                 res = sp_res + bot_res
-                scalar_features[step] = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
+                scalar_features[step] = self.get_scalar_features(next_obs, res, self.num_envs).to(device)
                 dones[step] = next_done
 
                 with torch.no_grad():
@@ -276,7 +278,7 @@ class SelfPlayTrainer:
                     )
 
                     # debugging
-                    # for i in range(args.num_envs):
+                    # for i in range(self.num_envs):
                     #     with torch.no_grad():
                     #         # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
                     #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
@@ -290,7 +292,7 @@ class SelfPlayTrainer:
                         scalar_features[step],
                         z_features[step],
                         num_selfplay_envs=args.num_selfplay_envs,
-                        num_envs=args.num_envs,
+                        num_envs=self.num_envs,
                         unique_agents=unique_agents,
                         only_player_0=True
                     ).flatten()
@@ -301,7 +303,6 @@ class SelfPlayTrainer:
                     # gesamplete action (aus Verteilung der Logits) (24, 256, 7),
                     # actor(forward(...)), invalid_action_masks
                     # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
-                    # TODO: sp_envs und envs getrennt behandeln (funktioniert es?)
                     bot_actions[step], bot_logprobs[step], _, bot_invalid_action_masks[step] = agent.get_action(
                         bot_obs[step],
                         scalar_features[step, args.num_selfplay_envs:],
@@ -314,7 +315,7 @@ class SelfPlayTrainer:
                         scalar_features[step, :args.num_selfplay_envs],
                         z_features[step, :args.num_selfplay_envs],
                         num_selfplay_envs=args.num_selfplay_envs,
-                        num_envs=args.num_envs,
+                        num_envs=args.num_selfplay_envs,
                         envs=sp_envs,
                         active_league_agents=self.active_league_agents,
                         unique_agents=sp_only_unique_agents
@@ -344,7 +345,7 @@ class SelfPlayTrainer:
                 sp_valid_counts = sp_invalid_action_masks[step][:, :, 0].sum(1).long().cpu().numpy()
 
                 # Anpassungen für Spieler 1 nach (Spieler 1 -> Spieler 0)
-                # TODO: adjust funktionenbekommen nurnoch selfplay args
+                # TODO (optimize): nur die Indizes anpassen, die man anpassen muss (bei type move nicht harvest, return, produce, attack anpassen)
                 adjust_action_selfplay(args, sp_valid_actions, sp_valid_counts)
 
                 '''
@@ -393,8 +394,8 @@ class SelfPlayTrainer:
 
                 bot_next_obs, _, bot_attackrew, bot_winlossrew, bot_scorerew, bot_ds, bot_infos, bot_res = envs.step(bot_java_valid_actions)
                 bot_next_obs = torch.Tensor(envs._from_microrts_obs(bot_next_obs)).to(device) # next_obs zu Tensor mit shape (24, 16, 16, 73) (von (24, X))
-                sp_next_obs, _, sp_attackrew, sp_winlossrew, sp_scorerew, sp_ds, sp_infos, sp_res = envs.step(sp_java_valid_actions)
-                sp_next_obs = torch.Tensor(envs._from_microrts_obs(sp_next_obs)).to(device)
+                sp_next_obs, _, sp_attackrew, sp_winlossrew, sp_scorerew, sp_ds, sp_infos, sp_res = sp_envs.step(sp_java_valid_actions)
+                sp_next_obs = torch.Tensor(sp_envs._from_microrts_obs(sp_next_obs)).to(device)
                 
                 adjust_obs_selfplay(args, sp_next_obs)
 
@@ -423,8 +424,8 @@ class SelfPlayTrainer:
                 # _last_scorerews = np.copy(scorerews)
 
 
+                attack_tensor = torch.as_tensor(np.concatenate([sp_attackrew, bot_attackrew]), device=device, dtype=torch.float)
                 if args.dyn_attack_reward > 0:
-                    attack_tensor = torch.as_tensor(np.concatenate([bot_attackrew, sp_attackrew]), device=device, dtype=torch.float)
                     # done_tensor = torch.as_tensor(ds, device=device, dtype=torch.bool)
                     # draw_mask = (winloss_tensor == 0) & done_tensor
                     sc = scalar_features[step]
@@ -448,14 +449,14 @@ class SelfPlayTrainer:
                 else:
                     rewards_attack[step] = attack_tensor * attack
 
-                rewards_winloss[step] = torch.Tensor(np.concatenate([bot_winlossrew, sp_winlossrew]) * winloss).to(device)
-                rewards_score[step] = torch.Tensor(np.concatenate([bot_scorerew, sp_scorerew]) * scorew).to(device)
-                next_done = torch.Tensor(np.concatenate([bot_ds, sp_ds])).to(device)
+                rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew]) * winloss).to(device)
+                rewards_score[step] = torch.Tensor(np.concatenate([sp_scorerew, bot_scorerew]) * scorew).to(device)
+                next_done = torch.Tensor(np.concatenate([sp_ds, bot_ds])).to(device)
 
                 # =============
                 # Logging PPO training
                 # =============
-                infos = bot_infos + sp_infos
+                infos =  sp_infos + bot_infos
                 for info in infos:
 
                     if 'episode' in info.keys():
@@ -494,6 +495,7 @@ class SelfPlayTrainer:
                             print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
                             print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))} \n")
                             num_done_botgames += 1
+                            last_bot_env_change += 1
 
                         elif done_idx % 2 == 0:
                             print(f"Game {int(done_idx/2)} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
@@ -512,10 +514,16 @@ class SelfPlayTrainer:
                             print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack):.3f}")
                             print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_withdraw:.3f}\n")
                             num_done_selfplaygames += 1
-
+                            last_bot_env_change += 1
+                        
                         break
                 # =============
             # =========================
+
+
+            
+
+            
 
             # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
             if args.dbg_no_main_agent_ppo_update:
@@ -527,7 +535,6 @@ class SelfPlayTrainer:
             # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
             unique_agents = agent.get_unique_agents(self.active_league_agents)
 
-            # TODO: konkatiniere sp und bot
             obs = torch.cat([sp_obs, bot_obs], dim=1)
             actions = torch.cat([sp_actions, bot_actions], dim=1)
             logprobs = torch.cat([sp_logprobs, bot_logprobs], dim=1)
@@ -535,7 +542,7 @@ class SelfPlayTrainer:
 
 
             with torch.no_grad():
-                next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
+                next_scalar_features = self.get_scalar_features(next_obs, res, self.num_envs).to(device)
                 next_z_features = agent.selfplay_get_z_encoded_features(
                     args, device, z_features, next_obs, args.num_steps, unique_agents
                 )
@@ -547,7 +554,7 @@ class SelfPlayTrainer:
                     next_scalar_features,
                     next_z_features,
                     num_selfplay_envs=args.num_selfplay_envs,
-                    num_envs=args.num_envs,
+                    num_envs=self.num_envs,
                     unique_agents=unique_agents,
                     only_player_0=True
                 ).reshape(1, -1)
@@ -607,10 +614,10 @@ class SelfPlayTrainer:
 
 
             # flatten the batch
-            # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
+            # args.num_steps, self.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
             # (ScFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
             b_Sc = scalar_features[:, self.indices].reshape(-1, scalar_features.shape[-1])
-            # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 8))
+            # args.num_steps, self.num_envs Dimensionen vereinigen  (shape (steps*envs, 8))
             # (zFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
             b_z = z_features[:, self.indices].reshape(-1, z_features.shape[-1])
             # dasselbe mit obs                                      (shape (steps*envs, 16, 16, 73)
@@ -751,12 +758,101 @@ class SelfPlayTrainer:
                 else:
                     save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
 
+            # TODO: Verbessere, wann neue Bots geladen werden
+            # remove or add an Bot environment depending on the number of played games in relation to selfplay games
+            # TODO: funktioniert das richtig?
+            if  last_bot_env_change >= 100 and num_done_selfplaygames / 2 <= num_done_botgames:
+                envs.close()
+                envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
+                last_bot_env_change = 0
+
+                bot_obs = bot_obs.zero_()[:, :args.num_bot_envs]
+                bot_actions = bot_actions.zero_()[:, :args.num_bot_envs]
+                bot_logprobs = bot_logprobs.zero_()[:, :args.num_bot_envs]
+                bot_invalid_action_masks = bot_invalid_action_masks.zero_()[:, :args.num_bot_envs]
+
+                rewards_attack = rewards_attack[:, :self.num_envs]
+                rewards_attack[:, args.num_selfplay_envs:].zero_()
+                rewards_winloss = rewards_winloss[:, :self.num_envs]
+                rewards_winloss[:, args.num_selfplay_envs:].zero_()
+                rewards_score = rewards_score[:, :self.num_envs]
+                rewards_score[:, args.num_selfplay_envs:].zero_()
+                # TODO (optimize): muss man die wirklich resetten?
+                dones = dones[:, :self.num_envs]
+                dones[:, args.num_selfplay_envs:].zero_()
+                values = values[:, :self.num_envs]
+                values[:, args.num_selfplay_envs:].zero_()
+
+                next_obs_np, _, bot_res = envs.reset()
+                bot_next_obs = torch.Tensor(next_obs_np).to(device)
+
+                next_done = next_done[:self.num_envs]
+                next_done[args.num_selfplay_envs:].zero_()
+
+                scalar_features = scalar_features[:, :self.num_envs]
+                scalar_features[:, args.num_selfplay_envs:].zero_()
+                z_features = z_features[:, :self.num_envs]
+                z_features[:, args.num_selfplay_envs:].zero_()
+
+                bot_position_indices = bot_position_indices[:args.num_bot_envs]
+            
+            elif last_bot_env_change >= 100 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames / 4 >= num_done_botgames:
+                envs.close()
+                envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
+                last_bot_env_change = 0
+
+                bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape, device=device)
+                bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape, device=device)
+                bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
+                bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
+
+                rewards_attack = torch.cat((rewards_attack, torch.zeros((args.num_steps, self.num_bot_envs), device=device)))
+                rewards_winloss = torch.zeros((args.num_steps, self.num_envs), device=device)
+                rewards_score = torch.zeros((args.num_steps, self.num_envs), device=device)
+                dones = torch.zeros((args.num_steps, self.num_envs), device=device)
+                values = torch.zeros((args.num_steps, self.num_envs), device=device)
+
+                rewards_attack = torch.cat(
+                    (rewards_attack, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_attack.dtype)), dim=1
+                )
+                rewards_winloss = torch.cat(
+                    (rewards_winloss, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_winloss.dtype)), dim=1
+                )
+                rewards_score = torch.cat(
+                    (rewards_score, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_score.dtype)), dim=1
+                )
+                dones = torch.cat((dones, torch.zeros((args.num_steps, 1), device=device, dtype=dones.dtype)), dim=1)
+                values = torch.cat((values, torch.zeros((args.num_steps, 1), device=device, dtype=values.dtype)), dim=1)
+                rewards_attack[:, args.num_selfplay_envs:].zero_()
+                rewards_winloss[:, args.num_selfplay_envs:].zero_()
+                rewards_score[:, args.num_selfplay_envs:].zero_()
+                # TODO (optimize): muss man die wirklich resetten?
+                dones[:, args.num_selfplay_envs:].zero_()
+                values[:, args.num_selfplay_envs:].zero_()
 
 
-    # TODO: nutze diese Methode, um mehr Bot envs zu kreieren, wenn nicht genug bot envs enden
+                next_obs_np, _, bot_res = envs.reset()
+                bot_next_obs = torch.Tensor(next_obs_np, device=device)
+
+                
+                next_done = torch.cat((next_done, torch.zeros((args.num_steps, 1), device=device, dtype=next_done.dtype)), dim=1)
+                rewards_score[args.num_selfplay_envs:].zero_()
+
+                scalar_features = torch.zeros((args.num_steps, self.num_envs, 11), device=device)
+                scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, 1), device=device, dtype=scalar_features.dtype)), dim=1)
+                scalar_features[:, args.num_selfplay_envs:].zero_()
+                z_features = torch.zeros((args.num_steps, self.num_envs, 8), dtype=torch.long, device=device)
+                z_features = torch.cat((z_features, torch.zeros((args.num_steps, 1), device=device, dtype=z_features.dtype)), dim=1)
+                z_features[:, args.num_selfplay_envs:].zero_()
+
+                bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[args.num_bot_envs:].clone()))
+
+
+    # TODO (optimize): in obs, ... die envs entfernen, die man nicht braucht (spart Rechenzeit)
     def get_new_bot_envs(self, args, num_bots):
 
         args.num_bot_envs = num_bots
+        self.num_envs = args.num_selfplay_envs + args.num_bot_envs
 
         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
         reward_weight = np.array([1.0, 1.0, 1.0, 0.2, 1.0, 4.0, 5.25, 6.0, 0])
