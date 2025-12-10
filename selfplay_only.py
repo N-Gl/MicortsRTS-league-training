@@ -49,7 +49,6 @@ def adjust_obs_selfplay(args, next_obs, is_new_env: bool = False):
 
             # rottate directions 180°
             for i in range(0, 4):
-                # TODO: aus 25 wurde 26 funktioniert jetzt auch in League?
                 next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
                     next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
                 )
@@ -257,7 +256,7 @@ class SelfPlayTrainer:
                         sp_envs.render("human")
                         
                 global_step += args.num_main_agents + args.num_bot_envs
-                # global_step += (args.num_main_agents // 2) + args.num_bot_envs # TODO: funktioniert die verbesserte Zählweise?
+                # global_step += (args.num_main_agents // 2) + args.num_bot_envs
                 bot_obs[step] = bot_next_obs
                 sp_obs[step] = sp_next_obs
                 next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)
@@ -763,7 +762,6 @@ class SelfPlayTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            # TODO: funktioniert das richtig?
             if  last_bot_env_change >= 100 and num_done_selfplaygames / 2 <= num_done_botgames:
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
