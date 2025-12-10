@@ -419,6 +419,15 @@ class Agent(nn.Module):
                 self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices]).flatten()# .to(self.device)
 
         return self._values#.clone()
+    
+
+    def remove_last_bot_env(self):
+        if self._values is not None:
+            self._values = self._values[:-1]
+
+    def add_bot_env(self):
+        if self._values is not None:
+            self._values = torch.cat([self._values, torch.zeros(1, device=self.device)], dim=0)
 
         
 

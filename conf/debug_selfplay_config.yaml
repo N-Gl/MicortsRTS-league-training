@@ -16,7 +16,7 @@ ExperimentConfig:
 
   num_bot_envs: 2
   max_num_bot_envs: 5
-  num_main_agents: 4   # 1 num_main_agents == 2 env == 1 Game
+  num_main_agents: 2   # 1 num_main_agents == 2 env == 1 Game
 
   total_timesteps: 30000000
 

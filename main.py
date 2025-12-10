@@ -16,9 +16,10 @@ import time
 import json
 import random
 import os
-from stable_baselines3.common.vec_env import VecEnvWrapper, VecVideoRecorder
+from stable_baselines3.common.vec_env import VecVideoRecorder
 from microrts_space_transform import MicroRTSSpaceTransform
 import atexit
+from VecstatsMonitor import VecstatsMonitor
 
 from agent_model import build_agent
 
@@ -62,7 +63,8 @@ def main(cfg: ExperimentConfig):
     else:
         args.__dict__.setdefault('num_selfplay_envs', (args.num_main_agents + args.num_main_exploiters + args.num_league_exploiters) * 2)
 
-    args.__dict__.setdefault('num_envs', args.num_selfplay_envs + args.num_bot_envs)
+    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
+    # args.__dict__.setdefault('num_envs', args.num_selfplay_envs + args.num_bot_envs)
     # TODO: ist die args.batch_size korrekt?
     args.__dict__.setdefault('batch_size', int((args.num_selfplay_envs//2 + args.num_bot_envs) * args.num_steps))
     args.__dict__.setdefault('minibatch_size', int(args.batch_size // max(args.n_minibatch, 1)))
@@ -71,76 +73,12 @@ def main(cfg: ExperimentConfig):
     print(json.dumps(OmegaConf.to_container(cfg, resolve=True), indent=2, sort_keys=True))
     print("change config in conf/config.yaml")
 
-
-    class VecstatsMonitor(VecEnvWrapper):
-        def __init__(self, venv, gamma=None):
-            super().__init__(venv)
-            self.eprets = None
-            self.eplens = None
-            self.epcount = 0
-            self.tstart = time.time()
-            self.gamma = gamma
-            self.raw_rewards = None
-
-        def reset(self):
-            obs = self.venv.reset()
-            n = self.num_envs
-            self.eprets = np.zeros(n, dtype=float)
-            self.eplens = np.zeros(n, dtype=int)
-            self.raw_rewards = [[] for _ in range(n)]
-            self.tstart = time.time()
-            return obs
-
-        def step_wait(self):
-            obs, denserews,attackrews,winlossrews, scorerews , dones, infos,res = self.venv.step_wait()
-
-            self.eprets += denserews +winlossrews +scorerews +attackrews
-            self.eplens += 1
-
-            for i, info in enumerate(infos):
-                if 'raw_rewards' in info:
-                    self.raw_rewards[i].append(info['raw_rewards'])
-
-            newinfos = list(infos)
-
-            for i, done in enumerate(dones):
-                if done:
-                    info = infos[i].copy()
-                    ep_ret = float(self.eprets[i])
-                    ep_len = int(self.eplens[i])
-                    ep_time = round(time.time() - self.tstart, 6)
-                    info['episode'] = {'r': ep_ret, 'l': ep_len, 't': ep_time}
-
-
-                    self.epcount += 1
-
-                    if self.raw_rewards[i]:
-                        agg = np.sum(np.array(self.raw_rewards[i]), axis=0)
-                        raw_names = [str(rf) for rf in self.rfs]
-                        info['microrts_stats'] = dict(zip(raw_names, agg.tolist()))
-                    else:
-                        info['microrts_stats'] = {}
-
-                    if winlossrews[i] == 0:
-                        info['microrts_stats']['draw'] = True
-                    else:
-                        info['microrts_stats']['draw'] = False
-
-                    self.eprets[i] = 0.0
-                    self.eplens[i] = 0
-                    self.raw_rewards[i] = []
-                    newinfos[i] = info
-
-            return obs, denserews,attackrews,winlossrews, scorerews, dones, newinfos,res
-
-        def step(self, actions):
-            self.venv.step_async(actions)
-            return self.step_wait()
     
     if args.exp_name:
         experiment_name = f"{args.exp_name}"
     else:
         experiment_name = f"{args.model_path}"
+        args.exp_name = experiment_name
     writer = SummaryWriter(f"runs/{experiment_name}")
     writer.add_text('hyperparameters', "|param|value|\n|-|-|\n%s" % (
             '\n'.join([f"|{key}|{value}|" for key, value in vars(args).items()])))

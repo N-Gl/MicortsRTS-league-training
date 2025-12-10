@@ -44,6 +44,7 @@ ExperimentConfig:
   max_num_bot_envs: 0
   num_selfplay_envs: 0
 
+  num_envs: 0
   num_main_agents: 0
   num_main_exploiters: 0
   num_league_exploiters: 0

@@ -12,6 +12,9 @@ from microrts_space_transform import MicroRTSSpaceTransform
 from gym_microrts.envs.microrts_vec_env import  MicroRTSGridModeVecEnv
 from gym_microrts import microrts_ai
 
+from stable_baselines3.common.vec_env import VecVideoRecorder
+from VecstatsMonitor import VecstatsMonitor
+
 
 
 class Selfplay_agent:
@@ -154,13 +157,13 @@ class SelfPlayTrainer:
         self.active_league_agents = []
         self.league_agent = Selfplay_agent(agent)
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
-        self.num_envs = args.num_envs
+        args.num_envs = args.num_envs
         for _ in range(args.num_main_agents):
             self.active_league_agents.append(self.league_agent)
             self.active_league_agents.append(self.league_supervised_agent)
         for _ in range(args.num_bot_envs):
             self.active_league_agents.append(self.league_agent)
-        self.indices = torch.tensor(range(args.num_selfplay_envs, self.num_envs), dtype=torch.long, device=device)
+        self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
         self.indices = torch.cat(
             (torch.tensor(range(0, args.num_selfplay_envs, 2), dtype=torch.long, device=device), self.indices)
         )
@@ -198,11 +201,11 @@ class SelfPlayTrainer:
         bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
         bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape).to(device)
 
-        rewards_attack = torch.zeros((args.num_steps, self.num_envs)).to(device)
-        rewards_winloss = torch.zeros((args.num_steps, self.num_envs)).to(device)
-        rewards_score = torch.zeros((args.num_steps, self.num_envs)).to(device)
-        dones = torch.zeros((args.num_steps, self.num_envs)).to(device)
-        values = torch.zeros((args.num_steps, self.num_envs)).to(device)
+        rewards_attack = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        rewards_winloss = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        rewards_score = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        values = torch.zeros((args.num_steps, args.num_envs)).to(device)
 
         sp_obs = torch.zeros((args.num_steps, args.num_selfplay_envs) + envs.single_observation_space.shape).to(device)
         sp_actions = torch.zeros((args.num_steps, args.num_selfplay_envs) + action_space_shape).to(device)
@@ -220,10 +223,10 @@ class SelfPlayTrainer:
         sp_next_obs = torch.Tensor(next_obs_np).to(device)
 
         adjust_obs_selfplay(args, sp_next_obs, is_new_env=True)
-        next_done = torch.zeros(self.num_envs).to(device)
+        next_done = torch.zeros(args.num_envs).to(device)
 
-        scalar_features = torch.zeros((args.num_steps, self.num_envs, 11)).to(device)
-        z_features = torch.zeros((args.num_steps, self.num_envs, 8), dtype=torch.long).to(device)
+        scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
+        z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long).to(device)
 
         num_updates = args.total_timesteps // args.batch_size
         bot_position_indices = (
@@ -259,7 +262,7 @@ class SelfPlayTrainer:
                 sp_obs[step] = sp_next_obs
                 next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)
                 res = sp_res + bot_res
-                scalar_features[step] = self.get_scalar_features(next_obs, res, self.num_envs).to(device)
+                scalar_features[step] = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
                 dones[step] = next_done
 
                 with torch.no_grad():
@@ -278,7 +281,7 @@ class SelfPlayTrainer:
                     )
 
                     # debugging
-                    # for i in range(self.num_envs):
+                    # for i in range(args.num_envs):
                     #     with torch.no_grad():
                     #         # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
                     #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
@@ -292,7 +295,7 @@ class SelfPlayTrainer:
                         scalar_features[step],
                         z_features[step],
                         num_selfplay_envs=args.num_selfplay_envs,
-                        num_envs=self.num_envs,
+                        num_envs=args.num_envs,
                         unique_agents=unique_agents,
                         only_player_0=True
                     ).flatten()
@@ -542,7 +545,7 @@ class SelfPlayTrainer:
 
 
             with torch.no_grad():
-                next_scalar_features = self.get_scalar_features(next_obs, res, self.num_envs).to(device)
+                next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
                 next_z_features = agent.selfplay_get_z_encoded_features(
                     args, device, z_features, next_obs, args.num_steps, unique_agents
                 )
@@ -554,7 +557,7 @@ class SelfPlayTrainer:
                     next_scalar_features,
                     next_z_features,
                     num_selfplay_envs=args.num_selfplay_envs,
-                    num_envs=self.num_envs,
+                    num_envs=args.num_envs,
                     unique_agents=unique_agents,
                     only_player_0=True
                 ).reshape(1, -1)
@@ -614,10 +617,10 @@ class SelfPlayTrainer:
 
 
             # flatten the batch
-            # args.num_steps, self.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
+            # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
             # (ScFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
             b_Sc = scalar_features[:, self.indices].reshape(-1, scalar_features.shape[-1])
-            # args.num_steps, self.num_envs Dimensionen vereinigen  (shape (steps*envs, 8))
+            # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 8))
             # (zFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
             b_z = z_features[:, self.indices].reshape(-1, z_features.shape[-1])
             # dasselbe mit obs                                      (shape (steps*envs, 16, 16, 73)
@@ -766,32 +769,34 @@ class SelfPlayTrainer:
                 envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
                 last_bot_env_change = 0
 
+                agent.remove_last_bot_env()
+
                 bot_obs = bot_obs.zero_()[:, :args.num_bot_envs]
                 bot_actions = bot_actions.zero_()[:, :args.num_bot_envs]
                 bot_logprobs = bot_logprobs.zero_()[:, :args.num_bot_envs]
                 bot_invalid_action_masks = bot_invalid_action_masks.zero_()[:, :args.num_bot_envs]
 
-                rewards_attack = rewards_attack[:, :self.num_envs]
+                rewards_attack = rewards_attack[:, :args.num_envs]
                 rewards_attack[:, args.num_selfplay_envs:].zero_()
-                rewards_winloss = rewards_winloss[:, :self.num_envs]
+                rewards_winloss = rewards_winloss[:, :args.num_envs]
                 rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                rewards_score = rewards_score[:, :self.num_envs]
+                rewards_score = rewards_score[:, :args.num_envs]
                 rewards_score[:, args.num_selfplay_envs:].zero_()
                 # TODO (optimize): muss man die wirklich resetten?
-                dones = dones[:, :self.num_envs]
+                dones = dones[:, :args.num_envs]
                 dones[:, args.num_selfplay_envs:].zero_()
-                values = values[:, :self.num_envs]
+                values = values[:, :args.num_envs]
                 values[:, args.num_selfplay_envs:].zero_()
 
                 next_obs_np, _, bot_res = envs.reset()
                 bot_next_obs = torch.Tensor(next_obs_np).to(device)
 
-                next_done = next_done[:self.num_envs]
+                next_done = next_done[:args.num_envs]
                 next_done[args.num_selfplay_envs:].zero_()
 
-                scalar_features = scalar_features[:, :self.num_envs]
+                scalar_features = scalar_features[:, :args.num_envs]
                 scalar_features[:, args.num_selfplay_envs:].zero_()
-                z_features = z_features[:, :self.num_envs]
+                z_features = z_features[:, :args.num_envs]
                 z_features[:, args.num_selfplay_envs:].zero_()
 
                 bot_position_indices = bot_position_indices[:args.num_bot_envs]
@@ -801,16 +806,18 @@ class SelfPlayTrainer:
                 envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
                 last_bot_env_change = 0
 
+                agent.add_bot_env()
+
                 bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape, device=device)
                 bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape, device=device)
                 bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
                 bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
 
                 rewards_attack = torch.cat((rewards_attack, torch.zeros((args.num_steps, self.num_bot_envs), device=device)))
-                rewards_winloss = torch.zeros((args.num_steps, self.num_envs), device=device)
-                rewards_score = torch.zeros((args.num_steps, self.num_envs), device=device)
-                dones = torch.zeros((args.num_steps, self.num_envs), device=device)
-                values = torch.zeros((args.num_steps, self.num_envs), device=device)
+                rewards_winloss = torch.zeros((args.num_steps, args.num_envs), device=device)
+                rewards_score = torch.zeros((args.num_steps, args.num_envs), device=device)
+                dones = torch.zeros((args.num_steps, args.num_envs), device=device)
+                values = torch.zeros((args.num_steps, args.num_envs), device=device)
 
                 rewards_attack = torch.cat(
                     (rewards_attack, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_attack.dtype)), dim=1
@@ -838,10 +845,10 @@ class SelfPlayTrainer:
                 next_done = torch.cat((next_done, torch.zeros((args.num_steps, 1), device=device, dtype=next_done.dtype)), dim=1)
                 rewards_score[args.num_selfplay_envs:].zero_()
 
-                scalar_features = torch.zeros((args.num_steps, self.num_envs, 11), device=device)
+                scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
                 scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, 1), device=device, dtype=scalar_features.dtype)), dim=1)
                 scalar_features[:, args.num_selfplay_envs:].zero_()
-                z_features = torch.zeros((args.num_steps, self.num_envs, 8), dtype=torch.long, device=device)
+                z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
                 z_features = torch.cat((z_features, torch.zeros((args.num_steps, 1), device=device, dtype=z_features.dtype)), dim=1)
                 z_features[:, args.num_selfplay_envs:].zero_()
 
@@ -852,7 +859,10 @@ class SelfPlayTrainer:
     def get_new_bot_envs(self, args, num_bots):
 
         args.num_bot_envs = num_bots
-        self.num_envs = args.num_selfplay_envs + args.num_bot_envs
+        args.num_envs = args.num_selfplay_envs + args.num_bot_envs
+        self.active_league_agents = self.active_league_agents[:args.num_envs]
+        self.indices = self.indices[:-1]
+
 
         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
         reward_weight = np.array([1.0, 1.0, 1.0, 0.2, 1.0, 4.0, 5.25, 6.0, 0])
@@ -875,8 +885,18 @@ class SelfPlayTrainer:
             map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
             reward_weight=reward_weight,
         )
+        envsT = MicroRTSSpaceTransform(envs)
+        # print(envsT.__class__.mro())
+        # print(hasattr(envsT, "step_async"))
+        # print(envsT.step_async.__qualname__)
+        # print(envsT.step_wait.__qualname__)
 
-        return MicroRTSSpaceTransform(envs)
+        envsT = VecstatsMonitor(envsT, args.gamma)
+        if args.capture_video:
+            envs = VecVideoRecorder(envs, f'videos/{args.exp_name}',
+                                    record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
+
+        return envsT
 
     # TODO: Debugging (nachher entfernen)
     def assert_supervised_grads_zero(self, supervised_agent):
