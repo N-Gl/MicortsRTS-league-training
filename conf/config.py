@@ -32,6 +32,7 @@ class ExperimentConfig:
     new_hist_rewards: int
     attack_reward_weight: float
     dyn_attack_reward: float
+    rewardscore: float
     num_steps: int
     gamma: float
     gae_lambda: float

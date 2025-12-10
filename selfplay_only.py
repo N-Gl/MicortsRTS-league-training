@@ -363,7 +363,6 @@ class SelfPlayTrainer:
 
                 # densereward = 0
                 winloss = 10
-                scorew = 0.2
                 attack = args.attack_reward_weight
                 # =============
 
@@ -396,13 +395,13 @@ class SelfPlayTrainer:
                     ) ** 1.5
                     # less_draw_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=0.1)
                     # rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
-                    attack_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=2.0, min=1.0)
+                    attack_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=1.5, min=0.5)
                     rewards_attack[step] = attack_tensor + attack * attack_scaled * (attack_tensor > 0).float()
                 else:
                     rewards_attack[step] = torch.Tensor(attackrew * attack).to(device)
 
                 rewards_winloss[step] = torch.Tensor(winlossrew * winloss).to(device)
-                rewards_score[step] = torch.Tensor(scorerew * scorew).to(device)
+                rewards_score[step] = torch.Tensor(scorerew).to(device)
                 next_done = torch.Tensor(ds).to(device)
 
                 # =============
@@ -511,7 +510,7 @@ class SelfPlayTrainer:
                 b_values = values[:, self.indices]
                 b_rewards_attack = rewards_attack[:, self.indices]
                 b_rewards_winloss = rewards_winloss[:, self.indices]
-                # b_rewards_score = rewards_score[:, self.indices]
+                b_rewards_score = rewards_score[:, self.indices]
                 b_dones = dones[:, self.indices]
                 b_next_done = next_done[self.indices]
 
@@ -541,7 +540,7 @@ class SelfPlayTrainer:
                     delta = (
                         b_rewards_winloss[t]
                         + b_rewards_attack[t]
-                        # + b_rewards_score[t]
+                        + b_rewards_score[t]
                         + args.gamma * nextvalues * nextnonterminal
                         - b_values[t]
                     )
