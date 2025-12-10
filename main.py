@@ -436,8 +436,8 @@ def main(cfg: ExperimentConfig):
 
 
         default_opponent_paths = [
-            # ["PPO_with_basis_Thesis_BCagent", agent_model.Agent, "saved_models/19_10_2025 (good_but_with_basis_Thesis_BCagent)/agent.pt", None],
-            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None]
+             ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__PPO/agent_update_380.pt", None],
+            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None]
         ]
         # 2nd element: uninitialized Agent class 
         # last element: League Agent (if None: main Agent)
@@ -471,16 +471,6 @@ def main(cfg: ExperimentConfig):
 
             bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = {}, [], []
             aggregate_stats, aggregate_episode_rewards, opponent_table_rows = {}, [], []
-            if len(default_bot_opponents) > 0:
-                from evaluate import bot_evaluate_agent
-                bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
-                    args=args,
-                    evaluation_opponents=default_bot_opponents,
-                    device=device,
-                    get_scalar_features=getScalarFeatures,
-                    reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
-                )
 
             if len(default_opponent_paths) > 0:
                 from selfplay_evaluate import evaluate_agent
@@ -493,6 +483,19 @@ def main(cfg: ExperimentConfig):
                     reward_weight=reward_weight,
                     vecstats_monitor_cls=VecstatsMonitor,
                 )
+
+            if len(default_bot_opponents) > 0:
+                from evaluate import bot_evaluate_agent
+                bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
+                    args=args,
+                    evaluation_opponents=default_bot_opponents,
+                    device=device,
+                    get_scalar_features=getScalarFeatures,
+                    reward_weight=reward_weight,
+                    vecstats_monitor_cls=VecstatsMonitor,
+                )
+
+            
 
         
 
