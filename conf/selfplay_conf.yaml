@@ -3,21 +3,23 @@ defaults:
 
 ExperimentConfig:
   selfplay: true
-  model_path: models/04_12_25__Bots__finished_PPO_Basis_thesis/agent_update_150.pt
+  model_path: league_models/09_12_25__04_12_25__PPO/Main_agent_backups/agent_update_380.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 08_12_25__04_12_25__4_num_bot_envs_27_num_main_agents__Bots__finished_PPO_Basis_thesis
+  exp_name: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true
   wandb_project_name: new_selfplay
 
   prod_mode: true
-  render: true
+  render: false
   render_all: false
 
-  seed: 1765220129
+  seed: 
 
   num_bot_envs: 0
   num_main_agents: 27   # 1 num_main_agents == 1 env
 
   total_timesteps: 20000000
+
+  early_updates: true  # TODO
 
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
   dyn_attack_reward: 0.0 # TODO               # add more attackreward depending on situation (0.0) # Beispiel: 1.5
@@ -38,13 +40,12 @@ ExperimentConfig:
   ent_coef: 0.005 # currently running               # new (BA Parameter) (Entropy coefficient η = 0.005)
   vf_coef: 0.01                 # new (BA Parameter) (Value function coefficient β = 0.01)
   max_grad_norm: 0.5            # new (BA Parameter) (Gradient norm threshold ω = 0.5)
-  clip_coef: 0.2 # TODO: 0.25                # new (BA Parameter) (Clipping coefficient = 0.1)
+  clip_coef: 0.15 # TODO: 0.25                # new (BA Parameter) (Clipping coefficient = 0.1)
   update_epochs: 4              
-  kle_stop: false               
+  kle_stop: true               
   kle_rollback: false           
   target_kl: 0.03               
   kl_coeff: 0.4  # currently running               # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
   norm_adv: true                
   anneal_lr: true               
   clip_vloss: true
-

@@ -584,7 +584,14 @@ class SelfPlayTrainer:
             inds = np.arange(new_batch_size)
 
             value_only_phase = update <= args.value_warmup_updates
-            for _ in range(args.update_epochs):
+            # Optional rollback: snapshot params before policy epochs
+            old_params = None
+            if not value_only_phase and args.kle_rollback:
+                # create a detached copy of parameters for rollback
+                old_params = {k: v.detach().clone() for k, v in agent.state_dict().items()}
+
+            pg_stop_iter = -1
+            for epoch_pi in range(args.update_epochs):
                 np.random.shuffle(inds)
 
                 for start in range(0, new_batch_size, minibatch_size):
@@ -617,7 +624,7 @@ class SelfPlayTrainer:
                         )
                         ratio = (newlogproba - b_logprobs[minibatch_ind]).exp()
 
-                        # for logging
+                        # KL estimate for early stopping / rollback
                         approx_kl = (b_logprobs[minibatch_ind] - newlogproba).mean()
 
                         # Policy loss L^CLIP(θ) = E ̂_t ["min" (r_t (θ)*Â_t,"clip" (r_t (θ),1-ϵ,1+ϵ)*Â_t )]
@@ -675,6 +682,17 @@ class SelfPlayTrainer:
                     torch.nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
                     optimizer.step()
 
+                    # KL early stop / rollback
+                    if not value_only_phase and (args.kle_stop or args.kle_rollback):
+                        if approx_kl.item() > args.target_kl:
+                            pg_stop_iter = epoch_pi
+                            if args.kle_rollback and old_params is not None:
+                                # revert to snapshot and exit epochs
+                                agent.load_state_dict(old_params)
+                            break
+                if pg_stop_iter != -1:
+                    break
+
             writer.add_scalar("charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
             writer.add_scalar("charts/update", update, global_step)
             writer.add_scalar("losses/value_loss", args.vf_coef * v_loss.item(), global_step)
@@ -683,14 +701,14 @@ class SelfPlayTrainer:
             writer.add_scalar("losses/total_loss", loss.item(), global_step)
             writer.add_scalar("losses/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
             writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
+            if args.kle_stop or args.kle_rollback:
+                writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
             writer.add_scalar("charts/sps", int(global_step / (time.time() - start_time)), global_step)
-            # if args.kle_stop or args.kle_rollback:
-            #     writer.add_scalar("debug/pg_stop_iter", i_epoch_pi, global_step)
             writer.add_scalar("charts/sps", int(global_step / (time.time() - start_time)), global_step)
             print("SPS:", int(global_step / (time.time() - start_time)))
 
             if args.prod_mode and update % self.checkpoint_frequency == 0:
-                if (update < 500):
+                if (update < 500 and not args.early_updates):
                     if (update % (self.checkpoint_frequency * 5) == 0):
                         save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
                 else:
