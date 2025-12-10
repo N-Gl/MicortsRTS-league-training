@@ -14,8 +14,8 @@ ExperimentConfig:
 
   seed: 
 
-  num_bot_envs: 0
-  num_main_agents: 27   # 1 num_main_agents == 1 env
+  num_bot_envs: 25
+  num_main_agents: 0   # 1 num_main_agents == 1 env
 
   total_timesteps: 20000000
 

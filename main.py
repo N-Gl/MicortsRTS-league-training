@@ -222,6 +222,17 @@ def main(cfg: ExperimentConfig):
 
         print(f"opponents: \n{opponents}")
 
+        if args.endgame_maps:
+            map_list = [
+                # "maps/16x16/endgame_map.xml"
+                "maps/16x16/endgame_map_2.xml"
+                # "maps/16x16/endgame_map_3.xml"
+            ] # + ["maps/16x16/basesWorkers16x16A.xml" for _ in range(50)]
+        else:
+            map_list = [
+                "maps/16x16/basesWorkers16x16A.xml"
+            ]
+
     
         envs = MicroRTSGridModeVecEnv(
             num_selfplay_envs=args.num_selfplay_envs,
@@ -238,7 +249,7 @@ def main(cfg: ExperimentConfig):
             # [microrts_ai.droplet for _ in range(4)] +
             # [microrts_ai.tiamat for _ in range(3)] +
             # [microrts_ai.workerRushAI for _ in range(3)],
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+            map_paths=map_list, # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
             reward_weight=reward_weight,
         )
         envsT = MicroRTSSpaceTransform(envs)
