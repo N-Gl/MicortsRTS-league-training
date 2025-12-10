@@ -5,16 +5,16 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "models/06_12_25__BCagent_PPO_clip_coef_0.15_dyn_attack_reward_2.0_value_warmup_4_update_2440.pt"
+                          "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt"
                           ]
   names: [
-          "06_12_25__BCagent_PPO_clip_coef_0.15_dyn_attack_reward_2.0_value_warmup_4_update_2440"
+          "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true"
          ]
-  exp_name: "06_12_25__BCagent_PPO_clip_coef_0.15_dyn_attack_reward_2.0_value_warmup_4_update_2440"
+  exp_name: "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true"
   wandb_project_name: new_Evaluation
   prod_mode: true
 
-  seed: 1
+  seed:
   exact_seed: true
 
   render: true

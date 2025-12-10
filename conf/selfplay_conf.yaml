@@ -5,7 +5,7 @@ ExperimentConfig:
   selfplay: true
   model_path: league_models/09_12_25__04_12_25__PPO/Main_agent_backups/agent_update_380.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true
+  exp_name: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true_clip__coef_0.1__target_kl_0.0065__kl_coeff_0.4_ent_coef_0.005
   wandb_project_name: new_selfplay
 
   prod_mode: true
@@ -34,18 +34,18 @@ ExperimentConfig:
   # ent_coef größer   --> explorativer (reset)        (reset) (reset) (reset)
   # kl_coeff kleiner  --> explorativer        (reset) (reset) (reset) (reset)
   # clip_coef größer  --> explorativer                        (reset) (0.2)
-  num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
-  gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
-  gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
-  ent_coef: 0.005 # currently running               # new (BA Parameter) (Entropy coefficient η = 0.005)
-  vf_coef: 0.01                 # new (BA Parameter) (Value function coefficient β = 0.01)
-  max_grad_norm: 0.5            # new (BA Parameter) (Gradient norm threshold ω = 0.5)
-  clip_coef: 0.15 # TODO: 0.25                # new (BA Parameter) (Clipping coefficient = 0.1)
+  num_steps: 512                                       # new (BA Parameter) (Rollout steps per environment = 512)
+  gamma: 1.0                                           # new (BA Parameter) Discount factor γ = 1 (no discounting)
+  gae_lambda: 0.95                                     # new (BA Parameter) (GAE parameter λ = 0.95)
+  ent_coef: 0.005 # TODO: größer machen               # new (BA Parameter) (Entropy coefficient η = 0.005)
+  vf_coef: 0.01 # TODO: erhöhen? (0.1)                # new (BA Parameter) (Value function coefficient β = 0.01)
+  max_grad_norm: 0.5                                  # new (BA Parameter) (Gradient norm threshold ω = 0.5)
+  clip_coef: 0.1 # TODO: 0.1                          # new (BA Parameter) (Clipping coefficient = 0.1)
   update_epochs: 4              
   kle_stop: true               
   kle_rollback: false           
-  target_kl: 0.03               
-  kl_coeff: 0.4  # currently running               # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
+  target_kl: 0.0065 # TODO: 0.006 (mit 0.003 testen)
+  kl_coeff: 0.4                                       # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
   norm_adv: true                
   anneal_lr: true               
   clip_vloss: true
