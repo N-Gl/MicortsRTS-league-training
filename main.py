@@ -203,7 +203,7 @@ def main(cfg: ExperimentConfig):
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
         torch.backends.cudnn.deterministic = args.torch_deterministic
-    reward_weight = reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
+    reward_weight = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0, 0, 0, 0])
 
 
     if args.initial_BC or args.BC_finetuning:

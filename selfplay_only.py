@@ -189,6 +189,7 @@ class SelfPlayTrainer:
         actions = torch.zeros((args.num_steps, args.num_envs) + action_space_shape).to(device)
         logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_attack = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        other_rewards = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_winloss = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_score = torch.zeros((args.num_steps, args.num_envs)).to(device)
         dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
@@ -348,7 +349,7 @@ class SelfPlayTrainer:
                 # Schritt in der Umgebung mit der in get_action gesampleten Action
                 # =============
 
-                next_obs, _, attackrew, winlossrew, scorerew, ds, infos, res = envs.step(java_valid_actions)
+                next_obs, rs, attackrew, winlossrew, scorerew, ds, infos, res = envs.step(java_valid_actions)
                 next_obs = torch.Tensor(envs._from_microrts_obs(next_obs)).to(device) # next_obs zu Tensor mit shape (24, 16, 16, 73) (von (24, X))
                 
                 adjust_obs_selfplay(args, next_obs)
@@ -401,6 +402,7 @@ class SelfPlayTrainer:
                 else:
                     rewards_attack[step] = torch.Tensor(attackrew * attack).to(device)
 
+                other_rewards[step] = torch.Tensor(rs).to(device)
                 rewards_winloss[step] = torch.Tensor(winlossrew * winloss).to(device)
                 rewards_score[step] = torch.Tensor(scorerew).to(device)
                 next_done = torch.Tensor(ds).to(device)
@@ -510,13 +512,14 @@ class SelfPlayTrainer:
                 b_next_value = next_value[:, self.indices]
                 b_values = values[:, self.indices]
                 b_rewards_attack = rewards_attack[:, self.indices]
+                b_other_rewards = other_rewards[:, self.indices]
                 b_rewards_winloss = rewards_winloss[:, self.indices]
                 b_rewards_score = rewards_score[:, self.indices]
                 b_dones = dones[:, self.indices]
                 b_next_done = next_done[self.indices]
 
 
-                b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_rewards_score, b_dones, b_next_done)
+                b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_other_rewards, b_rewards_winloss, b_rewards_score, b_dones, b_next_done)
 
 
             # flatten the batch

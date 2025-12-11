@@ -18,7 +18,7 @@ def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, 
     writer.add_scalar("charts/sps", int(global_step / (time.time() - start_time)), global_step)
     print("SPS:", int(global_step / (time.time() - start_time)))
 
-def gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_rewards_score, b_dones, b_next_done):
+def gae(args, device, b_next_value, b_values, b_rewards_attack, b_other_rewards, b_rewards_winloss, b_rewards_score, b_dones, b_next_done):
     b_advantages = torch.zeros_like(b_rewards_winloss).to(device)
     lastgaelam = 0
     for t in reversed(range(args.num_steps)):
@@ -42,6 +42,7 @@ def gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winlos
                     b_rewards_winloss[t]
                     + b_rewards_attack[t]
                     + b_rewards_score[t]
+                    + b_other_rewards[t]
                     + args.gamma * nextvalues * nextnonterminal
                     - b_values[t]
                 )
