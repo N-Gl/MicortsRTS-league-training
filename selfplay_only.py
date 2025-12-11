@@ -534,6 +534,10 @@ class SelfPlayTrainer:
             b_logprobs = logprobs[:, self.indices].reshape(-1)
             # b_values = values[:, self.indices].reshape(-1)
             b_values = b_values.reshape(-1)
+            # b_advantages = advantages[:, self.indices].reshape(-1)
+            b_advantages = b_advantages.reshape(-1)
+            # b_returns = returns[:, self.indices].reshape(-1)
+            b_returns = b_returns.reshape(-1)
             # dasselbe mit invalid_action_masks                     (shape (steps*envs, 256, 79))
             b_invalid_action_masks = invalid_action_masks[:, self.indices].reshape((-1,) + invalid_action_shape)
             
