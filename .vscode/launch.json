@@ -71,6 +71,19 @@
     },
 
     {
+      "name": "Python: recreating drop",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "recreate_drop",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: league training",
       "type": "debugpy",
       "request": "launch",
