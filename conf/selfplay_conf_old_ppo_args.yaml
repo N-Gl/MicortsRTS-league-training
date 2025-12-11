@@ -22,7 +22,7 @@ ExperimentConfig:
 
   early_updates: true  # TODO
 
-  attack_reward_weight: 0.05 # (im basis ppo: 1)
+  attack_reward_weight: 1 # (im basis ppo: 1)
   dyn_attack_reward: 0.0
   rewardscore: 0.0
   value_warmup_updates: 0

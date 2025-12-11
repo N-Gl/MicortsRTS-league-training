@@ -363,7 +363,7 @@ class SelfPlayTrainer:
 
 
                 # densereward = 0
-                winloss = 10
+                winloss = 1
                 attack = args.attack_reward_weight
                 # =============
 
