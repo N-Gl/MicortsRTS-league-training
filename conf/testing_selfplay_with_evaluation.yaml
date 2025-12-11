@@ -15,7 +15,7 @@ ExperimentConfig:
           "finished_PPO_Basis_Thesis",
           "BCagent"
          ]
-  exp_name: "testing defaults" # TODO
+  exp_name: "testing selfplay_evaluate_testing, player 1 Bots" # TODO
   wandb_project_name: testing_selfplay_methodes
   prod_mode: true
 
@@ -25,6 +25,8 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 500
-  num_parallel_eval_envs: 75
-  num_parallel_selfplay_eval_games: 75        # Number of parallel environments 1 == 2 Selfplay envs
+  switch_sides: false
+
+  num_eval_episodes: 200
+  num_parallel_eval_envs: 50
+  num_parallel_selfplay_eval_games: 50        # Number of parallel environments 1 == 2 Selfplay envs

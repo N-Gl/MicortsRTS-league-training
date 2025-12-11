@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from gym_microrts.envs.microrts_vec_env import MicroRTSGridModeVecEnv
 from jpype.types import JArray, JInt
-from league_training import MainPlayer, Payoff
+from league import MainPlayer, Payoff
 from microrts_space_transform import MicroRTSSpaceTransform
 import agent_model
 import selfplay_only

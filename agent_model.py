@@ -346,10 +346,16 @@ class Agent(nn.Module):
             unique_agents = self.get_unique_agents(active_league_agents)
 
         # TODO (optimize): indices als Tensor statt Python-Liste
+        bot_replacements = []
         for agent, indices in unique_agents.items():
             if not indices:
                 continue
-            
+            if isinstance(agent, Bot_Agent):
+                bot_replacements.append((agent, indices))
+                # placeholder logits; will be overridden by bot actions later
+                self.logits[indices] = 0.0
+                continue
+
             if agent is not self:
                 with torch.no_grad():
                     subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices]))
@@ -361,7 +367,7 @@ class Agent(nn.Module):
                 subset_logits = subset_logits.detach()
             self.logits[indices] = subset_logits# .to(self.device)
 
-        return self.get_action(
+        action, logprob, entropy, invalid_action_masks = self.get_action(
             x,
             sc,
             z,
@@ -372,6 +378,21 @@ class Agent(nn.Module):
             num_selfplay_envs=num_selfplay_envs,
             logits=self.logits
         )
+        for bot_agent, indices in bot_replacements:
+            bot_actions, _, _, bot_masks = bot_agent.get_action(
+                x,
+                sc,
+                z,
+                envs=envs,
+                selfplay_envs=num_selfplay_envs > 0,
+                num_selfplay_envs=num_selfplay_envs,
+            )
+            action[indices] = bot_actions[indices]
+            invalid_action_masks[indices] = bot_masks[indices]
+            logprob[indices] = 0.0
+            entropy[indices] = 0.0
+
+        return action, logprob, entropy, invalid_action_masks
     
 
     def _adjust_selfplay_masks(self, split_masks, num_selfplay_envs: int, total_envs: int) -> None:

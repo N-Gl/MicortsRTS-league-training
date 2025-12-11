@@ -529,7 +529,7 @@ def main(cfg: ExperimentConfig):
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
                     vecstats_monitor_cls=VecstatsMonitor,
-                    switch_sides=getattr(args, "switch_sides", False),
+                    switch_sides=args.switch_sides,
                 )
 
             elif len(default_opponent_paths) > 0:
