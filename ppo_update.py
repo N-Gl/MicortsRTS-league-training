@@ -101,7 +101,7 @@ def update(args, agent, envs, device, supervised_agent, optimizer, update, b_val
         epoch_indices = []
     value_only_phase = update <= args.value_warmup_updates
     
-    for epoch_pi in range(epoch_indices):
+    for epoch_pi in epoch_indices:
         np.random.shuffle(inds)
         for start in range(0, new_batch_size, minibatch_size):
             end = start + minibatch_size
