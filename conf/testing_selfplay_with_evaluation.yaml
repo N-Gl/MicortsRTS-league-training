@@ -1,0 +1,29 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  evaluate: true
+  model_path: 
+  evaluation_model_paths: [
+                          "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt",
+                          "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt",
+                          "models/BCagent.pt"
+                          ]
+  names: [
+          "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true_update_470",
+          "finished_PPO_Basis_Thesis",
+          "BCagent"
+         ]
+  exp_name: "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true"
+  wandb_project_name: testing_selfplay_methodes
+  prod_mode: true
+
+  seed:
+  exact_seed: true
+
+  render: true
+  render_all: false
+
+  num_eval_episodes: 500
+  num_parallel_eval_envs: 75
+  num_parallel_selfplay_eval_games: 75        # Number of parallel environments 1 == 2 Selfplay envs

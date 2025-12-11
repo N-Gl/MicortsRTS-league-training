@@ -482,8 +482,9 @@ def main(cfg: ExperimentConfig):
 
 
         default_opponent_paths = [
-             ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__PPO/agent_update_380.pt", None],
-            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None]
+             ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt", None],
+            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
+            ["BCagent", agent_model.Agent, "models/BCagent.pt", None]
         ]
         # 2nd element: uninitialized Agent class 
         # last element: League Agent (if None: main Agent)
@@ -498,12 +499,12 @@ def main(cfg: ExperimentConfig):
             ("randomAI", microrts_ai.randomAI),
             ("randomBiasedAI", microrts_ai.randomBiasedAI),
             ("rojo", microrts_ai.rojo),
-            ("mixedBot", microrts_ai.mixedBot),
-            ("izanagi", microrts_ai.izanagi), 
-            ("tiamat", microrts_ai.tiamat),
-            ("droplet", microrts_ai.droplet),
+            # ("mixedBot", microrts_ai.mixedBot),
+            # ("izanagi", microrts_ai.izanagi), 
+            # ("tiamat", microrts_ai.tiamat),
+            # ("droplet", microrts_ai.droplet),
             # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:
@@ -531,7 +532,7 @@ def main(cfg: ExperimentConfig):
                 )
 
             if len(default_bot_opponents) > 0:
-                from evaluate import bot_evaluate_agent
+                from evaluate_testing import bot_evaluate_agent
                 bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
                     args=args,
                     evaluation_opponents=default_bot_opponents,
