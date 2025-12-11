@@ -482,9 +482,9 @@ def main(cfg: ExperimentConfig):
 
 
         default_opponent_paths = [
-             ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt", None],
-            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
-            ["BCagent", agent_model.Agent, "models/BCagent.pt", None]
+            # ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt", None],
+            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
+            # ["BCagent", agent_model.Agent, "models/BCagent.pt", None],
         ]
         # 2nd element: uninitialized Agent class 
         # last element: League Agent (if None: main Agent)
@@ -519,7 +519,20 @@ def main(cfg: ExperimentConfig):
             bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = {}, [], []
             aggregate_stats, aggregate_episode_rewards, opponent_table_rows = {}, [], []
 
-            if len(default_opponent_paths) > 0:
+            if args.selfplay_evaluate_testing:
+                from selfplay_evaluate_testing import evaluate_agent as evaluate_agent_testing
+                args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
+                aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent_testing(
+                    args=args,
+                    default_opponent_paths=default_bot_opponents,
+                    device=device,
+                    get_scalar_features=getScalarFeatures,
+                    reward_weight=reward_weight,
+                    vecstats_monitor_cls=VecstatsMonitor,
+                    switch_sides=getattr(args, "switch_sides", False),
+                )
+
+            elif len(default_opponent_paths) > 0:
                 from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
                 aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(

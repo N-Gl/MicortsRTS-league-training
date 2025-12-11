@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, Sequence, Union
+from typing import Any, Dict, Optional, Sequence, Union
 
 import numpy as np
 import torch
@@ -424,3 +424,289 @@ class Agent(nn.Module):
 def build_agent(action_plane_nvec: Sequence[int], device: torch.device) -> Agent:
     """Factory-methode"""
     return Agent(action_plane_nvec=action_plane_nvec, device=device).to(device)
+
+
+class _ZeroZEncoder(nn.Module):
+    def __init__(self, device: torch.device):
+        super().__init__()
+        self.device = device
+
+    def forward(self, obs: torch.Tensor) -> torch.Tensor:
+        batch = obs.shape[0] if obs is not None else 0
+        return torch.zeros((batch, 8), dtype=torch.long, device=self.device)
+
+
+class Bot_Agent(nn.Module):
+    """
+    Lightweight agent wrapper that forwards actions from a scripted microrts bot
+    while matching the Agent API expected by the selfplay helpers.
+    """
+
+    def __init__(self, action_plane_nvec: Sequence[int], device: torch.device, bot: Any):
+        super().__init__()
+        self.device = device
+        nvec = np.asarray(action_plane_nvec)
+        self.action_nvec_list = nvec.tolist()
+        self.action_dim = int(nvec.sum())
+        self.num_action_params = len(self.action_nvec_list)
+        self.mapsize = 16 * 16
+        self.bot_factory = bot
+        self.bot = None
+        self.unit_type_lookup: Optional[Dict[str, int]] = None
+        self.z_encoder = _ZeroZEncoder(device)
+
+    def _ensure_bot(self, envs) -> None:
+        if self.bot is not None:
+            return
+        interface = getattr(envs, "interface", envs)
+        utt = getattr(interface, "real_utt", None)
+        if utt is None:
+            raise ValueError("Bot_Agent benötigt eine Umgebung mit real_utt, um den Bot zu initialisieren.")
+        self.bot = self.bot_factory(utt) if callable(self.bot_factory) else self.bot_factory
+
+    def _ensure_unit_type_lookup(self, interface) -> None:
+        if self.unit_type_lookup is not None:
+            return
+        utt_dict = getattr(interface, "utt", None)
+        lookup: Dict[str, int] = {}
+        if utt_dict:
+            for idx, unit_type in enumerate(utt_dict.get("unitTypes", [])):
+                name = unit_type.get("name") or str(idx)
+                lookup[name] = idx
+                lookup[str(unit_type.get("ID", idx))] = idx
+        self.unit_type_lookup = lookup
+
+    def _unit_type_index(self, unit_type) -> int:
+        if unit_type is None or self.unit_type_lookup is None:
+            return 0
+        for attr in ("getName", "name"):
+            value = getattr(unit_type, attr, None)
+            if callable(value):
+                try:
+                    value = value()
+                except Exception:
+                    value = None
+            if isinstance(value, str) and value in self.unit_type_lookup:
+                return int(self.unit_type_lookup[value])
+        for attr in ("getID", "ID"):
+            value = getattr(unit_type, attr, None)
+            if callable(value):
+                try:
+                    value = value()
+                except Exception:
+                    value = None
+            if value is not None:
+                return int(self.unit_type_lookup.get(str(value), value))
+        return 0
+
+    def _safe_direction(self, unit_action) -> int:
+        direction = getattr(unit_action, "getDirection", None)
+        if callable(direction):
+            try:
+                return int(direction())
+            except Exception:
+                return 0
+        return 0
+
+    def _attack_index(self, unit, unit_action) -> int:
+        dx = dy = 0
+        if hasattr(unit_action, "getLocationX") and hasattr(unit_action, "getLocationY"):
+            try:
+                dx = int(unit_action.getLocationX()) - int(unit.getX())
+                dy = int(unit_action.getLocationY()) - int(unit.getY())
+            except Exception:
+                dx = dy = 0
+        elif hasattr(unit_action, "getDirection"):
+            try:
+                direction = int(unit_action.getDirection())
+                direction_map = {0: (0, -1), 1: (1, 0), 2: (0, 1), 3: (-1, 0)}
+                dx, dy = direction_map.get(direction, (0, 0))
+            except Exception:
+                dx = dy = 0
+        attack_idx = (dy + 3) * 7 + (dx + 3)
+        return int(np.clip(attack_idx, 0, 48))
+
+    def _encode_unit_action(self, unit, unit_action, envs, env_idx) -> torch.Tensor:
+        encoded = [0] * self.num_action_params
+        try:
+            action_type = int(unit_action.getType())
+        except Exception:
+            action_type = 0
+        encoded[0] = action_type
+
+        if action_type == 1:
+            encoded[1] = self._safe_direction(unit_action)
+        elif action_type == 2:
+            encoded[2] = self._safe_direction(unit_action)
+        elif action_type == 3:
+            encoded[3] = self._safe_direction(unit_action)
+        elif action_type == 4:
+            encoded[4] = self._safe_direction(unit_action)
+            unit_type = None
+            if hasattr(unit_action, "getUnitType"):
+                try:
+                    unit_type = unit_action.getUnitType()
+                except Exception:
+                    unit_type = None
+            encoded[5] = self._unit_type_index(unit_type)
+        elif action_type in (5, 6):
+            encoded[6] = self._attack_index(unit, unit_action)
+        return torch.as_tensor(encoded, device=self.device)
+
+    def _env_geometry(self, envs, env_idx: int):
+        interface = getattr(envs, "interface", envs)
+        env_h = interface.heights[env_idx]
+        env_w = interface.widths[env_idx]
+        pad_h = (envs.height - env_h) // 2 if hasattr(envs, "height") else 0
+        pad_w = (envs.width - env_w) // 2 if hasattr(envs, "width") else 0
+        return env_h, env_w, pad_h, pad_w
+
+    def _split_pair(self, pair):
+        if isinstance(pair, (list, tuple)) and len(pair) >= 2:
+            return pair[0], pair[1]
+        unit = getattr(pair, "m_a", None) or getattr(pair, "first", None)
+        action = getattr(pair, "m_b", None) or getattr(pair, "second", None)
+        if unit is None and hasattr(pair, "getA"):
+            try:
+                unit = pair.getA()
+            except Exception:
+                unit = None
+        if action is None and hasattr(pair, "getB"):
+            try:
+                action = pair.getB()
+            except Exception:
+                action = None
+        return unit, action
+
+    def _base_mask(self, envs) -> torch.Tensor:
+        if hasattr(envs, "get_action_mask"):
+            try:
+                mask_np = envs.get_action_mask()
+                source_mask = getattr(envs, "source_unit_mask", None)
+                if source_mask is not None:
+                    merged = np.concatenate(
+                        [source_mask.reshape(envs.num_envs, -1, 1), mask_np], axis=2
+                    )
+                    return torch.as_tensor(merged, dtype=torch.bool, device=self.device)
+            except Exception:
+                pass
+        mapsize = self.mapsize
+        if hasattr(envs, "height") and hasattr(envs, "width"):
+            mapsize = envs.height * envs.width
+        return torch.zeros(
+            (envs.num_envs, mapsize, self.action_dim + 1), dtype=torch.bool, device=self.device
+        )
+
+    def _actions_for_env(self, envs, env_idx: int, base_mask_env: torch.Tensor):
+        interface = getattr(envs, "interface", envs)
+        player = env_idx % 2 if env_idx < interface.num_selfplay_envs else interface.players[env_idx]
+        try:
+            gs = interface.get_game_state(env_idx)
+            player_action = self.bot.getAction(player, gs)
+            raw_pairs = list(player_action.getActions()) if player_action is not None else []
+        except Exception:
+            raw_pairs = []
+
+        env_h, env_w, pad_h, pad_w = self._env_geometry(envs, env_idx)
+        padded_w = envs.width if hasattr(envs, "width") else env_w
+        mapsize = envs.height * envs.width if hasattr(envs, "height") else self.mapsize
+        actions = torch.zeros(
+            (mapsize, self.num_action_params), dtype=torch.long, device=self.device
+        )
+        mask = base_mask_env.clone()
+
+        for pair in raw_pairs:
+            unit, unit_action = self._split_pair(pair)
+            if unit is None or unit_action is None:
+                continue
+            try:
+                x, y = int(unit.getX()), int(unit.getY())
+            except Exception:
+                continue
+            pos = (y + pad_h) * padded_w + (x + pad_w)
+            if pos < 0 or pos >= mapsize:
+                continue
+            actions[pos] = self._encode_unit_action(unit, unit_action, envs, env_idx)
+            mask[pos, 0] = True
+
+        return actions, mask
+
+    def get_action(
+        self,
+        x: torch.Tensor,
+        sc: torch.Tensor,
+        z: torch.Tensor,
+        action: Optional[torch.Tensor] = None,
+        invalid_action_masks: Optional[torch.Tensor] = None,
+        envs=None,
+        selfplay_envs: bool = False,
+        num_selfplay_envs: int = 0,
+        logits: Optional[torch.Tensor] = None,
+    ):
+        if envs is None:
+            raise ValueError("Bot_Agent benötigt ein envs-Objekt, um Bot-Actions zu berechnen.")
+        self._ensure_bot(envs)
+        interface = getattr(envs, "interface", envs)
+        self._ensure_unit_type_lookup(interface)
+        if hasattr(envs, "height") and hasattr(envs, "width"):
+            self.mapsize = envs.height * envs.width
+
+        base_mask = self._base_mask(envs)
+        actions = torch.zeros(
+            (envs.num_envs, self.mapsize, self.num_action_params),
+            dtype=torch.long,
+            device=self.device,
+        )
+        invalid_masks = base_mask.clone()
+
+        for env_idx in range(envs.num_envs):
+            env_actions, env_mask = self._actions_for_env(envs, env_idx, base_mask[env_idx])
+            actions[env_idx] = env_actions
+            invalid_masks[env_idx] = env_mask
+
+        logprob = torch.zeros(envs.num_envs, device=self.device)
+        entropy = torch.zeros(envs.num_envs, device=self.device)
+        return actions, logprob, entropy, invalid_masks
+
+    def selfplay_get_action(
+        self,
+        x: torch.Tensor,
+        sc: torch.Tensor,
+        z: torch.Tensor,
+        num_selfplay_envs: int,
+        num_envs: int,
+        action: Optional[torch.Tensor] = None,
+        invalid_action_masks: Optional[torch.Tensor] = None,
+        envs=None,
+        active_league_agents=None,
+        unique_agents: Optional[Dict] = None,
+    ):
+        return self.get_action(
+            x,
+            sc,
+            z,
+            action=action,
+            invalid_action_masks=invalid_action_masks,
+            envs=envs,
+            selfplay_envs=num_selfplay_envs > 0,
+            num_selfplay_envs=num_selfplay_envs,
+        )
+
+    def get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
+        return torch.zeros(x.shape[0], device=self.device)
+
+    def selfplay_get_value(
+        self,
+        x: torch.Tensor,
+        sc: torch.Tensor,
+        z: torch.Tensor,
+        active_league_agents=None,
+        num_selfplay_envs: int = 0,
+        num_envs: int = 0,
+        unique_agents=None,
+        only_player_0: bool = False,
+    ) -> torch.Tensor:
+        return torch.zeros(x.shape[0], device=self.device)
+
+    def selfplay_get_z_encoded_features(self, args, device, z_features, next_obs, step, unique_agents):
+        return torch.zeros((args.num_envs, z_features.shape[2]), dtype=torch.long, device=self.device)

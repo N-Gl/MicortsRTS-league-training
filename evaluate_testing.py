@@ -71,7 +71,32 @@ def bot_evaluate_agent(
                         z_features[env_index] = agent.z_encoder(obs[env_index].view(-1))
 
                     scalar_features = get_scalar_features(obs.cpu(), res, args.num_envs).to(device)
-                    actions, _, _, invalid_masks = agent.get_action(obs, scalar_features, z_features, envs=eval_env)
+
+
+                    # ======
+                    zeros = torch.zeros(obs[0].shape, dtype=torch.long, device=device)
+                    zeros = torch.stack([zeros for _ in range(args.num_envs * 2)], dim=0)
+                    zeros[::2] = obs
+                    obs = zeros
+
+                    zeros = torch.zeros(scalar_features[0].shape, dtype=torch.long, device=device)
+                    zeros = torch.stack([zeros for _ in range(args.num_envs * 2)], dim=0)
+                    zeros[::2] = scalar_features
+                    scalar_features = zeros
+
+                    zeros = torch.zeros(z_features[0].shape, dtype=torch.long, device=device)
+                    zeros = torch.stack([zeros for _ in range(args.num_envs * 2)], dim=0)
+                    zeros[::2] = z_features
+                    z_features = zeros
+
+
+                    actions, _, _, invalid_masks = agent.selfplay_get_action(obs, scalar_features, z_features, envs=eval_env)
+
+
+
+
+                    # ======
+
 
                     real_action = torch.cat([position_indices, actions], dim=2).cpu().numpy()
                     valid_mask = invalid_masks[:, :, 0].bool().cpu().numpy()

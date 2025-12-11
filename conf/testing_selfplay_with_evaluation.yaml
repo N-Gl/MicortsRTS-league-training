@@ -3,6 +3,7 @@ defaults:
 
 ExperimentConfig:
   evaluate: true
+  selfplay_evaluate_testing: true
   model_path: 
   evaluation_model_paths: [
                           "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt",
@@ -14,11 +15,11 @@ ExperimentConfig:
           "finished_PPO_Basis_Thesis",
           "BCagent"
          ]
-  exp_name: "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true"
+  exp_name: "testing defaults" # TODO
   wandb_project_name: testing_selfplay_methodes
   prod_mode: true
 
-  seed:
+  seed: 100
   exact_seed: true
 
   render: true
