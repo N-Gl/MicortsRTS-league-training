@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import collections
-import os
 from collections import deque
 from dataclasses import dataclass
 from enum import IntEnum
@@ -10,7 +8,6 @@ import time
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 import torch.optim as optim
 from jpype.types import JArray, JInt
 
