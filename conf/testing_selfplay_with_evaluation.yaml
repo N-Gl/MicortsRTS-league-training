@@ -25,8 +25,8 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  switch_sides: false
+  Bot_as_player_1: true
 
   num_eval_episodes: 200
-  num_parallel_eval_envs: 50
-  num_parallel_selfplay_eval_games: 50        # Number of parallel environments 1 == 2 Selfplay envs
+  num_parallel_eval_envs: 10
+  num_parallel_selfplay_eval_games: 10        # Number of parallel environments 1 == 2 Selfplay envs

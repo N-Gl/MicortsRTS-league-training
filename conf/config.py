@@ -71,6 +71,7 @@ class ExperimentConfig:
     dbg_no_main_agent_ppo_update: bool
     value_warmup_updates: int
     endgame_maps: bool
+    Bot_as_player_1: bool
 
 
     

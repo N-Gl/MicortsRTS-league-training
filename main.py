@@ -520,16 +520,20 @@ def main(cfg: ExperimentConfig):
             aggregate_stats, aggregate_episode_rewards, opponent_table_rows = {}, [], []
 
             if args.selfplay_evaluate_testing:
-                from selfplay_evaluate_testing import evaluate_agent as evaluate_agent_testing
+
+                Bot_opponents = []
+                for opponent_name, opponent_bot in default_bot_opponents:
+                    Bot_opponents.append((opponent_name, opponent_bot, "", None))
+
+                from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
-                aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent_testing(
+                aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
                     args=args,
-                    default_opponent_paths=default_bot_opponents,
+                    default_opponent_paths=Bot_opponents,
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
-                    switch_sides=args.switch_sides,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             elif len(default_opponent_paths) > 0:
@@ -541,7 +545,7 @@ def main(cfg: ExperimentConfig):
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             if len(default_bot_opponents) > 0:
@@ -552,7 +556,7 @@ def main(cfg: ExperimentConfig):
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             

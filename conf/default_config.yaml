@@ -82,6 +82,7 @@ ExperimentConfig:
 
 
   dbg_no_main_agent_ppo_update: false
+  Bot_as_player_1: true
 
   num_eval_episodes: 100
   num_parallel_eval_games: 0
