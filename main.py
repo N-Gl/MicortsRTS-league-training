@@ -502,12 +502,12 @@ def main(cfg: ExperimentConfig):
             ("randomAI", microrts_ai.randomAI),
             ("randomBiasedAI", microrts_ai.randomBiasedAI),
             ("rojo", microrts_ai.rojo),
-            # ("mixedBot", microrts_ai.mixedBot),
-            # ("izanagi", microrts_ai.izanagi), 
-            # ("tiamat", microrts_ai.tiamat),
-            # ("droplet", microrts_ai.droplet),
+            ("mixedBot", microrts_ai.mixedBot),
+            ("izanagi", microrts_ai.izanagi), 
+            ("tiamat", microrts_ai.tiamat),
+            ("droplet", microrts_ai.droplet),
             # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:
@@ -523,16 +523,20 @@ def main(cfg: ExperimentConfig):
             aggregate_stats, aggregate_episode_rewards, opponent_table_rows = {}, [], []
 
             if args.selfplay_evaluate_testing:
-                from selfplay_evaluate_testing import evaluate_agent as evaluate_agent_testing
+
+                Bot_opponents = []
+                for opponent_name, opponent_bot in default_bot_opponents:
+                    Bot_opponents.append((opponent_name, opponent_bot, "", None))
+
+                from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
-                aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent_testing(
+                aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
                     args=args,
-                    default_opponent_paths=default_bot_opponents,
+                    default_opponent_paths=Bot_opponents,
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
-                    switch_sides=args.switch_sides,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             elif len(default_opponent_paths) > 0:
@@ -544,18 +548,18 @@ def main(cfg: ExperimentConfig):
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             if len(default_bot_opponents) > 0:
-                from evaluate_testing import bot_evaluate_agent
+                from evaluate import bot_evaluate_agent
                 bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
                     args=args,
                     evaluation_opponents=default_bot_opponents,
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             

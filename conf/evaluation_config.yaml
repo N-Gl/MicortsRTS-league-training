@@ -5,12 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt"
+                          "models/old_ppo_args__12_12_25__04_12_25__ppo_update_520.pt",
+                          "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true"
+          "old_ppo_args__12_12_25__04_12_25__ppo_update_520",
+          "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true"
+  exp_name: "old_ppo_args__12_12_25__04_12_25__ppo_update_520"
   wandb_project_name: new_Evaluation
   prod_mode: true
 

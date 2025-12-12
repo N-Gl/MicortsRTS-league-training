@@ -424,9 +424,9 @@ class SelfPlayTrainer:
                         break
                 if np.any(['episode' in info.keys() for info in infos]):
                     if not hasattr(writer, "recent_bot_winloss"):
-                                writer.recent_bot_winloss = deque([0.0] * 200, maxlen=200)
+                                writer.recent_bot_winloss = deque([0.0] * 50, maxlen=200)
                     if not hasattr(writer, "recent_selfplay_winloss"):
-                                writer.recent_selfplay_winloss = deque([0.0] * 200, maxlen=200)
+                                writer.recent_selfplay_winloss = deque([0.0] * 50, maxlen=200)
 
                     for done_idx in where_done[0]:
                         if done_idx > args.num_selfplay_envs - 1:

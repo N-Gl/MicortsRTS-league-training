@@ -11,14 +11,15 @@ ExperimentConfig:
 
   prod_mode: true
   render: false
+  render: false
   render_all: false
 
   seed: 
 
-  num_bot_envs: 0
-  num_main_agents: 27   # 1 num_main_agents == 1 env
+  num_bot_envs: 25
+  num_main_agents: 0   # 1 num_main_agents == 1 env
 
-  total_timesteps: 20000000
+  total_timesteps: 30000000
 
   early_updates: true  # TODO
 
@@ -30,7 +31,7 @@ ExperimentConfig:
 
   endgame_maps: false
 
-  PPO_learning_rate: 2.5e-4     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  PPO_learning_rate: 2.5e-4 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0
 
   dbg_no_main_agent_ppo_update: false # TODO
@@ -39,10 +40,13 @@ ExperimentConfig:
 
   num_steps: 512 # (im basis ppo: 256)                
   gamma: 1 # (im basis ppo: 0.99)                  
+  num_steps: 512 # (im basis ppo: 256)                
+  gamma: 1 # (im basis ppo: 0.99)                  
   gae_lambda: 0.95                                   
   ent_coef: 0.01               
   vf_coef: 0.5               
   max_grad_norm: 0.5                                 
+  clip_coef: 0.15 # bis 0.2
   clip_coef: 0.15 # bis 0.2
   update_epochs: 4              
   kle_stop: true               
