@@ -33,6 +33,7 @@ class ExperimentConfig:
     new_hist_rewards: int
     attack_reward_weight: float
     dyn_attack_reward: float
+    rewardscore: float
     num_steps: int
     gamma: float
     gae_lambda: float
@@ -70,6 +71,8 @@ class ExperimentConfig:
     num_parallel_selfplay_eval_games: int
     dbg_no_main_agent_ppo_update: bool
     value_warmup_updates: int
+    endgame_maps: bool
+    Bot_as_player_1: bool
 
 
     

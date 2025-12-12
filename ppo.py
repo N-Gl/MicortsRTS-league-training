@@ -165,7 +165,7 @@ class PPOTrainer:
                 attack_weight = self.args.attack_reward_weight
 
                 rewards_attack[step] = torch.Tensor(attack_reward * attack_weight).to(self.device)
-                rewards_winloss[step] = torch.Tensor(winloss_reward * winloss_weight + 1).to(self.device)  # TODO: würde hier +1 gegen viele Draws helfen?
+                rewards_winloss[step] = torch.Tensor(winloss_reward * winloss_weight).to(self.device)  # TODO: würde hier +1 gegen viele Draws helfen?
                 rewards_score[step] = torch.Tensor(score_reward * score_weight).to(self.device)
                 next_done = torch.Tensor(done_flags).to(self.device)
 

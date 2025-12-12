@@ -9,6 +9,7 @@ ExperimentConfig:
   BC_finetuning: false
   ppo: false
   evaluate: false
+  selfplay_evaluate_testing: false
   selfplay: false
 
   pfsp: false
@@ -57,6 +58,9 @@ ExperimentConfig:
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
   dyn_attack_reward: 0.0                # subtract from reward when a game ends in a draw (selfplay training)
   value_warmup_updates: 0        # number of initial PPO updates with value-only training
+  rewardscore: 0.0
+
+  endgame_maps: false
 
   num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
@@ -81,6 +85,7 @@ ExperimentConfig:
 
 
   dbg_no_main_agent_ppo_update: false
+  Bot_as_player_1: true
 
   num_eval_episodes: 100
   num_parallel_eval_games: 0

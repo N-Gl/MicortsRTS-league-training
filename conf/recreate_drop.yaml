@@ -1,0 +1,65 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  # recreating: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380
+  model_path: models/09_12_25__04_12_25__PPO/agent_update_380.pt
+  BC_model_path: 
+  wandb_project_name: testing_selfplay
+  exp_name: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380
+  selfplay: True
+  resume: True
+  BC_learning_rate: 1e-06
+  BC_weight_decay: 0.0
+  PPO_learning_rate: 2.5e-05
+  PPO_weight_decay: 0.0
+  torch_deterministic: True
+  deterministic: True
+  seed: 1765319791
+  exact_seed: True
+  total_timesteps: 20000000
+  cuda: True
+  prod_mode: True
+  render: True
+  render_all: False
+  capture_video: False
+  create_run_id_file: False
+  n_minibatch: 4
+  num_bot_envs: 0
+  num_selfplay_envs: 0
+  num_main_agents: 27
+  num_main_exploiters: 0
+  num_league_exploiters: 0
+  selfplay_save_interval: 10
+  checkpoint_frequency: 10
+  new_hist_rewards: 0
+  attack_reward_weight: 0.05
+  dyn_attack_reward: 0.0
+  value_warmup_updates: 0
+  num_steps: 512
+  gamma: 1.0
+  gae_lambda: 0.95
+  ent_coef: 0.005
+  vf_coef: 0.01
+  max_grad_norm: 0.5
+  clip_coef: 0.15
+  update_epochs: 4
+  kle_stop: False
+  kle_rollback: False
+  target_kl: 0.03
+  kl_coeff: 0.4
+  norm_adv: True
+  anneal_lr: True
+  clip_vloss: True
+  epochs: 30
+  warmup_epochs: 20
+  newdata: False
+  nurwins: False
+  dbg_no_main_agent_ppo_update: False
+  num_eval_episodes: 100
+  num_parallel_eval_games: 0
+  early_updates: True
+
+  args.rewardscore: 0.0
+  endgame_maps: False
+  rewardscore: 0.0

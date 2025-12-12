@@ -5,11 +5,11 @@ ExperimentConfig:
   selfplay: true
   model_path: league_models/09_12_25__04_12_25__PPO/Main_agent_backups/agent_update_380.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true_clip__coef_0.1__target_kl_0.0065__kl_coeff_0.4_ent_coef_0.005
+  exp_name: 09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_rollback__true_clip_coef_0.15__target_kl_0.006__kl_coeff_0.4_ent_coef_0.005__lr_1.25e-5
   wandb_project_name: new_selfplay
 
   prod_mode: true
-  render: false
+  render: true
   render_all: false
 
   seed: 1765220129
@@ -23,10 +23,13 @@ ExperimentConfig:
   early_updates: true  # TODO
 
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
-  dyn_attack_reward: 0.0 # TODO               # add more attackreward depending on situation (0.0) # Beispiel: 1.5
-  value_warmup_updates: 0 # TODO      # number of initial PPO updates with value-only training (0) # Beispiel: 4
+  dyn_attack_reward: 1.0 # TODO               # add more attackreward depending on situation (0.0) # Beispiel: 1.5
+  rewardscore: 10.0        # TODO                  # new (BA Parameter) 0.0
+  value_warmup_updates: -1 # TODO      # number of initial PPO updates with value-only training (0) # Beispiel: 4
 
-  PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  endgame_maps: false
+
+  PPO_learning_rate: 1.25e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0
 
   dbg_no_main_agent_ppo_update: false # TODO
@@ -41,11 +44,11 @@ ExperimentConfig:
   ent_coef: 0.005 # TODO: größer machen               # new (BA Parameter) (Entropy coefficient η = 0.005)
   vf_coef: 0.01 # TODO: erhöhen? (0.1)                # new (BA Parameter) (Value function coefficient β = 0.01)
   max_grad_norm: 0.5                                  # new (BA Parameter) (Gradient norm threshold ω = 0.5)
-  clip_coef: 0.1 # TODO: 0.1                          # new (BA Parameter) (Clipping coefficient = 0.1)
+  clip_coef: 0.15 # TODO: 0.2                          # new (BA Parameter) (Clipping coefficient = 0.1)
   update_epochs: 4              
-  kle_stop: true               
-  kle_rollback: false           
-  target_kl: 0.0065 # TODO: 0.006 (mit 0.003 testen)
+  kle_stop: false               
+  kle_rollback: true           
+  target_kl: 0.006 # TODO: 0.006 (mit 0.003 testen)
   kl_coeff: 0.4                                       # new (BA Parameter) (KL regularization coefficient λ_(KL) = 0.4)
   norm_adv: true                
   anneal_lr: true               

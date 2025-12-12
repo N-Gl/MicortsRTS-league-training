@@ -143,7 +143,7 @@ def main(cfg: ExperimentConfig):
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
         torch.backends.cudnn.deterministic = args.torch_deterministic
-    reward_weight = np.array([1.0, 1.0, 1.0, 0.2, 1.0, 4.0, 5.25, 6.0, 0])
+    reward_weight = np.array([1.0, 1.0, 1.0, 0.2, 1.0, 4.0, 5.25, 6.0, args.rewardscore])
 
 
     if args.initial_BC or args.BC_finetuning:
@@ -152,15 +152,29 @@ def main(cfg: ExperimentConfig):
         args.num_bot_envs = args.num_parallel_eval_envs
 
     else:
-    #     if args.num_bot_envs > 16:
-    #         opponents = [microrts_ai.coacAI for _ in range(args.num_bot_envs-8)] + [microrts_ai.mayari for _ in range(8)]
-    #     elif args.num_bot_envs > 8:
-    #         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2+2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2-2)]
-    #     else:
-    #         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
-        opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+        if args.even_opponent_split:
+            opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+        else:
+            if args.num_bot_envs > 16:
+                opponents = [microrts_ai.coacAI for _ in range(args.num_bot_envs-8)] + [microrts_ai.mayari for _ in range(8)]
+            elif args.num_bot_envs > 8:
+                opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2+2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2-2)]
+            else:
+                opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+            
 
         print(f"opponents: \n{opponents}")
+
+        if args.endgame_maps:
+            map_list = [
+                # "maps/16x16/endgame_map.xml"
+                "maps/16x16/endgame_map_2.xml"
+                # "maps/16x16/endgame_map_3.xml"
+            ] # + ["maps/16x16/basesWorkers16x16A.xml" for _ in range(50)]
+        else:
+            map_list = [
+                "maps/16x16/basesWorkers16x16A.xml"
+            ]
 
 
         if args.num_bot_envs > 0:
@@ -179,7 +193,7 @@ def main(cfg: ExperimentConfig):
                 # [microrts_ai.droplet for _ in range(4)] +
                 # [microrts_ai.tiamat for _ in range(3)] +
                 # [microrts_ai.workerRushAI for _ in range(3)],
-                map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+                map_paths=map_list, # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
                 reward_weight=reward_weight,
             )
             envsT = MicroRTSSpaceTransform(envs)
@@ -436,8 +450,9 @@ def main(cfg: ExperimentConfig):
 
 
         default_opponent_paths = [
-             ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__PPO/agent_update_380.pt", None],
-            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None]
+            # ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt", None],
+            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
+            # ["BCagent", agent_model.Agent, "models/BCagent.pt", None],
         ]
         # 2nd element: uninitialized Agent class 
         # last element: League Agent (if None: main Agent)
@@ -472,7 +487,24 @@ def main(cfg: ExperimentConfig):
             bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = {}, [], []
             aggregate_stats, aggregate_episode_rewards, opponent_table_rows = {}, [], []
 
-            if len(default_opponent_paths) > 0:
+            if args.selfplay_evaluate_testing:
+
+                Bot_opponents = []
+                for opponent_name, opponent_bot in default_bot_opponents:
+                    Bot_opponents.append((opponent_name, opponent_bot, "", None))
+
+                from selfplay_evaluate import evaluate_agent
+                args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
+                aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
+                    args=args,
+                    default_opponent_paths=Bot_opponents,
+                    device=device,
+                    get_scalar_features=getScalarFeatures,
+                    reward_weight=reward_weight,
+                    vecstats_monitor_cls=VecstatsMonitor
+                )
+
+            elif len(default_opponent_paths) > 0:
                 from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
                 aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
@@ -481,7 +513,7 @@ def main(cfg: ExperimentConfig):
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             if len(default_bot_opponents) > 0:
@@ -492,7 +524,7 @@ def main(cfg: ExperimentConfig):
                     device=device,
                     get_scalar_features=getScalarFeatures,
                     reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
+                    vecstats_monitor_cls=VecstatsMonitor
                 )
 
             

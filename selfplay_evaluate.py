@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from gym_microrts.envs.microrts_vec_env import MicroRTSGridModeVecEnv
 from jpype.types import JArray, JInt
-from league_training import MainPlayer, Payoff
+from league import MainPlayer, Payoff
 from microrts_space_transform import MicroRTSSpaceTransform
 import agent_model
 import selfplay_only
@@ -23,7 +23,7 @@ def evaluate_agent(
     device: torch.device,
     get_scalar_features,
     reward_weight: np.ndarray,
-    vecstats_monitor_cls,
+    vecstats_monitor_cls
 ):
     opponents = default_opponent_paths
 
@@ -43,15 +43,26 @@ def evaluate_agent(
     aggregate_stats = {"win": 0, "draw": 0, "loss": 0}
     aggregate_episode_rewards: List[float] = []
     opponent_table_rows: List[Tuple] = []
+    active_league_agents: List[MainPlayer] = []
 
     if args.render_all:
         from ppo import Rendering
 
     for idx, (opponent_name, opponent_ai, opponent_path,  league_agent) in enumerate(opponents):
         eval_env = _make_selfplay_eval_env(args, reward_weight, vecstats_monitor_cls)
-        opponent_ai = opponent_ai(eval_env.action_plane_space.nvec, device).to(device)
-        opponent_ai.load_state_dict(torch.load(opponent_path, map_location=device, weights_only=True))
-        opponent_ai.eval()
+
+        if not opponent_ai == agent_model.Agent:
+            opponent_ai = agent_model.Bot_Agent(
+                        eval_env, 
+                        range(args.Bot_as_player_1, args.num_parallel_selfplay_eval_games//2, 2), 
+                        opponent_ai, 
+                        device=device,
+                        player_id=args.Bot_as_player_1
+                    ).to(device)
+        else:
+            opponent_ai = opponent_ai(eval_env.action_plane_space.nvec, device).to(device)
+            opponent_ai.load_state_dict(torch.load(opponent_path, map_location=device, weights_only=True))
+            opponent_ai.eval()
 
         if league_agent is None:
             league_agent = MainPlayer(opponent_ai, Payoff(), args)
@@ -59,6 +70,17 @@ def evaluate_agent(
         agent = agent_model.Agent(eval_env.action_plane_space.nvec, device).to(device)
         agent.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=True))
         agent.eval()
+
+        main_league_agent = MainPlayer(agent, Payoff(), args)
+
+        if args.Bot_as_player_1:
+            for _ in range(args.num_parallel_selfplay_eval_games//2):
+                active_league_agents.append(main_league_agent)
+                active_league_agents.append(league_agent)
+        else:
+            for _ in range(args.num_parallel_selfplay_eval_games//2):
+                active_league_agents.append(league_agent)
+                active_league_agents.append(main_league_agent)
 
         try:
             obs_np, _, res = eval_env.reset()
@@ -81,13 +103,13 @@ def evaluate_agent(
                             eval_env.render("human")
 
                     for env_index in range(args.num_parallel_selfplay_eval_games):
-                        z_features[env_index] = agent.z_encoder(obs[env_index].view(-1))
+                        z_features[env_index] = agent.z_encoder(obs[env_index].view(-1)) # TODO: selfplay_get_z_encoded_features
 
                     scalar_features = get_scalar_features(obs, res, args.num_parallel_selfplay_eval_games).to(device)
                     actions, _, _, invalid_masks = agent.selfplay_get_action(
                         obs, scalar_features, z_features, 
                         num_selfplay_envs=args.num_parallel_selfplay_eval_games, num_envs=args.num_parallel_selfplay_eval_games, 
-                        envs=eval_env, active_league_agents=[league_agent for _ in range(args.num_parallel_selfplay_eval_games)]
+                        envs=eval_env, active_league_agents=active_league_agents
                         )
 
                     real_action = torch.cat([position_indices, actions], dim=2).cpu().numpy()

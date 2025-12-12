@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, Sequence, Union
+from typing import Any, Dict, Optional, Sequence, Union
 
 import numpy as np
 import torch
@@ -240,29 +240,6 @@ class Agent(nn.Module):
         # np.any([torch.where(z[i] != z[i+1])[0].shape[0] != 0 or torch.where(x[i] != x[i+1])[0].shape[0] != 0 or torch.where(sc[i] != sc[i+1])[0].shape[0] != 0 for i in range(0, num_selfplay_envs//2, 2)])
 
         if action is None:
-            # if hasattr(envs, "get_action_mask"):
-            #     mask_np = envs.get_action_mask()
-            #     src_mask = getattr(envs, "source_unit_mask", None)
-            #     if src_mask is None:
-            #         src_mask = mask_np.any(axis=-1, keepdims=True)
-            #     else:
-            #         src_mask = src_mask.reshape(envs.num_envs, -1, 1)
-# 
-            #     if selfplay_envs and num_selfplay_envs > 1:
-            #         upper = min(num_selfplay_envs, mask_np.shape[0])
-            #         h = w = int(np.sqrt(mask_np.shape[1]))
-            #         mask_p1 = mask_np[1:upper:2].reshape(-1, h, w, mask_np.shape[-1])
-            #         mask_p1 = np.flip(mask_p1, axis=(1, 2))
-            #         mask_np[1:upper:2] = mask_p1.reshape(-1, h * w, mask_np.shape[-1])
-            #         src_p1 = src_mask[1:upper:2].reshape(-1, h, w, 1)
-            #         src_p1 = np.flip(src_p1, axis=(1, 2))
-            #         src_mask[1:upper:2] = src_p1.reshape(-1, h * w, 1)
-# 
-            #     mask_np = np.concatenate([src_mask, mask_np], axis=2)
-            #     invalid_action_masks = torch.as_tensor(mask_np, dtype=torch.bool, device=self.device)
-            # else:
-            #     raise AttributeError("Environment does not provide get_action_mask for action filtering.")
-            # =====
             invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in range(envs.num_envs)]).to(self.device)
             
             if selfplay_envs and num_selfplay_envs > 1:
@@ -347,9 +324,16 @@ class Agent(nn.Module):
         if unique_agents is None:
             unique_agents = self.get_unique_agents(active_league_agents)
 
+        bot_replacements = []
         # TODO (optimize): indices als Tensor statt Python-Liste
         for agent, indices in unique_agents.items():
             if not indices:
+                continue
+
+            if isinstance(agent, Bot_Agent):
+                bot_replacements.append((agent, indices))
+                # placeholder logits; will be overridden by bot actions later
+                self.logits[indices] = 0.0
                 continue
             
             if agent is not self:
@@ -363,7 +347,8 @@ class Agent(nn.Module):
                 subset_logits = subset_logits.detach()
             self.sp_logits[indices] = subset_logits# .to(self.device)
 
-        return self.get_action(
+
+        action, logprob, entropy, invalid_action_masks = self.get_action(
             x,
             sc,
             z,
@@ -374,6 +359,20 @@ class Agent(nn.Module):
             num_selfplay_envs=num_selfplay_envs,
             logits=self.sp_logits[:num_selfplay_envs]
         )
+
+        for bot_agent, indices in bot_replacements:
+            bot_actions, bot_logprob, bot_entropy, bot_invalid_masks = bot_agent.get_action(
+                len(indices)
+            )
+            action[indices] = bot_actions
+            logprob[indices] = bot_logprob
+            entropy[indices] = bot_entropy
+            invalid_action_masks[indices] = bot_invalid_masks
+
+
+
+
+        return action, logprob, entropy, invalid_action_masks
     
 
     def _adjust_selfplay_masks(self, split_masks, num_selfplay_envs: int, total_envs: int) -> None:
@@ -435,3 +434,83 @@ class Agent(nn.Module):
 def build_agent(action_plane_nvec: Sequence[int], device: torch.device) -> Agent:
     """Factory-methode"""
     return Agent(action_plane_nvec=action_plane_nvec, device=device).to(device)
+
+
+
+class Bot_Agent(nn.Module):
+    """
+    Lightweight agent wrapper that forwards actions from a scripted microrts bot
+    while matching the Agent API expected by the selfplay helpers.
+    """
+
+    def __init__(self, envsT, env_ids, bot, device, mapsize: int = 16 * 16, player_id = 1):
+        super().__init__()
+        self.device = device
+        self.envsT = envsT
+        self.env_ids = env_ids
+        self.bot = bot(self.envsT.interface.real_utt)
+        self.mapsize = mapsize
+        self.action_dim = int(np.asarray(self.envsT.action_plane_space.nvec).sum())
+        self.player_id = player_id
+
+    def forward(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
+        return torch.tensor(x.shape[0], device=self.device)
+    
+    def actor(self, features: torch.Tensor) -> torch.Tensor:
+        num_envs = features.item()
+        return torch.zeros((num_envs, self.mapsize * self.action_dim), device=self.device)
+    
+    def get_action(self, num_envs: int):
+        actions = torch.zeros(
+            (num_envs, self.envsT.height * self.envsT.width, len(self.envsT.action_plane_space.nvec)),
+            dtype=torch.int64,
+            device=self.device,
+        )
+        player_id = self.player_id
+        for env_id in self.env_ids:
+            gs = self.envsT.interface.get_game_state(env_id)
+            player_action = self.bot.getAction(player_id, gs)
+            bot_pairs = list(player_action.getActions())
+            self._pairs_to_actions_inplace(bot_pairs, actions, self.envsT, env_idx=env_id)
+
+        mask = torch.ones(
+            (num_envs, self.envsT.height * self.envsT.width, self.action_dim + 1),
+            dtype=torch.bool,
+            device=self.device,
+        )
+        return actions, 0, 0, mask
+
+
+    def _pairs_to_actions_inplace(self, pairs, act: torch.Tensor, envsT, env_idx=0):
+        h, w = envsT.height, envsT.width
+
+        def attack_idx(unit, ua):
+            dx = dy = 0
+            if hasattr(ua, "getLocationX") and hasattr(ua, "getLocationY"):
+                dx = int(ua.getLocationX()) - int(unit.getX())
+                dy = int(ua.getLocationY()) - int(unit.getY())
+            return max(0, min((dy + 3) * 7 + (dx + 3), 48))
+
+        for p in pairs:
+            unit = getattr(p, "m_a", None) or getattr(p, "first", None) or p.getA()
+            ua   = getattr(p, "m_b", None) or getattr(p, "second", None) or p.getB()
+            x, y = int(unit.getX()), int(unit.getY())
+            pos  = y * w + x
+            t = int(ua.getType())
+            act[env_idx, pos, 0] = t
+            if t == 1:
+                act[env_idx, pos, 1] = int(ua.getDirection())
+            elif t == 2:
+                act[env_idx, pos, 2] = int(ua.getDirection())
+            elif t == 3:
+                act[env_idx, pos, 3] = int(ua.getDirection())
+            elif t == 4:
+                act[env_idx, pos, 4] = int(ua.getDirection())
+                act[env_idx, pos, 5] = int(getattr(ua.getUnitType(), "ID", 0))
+            elif t in (5, 6):
+                act[env_idx, pos, 6] = attack_idx(unit, ua)
+
+
+        
+
+   
