@@ -9,6 +9,7 @@ ExperimentConfig:
   BC_finetuning: false
   ppo: false
   evaluate: false
+  selfplay_evaluate_testing: false
   selfplay: false
 
   pfsp: false

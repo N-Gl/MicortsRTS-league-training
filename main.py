@@ -499,12 +499,12 @@ def main(cfg: ExperimentConfig):
             ("randomAI", microrts_ai.randomAI),
             ("randomBiasedAI", microrts_ai.randomBiasedAI),
             ("rojo", microrts_ai.rojo),
-            # ("mixedBot", microrts_ai.mixedBot),
-            # ("izanagi", microrts_ai.izanagi), 
-            # ("tiamat", microrts_ai.tiamat),
-            # ("droplet", microrts_ai.droplet),
+            ("mixedBot", microrts_ai.mixedBot),
+            ("izanagi", microrts_ai.izanagi), 
+            ("tiamat", microrts_ai.tiamat),
+            ("droplet", microrts_ai.droplet),
             # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:
