@@ -713,6 +713,8 @@ class SelfPlayTrainer:
 
                 bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[args.num_bot_envs:].clone()))
 
+            writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
+
 
     # TODO (optimize): in obs, ... die envs entfernen, die man nicht braucht (spart Rechenzeit)
     def get_new_bot_envs(self, args, num_bots):

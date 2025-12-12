@@ -12,7 +12,7 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  seed: 1765220129
+  seed: 
 
   num_bot_envs: 2
   max_num_bot_envs: 5
