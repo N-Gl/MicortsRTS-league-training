@@ -99,7 +99,6 @@ def update(args, agent, envs, device, supervised_agent, optimizer, update, b_val
     if args.dbg_no_main_agent_ppo_update:
         print("\nDebug: skipping PPO update for main agent\n")
         epoch_indices = []
-    value_only_phase = update <= args.value_warmup_updates
     
     for epoch_pi in epoch_indices:
         np.random.shuffle(inds)

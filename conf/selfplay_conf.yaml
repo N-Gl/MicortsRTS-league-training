@@ -24,7 +24,7 @@ ExperimentConfig:
   attack_reward_weight: 0.05    # new (BA Parameter) 0.05
   dyn_attack_reward: 1.0 # TODO               # add more attackreward depending on situation (0.0) # Beispiel: 1.5
   rewardscore: 10.0        # TODO                  # new (BA Parameter) 0.0
-  value_warmup_updates: 0 # TODO      # number of initial PPO updates with value-only training (0) # Beispiel: 4
+  value_warmup_updates: -1 # TODO      # number of initial PPO updates with value-only training (0) # Beispiel: 4
 
   endgame_maps: false
 
