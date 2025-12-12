@@ -18,6 +18,8 @@ ExperimentConfig:
   max_num_bot_envs: 5
   num_main_agents: 2   # 1 num_main_agents == 2 env == 1 Game
 
+  even_opponent_split: false # TODO
+
   total_timesteps: 30000000
 
   early_updates: false

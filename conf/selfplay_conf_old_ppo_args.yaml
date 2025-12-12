@@ -19,7 +19,7 @@ ExperimentConfig:
   max_num_bot_envs: 9
   num_main_agents: 27   # 1 num_main_agents == 1 env
 
-  even_opponent_split: true
+  even_opponent_split: true # TODO
 
   total_timesteps: 30000000
 
