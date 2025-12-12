@@ -545,7 +545,7 @@ def main(cfg: ExperimentConfig):
                 )
 
             if len(default_bot_opponents) > 0:
-                from evaluate_testing import bot_evaluate_agent
+                from evaluate import bot_evaluate_agent
                 bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
                     args=args,
                     evaluation_opponents=default_bot_opponents,

@@ -6,11 +6,11 @@ ExperimentConfig:
   selfplay: true
   model_path: league_models/09_12_25__04_12_25__PPO/Main_agent_backups/agent_update_380.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: old_ppo_args
+  exp_name: old_ppo_args__09_12_25__04_12_25__PPO_update_380
   wandb_project_name: new_selfplay
 
   prod_mode: true
-  render: true
+  render: false
   render_all: false
 
   seed: 
@@ -37,13 +37,13 @@ ExperimentConfig:
 
 
 
-  num_steps: 512 # (im basis ppo: 256)               
-  gamma: 1.0 # (im basis ppo: 0.99)                  
+  num_steps: 512 # (im basis ppo: 256)                
+  gamma: 1 # (im basis ppo: 0.99)                  
   gae_lambda: 0.95                                   
   ent_coef: 0.01               
   vf_coef: 0.5               
   max_grad_norm: 0.5                                 
-  clip_coef: 0.1 # bis 0.2
+  clip_coef: 0.15 # bis 0.2
   update_epochs: 4              
   kle_stop: true               
   kle_rollback: true           
