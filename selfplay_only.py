@@ -672,23 +672,19 @@ class SelfPlayTrainer:
                 bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
                 bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
 
-                rewards_attack = torch.cat((rewards_attack, torch.zeros((args.num_steps, self.num_bot_envs), device=device)))
-                rewards_winloss = torch.zeros((args.num_steps, args.num_envs), device=device)
-                rewards_score = torch.zeros((args.num_steps, args.num_envs), device=device)
-                dones = torch.zeros((args.num_steps, args.num_envs), device=device)
-                values = torch.zeros((args.num_steps, args.num_envs), device=device)
+                num_added_envs = args.num_envs - rewards_attack.shape[1]
 
                 rewards_attack = torch.cat(
-                    (rewards_attack, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_attack.dtype)), dim=1
+                    (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
                 )
                 rewards_winloss = torch.cat(
-                    (rewards_winloss, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_winloss.dtype)), dim=1
+                    (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
                 )
                 rewards_score = torch.cat(
-                    (rewards_score, torch.zeros((args.num_steps, 1), device=device, dtype=rewards_score.dtype)), dim=1
+                    (rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_score.dtype)), dim=1
                 )
-                dones = torch.cat((dones, torch.zeros((args.num_steps, 1), device=device, dtype=dones.dtype)), dim=1)
-                values = torch.cat((values, torch.zeros((args.num_steps, 1), device=device, dtype=values.dtype)), dim=1)
+                dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
+                values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
                 rewards_attack[:, args.num_selfplay_envs:].zero_()
                 rewards_winloss[:, args.num_selfplay_envs:].zero_()
                 rewards_score[:, args.num_selfplay_envs:].zero_()
@@ -698,20 +694,20 @@ class SelfPlayTrainer:
 
 
                 next_obs_np, _, bot_res = envs.reset()
-                bot_next_obs = torch.Tensor(next_obs_np, device=device)
+                bot_next_obs = torch.Tensor(next_obs_np).to(device)
 
                 
-                next_done = torch.cat((next_done, torch.zeros((args.num_steps, 1), device=device, dtype=next_done.dtype)), dim=1)
-                rewards_score[args.num_selfplay_envs:].zero_()
+                next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))
+                next_done[args.num_selfplay_envs:].zero_()
 
-                scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
-                scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, 1), device=device, dtype=scalar_features.dtype)), dim=1)
+                # scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
+                scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, num_added_envs, 11), device=device, dtype=scalar_features.dtype)), dim=1)
                 scalar_features[:, args.num_selfplay_envs:].zero_()
-                z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
-                z_features = torch.cat((z_features, torch.zeros((args.num_steps, 1), device=device, dtype=z_features.dtype)), dim=1)
+                # z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
+                z_features = torch.cat((z_features, torch.zeros((args.num_steps, num_added_envs, 8), device=device, dtype=z_features.dtype)), dim=1)
                 z_features[:, args.num_selfplay_envs:].zero_()
 
-                bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[args.num_bot_envs:].clone()))
+                bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
 
             writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
 
