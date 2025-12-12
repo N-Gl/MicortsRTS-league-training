@@ -16,9 +16,10 @@ import time
 import json
 import random
 import os
-from stable_baselines3.common.vec_env import VecEnvWrapper, VecVideoRecorder
+from stable_baselines3.common.vec_env import VecVideoRecorder
 from microrts_space_transform import MicroRTSSpaceTransform
 import atexit
+from VecstatsMonitor import VecstatsMonitor
 
 from agent_model import build_agent
 
@@ -44,6 +45,8 @@ def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True) -> str
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: ExperimentConfig):
     args = cfg.ExperimentConfig
+    # allow runtime fields (e.g., num_envs) to be added/updated
+    OmegaConf.set_struct(args, False)
 
     if args.seed == None:
         args.seed = int(time.time())
@@ -60,7 +63,8 @@ def main(cfg: ExperimentConfig):
     else:
         args.__dict__.setdefault('num_selfplay_envs', (args.num_main_agents + args.num_main_exploiters + args.num_league_exploiters) * 2)
 
-    args.__dict__.setdefault('num_envs', args.num_selfplay_envs + args.num_bot_envs)
+    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
+    # args.__dict__.setdefault('num_envs', args.num_selfplay_envs + args.num_bot_envs)
     # TODO: ist die args.batch_size korrekt?
     args.__dict__.setdefault('batch_size', int((args.num_selfplay_envs//2 + args.num_bot_envs) * args.num_steps))
     args.__dict__.setdefault('minibatch_size', int(args.batch_size // max(args.n_minibatch, 1)))
@@ -69,76 +73,12 @@ def main(cfg: ExperimentConfig):
     print(json.dumps(OmegaConf.to_container(cfg, resolve=True), indent=2, sort_keys=True))
     print("change config in conf/config.yaml")
 
-
-    class VecstatsMonitor(VecEnvWrapper):
-        def __init__(self, venv, gamma=None):
-            super().__init__(venv)
-            self.eprets = None
-            self.eplens = None
-            self.epcount = 0
-            self.tstart = time.time()
-            self.gamma = gamma
-            self.raw_rewards = None
-
-        def reset(self):
-            obs = self.venv.reset()
-            n = self.num_envs
-            self.eprets = np.zeros(n, dtype=float)
-            self.eplens = np.zeros(n, dtype=int)
-            self.raw_rewards = [[] for _ in range(n)]
-            self.tstart = time.time()
-            return obs
-
-        def step_wait(self):
-            obs, denserews,attackrews,winlossrews, scorerews , dones, infos,res = self.venv.step_wait()
-
-            self.eprets += denserews +winlossrews +scorerews +attackrews
-            self.eplens += 1
-
-            for i, info in enumerate(infos):
-                if 'raw_rewards' in info:
-                    self.raw_rewards[i].append(info['raw_rewards'])
-
-            newinfos = list(infos)
-
-            for i, done in enumerate(dones):
-                if done:
-                    info = infos[i].copy()
-                    ep_ret = float(self.eprets[i])
-                    ep_len = int(self.eplens[i])
-                    ep_time = round(time.time() - self.tstart, 6)
-                    info['episode'] = {'r': ep_ret, 'l': ep_len, 't': ep_time}
-
-
-                    self.epcount += 1
-
-                    if self.raw_rewards[i]:
-                        agg = np.sum(np.array(self.raw_rewards[i]), axis=0)
-                        raw_names = [str(rf) for rf in self.rfs]
-                        info['microrts_stats'] = dict(zip(raw_names, agg.tolist()))
-                    else:
-                        info['microrts_stats'] = {}
-
-                    if winlossrews[i] == 0:
-                        info['microrts_stats']['draw'] = True
-                    else:
-                        info['microrts_stats']['draw'] = False
-
-                    self.eprets[i] = 0.0
-                    self.eplens[i] = 0
-                    self.raw_rewards[i] = []
-                    newinfos[i] = info
-
-            return obs, denserews,attackrews,winlossrews, scorerews, dones, newinfos,res
-
-        def step(self, actions):
-            self.venv.step_async(actions)
-            return self.step_wait()
     
     if args.exp_name:
         experiment_name = f"{args.exp_name}"
     else:
         experiment_name = f"{args.model_path}"
+        args.exp_name = experiment_name
     writer = SummaryWriter(f"runs/{experiment_name}")
     writer.add_text('hyperparameters', "|param|value|\n|-|-|\n%s" % (
             '\n'.join([f"|{key}|{value}|" for key, value in vars(args).items()])))
@@ -222,38 +162,39 @@ def main(cfg: ExperimentConfig):
 
         print(f"opponents: \n{opponents}")
 
+
+        if args.num_bot_envs > 0:
+            envs = MicroRTSGridModeVecEnv(
+                num_selfplay_envs=0,
+                num_bot_envs=args.num_bot_envs,
+                max_steps=2000, # new (BA Parameter) (max episode length of 2000)
+                always_player_1=True,
+                bot_envs_alternate_player=False,
+                render_theme=1,
+                ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
+                # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
+                # [microrts_ai.mayari for _ in range(4)] + 
+                # [microrts_ai.mixedBot for _ in range(4)] + 
+                # [microrts_ai.izanagi for _ in range(3)] +
+                # [microrts_ai.droplet for _ in range(4)] +
+                # [microrts_ai.tiamat for _ in range(3)] +
+                # [microrts_ai.workerRushAI for _ in range(3)],
+                map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+                reward_weight=reward_weight,
+            )
+            envsT = MicroRTSSpaceTransform(envs)
+            # print(envsT.__class__.mro())
+            # print(hasattr(envsT, "step_async"))
+            # print(envsT.step_async.__qualname__)
+            # print(envsT.step_wait.__qualname__)
     
-        envs = MicroRTSGridModeVecEnv(
-            num_selfplay_envs=0,
-            num_bot_envs=args.num_bot_envs,
-            max_steps=2000, # new (BA Parameter) (max episode length of 2000)
-            always_player_1=True,
-            bot_envs_alternate_player=False,
-            render_theme=1,
-            ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
-            # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
-            # [microrts_ai.mayari for _ in range(4)] + 
-            # [microrts_ai.mixedBot for _ in range(4)] + 
-            # [microrts_ai.izanagi for _ in range(3)] +
-            # [microrts_ai.droplet for _ in range(4)] +
-            # [microrts_ai.tiamat for _ in range(3)] +
-            # [microrts_ai.workerRushAI for _ in range(3)],
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
-            reward_weight=reward_weight,
-        )
-        envsT = MicroRTSSpaceTransform(envs)
-        # print(envsT.__class__.mro())
-        # print(hasattr(envsT, "step_async"))
-        # print(envsT.step_async.__qualname__)
-        # print(envsT.step_wait.__qualname__)
-    
-        envsT = VecstatsMonitor(envsT, args.gamma)
-        if args.capture_video:
-            envs = VecVideoRecorder(envs, f'videos/{experiment_name}',
-                                    record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
+            envsT = VecstatsMonitor(envsT, args.gamma)
+            if args.capture_video:
+                envs = VecVideoRecorder(envs, f'videos/{experiment_name}',
+                                        record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
 
 
-    if args.selfplay or args.league_training:
+    if (args.selfplay or args.league_training) and args.num_selfplay_envs > 0:
         sp_envs = MicroRTSGridModeVecEnv(
             num_selfplay_envs=args.num_selfplay_envs,
             num_bot_envs=0,
@@ -261,14 +202,6 @@ def main(cfg: ExperimentConfig):
             always_player_1=True,
             bot_envs_alternate_player=False,
             render_theme=1,
-            ai2s=opponents, # new (BA Parameter) (Targeted training during PPO training) 16 CoacAI and 8 Mayari environments
-            # ai2s=[microrts_ai.coacAI for _ in range(3)] + 
-            # [microrts_ai.mayari for _ in range(4)] + 
-            # [microrts_ai.mixedBot for _ in range(4)] + 
-            # [microrts_ai.izanagi for _ in range(3)] +
-            # [microrts_ai.droplet for _ in range(4)] +
-            # [microrts_ai.tiamat for _ in range(3)] +
-            # [microrts_ai.workerRushAI for _ in range(3)],
             map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
             reward_weight=reward_weight,
         )
@@ -503,8 +436,8 @@ def main(cfg: ExperimentConfig):
 
 
         default_opponent_paths = [
-            # ["PPO_with_basis_Thesis_BCagent", agent_model.Agent, "saved_models/19_10_2025 (good_but_with_basis_Thesis_BCagent)/agent.pt", None],
-            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None]
+             ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__PPO/agent_update_380.pt", None],
+            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None]
         ]
         # 2nd element: uninitialized Agent class 
         # last element: League Agent (if None: main Agent)
@@ -538,16 +471,6 @@ def main(cfg: ExperimentConfig):
 
             bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = {}, [], []
             aggregate_stats, aggregate_episode_rewards, opponent_table_rows = {}, [], []
-            if len(default_bot_opponents) > 0:
-                from evaluate import bot_evaluate_agent
-                bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
-                    args=args,
-                    evaluation_opponents=default_bot_opponents,
-                    device=device,
-                    get_scalar_features=getScalarFeatures,
-                    reward_weight=reward_weight,
-                    vecstats_monitor_cls=VecstatsMonitor,
-                )
 
             if len(default_opponent_paths) > 0:
                 from selfplay_evaluate import evaluate_agent
@@ -560,6 +483,19 @@ def main(cfg: ExperimentConfig):
                     reward_weight=reward_weight,
                     vecstats_monitor_cls=VecstatsMonitor,
                 )
+
+            if len(default_bot_opponents) > 0:
+                from evaluate import bot_evaluate_agent
+                bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
+                    args=args,
+                    evaluation_opponents=default_bot_opponents,
+                    device=device,
+                    get_scalar_features=getScalarFeatures,
+                    reward_weight=reward_weight,
+                    vecstats_monitor_cls=VecstatsMonitor,
+                )
+
+            
 
         
 

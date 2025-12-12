@@ -26,6 +26,7 @@ class ExperimentConfig:
     render_all: bool
     n_minibatch: int
     num_bot_envs: int
+    max_num_bot_envs: int
     num_league_exploiters: int
     num_main_exploiters: int
     num_main_agents: int

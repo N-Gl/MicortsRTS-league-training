@@ -41,8 +41,10 @@ ExperimentConfig:
 
   n_minibatch: 4
   num_bot_envs: 0              # new (BA Parameter) (number of parallel game environments = 24)
+  max_num_bot_envs: 0
   num_selfplay_envs: 0
 
+  num_envs: 0
   num_main_agents: 0
   num_main_exploiters: 0
   num_league_exploiters: 0
