@@ -411,6 +411,8 @@ def main(cfg: ExperimentConfig):
     if args.selfplay:
         from selfplay_only import SelfPlayTrainer
 
+        assert args.bot_adding_done_training_ratio < args.bot_removing_done_training_ratio, f"bot_adding_done_training_ratio ({args.bot_adding_done_training_ratio}) must be smaller than bot_removing_done_training_ratio ({args.bot_removing_done_training_ratio})"
+
         selfplay_trainer = SelfPlayTrainer(
             agent=agent,
             supervised_agent=supervised_agent,
@@ -429,6 +431,8 @@ def main(cfg: ExperimentConfig):
 
     if args.league_training:
         from league_training import LeagueTrainer
+
+        assert args.bot_adding_done_training_ratio < args.bot_removing_done_training_ratio, f"bot_adding_done_training_ratio ({args.bot_adding_done_training_ratio}) must be smaller than bot_removing_done_training_ratio ({args.bot_removing_done_training_ratio})"
 
         league_trainer = LeagueTrainer(
             agent=agent,

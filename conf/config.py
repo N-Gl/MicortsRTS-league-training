@@ -73,6 +73,8 @@ class ExperimentConfig:
     value_warmup_updates: int
     endgame_maps: bool
     Bot_as_player_1: bool
+    bot_adding_done_training_ratio: float
+    bot_removing_done_training_ratio: float
 
 
     

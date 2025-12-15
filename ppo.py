@@ -358,7 +358,8 @@ class Rendering:
     _viewer_size = None
     _viewer_disabled = False
     _render_interval = None
-    _last_render_ts = 0.0
+    # track last render time per vec_client so multiple env groups can render in one step
+    _last_render_ts = {}
 
     @staticmethod
     def render_all_envs(env_transform):
@@ -370,7 +371,7 @@ class Rendering:
         if vec_client is not None:
             clients = Rendering._get_clients(vec_client)
             if clients and not Rendering._viewer_disabled:
-                if not Rendering._should_render_now():
+                if not Rendering._should_render_now(render_key=id(vec_client)):
                     return
                 if Rendering._render_single_window(clients):
                     return
@@ -684,15 +685,17 @@ class Rendering:
             return 6
 
     @staticmethod
-    def _should_render_now():
+    def _should_render_now(render_key=None):
         interval = Rendering._get_render_interval()
         now = time.time()
+        key = render_key if render_key is not None else "_global"
+        last_ts = Rendering._last_render_ts.get(key, 0.0)
         if interval <= 0:
-            Rendering._last_render_ts = now
+            Rendering._last_render_ts[key] = now
             return True
-        if now - Rendering._last_render_ts < interval:
+        if now - last_ts < interval:
             return False
-        Rendering._last_render_ts = now
+        Rendering._last_render_ts[key] = now
         return True
 
     @staticmethod

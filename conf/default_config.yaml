@@ -49,6 +49,8 @@ ExperimentConfig:
   num_main_agents: 0
   num_main_exploiters: 0
   num_league_exploiters: 0
+  bot_adding_done_training_ratio:
+  bot_removing_done_training_ratio:
 
   selfplay_save_interval: 10
   checkpoint_frequency: 10

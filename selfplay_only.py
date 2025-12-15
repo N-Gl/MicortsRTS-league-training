@@ -250,6 +250,7 @@ class SelfPlayTrainer:
             for step in range(args.num_steps):
                 if args.render:
                     if args.render_all:
+                        # TODO: funktioniert nicht richtig
                         Rendering.render_all_envs(envs)
                         Rendering.render_all_envs(sp_envs)
                     else:
@@ -481,6 +482,7 @@ class SelfPlayTrainer:
 
                     for done_idx in where_done[0]:
                         if done_idx > args.num_selfplay_envs - 1:
+                            print(f"Game {int(args.num_selfplay_envs/2 + int(done_idx - (args.num_selfplay_envs - 1)))} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
                             writer.recent_bot_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
                             selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
@@ -623,7 +625,9 @@ class SelfPlayTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 100 and num_done_selfplaygames / 1.5 <= num_done_botgames:
+            if  last_bot_env_change >= 100 and num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames:
+                print("Removing a Bot Environment")
+
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
                 last_bot_env_change = 0
@@ -659,8 +663,12 @@ class SelfPlayTrainer:
                 z_features[:, args.num_selfplay_envs:].zero_()
 
                 bot_position_indices = bot_position_indices[:args.num_bot_envs]
-            
-            elif last_bot_env_change >= 100 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames / 2 >= num_done_botgames:
+
+                print("New number of Bot Environments:", args.num_bot_envs)
+
+            elif last_bot_env_change >= 100 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+                print("Adding an Bot Environment")
+
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
                 last_bot_env_change = 0
@@ -708,6 +716,8 @@ class SelfPlayTrainer:
                 z_features[:, args.num_selfplay_envs:].zero_()
 
                 bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
+
+                print("New number of Bot Environments:", args.num_bot_envs)
 
             writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
 

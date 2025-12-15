@@ -90,6 +90,19 @@
     },
 
     {
+      "name": "Python: selfplay_conf_old_ppo_args",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "debug_selfplay_conf_old_ppo_args",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: recreating drop",
       "type": "debugpy",
       "request": "launch",
