@@ -4,9 +4,9 @@ defaults:
 ExperimentConfig:
   # args from https://github.com/Farama-Foundation/MicroRTS-Py/blob/master/experiments/ppo_gridnet.py
   selfplay: true
-  model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
+  model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: old_ppo_args__12_12_25__04_12_25__BCagent__selfplay__bot_adding_done_training_ratio_2__bot_removing_done_training_ratio_1.5
+  exp_name: old_ppo_args__12_12_25__04_12_25__PPO__selfplay__bot_adding_done_training_ratio_2__bot_removing_done_training_ratio_1.5
   wandb_project_name: new_selfplay
 
   prod_mode: true

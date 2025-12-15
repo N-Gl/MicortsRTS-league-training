@@ -520,7 +520,6 @@ class SelfPlayTrainer:
                             num_done_selfplaygames += 1
                             last_bot_env_change += 1
                         
-                    break
                 # =============
             # =========================
 
