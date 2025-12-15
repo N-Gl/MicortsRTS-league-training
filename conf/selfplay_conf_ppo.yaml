@@ -12,12 +12,14 @@ ExperimentConfig:
   render: false
   render_all: false
 
+  # in Main Branch ausführen
+
   seed: 
 
   num_bot_envs: 25
   num_main_agents: 0   # 1 num_main_agents == 1 env
 
-  total_timesteps: 20000000
+  total_timesteps: 40000000
 
   early_updates: true  # TODO
 
