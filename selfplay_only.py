@@ -623,7 +623,7 @@ class SelfPlayTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 100 and num_done_selfplaygames / 2 <= num_done_botgames:
+            if  last_bot_env_change >= 100 and num_done_selfplaygames / 1.5 <= num_done_botgames:
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
                 last_bot_env_change = 0
@@ -660,7 +660,7 @@ class SelfPlayTrainer:
 
                 bot_position_indices = bot_position_indices[:args.num_bot_envs]
             
-            elif last_bot_env_change >= 100 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames / 4 >= num_done_botgames:
+            elif last_bot_env_change >= 100 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames / 2 >= num_done_botgames:
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
                 last_bot_env_change = 0
