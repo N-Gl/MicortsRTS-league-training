@@ -15,7 +15,7 @@ ExperimentConfig:
 
   seed: 
 
-  num_bot_envs: 5
+  num_bot_envs: 3
   max_num_bot_envs: 15
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75

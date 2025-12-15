@@ -520,7 +520,7 @@ class SelfPlayTrainer:
                             num_done_selfplaygames += 1
                             last_bot_env_change += 1
                         
-                        break
+                    break
                 # =============
             # =========================
 
@@ -625,8 +625,8 @@ class SelfPlayTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 100 and num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames:
-                print("Removing a Bot Environment")
+            if  last_bot_env_change >= 50 and args.num_bot_envs > 0 and num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames:
+                print("\nRemoving a Bot Environment")
 
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
@@ -665,9 +665,10 @@ class SelfPlayTrainer:
                 bot_position_indices = bot_position_indices[:args.num_bot_envs]
 
                 print("New number of Bot Environments:", args.num_bot_envs)
+                print("")
 
-            elif last_bot_env_change >= 100 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
-                print("Adding an Bot Environment")
+            elif last_bot_env_change >= 50 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+                print("\nAdding an Bot Environment")
 
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
@@ -718,6 +719,7 @@ class SelfPlayTrainer:
                 bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
 
                 print("New number of Bot Environments:", args.num_bot_envs)
+                print("")
 
             writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
 
