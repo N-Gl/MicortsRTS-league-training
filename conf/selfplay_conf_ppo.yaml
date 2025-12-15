@@ -15,8 +15,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  # in Main Branch ausführen
-
   seed: 
 
   num_bot_envs: 25
