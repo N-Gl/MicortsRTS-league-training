@@ -3,10 +3,10 @@ defaults:
 
 ExperimentConfig:
   selfplay: true
-  model_path: models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt
+  model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 10_12_25__PPO
-  wandb_project_name: new_PPO
+  exp_name: old_ppo_args__12_12_25__04_12_25__BCagent__selfplay
+  wandb_project_name: new_selfplay
 
   prod_mode: true
   render: true
