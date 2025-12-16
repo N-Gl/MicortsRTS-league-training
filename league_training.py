@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
-from enum import IntEnum
 from typing import Any, Callable, List, Sequence, Tuple
 import time
 
@@ -17,12 +16,6 @@ from selfplay_only import adjust_action_selfplay, adjust_obs_selfplay, render_al
 from log_aggregate_result_table import Logger
 
 import league
-
-class SelfplayAgentType(IntEnum):
-    CUR_MAIN = 0    # used, when the current main agent plays against a bot (not for non-selfplaying envs)
-    OLD_MAIN = 1
-    MAIN_EXPLOITER = 2
-    LEAGUE_EXPLOITER = 3
 
 
 
@@ -47,69 +40,6 @@ class LeagueTrainer:
     def __post_init__(self):
         self.checkpoint_frequency = self.args.checkpoint_frequency
 
-
-    def _init_agent_type(self):
-        agent_type = []
-        if self.args.num_selfplay_envs > 0:
-            for i in range(self.args.num_main_agents):
-                agent_type.append(SelfplayAgentType.CUR_MAIN)
-                agent_type.append(-1)
-
-            for i in range(self.args.num_main_exploiters):
-                agent_type.append(SelfplayAgentType.MAIN_EXPLOITER) 
-                agent_type.append(-1)
-
-            for i in range(self.args.num_league_exploiters):
-                agent_type.append(SelfplayAgentType.LEAGUE_EXPLOITER) 
-                agent_type.append(-1)
-        else:
-            agent_type = None
-
-        if self.args.num_selfplay_envs > 0:
-            agent_type = torch.tensor(agent_type, dtype=torch.long).to(self.device)
-            assert self.args.num_selfplay_envs == len(agent_type), "Number of selfplay envs must be equal to the number of agent types (each agent plays against itself)"
-        else:
-            assert agent_type is None, "If no selfplay envs are used, agent_type must be None"
-        return agent_type
-
-    def _initialize_league(self):
-
-        agent_type = self._init_agent_type()
-
-        # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
-
-        league = league.League(initial_agent=self.agent, args=self.args)
-        
-        # initiale Environments mit den jeweiligen Gegnern gefüllt
-        active_league_agents = []
-        assert len(league._learning_agents) == self.args.num_selfplay_envs//2, "Number of learning agents must be half of the number of selfplay envs"
-        for idx, player0 in enumerate(league._learning_agents):
-            opp = player0.get_match()[0]
-            active_league_agents.append(player0)
-            active_league_agents.append(opp)
-
-            if isinstance(opp, league.MainPlayer):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.CUR_MAIN
-            elif isinstance(opp, league.LeagueExploiter) or isinstance(opp._parent, league.LeagueExploiter):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
-            elif isinstance(opp, league.MainExploiter) or isinstance(opp._parent, league.MainExploiter):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.MAIN_EXPLOITER
-            elif isinstance(opp._parent, league.MainPlayer):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.OLD_MAIN
-            else:
-                raise ValueError("Unknown agent type")
-            
-            # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
-
-        
-        #( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
-        while len(active_league_agents) < self.args.num_envs:
-            active_league_agents.append(league.learning_agents[0])
-        
-        return league, active_league_agents, agent_type
-
-    def _on_checkpoint(self):
-        self.hist_reward += self.args.new_hist_rewards
 
 
 
@@ -138,7 +68,7 @@ class LeagueTrainer:
             raise ValueError("league training requires at least one main agent")
 
 
-        league, active_league_agents, agent_type = self._initialize_league()
+        league, active_league_agents, agent_type = league._initialize_league()
         
 
         optimizer = optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
@@ -424,18 +354,18 @@ class LeagueTrainer:
 
                             if done_agent.ready_to_checkpoint():
                                 league.add_player(done_agent.checkpoint())
-                                self._on_checkpoint()
+                                league._on_checkpoint()
 
                             # neuen gegner in diesem environment auswählen
                             opp = active_league_agents[done_idx + 1] = done_agent.get_match()[0]
                             if isinstance(active_league_agents[1], league.MainPlayer):
-                                agent_type[done_idx + 1] = SelfplayAgentType.CUR_MAIN
+                                agent_type[done_idx + 1] = league.SelfplayAgentType.CUR_MAIN
                             elif isinstance(active_league_agents[1], league.LeagueExploiter) or isinstance(active_league_agents[1]._parent, league.LeagueExploiter):
-                                agent_type[done_idx + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
+                                agent_type[done_idx + 1] = league.SelfplayAgentType.LEAGUE_EXPLOITER
                             elif isinstance(active_league_agents[1], league.MainExploiter) or isinstance(active_league_agents[1]._parent, league.MainExploiter):
-                                agent_type[done_idx + 1] = SelfplayAgentType.MAIN_EXPLOITER
+                                agent_type[done_idx + 1] = league.SelfplayAgentType.MAIN_EXPLOITER
                             elif isinstance(active_league_agents[1]._parent, league.MainPlayer):
-                                agent_type[done_idx + 1] = SelfplayAgentType.OLD_MAIN
+                                agent_type[done_idx + 1] = league.SelfplayAgentType.OLD_MAIN
                             else:
                                 raise ValueError("Unknown agent type")
 
@@ -531,9 +461,9 @@ class LeagueTrainer:
             # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
             main_indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.int).to(device)
             if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-                main_indices = torch.cat((torch.where((agent_type == SelfplayAgentType.CUR_MAIN) | (agent_type == SelfplayAgentType.OLD_MAIN))[0], main_indices))
+                main_indices = torch.cat((torch.where((agent_type == league.SelfplayAgentType.CUR_MAIN) | (agent_type == league.SelfplayAgentType.OLD_MAIN))[0], main_indices))
             else:
-                main_indices = torch.cat((torch.where(agent_type[0:args.num_selfplay_envs:2] == SelfplayAgentType.CUR_MAIN)[0] * 2, main_indices))
+                main_indices = torch.cat((torch.where(agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.CUR_MAIN)[0] * 2, main_indices))
 
             # inds: indices from the batch
             main_batch_size = int(len(main_indices) * args.num_steps)
