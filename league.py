@@ -497,7 +497,7 @@ class League:
     def _log_selfplay_results(self, args, agent, writer, global_step, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games):
         selfplay_winrate = None
         selfplay_with_draw = None
-        if isinstance(done_agent, self.MainPlayer):
+        if isinstance(done_agent, MainPlayer):
             writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
             selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
             selfplay_with_draw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
@@ -509,7 +509,7 @@ class League:
         num_done_selfplaygames += 1
 
         # TODO (league training): auch andere Agents loggen? (wäre pro exploiter pro Gegner eine Zeile in der Tabelle)
-        if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and isinstance(done_agent, self.MainPlayer):
+        if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and isinstance(done_agent, MainPlayer):
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates = []
             opp_names = []
@@ -517,8 +517,8 @@ class League:
             opponent_table_rows: List[Tuple] = []
             count_league_players = 0
             for i, p1 in enumerate(done_agent.payoff.players):
-                if not isinstance(p1, self.LeagueExploiter): # league exploiters will be turned to historicals bevore playing against main agents
-                    if isinstance(p1, self.Historical):
+                if not isinstance(p1, LeagueExploiter): # league exploiters will be turned to historicals bevore playing against main agents
+                    if isinstance(p1, Historical):
                         name = getattr(p1, "name", p1.__class__.__name__) + "_" + getattr(p1._parent, "name", p1._parent.__class__.__name__)+ "_" + str(i)
                     else:
                         name = getattr(p1, "name", p1.__class__.__name__) + "_" + str(i)
@@ -591,18 +591,18 @@ class League:
         # neuen gegner in diesem environment auswählen
         opp = done_agent.get_match()[0]
         # TODO: vorher active_league_agents[1] statt active_league_agents[1 + done_idx] ist es jetzt richtig?
-        if isinstance(opp, self.MainPlayer):
+        if isinstance(opp, MainPlayer):
             a_type = SelfplayAgentType.CUR_MAIN
-        elif isinstance(opp, self.LeagueExploiter) or isinstance(opp._parent, self.LeagueExploiter):
+        elif isinstance(opp, LeagueExploiter) or isinstance(opp._parent, LeagueExploiter):
             a_type = SelfplayAgentType.LEAGUE_EXPLOITER
-        elif isinstance(opp, self.MainExploiter) or isinstance(opp._parent, self.MainExploiter):
+        elif isinstance(opp, MainExploiter) or isinstance(opp._parent, MainExploiter):
             a_type = SelfplayAgentType.MAIN_EXPLOITER
-        elif isinstance(opp._parent, self.MainPlayer):
+        elif isinstance(opp._parent, MainPlayer):
             a_type = SelfplayAgentType.OLD_MAIN
         else:
             raise ValueError("Unknown agent type")
 
-        if isinstance(opp, self.Historical):
+        if isinstance(opp, Historical):
             opp_name = getattr(opp, "name", opp.__class__.__name__) + "_" + getattr(opp._parent, "name", opp._parent.__class__.__name__)
         else:
             opp_name = getattr(opp, "name", opp.__class__.__name__)
@@ -610,34 +610,35 @@ class League:
         print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}")
 
         return opp, a_type, num_done_selfplaygames, last_logged_selfplay_games
-    
-    def initialize_league(self, args, device, agent):
-        agent_type = _init_agent_type(args, device)
-        # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
-        league = self.League(initial_agent=agent, args=args)
 
-        # initiale Environments mit den jeweiligen Gegnern gefüllt
-        active_league_agents = []
-        assert len(league._learning_agents) == args.num_selfplay_envs//2, "Number of learning agents must be half of the number of selfplay envs"
-        for idx, player0 in enumerate(league._learning_agents):
-            opp = player0.get_match()[0]
-            active_league_agents.append(player0)
-            active_league_agents.append(opp)
-            if isinstance(opp, league.MainPlayer):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.CUR_MAIN
-            elif isinstance(opp, league.LeagueExploiter) or isinstance(opp._parent, league.LeagueExploiter):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
-            elif isinstance(opp, league.MainExploiter) or isinstance(opp._parent, league.MainExploiter):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.MAIN_EXPLOITER
-            elif isinstance(opp._parent, league.MainPlayer):
-                agent_type[idx * 2 + 1] = SelfplayAgentType.OLD_MAIN
-            else:
-                raise ValueError("Unknown agent type")
 
-            # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
+def initialize_league(args, device, agent):
+    agent_type = _init_agent_type(args, device)
+    # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
+    league_instance = League(initial_agent=agent, args=args)
 
-        #( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
-        while len(active_league_agents) < args.num_envs:
-            active_league_agents.append(league.learning_agents[0])
+    # initiale Environments mit den jeweiligen Gegnern gefüllt
+    active_league_agents = []
+    assert len(league_instance.learning_agents) == args.num_selfplay_envs // 2, "Number of learning agents must be half of the number of selfplay envs"
+    for idx, player0 in enumerate(league_instance.learning_agents):
+        opp = player0.get_match()[0]
+        active_league_agents.append(player0)
+        active_league_agents.append(opp)
+        if isinstance(opp, MainPlayer):
+            agent_type[idx * 2 + 1] = SelfplayAgentType.CUR_MAIN
+        elif isinstance(opp, LeagueExploiter) or isinstance(opp._parent, LeagueExploiter):
+            agent_type[idx * 2 + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
+        elif isinstance(opp, MainExploiter) or isinstance(opp._parent, MainExploiter):
+            agent_type[idx * 2 + 1] = SelfplayAgentType.MAIN_EXPLOITER
+        elif isinstance(opp._parent, MainPlayer):
+            agent_type[idx * 2 + 1] = SelfplayAgentType.OLD_MAIN
+        else:
+            raise ValueError("Unknown agent type")
 
-        return league, active_league_agents, agent_type
+        # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
+
+    # ( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
+    while len(active_league_agents) < args.num_envs:
+        active_league_agents.append(league_instance.learning_agents[0])
+
+    return league_instance, active_league_agents, agent_type

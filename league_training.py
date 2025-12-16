@@ -30,10 +30,10 @@ class LeagueTrainer:
     get_scalar_features: Callable
     action_plane_nvec: Sequence[int]
     checkpoint_frequency: int = 0
-    hist_reward = 0
-    num_done_selfplaygames = 0
-    last_logged_selfplay_games = 0
-    num_done_botgames = 0
+    hist_reward: int = 0
+    num_done_selfplaygames: int = 0
+    last_logged_selfplay_games: int = 0
+    num_done_botgames: int = 0
 
 
     def __post_init__(self):
@@ -67,7 +67,7 @@ class LeagueTrainer:
             raise ValueError("league training requires at least one main agent")
 
 
-        league, active_league_agents, agent_type = league.initialize_league(args, device, agent)
+        league_instance, active_league_agents, agent_type = league.initialize_league(args, device, agent)
         
 
         optimizer = optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
@@ -335,6 +335,7 @@ class LeagueTrainer:
 
                     for done_idx in where_done[0].cpu().numpy():
                         done_agent = active_league_agents[done_idx]
+                        dyn_winloss = winloss_weight
                         if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
                             done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
 
@@ -346,7 +347,23 @@ class LeagueTrainer:
 
                         elif done_idx % 2 == 0:
                             # update League match results
-                            active_league_agents[done_idx + 1], agent_type[done_idx + 1] = league.handle_game_end(args, agent, writer, league, active_league_agents, global_step, infos, attack_weight, done_idx, done_agent, dyn_winloss)
+                            opp, new_type, self.num_done_selfplaygames, self.last_logged_selfplay_games = league_instance.handle_game_end(
+                                args,
+                                agent,
+                                writer,
+                                active_league_agents,
+                                global_step,
+                                infos,
+                                attack_weight,
+                                done_idx,
+                                done_agent,
+                                dyn_winloss,
+                                self.hist_reward,
+                                self.num_done_selfplaygames,
+                                self.last_logged_selfplay_games,
+                            )
+                            active_league_agents[done_idx + 1] = opp
+                            agent_type[done_idx + 1] = new_type
 
                 # =============
             # =========================

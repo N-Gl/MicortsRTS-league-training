@@ -681,107 +681,101 @@ class SelfPlayTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 50 and args.num_bot_envs > 0:
-                
-                winrate_differance = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2) - np.mean(np.add(writer.recent_bot_winloss, 1) / 2)
-                if winrate_differance < -args.lower_selfplay_winrate_offset:
-                    print("\nRemoving a Bot Environment")
-    
-                    envs.close()
-                    envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
-                    last_bot_env_change = 0
-    
-                    agent.remove_last_bot_env()
-    
-                    bot_obs = bot_obs.zero_()[:, :args.num_bot_envs]
-                    bot_actions = bot_actions.zero_()[:, :args.num_bot_envs]
-                    bot_logprobs = bot_logprobs.zero_()[:, :args.num_bot_envs]
-                    bot_invalid_action_masks = bot_invalid_action_masks.zero_()[:, :args.num_bot_envs]
-    
-                    rewards_attack = rewards_attack[:, :args.num_envs]
-                    rewards_attack[:, args.num_selfplay_envs:].zero_()
-                    rewards_winloss = rewards_winloss[:, :args.num_envs]
-                    rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                    rewards_score = rewards_score[:, :args.num_envs]
-                    rewards_score[:, args.num_selfplay_envs:].zero_()
-                    # TODO (optimize): muss man die wirklich resetten?
-                    dones = dones[:, :args.num_envs]
-                    dones[:, args.num_selfplay_envs:].zero_()
-                    values = values[:, :args.num_envs]
-                    values[:, args.num_selfplay_envs:].zero_()
-    
-                    next_obs_np, _, bot_res = envs.reset()
-                    bot_next_obs = torch.Tensor(next_obs_np).to(device)
-    
-                    next_done = next_done[:args.num_envs]
-                    next_done[args.num_selfplay_envs:].zero_()
-    
-                    scalar_features = scalar_features[:, :args.num_envs]
-                    scalar_features[:, args.num_selfplay_envs:].zero_()
-                    z_features = z_features[:, :args.num_envs]
-                    z_features[:, args.num_selfplay_envs:].zero_()
-    
-                    bot_position_indices = bot_position_indices[:args.num_bot_envs]
-    
-                    print("New number of Bot Environments:", args.num_bot_envs)
-                    print("")
+            if  last_bot_env_change >= 50 and args.num_bot_envs > 0 and num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames:
+                print("\nRemoving a Bot Environment")
 
-            elif last_bot_env_change >= 50 and args.num_bot_envs < args.max_num_bot_envs:
+                envs.close()
+                envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
+                last_bot_env_change = 0
+
+                agent.remove_last_bot_env()
+
+                bot_obs = bot_obs.zero_()[:, :args.num_bot_envs]
+                bot_actions = bot_actions.zero_()[:, :args.num_bot_envs]
+                bot_logprobs = bot_logprobs.zero_()[:, :args.num_bot_envs]
+                bot_invalid_action_masks = bot_invalid_action_masks.zero_()[:, :args.num_bot_envs]
+
+                rewards_attack = rewards_attack[:, :args.num_envs]
+                rewards_attack[:, args.num_selfplay_envs:].zero_()
+                rewards_winloss = rewards_winloss[:, :args.num_envs]
+                rewards_winloss[:, args.num_selfplay_envs:].zero_()
+                rewards_score = rewards_score[:, :args.num_envs]
+                rewards_score[:, args.num_selfplay_envs:].zero_()
+                # TODO (optimize): muss man die wirklich resetten?
+                dones = dones[:, :args.num_envs]
+                dones[:, args.num_selfplay_envs:].zero_()
+                values = values[:, :args.num_envs]
+                values[:, args.num_selfplay_envs:].zero_()
+
+                next_obs_np, _, bot_res = envs.reset()
+                bot_next_obs = torch.Tensor(next_obs_np).to(device)
+
+                next_done = next_done[:args.num_envs]
+                next_done[args.num_selfplay_envs:].zero_()
+
+                scalar_features = scalar_features[:, :args.num_envs]
+                scalar_features[:, args.num_selfplay_envs:].zero_()
+                z_features = z_features[:, :args.num_envs]
+                z_features[:, args.num_selfplay_envs:].zero_()
+
+                bot_position_indices = bot_position_indices[:args.num_bot_envs]
+
+                print("New number of Bot Environments:", args.num_bot_envs)
+                print("")
+
+            elif last_bot_env_change >= 50 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+                print("\nAdding an Bot Environment")
+
+                envs.close()
+                envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
+                last_bot_env_change = 0
+
+                agent.add_bot_env()
+
+                bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape, device=device)
+                bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape, device=device)
+                bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
+                bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
+
+                num_added_envs = args.num_envs - rewards_attack.shape[1]
+
+                rewards_attack = torch.cat(
+                    (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
+                )
+                rewards_winloss = torch.cat(
+                    (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
+                )
+                rewards_score = torch.cat(
+                    (rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_score.dtype)), dim=1
+                )
+                dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
+                values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
+                rewards_attack[:, args.num_selfplay_envs:].zero_()
+                rewards_winloss[:, args.num_selfplay_envs:].zero_()
+                rewards_score[:, args.num_selfplay_envs:].zero_()
+                # TODO (optimize): muss man die wirklich resetten?
+                dones[:, args.num_selfplay_envs:].zero_()
+                values[:, args.num_selfplay_envs:].zero_()
+
+
+                next_obs_np, _, bot_res = envs.reset()
+                bot_next_obs = torch.Tensor(next_obs_np).to(device)
+
                 
-                winrate_differance = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2) - np.mean(np.add(writer.recent_bot_winloss, 1) / 2)
-                if winrate_differance > args.upper_selfplay_winrate_offset:
-                    print("\nAdding an Bot Environment")
-    
-                    envs.close()
-                    envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
-                    last_bot_env_change = 0
-    
-                    agent.add_bot_env()
-    
-                    bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape, device=device)
-                    bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape, device=device)
-                    bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
-                    bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
-    
-                    num_added_envs = args.num_envs - rewards_attack.shape[1]
-    
-                    rewards_attack = torch.cat(
-                        (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
-                    )
-                    rewards_winloss = torch.cat(
-                        (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
-                    )
-                    rewards_score = torch.cat(
-                        (rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_score.dtype)), dim=1
-                    )
-                    dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
-                    values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
-                    rewards_attack[:, args.num_selfplay_envs:].zero_()
-                    rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                    rewards_score[:, args.num_selfplay_envs:].zero_()
-                    # TODO (optimize): muss man die wirklich resetten?
-                    dones[:, args.num_selfplay_envs:].zero_()
-                    values[:, args.num_selfplay_envs:].zero_()
-    
-    
-                    next_obs_np, _, bot_res = envs.reset()
-                    bot_next_obs = torch.Tensor(next_obs_np).to(device)
-    
-                    
-                    next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))
-                    next_done[args.num_selfplay_envs:].zero_()
-    
-                    # scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
-                    scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, num_added_envs, 11), device=device, dtype=scalar_features.dtype)), dim=1)
-                    scalar_features[:, args.num_selfplay_envs:].zero_()
-                    # z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
-                    z_features = torch.cat((z_features, torch.zeros((args.num_steps, num_added_envs, 8), device=device, dtype=z_features.dtype)), dim=1)
-                    z_features[:, args.num_selfplay_envs:].zero_()
-    
-                    bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
-    
-                    print("New number of Bot Environments:", args.num_bot_envs)
-                    print("")
+                next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))
+                next_done[args.num_selfplay_envs:].zero_()
+
+                # scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
+                scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, num_added_envs, 11), device=device, dtype=scalar_features.dtype)), dim=1)
+                scalar_features[:, args.num_selfplay_envs:].zero_()
+                # z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
+                z_features = torch.cat((z_features, torch.zeros((args.num_steps, num_added_envs, 8), device=device, dtype=z_features.dtype)), dim=1)
+                z_features[:, args.num_selfplay_envs:].zero_()
+
+                bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
+
+                print("New number of Bot Environments:", args.num_bot_envs)
+                print("")
 
             writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
 
