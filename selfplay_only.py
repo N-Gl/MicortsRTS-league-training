@@ -1,7 +1,10 @@
 from collections import deque
 import os
+import sys
 import time
 from typing import Callable
+import signal
+import threading
 
 import numpy as np
 import torch
@@ -130,6 +133,58 @@ def render_all_envs(env_transform):
     except Exception:
         pass
 
+# TODO: debugging function
+def break_on_stdout(trigger="Issuing a non legal action", include_stderr: bool = True):
+    """Pipe stdout (and optionally stderr) through a watcher and drop into pdb when trigger text appears."""
+    trigger_bytes = trigger.encode()
+    orig_stdout_fd = os.dup(sys.stdout.fileno())
+    orig_stderr_fd = os.dup(sys.stderr.fileno()) if include_stderr else None
+    read_fd, write_fd = os.pipe()
+
+    def _sigusr1(_sig, _frame):
+        import pdb
+        pdb.set_trace()
+
+    signal.signal(signal.SIGUSR1, _sigusr1)
+
+    def _reader():
+        buf = b""
+        while True:
+            chunk = os.read(read_fd, 4096)
+            if not chunk:
+                break
+            os.write(orig_stdout_fd, chunk)
+            buf = (buf + chunk)[-8192:]
+            if trigger_bytes in buf:
+                os.kill(os.getpid(), signal.SIGUSR1)
+
+    threading.Thread(target=_reader, daemon=True).start()
+    sys.stdout.flush()
+    if include_stderr:
+        sys.stderr.flush()
+    os.dup2(write_fd, sys.stdout.fileno())
+    if include_stderr:
+        os.dup2(write_fd, sys.stderr.fileno())
+
+    def cleanup():
+        try:
+            sys.stdout.flush()
+            if include_stderr:
+                sys.stderr.flush()
+            os.dup2(orig_stdout_fd, sys.stdout.fileno())
+            if include_stderr and orig_stderr_fd is not None:
+                os.dup2(orig_stderr_fd, sys.stderr.fileno())
+        finally:
+            for fd in (orig_stdout_fd, orig_stderr_fd if include_stderr else None, read_fd, write_fd):
+                if fd is None:
+                    continue
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+
+    return cleanup
+
 class SelfPlayTrainer:
     def __init__(
         self,
@@ -191,6 +246,9 @@ class SelfPlayTrainer:
             lr_fn = lambda frac: frac * args.PPO_learning_rate  # noqa: E731
         else:
             lr_fn = None
+
+        
+        cleanup_break = break_on_stdout("Issuing a non legal action")
 
         mapsize = 16 * 16
         action_space_shape = (mapsize, envs.action_plane_space.shape[0])
@@ -721,6 +779,9 @@ class SelfPlayTrainer:
                 print("")
 
             writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
+
+        if cleanup_break:
+            cleanup_break()
 
 
     # TODO (optimize): in obs, ... die envs entfernen, die man nicht braucht (spart Rechenzeit)
