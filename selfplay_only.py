@@ -142,8 +142,7 @@ def break_on_stdout(trigger="Issuing a non legal action", include_stderr: bool =
     read_fd, write_fd = os.pipe()
 
     def _sigusr1(_sig, _frame):
-        import pdb
-        pdb.set_trace()
+        breakpoint()
 
     signal.signal(signal.SIGUSR1, _sigusr1)
 
@@ -789,8 +788,17 @@ class SelfPlayTrainer:
 
         args.num_bot_envs = num_bots
         args.num_envs = args.num_selfplay_envs + args.num_bot_envs
-        self.active_league_agents = self.active_league_agents[:args.num_envs]
-        self.indices = self.indices[:-1]
+
+        # bring active_league_agents Länge in Einklang mit neuer Env-Anzahl
+        if len(self.active_league_agents) < args.num_envs:
+            self.active_league_agents.append(self.league_agent)
+            self.indices = torch.cat((self.indices, torch.tensor([args.num_envs - 1], device=self.device)))
+        else:
+            self.active_league_agents = self.active_league_agents[:args.num_envs]
+            self.indices = self.indices[:-1]
+
+
+        
 
 
         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
