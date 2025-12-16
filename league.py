@@ -3,8 +3,11 @@ import numpy as np
 import torch
 import os
 from enum import IntEnum
+from typing import List, Tuple
 
 from agent_model import Agent
+from log_aggregate_result_table import Logger
+
 
 
 class SelfplayAgentType(IntEnum):
@@ -51,61 +54,31 @@ def pfsp(win_rates, weighting="linear", enabled=True):
         return np.ones_like(win_rates) / len(win_rates)
     return probs / norm
 
-
-def _init_agent_type(self):
+def _init_agent_type(args, device):
     agent_type = []
-    if self.args.num_selfplay_envs > 0:
-        for i in range(self.args.num_main_agents):
+    if args.num_selfplay_envs > 0:
+        for i in range(args.num_main_agents):
             agent_type.append(SelfplayAgentType.CUR_MAIN)
             agent_type.append(-1)
-        for i in range(self.args.num_main_exploiters):
+        for i in range(args.num_main_exploiters):
             agent_type.append(SelfplayAgentType.MAIN_EXPLOITER) 
             agent_type.append(-1)
-        for i in range(self.args.num_league_exploiters):
+        for i in range(args.num_league_exploiters):
             agent_type.append(SelfplayAgentType.LEAGUE_EXPLOITER) 
             agent_type.append(-1)
     else:
         agent_type = None
-    if self.args.num_selfplay_envs > 0:
-        agent_type = torch.tensor(agent_type, dtype=torch.long).to(self.device)
-        assert self.args.num_selfplay_envs == len(agent_type), "Number of selfplay envs must be equal to the number of agent types (each agent plays against itself)"
+    if args.num_selfplay_envs > 0:
+        agent_type = torch.tensor(agent_type, dtype=torch.long).to(device)
+        assert args.num_selfplay_envs == len(agent_type), "Number of selfplay envs must be equal to the number of agent types (each agent plays against itself)"
     else:
         assert agent_type is None, "If no selfplay envs are used, agent_type must be None"
     return agent_type
 
-def _initialize_league(self):
-    agent_type = self._init_agent_type()
-    # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
-    league = league.League(initial_agent=self.agent, args=self.args)
-    
-    # initiale Environments mit den jeweiligen Gegnern gefüllt
-    active_league_agents = []
-    assert len(league._learning_agents) == self.args.num_selfplay_envs//2, "Number of learning agents must be half of the number of selfplay envs"
-    for idx, player0 in enumerate(league._learning_agents):
-        opp = player0.get_match()[0]
-        active_league_agents.append(player0)
-        active_league_agents.append(opp)
-        if isinstance(opp, league.MainPlayer):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.CUR_MAIN
-        elif isinstance(opp, league.LeagueExploiter) or isinstance(opp._parent, league.LeagueExploiter):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
-        elif isinstance(opp, league.MainExploiter) or isinstance(opp._parent, league.MainExploiter):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.MAIN_EXPLOITER
-        elif isinstance(opp._parent, league.MainPlayer):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.OLD_MAIN
-        else:
-            raise ValueError("Unknown agent type")
-        
-        # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
-    
-    #( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
-    while len(active_league_agents) < self.args.num_envs:
-        active_league_agents.append(league.learning_agents[0])
-    
-    return league, active_league_agents, agent_type
-
-def _on_checkpoint(self):
-    self.hist_reward += self.args.new_hist_rewards
+# TODO: rufe die Methode richtig auf
+def _on_checkpoint(hist_reward, args):
+    hist_reward += args.new_hist_rewards
+     
 
 class Payoff:
     def __init__(self):
@@ -518,3 +491,153 @@ class League:
     @property
     def learning_agents(self):
         return self._learning_agents
+    
+
+
+    def _log_selfplay_results(self, args, agent, writer, global_step, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games):
+        selfplay_winrate = None
+        selfplay_with_draw = None
+        if isinstance(done_agent, self.MainPlayer):
+            writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
+            selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
+            selfplay_with_draw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
+            winloss_values = np.array(writer.recent_selfplay_winloss)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_with_draw", selfplay_with_draw, num_done_selfplaygames)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
+            writer.add_scalar("progress/num_selfplay_games", num_done_selfplaygames, num_done_selfplaygames)
+        num_done_selfplaygames += 1
+
+        # TODO (league training): auch andere Agents loggen? (wäre pro exploiter pro Gegner eine Zeile in der Tabelle)
+        if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and isinstance(done_agent, self.MainPlayer):
+            last_logged_selfplay_games = num_done_selfplaygames
+            win_rates = []
+            opp_names = []
+            game_count = []
+            opponent_table_rows: List[Tuple] = []
+            count_league_players = 0
+            for i, p1 in enumerate(done_agent.payoff.players):
+                if not isinstance(p1, self.LeagueExploiter): # league exploiters will be turned to historicals bevore playing against main agents
+                    if isinstance(p1, self.Historical):
+                        name = getattr(p1, "name", p1.__class__.__name__) + "_" + getattr(p1._parent, "name", p1._parent.__class__.__name__)+ "_" + str(i)
+                    else:
+                        name = getattr(p1, "name", p1.__class__.__name__) + "_" + str(i)
+
+                    opp_names.append(name)
+                    game_count.append(done_agent._payoff._games[done_agent, p1])
+                    win_rates.append(done_agent.payoff._win_rate(done_agent, p1))
+
+                    wins = done_agent.payoff._wins[done_agent, p1]
+                    losses = done_agent.payoff._losses[done_agent, p1]
+                    draws = done_agent.payoff._draws[done_agent, p1]
+                    only_win_rate = wins / game_count[i-count_league_players] if game_count[i-count_league_players] > 0 else 0
+                    draw_rate = draws / game_count[i-count_league_players] if game_count[i-count_league_players] > 0 else 0
+                    loss_rate = losses / game_count[i-count_league_players] if game_count[i-count_league_players] > 0 else 0
+
+                    opponent_table_rows.append((name,
+                                                                    done_agent.payoff._no_decay_games[done_agent, p1],
+                                                                    done_agent.payoff._no_decay_wins[done_agent, p1],
+                                                                    done_agent.payoff._no_decay_draws[done_agent, p1],
+                                                                    done_agent.payoff._no_decay_losses[done_agent, p1],
+                                                                    only_win_rate,
+                                                                    draw_rate,
+                                                                    loss_rate
+                                                                    ))
+                else:
+                    count_league_players += 1
+
+            if done_agent.agent is agent:
+                self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
+            else:
+                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx)
+            Logger.log_wandb_summary(
+                                    args,
+                                    opponent_table_rows,
+                                    no_reward=True,
+                                    step=global_step,
+                                    table_name="league/games_summary",
+                                    with_name=self_name
+                                    )
+            self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
+            for opp, games, r in zip(opp_names, game_count, win_rates):
+                if games > 0:
+                    writer.add_scalar(f"winrate_per_opponent/{self_name}_vs_{opp}", r, games)
+        # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
+        if selfplay_winrate is not None:
+            print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_with_draw:.3f}")
+        return num_done_selfplaygames, last_logged_selfplay_games
+
+    # TODO: rufe die Methode richtig auf
+    def handle_game_end(self, args, agent, writer, active_league_agents, global_step, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, last_logged_selfplay_games):
+        self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
+
+        print(f"Game {int(done_idx/2)} ended: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {getattr(active_league_agents[done_idx + 1], 'name', active_league_agents[done_idx + 1].__class__.__name__)}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
+        num_done_selfplaygames, last_logged_selfplay_games = self._log_selfplay_results(
+            args,
+            agent,
+            writer,
+            global_step,
+            infos,
+            done_idx,
+            done_agent,
+            dyn_winloss,
+            attack_weight,
+            num_done_selfplaygames,
+            last_logged_selfplay_games,
+        )
+        if done_agent.ready_to_checkpoint():
+            self.add_player(done_agent.checkpoint())
+            _on_checkpoint(hist_reward=hist_reward, args=args)
+        # neuen gegner in diesem environment auswählen
+        opp = done_agent.get_match()[0]
+        # TODO: vorher active_league_agents[1] statt active_league_agents[1 + done_idx] ist es jetzt richtig?
+        if isinstance(opp, self.MainPlayer):
+            a_type = SelfplayAgentType.CUR_MAIN
+        elif isinstance(opp, self.LeagueExploiter) or isinstance(opp._parent, self.LeagueExploiter):
+            a_type = SelfplayAgentType.LEAGUE_EXPLOITER
+        elif isinstance(opp, self.MainExploiter) or isinstance(opp._parent, self.MainExploiter):
+            a_type = SelfplayAgentType.MAIN_EXPLOITER
+        elif isinstance(opp._parent, self.MainPlayer):
+            a_type = SelfplayAgentType.OLD_MAIN
+        else:
+            raise ValueError("Unknown agent type")
+
+        if isinstance(opp, self.Historical):
+            opp_name = getattr(opp, "name", opp.__class__.__name__) + "_" + getattr(opp._parent, "name", opp._parent.__class__.__name__)
+        else:
+            opp_name = getattr(opp, "name", opp.__class__.__name__)
+
+        print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}")
+
+        return opp, a_type, num_done_selfplaygames, last_logged_selfplay_games
+    
+    def initialize_league(self, args, device, agent):
+        agent_type = _init_agent_type(args, device)
+        # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
+        league = self.League(initial_agent=agent, args=args)
+
+        # initiale Environments mit den jeweiligen Gegnern gefüllt
+        active_league_agents = []
+        assert len(league._learning_agents) == args.num_selfplay_envs//2, "Number of learning agents must be half of the number of selfplay envs"
+        for idx, player0 in enumerate(league._learning_agents):
+            opp = player0.get_match()[0]
+            active_league_agents.append(player0)
+            active_league_agents.append(opp)
+            if isinstance(opp, league.MainPlayer):
+                agent_type[idx * 2 + 1] = SelfplayAgentType.CUR_MAIN
+            elif isinstance(opp, league.LeagueExploiter) or isinstance(opp._parent, league.LeagueExploiter):
+                agent_type[idx * 2 + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
+            elif isinstance(opp, league.MainExploiter) or isinstance(opp._parent, league.MainExploiter):
+                agent_type[idx * 2 + 1] = SelfplayAgentType.MAIN_EXPLOITER
+            elif isinstance(opp._parent, league.MainPlayer):
+                agent_type[idx * 2 + 1] = SelfplayAgentType.OLD_MAIN
+            else:
+                raise ValueError("Unknown agent type")
+
+            # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
+
+        #( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
+        while len(active_league_agents) < args.num_envs:
+            active_league_agents.append(league.learning_agents[0])
+
+        return league, active_league_agents, agent_type
