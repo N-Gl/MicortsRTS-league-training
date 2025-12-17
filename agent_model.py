@@ -391,7 +391,7 @@ class Agent(nn.Module):
     def get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
         return self.critic(self.forward(x, sc, z))
     
-    def selfplay_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False) -> torch.Tensor:
+    def selfplay_and_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False) -> torch.Tensor:
         '''
         returns value for selfplay and bot envs combined.
         Also returns value for not main Agents

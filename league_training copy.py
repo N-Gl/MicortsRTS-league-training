@@ -36,6 +36,8 @@ class LeagueTrainer:
     num_done_botgames: int = 0
 
 
+
+
     def __post_init__(self):
         self.checkpoint_frequency = self.args.checkpoint_frequency
 
@@ -44,6 +46,16 @@ class LeagueTrainer:
 
 
 
+
+
+
+
+
+
+
+
+
+#####################################################################
     
 
 

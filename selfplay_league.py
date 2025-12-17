@@ -5,21 +5,19 @@ import time
 from typing import Callable
 import signal
 import threading
-
 import numpy as np
 import torch
 from jpype.types import JArray, JInt
+from stable_baselines3.common.vec_env import VecVideoRecorder
+from VecstatsMonitor import VecstatsMonitor
 
-from agent_model import Agent
-import ppo_update
 from microrts_space_transform import MicroRTSSpaceTransform
 from gym_microrts.envs.microrts_vec_env import  MicroRTSGridModeVecEnv
 from gym_microrts import microrts_ai
 
-from stable_baselines3.common.vec_env import VecVideoRecorder
-from VecstatsMonitor import VecstatsMonitor
-
-
+from agent_model import Agent
+import ppo_update
+import league
 
 class Selfplay_agent:
     def __init__(self, agent):
@@ -98,6 +96,7 @@ def adjust_action_selfplay(args, valid_actions: np.ndarray, valid_actions_counts
                 # relative attack position anpassen (nur für a_r = 7)
             #real_action[1:args.num_selfplay_envs:2, :, 7] = torch.abs(real_action[1:args.num_selfplay_envs:2, :, 7] - 48)
 
+# TODO: benutze die Methode aus league.py (ist dasselbe?)
 def save_league_model(save_agent, experiment_name: str, dir_name: str, file_name: str):
     os.makedirs(f"league_models/{experiment_name}/{dir_name}", exist_ok=True)
     if isinstance(save_agent, Agent):
@@ -195,8 +194,7 @@ class SelfPlayTrainer:
         writer,
         device: torch.device,
         experiment_name: str,
-        get_scalar_features: Callable,
-        checkpoint_frequency: int = 10,
+        get_scalar_features: Callable
     ):
         self.agent = agent
         self.supervised_agent = supervised_agent
@@ -207,16 +205,17 @@ class SelfPlayTrainer:
         self.device = device
         self.experiment_name = experiment_name
         self.get_scalar_features = get_scalar_features
-        self.checkpoint_frequency = checkpoint_frequency
+        self.checkpoint_frequency = args.checkpoint_frequency
         self.active_league_agents = []
         self.league_agent = Selfplay_agent(agent)
+        # TODO: initialisiere die League Agents, wie in league_training.py
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
-        args.num_envs = args.num_envs
         for _ in range(args.num_main_agents):
             self.active_league_agents.append(self.league_agent)
             self.active_league_agents.append(self.league_supervised_agent)
         for _ in range(args.num_bot_envs):
             self.active_league_agents.append(self.league_agent)
+        # TODO: richtig initialisiert?
         self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
         self.indices = torch.cat(
             (torch.tensor(range(0, args.num_selfplay_envs, 2), dtype=torch.long, device=device), self.indices)
@@ -226,19 +225,25 @@ class SelfPlayTrainer:
         args = self.args
         num_done_botgames = 0
         num_done_selfplaygames = 0
+        last_logged_selfplay_games = 0
         agent: Agent = self.agent
         envs = self.envs
         sp_envs = self.sp_envs
         writer = self.writer
         device = self.device
-        # supervised_agent = self.supervised_agent or Agent(agent.action_plane_nvec, agent.device, initial_weights=agent.state_dict())
         supervised_agent = self.supervised_agent or Agent(agent.action_plane_nvec, agent.device, initial_weights=agent.state_dict())
-
         last_bot_env_change = 0
 
         if args.render:
             if args.render_all:
                 from ppo import Rendering
+
+        if args.num_selfplay_envs == 0:
+            raise ValueError("league training requires num_selfplay_envs > 0")
+        if args.num_main_agents == 0:
+            raise ValueError("league training requires at least one main agent")
+        
+        league_instance, active_league_agents, agent_type = league.initialize_league(args, device, agent)
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:
@@ -271,17 +276,15 @@ class SelfPlayTrainer:
 
         global_step = 0
         start_time = time.time()
+
         next_obs_np, _, bot_res = envs.reset()
-
         bot_next_obs = torch.Tensor(next_obs_np).to(device)
-
 
         next_obs_np, _, sp_res = sp_envs.reset()
         sp_next_obs = torch.Tensor(next_obs_np).to(device)
-
         adjust_obs_selfplay(args, sp_next_obs, is_new_env=True)
-        next_done = torch.zeros(args.num_envs).to(device)
 
+        next_done = torch.zeros(args.num_envs).to(device)
         scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
         z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long).to(device)
 
@@ -295,7 +298,7 @@ class SelfPlayTrainer:
 
         
 
-        print("PPO training started")
+        print("League PPO training started")
         
 
         for update in range(1, num_updates + 1):
@@ -314,7 +317,7 @@ class SelfPlayTrainer:
                         envs.render("human")
                         sp_envs.render("human")
                         
-                global_step += args.num_main_agents + args.num_bot_envs
+                global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
                 # global_step += (args.num_main_agents // 2) + args.num_bot_envs
                 bot_obs[step] = bot_next_obs
                 sp_obs[step] = sp_next_obs
@@ -357,6 +360,22 @@ class SelfPlayTrainer:
                         unique_agents=unique_agents,
                         only_player_0=True
                     ).flatten()
+
+                    # debug:
+                    # a = (Variables)
+                    # import pickle, os
+                    # with open(f"dump_var.pkl", "wb") as f:
+                    #     pickle.dump(a , f)
+
+                    # import pickle, glob
+                    # files = sorted(glob.glob("dump_*.pkl"))
+                    # c = pickle.load(open(files[0], "rb"))
+                    # arr = []
+                    # for a, b in zip(c, (Variables)):
+                    #     if isinstance(a == b, bool):
+                    #         arr.append((a == b))
+                    #     else:
+                    #         arr.append(torch.all(a == b).item())
                     
 
                     self.check_values(scalar_features, z_features, values, agent, step, obs=torch.cat([sp_obs[step], bot_obs[step]], dim=0), flatten=True)
@@ -370,7 +389,7 @@ class SelfPlayTrainer:
                         z_features[step, args.num_selfplay_envs:],
                         envs=envs
                     )
-
+###############################################################################################################################################
                     sp_actions[step], sp_logprobs[step], _, sp_invalid_action_masks[step] = agent.selfplay_get_action(
                         sp_obs[step],
                         scalar_features[step, :args.num_selfplay_envs],

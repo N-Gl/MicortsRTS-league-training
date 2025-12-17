@@ -1,0 +1,476 @@
+[33mcommit 9fa127aaea20404888542dec90cefd9720ab5906[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32msp_bot_seperated[m[33m, [m[1;31morigin/sp_bot_seperated[m[33m)[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 14:16:42 2025 +0100
+
+    not tested!
+
+[33mcommit 97c5b730c793edc9519aa008d4d7e920c882dc1e[m
+Merge: aba0a97 e5c9c57
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 14:07:16 2025 +0100
+
+    Merge branch 'sp_bot_seperated' of https://github.com/N-Gl/MicortsRTS-league-training into sp_bot_seperated
+
+[33mcommit aba0a9794fe43195875458062bd1a3d706cb62f5[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 14:06:21 2025 +0100
+
+    started extraction _log_selfplay_results, handle_game_end, initialize_league to league.py
+
+[33mcommit e5c9c579c9edf4a17bbaca3733a82139d88dd45e[m[33m ([m[1;32mcontrol_num_bots_by_winrate[m[33m)[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 13:04:55 2025 +0100
+
+    add, remove bots depending on winrate not num played games
+
+[33mcommit 0a944f9873c02644f48be5feee8cfbb597b44f48[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 12:25:54 2025 +0100
+
+    active_league_agents, indices adjustments for adding Botenvs (fixed non legal actions)
+
+[33mcommit 19a59724f4595204189d0feb2bf4cc8b1c077089[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 10:31:14 2025 +0100
+
+    debugging for Issuing a non legal action
+
+[33mcommit 49c638493fdd7bc309fd16872bfde973a197ce30[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 16 10:30:22 2025 +0100
+
+    extract more league methodes to league.py
+
+[33mcommit cca084a4a942678ff82906b6b3ff44fabd34f4b1[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 16:27:33 2025 +0100
+
+    changed Agent for selfplay
+
+[33mcommit db7debfbdac28baa19c9cbd355b40b6506d8e5ea[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 16:25:40 2025 +0100
+
+    removed break, use correct Agent, prepared evaluation
+
+[33mcommit 400db3253f22c978e5e95452b50386862e96f076[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 13:18:57 2025 +0100
+
+    fix winrate charts, add print statements
+
+[33mcommit fee25799f20277a396d1cc1061c75c0df3e0ec7a[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 12:45:55 2025 +0100
+
+    better output, bot_adding_done_training_ratio, bot_removing_done_training_ratio
+
+[33mcommit 93371cf100fe2a7924e3b5319be7dcc0d81423e1[m
+Author: N-Gl <N-Gl@gmx.de>
+Date:   Mon Dec 15 11:36:10 2025 +0100
+
+    update configs
+
+[33mcommit bd1385612877da4bed9cc95d4ed55f8ad0d6d0c9[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 11:24:01 2025 +0100
+
+    update configs
+
+[33mcommit bc2d88a444913914c1d329d21efe86320fcbe2dc[m
+Merge: da8a377 b556067
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 11:23:45 2025 +0100
+
+    Merge branch 'sp_bot_seperated' of https://github.com/N-Gl/MicortsRTS-league-training into sp_bot_seperated
+
+[33mcommit da8a377b2b1af156b77815c69c625d67c4f57f4a[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 15 11:21:52 2025 +0100
+
+    update configs
+
+[33mcommit b556067362d6116c5c28be9f60844e039990325c[m
+Author: N-Gl <N-Gl@gmx.de>
+Date:   Mon Dec 15 11:20:16 2025 +0100
+
+    update configs
+
+[33mcommit 03870e36ac23e68ab5aab6a8a227e8fbf4eaf6c2[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 19:47:34 2025 +0100
+
+    fix adding an bot env
+
+[33mcommit 38c5c0dfcc33f0092dfcbdc56e0230b9d2a81aa2[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 15:51:03 2025 +0100
+
+    change configs
+
+[33mcommit f85c06b8df03c4a8690fb509717c22bc09fc6014[m
+Author: N-Gl <N-Gl@gmx.de>
+Date:   Fri Dec 12 14:48:43 2025 +0000
+
+    log num_parallel_Bot_Games, prepare configs
+
+[33mcommit e5b9cd1c1fcfe0ece1d55ae231cdd8ef70ad11ea[m
+Merge: 08fe5b8 6cde384
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 15:24:52 2025 +0100
+
+    Merge branch 'main' into sp_bot_seperated
+
+[33mcommit 08fe5b8827fe9c87c31e249bcd551cc88a884b22[m
+Merge: db3715e 184483f
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 15:14:31 2025 +0100
+
+    Merge branch 'sp_bot_seperated' of https://github.com/N-Gl/MicortsRTS-league-training into sp_bot_seperated
+
+[33mcommit 6cde38445b9ca329fd92a7ac1fdbf4c72ff41e1e[m[33m ([m[1;32mmain[m[33m)[m
+Merge: 1d6428e eb62f1c
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 14:55:52 2025 +0100
+
+    Merge branch 'main' of https://github.com/N-Gl/MicortsRTS-league-training
+
+[33mcommit 1d6428e371afdbb33c6aa8d3bb42adc79b650241[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 14:55:10 2025 +0100
+
+    evaluation
+
+[33mcommit eb62f1c5222273b07b8806fdc6fa32efae963c2e[m[33m ([m[1;31morigin/main[m[33m)[m
+Merge: 50e0e30 0996d46
+Author: N-Gl <N-Gl@gmx.de>
+Date:   Fri Dec 12 13:53:20 2025 +0000
+
+    Merge branch 'main' of https://github.com/N-Gl/MicortsRTS-league-training
+
+[33mcommit 50e0e30820fd0b263a48faba2fdbc791a28d1d14[m
+Author: N-Gl <N-Gl@gmx.de>
+Date:   Fri Dec 12 13:49:14 2025 +0000
+
+    original ppo args
+
+[33mcommit 0996d466926b5de056e92965f989146cb93b261b[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 14:07:17 2025 +0100
+
+    ready to evaluate
+
+[33mcommit a87e5140fdb867339267b57ea0508a69f26572b2[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 13:25:13 2025 +0100
+
+    progress on Bot_Agents
+
+[33mcommit 5992bff47020acc4266465a5ebbc1ffadf68fd90[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 12 10:39:08 2025 +0100
+
+    only the first 50 winrates in selfplay_only are initialized withh 0
+
+[33mcommit 61d850437b5103f04a24886cc4746d0ebd381aaf[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 17:12:39 2025 +0100
+
+    fix update in ppo_update
+
+[33mcommit c04f46caf9e6681c5c8d66ae4c07336ab3730e1f[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 17:09:23 2025 +0100
+
+    fix imports, add edgecase in selfplay_get_action for Bot_Agents
+
+[33mcommit 32b680990fd48963c7d7d9249570515125eb63d7[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 16:47:57 2025 +0100
+
+    fix imports
+
+[33mcommit 3aecc9e54d55f766e7013c64e970de03ef254570[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 16:45:27 2025 +0100
+
+    extract league methodes to league.py, use ppo_update.log and ppo_update.update for main_agents in league_taraining.py
+
+[33mcommit 6b3f3f31f44a4d3637039085213e72f6fd5a149d[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 15:23:42 2025 +0100
+
+    testing_selfplay_with_evaluation (not tested)
+
+[33mcommit e21b61dfcb64f62a8b272abb703eb49ac019b2d3[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 14:21:37 2025 +0100
+
+    BCagent
+
+[33mcommit a16c5456844e4db1f7b8141d24dd6300787602ed[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 13:45:00 2025 +0100
+
+    ready to test selfplay with evaluation
+
+[33mcommit b95bf9a9b38dc4cce0acfefe8fd6508dd29a9d64[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 13:19:04 2025 +0100
+
+    extract ppo updates
+
+[33mcommit 97aa7df1bfa95eddaad33b4bd102cae664c847c8[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 11:57:12 2025 +0100
+
+    created selfplay_conf_old_ppo_args
+
+[33mcommit 5e5f3dd6f99b4611142dbeadb36503818a3297f5[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 11:44:51 2025 +0100
+
+    created selfplay_conf_old_ppo_args
+
+[33mcommit 1ef6ce87a4ff4e04b8bb5ac630024765f1888c26[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 11 10:46:04 2025 +0100
+
+    PPO model
+
+[33mcommit d17e6b49665e7f12a28660add1d5e92adab6dbbf[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Wed Dec 10 16:11:26 2025 +0100
+
+    add new maps (endgame_maps)
+
+[33mcommit c3ca40759a89477d0ea586991da0da03555c28d6[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Wed Dec 10 15:06:46 2025 +0100
+
+    add rewardscore
+
+[33mcommit 184483ffefcfa3dabfc54a642785f18616f6be2f[m
+Merge: 390445c 271fc51
+Author: N-Gl <n-gl@gmx.de>
+Date:   Wed Dec 10 14:08:54 2025 +0100
+
+    Merge branch 'main' into sp_bot_seperated
+
+[33mcommit 271fc517918256781fcb21d8f2268332fb975b54[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Wed Dec 10 14:04:30 2025 +0100
+
+    evaluate selfplay first
+
+[33mcommit 390445c61a953f0b1c2602f3ba6b5df4d47b8d7b[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Wed Dec 10 13:48:49 2025 +0100
+
+    remove finished TODOs
+
+[33mcommit b3516261c0962fb83af39e1966bb5a339582a1bb[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Wed Dec 10 13:26:10 2025 +0100
+
+    fixed indexing errors, removed removed Bot envs from active_league_agents, indices aswell
+
+[33mcommit 887479901308fc36e42482baa113cb328296c066[m
+Author: N-Gl <N-Gl@gmx.de>
+Date:   Wed Dec 10 09:27:48 2025 +0000
+
+    working selfplay run
+
+[33mcommit 7d192c03c8b37f77b22e49e4ebb38de7279c1a4d[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 9 15:57:48 2025 +0100
+
+    use self.num_envs, get_new_bot_envs, reset bot envs
+
+[33mcommit db3715e0bbf3b4a1b41f155df5e517e7d34e5392[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 9 11:54:26 2025 +0100
+
+    activate kle_stop
+
+[33mcommit 1dd84cd56b3a087f7171252c3661ae8fdc130d9e[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 9 09:41:01 2025 +0100
+
+    testing selfplay
+
+[33mcommit 1f82b586cfb9ebc8b9a14045115e3a4f4c7a5c8d[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Tue Dec 9 09:39:50 2025 +0100
+
+    testing selfplay
+
+[33mcommit b905bbebb4779c1f356b0dffd0f72568fec88225[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 17:08:36 2025 +0100
+
+    sp_bot_seperated (not tested)
+
+[33mcommit 8aeb7d26b9e08a433722d8b1d90445dd6e370125[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 15:22:53 2025 +0100
+
+    start tracking winrate better
+
+[33mcommit 7cff6321ecdf8904b3eb5079c8cd56901b29c1b6[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 13:33:06 2025 +0100
+
+    venv
+
+[33mcommit 82b2172369af83b730c7faaf42798293349594bd[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 12:27:27 2025 +0100
+
+    train_against_cur_main
+
+[33mcommit 7db11295c99ac3c3b52f256993e2fc0e16be66c7[m
+Merge: 3c64e32 a46f527
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 11:41:35 2025 +0100
+
+    Merge branch 'main' of https://github.com/N-Gl/MicortsRTS-league-training
+
+[33mcommit 3c64e320391927ade9406eaa87911b694c70414f[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 11:41:24 2025 +0100
+
+    dbg_no_main_agent_ppo_update, opponents are half half
+
+[33mcommit a46f5276e9c0351833e0cc97b3a8ca81dfd541bf[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 11:21:10 2025 +0100
+
+    remove main_envsT
+
+[33mcommit d59866c63552f31c290f15fc5f60939c3d2b025f[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Mon Dec 8 10:46:35 2025 +0100
+
+    dbg_no_main_agent_ppo_update, opponents are half half
+
+[33mcommit c0dd0608f6fc94b87ca2c866e93aaedbb56bead0[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 16:09:25 2025 +0100
+
+    toggle all Values calculated by main
+
+[33mcommit 9b80f591059ef37bae1b2f5d867de1d025a5f7bd[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 15:08:09 2025 +0100
+
+    still using debug_matrix_mask
+
+[33mcommit 33eafe1e1c1bc94a690119ad87c9d96c77b43ff7[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 13:38:06 2025 +0100
+
+    fix check_values
+
+[33mcommit 3fd3c134a4d6bacf64a691c3b1d727f6c6cea982[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 13:20:19 2025 +0100
+
+    fix selfplay_get_z_encoded_features
+
+[33mcommit 4749b9c3facfbf5f6bc2ba5c3d46f1630bfe8282[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 12:29:34 2025 +0100
+
+    fix delta
+
+[33mcommit dd4cdbb700bbaf7730d6ecb915cc0e64af6c3771[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 12:21:09 2025 +0100
+
+    Komments for different mask
+
+[33mcommit 1991c87e9d0788dbbf10f64ffc33258c6a5b4233[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 11:58:21 2025 +0100
+
+    fix global_step in selfplay_only
+
+[33mcommit 8ea08dc143ff4a0f1b8ca63694b041affa98a73b[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 11:40:34 2025 +0100
+
+    use selfplay_get_z_encoded_features in selfplay_only
+
+[33mcommit 180dd060bcc027b3729d9d7b03a8b7b8f549ae09[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 11:13:52 2025 +0100
+
+    dyn_attack_reward statt less_draw
+
+[33mcommit 344f3231e39ef2d7c4149598bcfc6f78b2db61f7[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 09:37:19 2025 +0100
+
+    use uptodate next_scalar_features, next_z_features
+
+[33mcommit 7360d09e2fa9ec5dcdf505829fc12c207eae7090[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Fri Dec 5 08:58:14 2025 +0100
+
+    less_draw, value_warmup_updates
+
+[33mcommit 20af952c92fb6c5feaa8f8777f9c554fd56661cf[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 16:39:57 2025 +0100
+
+    implement an warmup-phase
+
+[33mcommit 913b42befd89bb7a98b0b1f1e7beb713ef8220c9[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 16:16:35 2025 +0100
+
+    update selfplay_onnly as well
+
+[33mcommit 9118973b33d54f588869a0baf28120ae4115baba[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 16:03:52 2025 +0100
+
+    optimize skipping devalue a winnable draw
+
+[33mcommit 5b64cbe4ae67cc9da6fb48c273e2cb96e8ad96f1[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 16:00:10 2025 +0100
+
+    devalue a winnable draw
+
+[33mcommit abf8e981b820651c0ff2d26e99cff83272568990[m
+Merge: 24723aa fe931d4
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 14:01:36 2025 +0100
+
+    Merge branch 'main' of https://github.com/N-Gl/MicortsRTS-league-training
+
+[33mcommit 24723aabfbdbbbda97d65a307071bf5c6848d4c3[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 13:59:20 2025 +0100
+
+    deleate selfplay.py, improve outputs for selfplay_only
+
+[33mcommit fe931d4e7b5b535147c30eab1ed17c56f2643b65[m
+Author: N-Gl <130459237+N-Gl@users.noreply.github.com>
+Date:   Thu Dec 4 13:08:23 2025 +0100
+
+    Fix typos and improve README clarity
+
+[33mcommit 8efc43356c91347c715bff059c1edfceb02d56fb[m
+Author: N-Gl <130459237+N-Gl@users.noreply.github.com>
+Date:   Thu Dec 4 13:06:17 2025 +0100
+
+    Create README.md
+
+[33mcommit 1aa140cc36a831769216ac23d510c8db77506259[m
+Author: N-Gl <n-gl@gmx.de>
+Date:   Thu Dec 4 12:54:55 2025 +0100
+
+    repo start
