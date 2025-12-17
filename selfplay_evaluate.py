@@ -50,6 +50,7 @@ def evaluate_agent(
 
     for idx, (opponent_name, opponent_ai, opponent_path,  league_agent) in enumerate(opponents):
         eval_env = _make_selfplay_eval_env(args, reward_weight, vecstats_monitor_cls)
+        active_league_agents = []
 
         if not opponent_ai == agent_model.Agent:
             opponent_ai = agent_model.Bot_Agent(
