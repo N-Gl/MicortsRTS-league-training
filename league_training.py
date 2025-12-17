@@ -390,6 +390,7 @@ class LeagueTrainer:
 
 
                 # dont calculate GAE for Player 1 Environments
+                # TODO: man muss auch Bot environments beachten
                 b_last_value = last_value[:, ::2]
                 b_values = values[:, ::2]
                 b_rewards_attack = rewards_attack[:, ::2]
@@ -494,7 +495,7 @@ class LeagueTrainer:
                     else:
                         league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
             
-
+            
             self._train_exploiters(
                 league,
                 active_league_agents,
