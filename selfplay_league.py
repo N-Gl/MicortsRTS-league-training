@@ -678,29 +678,34 @@ class LeagueTrainer:
             main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
 
             
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
-                args, 
-                agent, 
-                envs, 
-                device, 
-                supervised_agent, 
-                optimizer, 
-                update, 
-                values[:, main_indices].reshape(-1), 
+            
+            main_agent_batch = {
+                "agent": agent,
+                "optimizer": optimizer,
+                "obs": obs[:, main_indices].reshape((-1,) + envs.single_observation_space.shape),
+                "sc": scalar_features[:, main_indices].reshape(-1, scalar_features.shape[-1]),
+                "z": z_features[:, main_indices].reshape(-1, z_features.shape[-1]),
+                "actions": actions[:, main_indices].reshape((-1,) + action_space_shape),
+                "logprobs": logprobs[:, main_indices].reshape(-1),
                 # TODO (league training): ist //2 richtig? (weil advantages, returns nur für Player 0 berechnet wurden)
-                b_advantages[:, main_indices//2].reshape(-1), 
-                b_returns[:, main_indices//2].reshape(-1), 
-                scalar_features[:, main_indices].reshape(-1, scalar_features.shape[-1]), 
-                z_features[:, main_indices].reshape(-1, z_features.shape[-1]), 
-                obs[:, main_indices].reshape((-1,) + envs.single_observation_space.shape), 
-                actions[:, main_indices].reshape((-1,) + action_space_shape), 
-                logprobs[:, main_indices].reshape(-1), 
-                invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape), 
-                main_batch_size, 
+                "advantages": b_advantages[:, main_indices//2].reshape(-1),
+                "returns": b_returns[:, main_indices//2].reshape(-1),
+                "values": values[:, main_indices].reshape(-1),
+                "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape),
+            }
+                
+            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
+                args,
+                envs,
+                main_agent_batch,
+                device,
+                supervised_agent,
+                update,
+                main_batch_size,
                 main_minibatch_size
                 )
 
-            ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
+            ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
 
              
@@ -709,13 +714,13 @@ class LeagueTrainer:
             if exploiter_indices:
                 env_shape = envs.single_observation_space.shape
     
-                agent_batches = []
+                # update every exploiter individually
                 for idx, exploiter_idx in enumerate(exploiter_indices):
                     player = self.active_league_agents[exploiter_idx]
                     # TODO (optimize): optimizer außerhalb des training-loops erstellen
-                    agent_batches.append(
-                        {
+                    exploiter_agent_batch = {
                             "player": player,
+                            "agent": player.agent,
                             "optimizer": optim.Adam(player.agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5),
                             "obs": obs[:, exploiter_idx].reshape((-1,) + env_shape),
                             "sc": scalar_features[:, exploiter_idx].reshape(-1, scalar_features.shape[-1]),
@@ -728,21 +733,35 @@ class LeagueTrainer:
                             "values": values[:, exploiter_idx].reshape(-1),
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape)
                         }
-                    )
-                    agent_batches[idx]["optimizer"].param_groups[0]["lr"] = lrnow
+                    exploiter_agent_batch[idx]["optimizer"].param_groups[0]["lr"] = lrnow
+
+                    pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
+                        args,
+                        envs,
+                        exploiter_agent_batch,
+                        device,
+                        supervised_agent,
+                        update,
+                        args.num_steps,
+                        max(args.num_steps // max(args.n_minibatch, 1), 1)
+                        )
+                    
+                    league.log_exploiter_ppo_update()
+
                 
                 # TODO: wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
-                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = league.train_exploiters(
-                    args,
-                    envs,
-                    agent_batches,
-                    writer,
-                    global_step,
-                    update,
-                    agent,
-                    self.experiment_name,
-                    exploiter_indices
-                )
+                # oder league.train_exploiters entfernen
+                # pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = league.train_exploiters(
+                #     args,
+                #     envs,
+                #     agent_batches,
+                #     writer,
+                #     global_step,
+                #     update,
+                #     agent,
+                #     self.experiment_name,
+                #     exploiter_indices
+                # )
 
             if not args.dbg_no_main_agent_ppo_update:
                 if args.prod_mode and update % args.checkpoint_frequency == 0:

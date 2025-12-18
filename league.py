@@ -1,4 +1,5 @@
 import collections
+from csv import writer
 import numpy as np
 import torch
 import os
@@ -667,6 +668,32 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
+
+def log_exploiter_ppo_update(args, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, exploiter_idx):
+    name = getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[exploiter_idx])
+
+    writer.add_scalar(f"{name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], global_step)
+    writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)
+    writer.add_scalar(f"{name}/policy_loss", pg_loss.item(), global_step)
+    writer.add_scalar(f"{name}/kl_loss", kl_loss.item(), global_step)
+    writer.add_scalar(f"{name}/total_loss", loss.item(), global_step)
+    writer.add_scalar(f"{name}/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
+    writer.add_scalar(f"{name}/approx_kl", approx_kl.item(), global_step)
+
+    if args.kle_stop or args.kle_rollback:
+        writer.add_scalar(f"{name}/pg_stop_iter", pg_stop_iter, global_step)
+
+    if args.prod_mode and update % args.checkpoint_frequency == 0:
+            print("Saving model checkpoint...")
+            save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=f"current_{getattr(exploiter_agent_batch['player'], 'name', exploiter_agent_batch['player'].__class__.__name__)}", file_name=f"{name}")
+
+            if update < 500:
+                if update % (args.checkpoint_frequency * 5) == 0:
+                    save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__), file_name=f"{name}_update_{update}")
+                    
+            else:
+                save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__), file_name=f"{name}_update_{update}")
+
 
 def train_exploiters(
         args,

@@ -73,7 +73,14 @@ def assert_supervised_grads_zero(supervised_agent):
             print(f"\n\n[supervised] max|grad|={max_abs} in {names}!!!\n\n")
 
     
-def update(args, agent, envs, device, supervised_agent, optimizer, update, b_values, b_advantages, b_returns, b_Sc, b_z, b_obs, b_actions, b_logprobs, b_invalid_action_masks, new_batch_size, minibatch_size):
+def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_size, minibatch_size):
+
+    agent = agent_batch["agent"]
+    optimizer = agent_batch["optimizer"]
+    b_values, b_advantages, b_returns = agent_batch["values"], agent_batch["advantages"], agent_batch["returns"]
+    b_Sc, b_z, b_obs = agent_batch["sc"], agent_batch["z"], agent_batch["obs"]
+    b_actions, b_logprobs, b_invalid_action_masks = agent_batch["actions"], agent_batch["logprobs"], agent_batch["masks"]
+    
     # Optimizing policy and value network with minibatch updates
     # --num_minibatches, --update-epochs
     # minibatches_size = int(args.batch_size // args.num_minibatches)
