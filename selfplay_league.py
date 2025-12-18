@@ -709,7 +709,7 @@ class LeagueTrainer:
 
 
              
-            exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0] + 2)
+            exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0] + 2).to(device)
 
             if exploiter_indices.numel() > 0:
                 env_shape = envs.single_observation_space.shape
@@ -733,7 +733,7 @@ class LeagueTrainer:
                             "values": values[:, exploiter_idx].reshape(-1),
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape)
                         }
-                    exploiter_agent_batch[idx]["optimizer"].param_groups[0]["lr"] = lrnow
+                    exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = lrnow
 
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                         args,
