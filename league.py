@@ -736,7 +736,6 @@ def train_exploiters(
                 logprob_splits = torch.split(combined_logprobs, chunk_sizes, dim=0)
                 entropy_splits = torch.split(combined_entropy, chunk_sizes, dim=0)
 
-                # free up memory
                 del batch_obs, batch_sc, batch_z, batch_actions, batch_masks
                 del combined_obs, combined_sc, combined_z, combined_actions, combined_masks
                 del logits_chunks, combined_logits, chunk_sizes

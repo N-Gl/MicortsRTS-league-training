@@ -176,7 +176,7 @@ def break_on_stdout(trigger="Issuing a non legal action", include_stderr: bool =
 
     return cleanup
 
-class SelfPlayTrainer:
+class LeagueTrainer:
     def __init__(
         self,
         agent,

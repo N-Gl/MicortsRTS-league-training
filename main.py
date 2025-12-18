@@ -428,19 +428,18 @@ def main(cfg: ExperimentConfig):
 
 
     if args.league_training:
-        from league_training import LeagueTrainer
+        from selfplay_league import LeagueTrainer
 
         league_trainer = LeagueTrainer(
             agent=agent,
             supervised_agent=supervised_agent,
             envs=envsT,
+            sp_envs=sp_envsT,
             args=args,
             writer=writer,
             device=device,
             experiment_name=experiment_name,
-            get_scalar_features=getScalarFeatures,
-            action_plane_nvec=action_plane_nvec,
-            checkpoint_frequency=10,
+            get_scalar_features=getScalarFeatures
         )
         league_trainer.train()
 
