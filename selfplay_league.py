@@ -709,7 +709,7 @@ class LeagueTrainer:
 
 
              
-            exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0] + 2).to(device)
+            exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0] * 2).to(device)
 
             if exploiter_indices.numel() > 0:
                 env_shape = envs.single_observation_space.shape
