@@ -777,7 +777,7 @@ class LeagueTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 50 and args.num_bot_envs >= 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
+            if  last_bot_env_change >= 15 and args.num_bot_envs >= 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
@@ -819,7 +819,7 @@ class LeagueTrainer:
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
-            elif last_bot_env_change >= 50 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+            elif last_bot_env_change >= 15 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
                 print("\nAdding an Bot Environment")
 
                 envs.close()

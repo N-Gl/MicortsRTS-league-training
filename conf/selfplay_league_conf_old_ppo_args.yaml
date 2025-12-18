@@ -23,6 +23,7 @@ ExperimentConfig:
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_diff_threshold: 0.9
+  bot_removing_winrate_threshold: 0.9
   num_main_agents: 10   # 1 num_main_agents == 1 env
   num_main_exploiters: 5
   num_league_exploiters: 5
