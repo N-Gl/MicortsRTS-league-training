@@ -868,8 +868,8 @@ class SelfPlayTrainer:
 
         # bring active_league_agents Länge in Einklang mit neuer Env-Anzahl
         if len(self.active_league_agents) < args.num_envs:
-            # TODO: der Mainagent soll hier hinzu gefügt werden
-            self.active_league_agents.append(self.league_agent)
+            # assert isinstance(self.active_league_agents[0], league.MainPlayer) "self.active_league_agents[0] must be an MainPlayer"
+            self.active_league_agents.append(self.active_league_agents[0])
             self.indices = torch.cat((self.indices, torch.tensor([args.num_envs - 1], device=self.device)))
         else:
             self.active_league_agents = self.active_league_agents[:args.num_envs]
