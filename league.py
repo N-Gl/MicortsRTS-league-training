@@ -642,3 +642,17 @@ def initialize_league(args, device, agent):
         active_league_agents.append(league_instance.learning_agents[0])
 
     return league_instance, active_league_agents, agent_type
+
+def _log_general_main_results(writer, global_step, infos, winloss_weight, attack_weight, done_idx, hist_reward):
+    game_length = infos[done_idx]["episode"]["l"]
+
+    dyn_winloss = winloss_weight * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500 TODO (training): für die ersten 3 millionen steps nur, wenn man gewinnt == 0?
+    writer.add_scalar("main_charts/old_episode_reward", infos[done_idx]['episode']['r'], global_step)
+    writer.add_scalar("main_charts/Game_length", game_length, global_step)
+    writer.add_scalar("main_charts/Episode_reward_with_hist_reward", hist_reward + infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + 
+                                          infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
+    writer.add_scalar("main_charts/Episode_reward", infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + 
+                                          infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
+    writer.add_scalar("main_charts/AttackReward", infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
+    writer.add_scalar("main_charts/WinLossRewardFunction", infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss, global_step)
+    return dyn_winloss
