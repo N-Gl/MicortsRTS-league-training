@@ -711,7 +711,7 @@ class LeagueTrainer:
              
             exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0])
 
-            if exploiter_indices:
+            if exploiter_indices.numel() > 0:
                 env_shape = envs.single_observation_space.shape
     
                 # update every exploiter individually
@@ -746,7 +746,7 @@ class LeagueTrainer:
                         max(args.num_steps // max(args.n_minibatch, 1), 1)
                         )
                     
-                    league.log_exploiter_ppo_update()
+                    league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, idx)
 
                 
                 # TODO: wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)

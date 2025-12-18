@@ -1,5 +1,4 @@
 import collections
-from csv import writer
 import numpy as np
 import torch
 import os
@@ -572,7 +571,7 @@ class League:
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
         print(f"Game {int(done_idx/2)} ended: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {getattr(active_league_agents[done_idx + 1], 'name', active_league_agents[done_idx + 1].__class__.__name__)}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
-        num_done_selfplaygames, last_logged_selfplay_games = self._log_selfplay_results(
+        last_logged_selfplay_games = self._log_selfplay_results(
             args,
             agent,
             writer,
@@ -609,7 +608,7 @@ class League:
 
         print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}")
 
-        return opp, a_type, num_done_selfplaygames, last_logged_selfplay_games
+        return opp, a_type, last_logged_selfplay_games
 
 
 def initialize_league(args, device, agent):
@@ -669,7 +668,7 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
 
-def log_exploiter_ppo_update(args, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, exploiter_idx):
+def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, exploiter_idx):
     name = getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[exploiter_idx])
 
     writer.add_scalar(f"{name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], global_step)
