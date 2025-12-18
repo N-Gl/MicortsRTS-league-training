@@ -44,6 +44,7 @@ ExperimentConfig:
   PPO_learning_rate: 2.5e-4 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   PPO_weight_decay: 0.0
 
+  sp: false
   dbg_no_main_agent_ppo_update: false # TODO
 
 
