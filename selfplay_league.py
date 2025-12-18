@@ -10,6 +10,7 @@ import torch
 from jpype.types import JArray, JInt
 from stable_baselines3.common.vec_env import VecVideoRecorder
 from VecstatsMonitor import VecstatsMonitor
+import torch.optim as optim
 
 from microrts_space_transform import MicroRTSSpaceTransform
 from gym_microrts.envs.microrts_vec_env import  MicroRTSGridModeVecEnv
@@ -95,14 +96,6 @@ def adjust_action_selfplay(args, valid_actions: np.ndarray, valid_actions_counts
             # real_action[1:args.num_selfplay_envs:2, :, 2:6] = (real_action[1:args.num_selfplay_envs:2, :, 2:6] + 2) % 4
                 # relative attack position anpassen (nur für a_r = 7)
             #real_action[1:args.num_selfplay_envs:2, :, 7] = torch.abs(real_action[1:args.num_selfplay_envs:2, :, 7] - 48)
-
-# TODO: benutze die Methode aus league.py (ist dasselbe?)
-# def save_league_model(save_agent, experiment_name: str, dir_name: str, file_name: str):
-#     os.makedirs(f"league_models/{experiment_name}/{dir_name}", exist_ok=True)
-#     if isinstance(save_agent, Agent):
-#         torch.save(save_agent.state_dict(), f"league_models/{experiment_name}/{dir_name}/{file_name}.pt")
-#     else:
-#         torch.save(save_agent.agent.state_dict(), f"league_models/{experiment_name}/{dir_name}/{file_name}.pt")
 
 
 def render_all_envs(env_transform):
@@ -205,21 +198,14 @@ class SelfPlayTrainer:
         self.device = device
         self.experiment_name = experiment_name
         self.get_scalar_features = get_scalar_features
-        self.checkpoint_frequency = args.checkpoint_frequency
         self.active_league_agents = []
         self.league_agent = Selfplay_agent(agent)
-        # TODO: initialisiere die League Agents, wie in league_training.py
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
-        for _ in range(args.num_main_agents):
-            self.active_league_agents.append(self.league_agent)
-            self.active_league_agents.append(self.league_supervised_agent)
-        for _ in range(args.num_bot_envs):
-            self.active_league_agents.append(self.league_agent)
-        # TODO: ist initialisiert, aber nachher auch main_indices, ...
         self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
         self.indices = torch.cat(
             (torch.tensor(range(0, args.num_selfplay_envs, 2), dtype=torch.long, device=device), self.indices)
         )
+        self.hist_reward: int = 0
 
     def train(self):
         args = self.args
@@ -243,7 +229,7 @@ class SelfPlayTrainer:
         if args.num_main_agents == 0:
             raise ValueError("league training requires at least one main agent")
         
-        league_instance, active_league_agents, agent_type = league.initialize_league(args, device, agent)
+        league_instance, self.active_league_agents, agent_type = league.initialize_league(args, device, agent)
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:
@@ -538,98 +524,52 @@ class SelfPlayTrainer:
                 # =============
                 infos =  sp_infos + bot_infos
                 # TODO: mische mit logging von league_training.py zusammen (verbessere _log_bot_game_results)
-                for info in infos:
-
-                    if 'episode' in info.keys():
-                        game_length = info['episode']['l']
-                        winloss = winloss * (-0.00013 * game_length + 1.16)
-                        writer.add_scalar("charts/old_episode_reward", info['episode']['r'], global_step)
-                        writer.add_scalar("charts/Game_length", game_length,global_step)
-                        writer.add_scalar("charts/Episode_reward", info['microrts_stats']['RAIWinLossRewardFunction'] * winloss + info['microrts_stats']['AttackRewardFunction'] * attack, global_step)
-                        writer.add_scalar("charts/AttackReward", info['microrts_stats']['AttackRewardFunction'] * attack, global_step)
-                        writer.add_scalar("charts/WinLossRewardFunction", info['microrts_stats']['RAIWinLossRewardFunction']* winloss, global_step)
-
-                        where_done = torch.where(next_done)
-
-                        break
+                
                 if np.any(['episode' in info.keys() for info in infos]):
                     if not hasattr(writer, "recent_bot_winloss"):
                                 writer.recent_bot_winloss = deque([0.0] * 50, maxlen=200)
                     if not hasattr(writer, "recent_selfplay_winloss"):
                                 writer.recent_selfplay_winloss = deque([0.0] * 50, maxlen=200)
 
+                    where_done = torch.where(next_done)
                     for done_idx in where_done[0]:
-                        done_agent = active_league_agents[done_idx]
-                        dyn_winloss = winloss
+                        done_agent = self.active_league_agents[done_idx]
+
+                        # TODO: ist dyn_winloss auch für exploiters?
+                        # dyn_winloss = winloss
+                        game_length = infos[done_idx]["episode"]["l"]
+                        dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500 TODO (training): für die ersten 3 millionen steps nur, wenn man gewinnt == 0?
                         if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
                             done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
 
                             if isinstance(done_agent, league.MainPlayer):
-                                # TODO: verbessere logging für MainPlayer
-                                # TODO: füge hist_reward hinzu
-                                dyn_winloss = league._log_general_main_results(writer, global_step, infos, winloss, attack, done_idx, hist_reward=0)
+                                # game_length = infos[done_idx]["episode"]["l"]
+                                # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500 TODO (training): für die ersten 3 millionen steps nur, wenn man gewinnt == 0?
+                                league.log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
-
-                            # TODO: verbessere:
-
-                            # self._log_bot_game_results(args, writer, global_step, infos, attack, done_idx, dyn_winloss)
-
-                            print(f"Game {int(args.num_selfplay_envs/2 + int(done_idx - (args.num_selfplay_envs - 1)))} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
-                            writer.recent_bot_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
-
-                            selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
-                            selfplay_withdraw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
-                            bot_winrate = np.mean(np.clip(writer.recent_bot_winloss, 0, 1))
-                            with_draw = np.mean(np.add(writer.recent_bot_winloss, 1) / 2)
-
-                            winloss_values = np.array(np.clip(writer.recent_bot_winloss, 0, 1))
-                            writer.add_scalar("progress/num_bot_games", num_done_botgames, global_step)
-                            writer.add_scalar(f"winrates/bot_Winrate_with_Draw_0", bot_winrate, num_done_botgames)
-                            writer.add_scalar(f"winrates/bot_Winrate_std", np.std(winloss_values), num_done_botgames)
-                            writer.add_scalar(f"winrates/bot_Winrate_with_draw_0.5", with_draw, num_done_botgames)
-                            print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack):.3f}")
-                            print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
-                            print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))} \n")
+                            league.log_bot_game_results(args, writer, global_step, infos, attack, done_idx, dyn_winloss, num_done_botgames)
                             num_done_botgames += 1
                             last_bot_env_change += 1
 
                         elif done_idx % 2 == 0:
-                            # print(f"Game {int(done_idx/2)} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
-                            # writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
-# 
-                            # selfplay_withdraw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
-                            # selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
-                            # bot_winrate = np.mean(np.clip(writer.recent_bot_winloss, 0, 1))
-                            # with_draw = np.mean(np.add(writer.recent_bot_winloss, 1) / 2)
-# 
-                            # winloss_values = np.array(writer.recent_selfplay_winloss)
-                            # writer.add_scalar("progress/num_selfplay_games", num_done_selfplaygames, global_step)
-                            # writer.add_scalar(f"winrates/selfplay_Winrate_with_draw", selfplay_withdraw, num_done_selfplaygames)
-                            # writer.add_scalar(f"winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
-                            # writer.add_scalar(f"winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
-                            # print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack):.3f}")
-                            # print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_withdraw:.3f}\n")
-                            num_done_selfplaygames += 1
-                            last_bot_env_change += 1
-
-                            # TODO: füge hist_reward hinzu (statt 0)
                             # update League match results
-                            active_league_agents[done_idx + 1], agent_type[done_idx + 1], self.num_done_selfplaygames, self.last_logged_selfplay_games = league_instance.handle_game_end(
+                            self.active_league_agents[done_idx + 1], agent_type[done_idx + 1], last_logged_selfplay_games = league_instance.handle_game_end(
                                 args,
                                 agent,
                                 writer,
-                                active_league_agents,
+                                self.active_league_agents,
                                 global_step,
                                 infos,
                                 attack,
                                 done_idx,
                                 done_agent,
                                 dyn_winloss,
-                                0,
-                                self.num_done_selfplaygames,
-                                self.last_logged_selfplay_games,
+                                self.hist_reward,
+                                num_done_selfplaygames,
+                                last_logged_selfplay_games
                             )
+                            num_done_selfplaygames += 1
                         
                 # =============
             # =========================
@@ -697,7 +637,6 @@ class SelfPlayTrainer:
 
 
 
-            # TODO: muss man alle auskommantieren?
             # flatten the batch
             # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
             # (ScFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
@@ -765,40 +704,51 @@ class SelfPlayTrainer:
 
 
              
-            non_main_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0])
+            exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0])
 
-            # inds: indices from the batch
-            non_main_batch_size = int(len(non_main_indices) * args.num_steps)
-            non_main_minibatch_size = int(non_main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
-
-            # TODO: wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
-            # TODO: verwende sonst richtige parameter
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
-                league,
-                active_league_agents,
-                b_advantages,
-                b_returns,
-                values,
-                obs,
-                scalar_features,
-                z_features,
-                actions,
-                logprobs,
-                invalid_action_masks,
-                action_space_shape,
-                invalid_action_shape,
-                lrnow,
-                envs,
-                writer,
-                global_step,
-                update
-            )
+            if exploiter_indices:
+                env_shape = envs.single_observation_space.shape
+    
+                agent_batches = []
+                for idx, exploiter_idx in enumerate(exploiter_indices):
+                    player = self.active_league_agents[exploiter_idx]
+                    # TODO (optimize): optimizer außerhalb des training-loops erstellen
+                    agent_batches.append(
+                        {
+                            "player": player,
+                            "optimizer": optim.Adam(player.agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5),
+                            "obs": obs[:, exploiter_idx].reshape((-1,) + env_shape),
+                            "sc": scalar_features[:, exploiter_idx].reshape(-1, scalar_features.shape[-1]),
+                            "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),
+                            "actions": actions[:, exploiter_idx].reshape((-1,) + action_space_shape),
+                            "logprobs": logprobs[:, exploiter_idx].reshape(-1),
+                            # TODO (league training): ist //2 richtig? (weil advantages, returns nur für Player 0 berechnet wurden)
+                            "advantages": b_advantages[:, exploiter_idx//2].reshape(-1),
+                            "returns": b_returns[:, exploiter_idx//2].reshape(-1),
+                            "values": values[:, exploiter_idx].reshape(-1),
+                            "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape)
+                        }
+                    )
+                    agent_batches[idx]["optimizer"].param_groups[0]["lr"] = lrnow
+                
+                # TODO: wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
+                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = league.train_exploiters(
+                    args,
+                    envs,
+                    agent_batches,
+                    writer,
+                    global_step,
+                    update,
+                    agent,
+                    self.experiment_name,
+                    exploiter_indices
+                )
 
             if not args.dbg_no_main_agent_ppo_update:
-                if args.prod_mode and update % self.checkpoint_frequency == 0:
+                if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")
                     if (update < 500 and not args.early_updates):
-                        if (update % (self.checkpoint_frequency * 5) == 0):
+                        if (update % (args.checkpoint_frequency * 5) == 0):
                             league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
                     else:
                         league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
@@ -808,7 +758,7 @@ class SelfPlayTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 50 and args.num_bot_envs > 0 and num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames:
+            if  last_bot_env_change >= 50 and args.num_bot_envs >= 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
@@ -918,6 +868,7 @@ class SelfPlayTrainer:
 
         # bring active_league_agents Länge in Einklang mit neuer Env-Anzahl
         if len(self.active_league_agents) < args.num_envs:
+            # TODO: der Mainagent soll hier hinzu gefügt werden
             self.active_league_agents.append(self.league_agent)
             self.indices = torch.cat((self.indices, torch.tensor([args.num_envs - 1], device=self.device)))
         else:

@@ -30,7 +30,7 @@ ExperimentConfig:
   attack_reward_weight: 0.05 # (im basis ppo: 1)
   dyn_attack_reward: 0.0
   rewardscore: 0.0
-  value_warmup_updates: 0
+  value_warmup_updates: 8
   # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
 
   endgame_maps: false
