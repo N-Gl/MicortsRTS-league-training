@@ -667,8 +667,34 @@ class SelfPlayTrainer:
             new_batch_size = int(len(self.indices) * args.num_steps)
             minibatch_size = int(new_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
 
+            main_agent_batch = {
+                "agent": agent,
+                "optimizer": optimizer,
+                "obs": b_obs,
+                "sc": b_Sc,
+                "z": b_z,
+                "actions": b_actions,
+                "logprobs": b_logprobs,
+                # TODO (league training): ist //2 richtig? (weil advantages, returns nur für Player 0 berechnet wurden)
+                "advantages": b_advantages,
+                "returns": b_returns,
+                "values": b_values,
+                "masks": b_invalid_action_masks,
+            }
+                
+            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
+                args,
+                envs,
+                main_agent_batch,
+                device,
+                supervised_agent,
+                update,
+                new_batch_size,
+                minibatch_size
+                )
+
             
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(args, agent, envs, device, supervised_agent, optimizer, update, b_values, b_advantages, b_returns, b_Sc, b_z, b_obs, b_actions, b_logprobs, b_invalid_action_masks, new_batch_size, minibatch_size)
+            # pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(args, agent, envs, device, supervised_agent, optimizer, update, b_values, b_advantages, b_returns, b_Sc, b_z, b_obs, b_actions, b_logprobs, b_invalid_action_masks, new_batch_size, minibatch_size)
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
 
