@@ -287,11 +287,11 @@ class MainPlayer(Player):
 
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. 
-        (wenn (min winrate gegen alle historischen gegner > 0.7 und steps_passed >= args.selfplay_save_interval) 
+        (wenn (min winrate gegen alle historischen gegner > 0.7 und steps_passed >= args.selfplay_ready_save_interval) 
         oder mehr als args.selfplay_save_interval steps vergangen sind)'''
         # weil nur eine Instanz von dem agent für Mainagent ex, ist checkpoint_step in agent gespeichert
         steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
-        if steps_passed < (self.args.selfplay_save_interval // 20) * self.args.num_main_agents: # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+        if steps_passed < (self.args.selfplay_ready_save_interval) * self.args.num_main_agents: # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
           return False
 
         historical = [
@@ -299,7 +299,7 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval * self.args.num_main_agents # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // self.args.num_envs * self.args.num_main_agents # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
 
 
     def checkpoint(self):
@@ -353,7 +353,7 @@ class MainExploiter(Player):
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. wie bei MainPlayer'''
         steps_passed = self.agent.get_steps() - self._checkpoint_step
-        if steps_passed < self.args.selfplay_save_interval // 20:
+        if steps_passed < self.args.selfplay_ready_save_interval:
             return False
 
         historical = [
@@ -361,7 +361,7 @@ class MainExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // self.args.num_envs
 
 
 class LeagueExploiter(Player):
@@ -399,7 +399,7 @@ class LeagueExploiter(Player):
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. wie bei MainPlayer'''
         steps_passed = self.agent.get_steps() - self._checkpoint_step
-        if steps_passed < self.args.selfplay_save_interval // 20:
+        if steps_passed < self.args.selfplay_ready_save_interval:
             return False
         
         historical = [
@@ -407,7 +407,7 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // self.args.num_envs
     
 
 class Historical(Player):

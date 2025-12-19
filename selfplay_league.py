@@ -207,6 +207,11 @@ class LeagueTrainer:
         )
         self.hist_reward: int = 0
 
+        # TODO: nachher entfernen:
+        assert args.selfplay_ready_save_interval > 0, "selfplay_ready_save_interval muss größer 0 sein"
+
+        
+
     def train(self):
         args = self.args
         num_done_botgames = 0
@@ -778,7 +783,7 @@ class LeagueTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 20 and args.num_bot_envs >= 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
+            if  last_bot_env_change >= 20 and args.num_bot_envs > 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
