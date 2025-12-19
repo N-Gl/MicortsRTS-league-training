@@ -606,7 +606,7 @@ class League:
         else:
             opp_name = getattr(opp, "name", opp.__class__.__name__)
 
-        print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}")
+        print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}\n")
 
         return opp, a_type, last_logged_selfplay_games
 
