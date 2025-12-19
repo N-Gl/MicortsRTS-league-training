@@ -1,0 +1,60 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  # args from https://github.com/Farama-Foundation/MicroRTS-Py/blob/master/experiments/ppo_gridnet.py
+  selfplay: true
+  model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
+  # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
+  BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
+  exp_name: temp
+  wandb_project_name: testing_selfplay
+
+  prod_mode: true
+  render: true
+  render_all: false
+
+  seed: 
+
+  num_bot_envs: 3
+  max_num_bot_envs: 15
+  bot_adding_done_training_ratio: 0.5
+  bot_removing_done_training_ratio: 0.75
+  num_main_agents: 20   # 1 num_main_agents == 1 env
+
+  even_opponent_split: true # TODO
+
+  total_timesteps: 30000000
+
+  early_updates: true  # TODO
+
+  attack_reward_weight: 0.05 # (im basis ppo: 1)
+  dyn_attack_reward: 0.0
+  rewardscore: 0.0
+  value_warmup_updates: 0
+  # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
+
+  endgame_maps: false
+
+  PPO_learning_rate: 2.5e-5 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  PPO_weight_decay: 0.0
+
+  dbg_no_main_agent_ppo_update: false # TODO
+
+
+
+  num_steps: 512 # (im basis ppo: 256)                
+  gamma: 1 # (im basis ppo: 0.99)            
+  gae_lambda: 0.95                                   
+  ent_coef: 0.005               
+  vf_coef: 0.5               
+  max_grad_norm: 0.5                                 
+  clip_coef: 0.15 # bis 0.2
+  update_epochs: 4              
+  kle_stop: true               
+  kle_rollback: true           
+  target_kl: 0.03
+  kl_coeff: 0.4                                      
+  norm_adv: true                
+  anneal_lr: true               
+  clip_vloss: true

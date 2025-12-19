@@ -23,7 +23,6 @@ def save_league_model(save_agent, experiment_name=None, dir_name=None, file_name
     else:
         torch.save(save_agent.agent.state_dict(), f"league_models/{experiment_name}/{dir_name}/{file_name}.pt")
 
-
 # aus Pseudocode von "Grandmaster level in StarCraft II using multi-agent reinforcement learning"
 def remove_monotonic_suffix(win_rates, players):
     # if not win_rates:

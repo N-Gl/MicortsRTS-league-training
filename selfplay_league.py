@@ -668,10 +668,17 @@ class LeagueTrainer:
             # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
             # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
             main_indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.int).to(device)
+            b_main_indices = torch.tensor(range(args.num_selfplay_envs // 2, args.num_envs - args.num_selfplay_envs // 2), dtype=torch.int).to(device)
             if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-                main_indices = torch.cat((torch.where((agent_type == league.SelfplayAgentType.CUR_MAIN) | (agent_type == league.SelfplayAgentType.OLD_MAIN))[0], main_indices))
+                selfplay_mains = torch.where((agent_type == league.SelfplayAgentType.CUR_MAIN) | (agent_type == league.SelfplayAgentType.OLD_MAIN))
+                main_indices = torch.cat((selfplay_mains)[0], main_indices)
+                b_main_indices = torch.cat((selfplay_mains)[0], b_main_indices)
             else:
-                main_indices = torch.cat((torch.where(agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.CUR_MAIN)[0] * 2, main_indices))
+                selfplay_mains = torch.where(agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.CUR_MAIN)[0]
+                main_indices = torch.cat((selfplay_mains * 2, main_indices))
+                b_main_indices = torch.cat((selfplay_mains, b_main_indices))
+
+            
 
             # inds: indices from the batch
             main_batch_size = int(len(main_indices) * args.num_steps)
@@ -687,11 +694,10 @@ class LeagueTrainer:
                 "z": z_features[:, main_indices].reshape(-1, z_features.shape[-1]),
                 "actions": actions[:, main_indices].reshape((-1,) + action_space_shape),
                 "logprobs": logprobs[:, main_indices].reshape(-1),
-                # TODO (league training): ist //2 richtig? (weil advantages, returns nur für Player 0 berechnet wurden)
-                "advantages": b_advantages[:, main_indices//2].reshape(-1),
-                "returns": b_returns[:, main_indices//2].reshape(-1),
+                "advantages": b_advantages[:, b_main_indices].reshape(-1),
+                "returns": b_returns[:, b_main_indices].reshape(-1),
                 "values": values[:, main_indices].reshape(-1),
-                "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape),
+                "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape)
             }
                 
             pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
@@ -707,9 +713,9 @@ class LeagueTrainer:
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
-
-             
-            exploiter_indices = (torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0] * 2).to(device)
+            # TODO: leagueexploiter können so nicht gegen Bots trainieren
+            b_exploiter_indices = torch.where((agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0].to(device)
+            exploiter_indices = (b_exploiter_indices * 2).to(device)
 
             if exploiter_indices.numel() > 0:
                 env_shape = envs.single_observation_space.shape
@@ -717,7 +723,6 @@ class LeagueTrainer:
                 # update every exploiter individually
                 for idx, exploiter_idx in enumerate(exploiter_indices):
                     player = self.active_league_agents[exploiter_idx]
-                    # TODO (optimize): optimizer außerhalb des training-loops erstellen
                     exploiter_agent_batch = {
                             "player": player,
                             "agent": player.agent,
@@ -727,9 +732,8 @@ class LeagueTrainer:
                             "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),
                             "actions": actions[:, exploiter_idx].reshape((-1,) + action_space_shape),
                             "logprobs": logprobs[:, exploiter_idx].reshape(-1),
-                            # TODO (league training): ist //2 richtig? (weil advantages, returns nur für Player 0 berechnet wurden)
-                            "advantages": b_advantages[:, exploiter_idx//2].reshape(-1),
-                            "returns": b_returns[:, exploiter_idx//2].reshape(-1),
+                            "advantages": b_advantages[:, b_exploiter_indices].reshape(-1),
+                            "returns": b_returns[:, b_exploiter_indices].reshape(-1),
                             "values": values[:, exploiter_idx].reshape(-1),
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape)
                         }

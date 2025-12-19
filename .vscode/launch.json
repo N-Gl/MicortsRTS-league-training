@@ -90,11 +90,11 @@
     },
 
     {
-      "name": "Python: selfplay_conf_old_ppo_args",
+      "name": "Python: debugging_selfplay_conf_old_ppo_args",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/main.py",
-      "args": ["--config-name", "debug_selfplay_conf_old_ppo_args",],
+      "args": ["--config-name", "debugging_selfplay_conf_old_ppo_args",],
       "console": "integratedTerminal",
       "justMyCode": false,
       //"env": {
@@ -121,6 +121,19 @@
       "request": "launch",
       "program": "${workspaceFolder}/main.py",
       "args": ["--config-name", "debug_league_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
+      "name": "Python: debugging_league_sp_conf_old_ppo_args",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "debugging_league_sp_conf_old_ppo_args",],
       "console": "integratedTerminal",
       "justMyCode": false,
       //"env": {
