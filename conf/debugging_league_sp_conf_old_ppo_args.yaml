@@ -24,8 +24,8 @@ ExperimentConfig:
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.9
   num_main_agents: 20   # 1 num_main_agents == 1 env
-  num_main_exploiters: 0
-  num_league_exploiters: 0
+  num_main_exploiters: 1
+  num_league_exploiters: 1
 
   selfplay_save_interval: 30000000   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
 

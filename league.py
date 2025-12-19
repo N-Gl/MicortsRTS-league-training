@@ -313,13 +313,14 @@ class MainExploiter(Player):
         self,
         initial_agent: torch.nn.Module,
         payoff: Payoff,
-        args,
+        args
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
         self._initial_weights = initial_agent.state_dict()
         self._payoff = payoff
         self._checkpoint_step = 0
+        self.num_resets_checkpoints = 0
 
     def get_match(self):
         '''wählt einen zufälligen main agenten als gegner, wenn die winrate gegen diesen gegner > 0.1 ist.
@@ -368,13 +369,14 @@ class LeagueExploiter(Player):
         self,
         initial_agent: torch.nn.Module,
         payoff: Payoff,
-        args,
+        args
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
         self._initial_weights = initial_agent.state_dict()
         self._payoff = payoff
         self._checkpoint_step = 0
+        self.num_resets_checkpoints = 0
 
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
@@ -546,7 +548,7 @@ class League:
             if done_agent.agent is agent:
                 self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
             else:
-                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx)
+                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx.item())
             Logger.log_wandb_summary(
                                     args,
                                     opponent_table_rows,
@@ -585,6 +587,13 @@ class League:
         )
         if done_agent.ready_to_checkpoint():
             self.add_player(done_agent.checkpoint())
+
+            if isinstance(done_agent, MainExploiter) or isinstance(done_agent, LeagueExploiter):
+                exploiter_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx.item())
+                done_agent.num_resets_checkpoints += 1
+                print(exploiter_name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")
+                writer.add_scalar(f"{exploiter_name}/num_resets_checkpoints", done_agent.num_resets_checkpoints, global_step)
+
             _on_checkpoint(hist_reward=hist_reward, args=args)
         # neuen gegner in diesem environment auswählen
         opp = done_agent.get_match()[0]
@@ -668,7 +677,7 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
 
 def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, exploiter_idx):
-    name = getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[exploiter_idx])
+    name = getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[exploiter_idx].item())
 
     writer.add_scalar(f"{name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], global_step)
     writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)
@@ -817,7 +826,7 @@ def train_exploiters(
             # is_changing = {k: not torch.equal(v, old_w[k]) for k, v in self.agent.state_dict().items()}
 
             
-            name = getattr(entry["player"], "name", entry["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[i])
+            name = getattr(entry["player"], "name", entry["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[i].item())
 
             writer.add_scalar(f"{name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], global_step)
             writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)

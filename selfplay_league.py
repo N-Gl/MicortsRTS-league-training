@@ -305,7 +305,6 @@ class LeagueTrainer:
                         sp_envs.render("human")
                         
                 global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
-                # global_step += (args.num_main_agents // 2) + args.num_bot_envs
                 bot_obs[step] = bot_next_obs
                 sp_obs[step] = sp_next_obs
                 next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)
@@ -523,8 +522,6 @@ class LeagueTrainer:
                 # Logging PPO training
                 # =============
                 infos =  sp_infos + bot_infos
-                # TODO: mische mit logging von league_training.py zusammen (verbessere _log_bot_game_results)
-                
                 if np.any(['episode' in info.keys() for info in infos]):
                     if not hasattr(writer, "recent_bot_winloss"):
                                 writer.recent_bot_winloss = deque([0.0] * 50, maxlen=200)
@@ -781,7 +778,7 @@ class LeagueTrainer:
 
             # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 15 and args.num_bot_envs >= 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
+            if  last_bot_env_change >= 20 and args.num_bot_envs >= 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
@@ -823,7 +820,7 @@ class LeagueTrainer:
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
-            elif last_bot_env_change >= 15 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+            elif last_bot_env_change >= 20 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
                 print("\nAdding an Bot Environment")
 
                 envs.close()
