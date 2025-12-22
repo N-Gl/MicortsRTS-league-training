@@ -87,7 +87,7 @@ ExperimentConfig:
   newdata: false                
   nurwins: false                
 
-
+  save_gpu_memory: false
   dbg_no_main_agent_ppo_update: false
   Bot_as_player_1: true
 

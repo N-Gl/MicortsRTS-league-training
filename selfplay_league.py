@@ -558,7 +558,7 @@ class LeagueTrainer:
 
                         elif done_idx % 2 == 0:
                             # update League match results
-                            self.active_league_agents[done_idx + 1], agent_type[done_idx + 1], last_logged_selfplay_games = league_instance.handle_game_end(
+                            self.active_league_agents[done_idx + 1], agent_type[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
                                 args,
                                 agent,
                                 writer,
@@ -574,6 +574,9 @@ class LeagueTrainer:
                                 last_logged_selfplay_games
                             )
                             num_done_selfplaygames += 1
+                            
+                            if args.save_gpu_memory:
+                                league.offload_historical_to_cpu(old_opp, active_agents=self.active_league_agents)
                         
                 # =============
             # =========================

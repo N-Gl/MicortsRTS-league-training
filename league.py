@@ -419,6 +419,8 @@ class Historical(Player):
         payoff_idx=None
     ):
         self.agent = Agent(action_plane_nvec=parent.agent.action_plane_nvec, device=parent.agent.device, initial_weights=parent.agent.state_dict()).to(parent.agent.device)
+        if args.save_gpu_memory:
+            offload_historical_to_cpu(self)
         self._payoff = payoff
         self._parent = parent
 
@@ -435,6 +437,31 @@ class Historical(Player):
 
     def ready_to_checkpoint(self):
         return False
+
+
+def _move_player_to_device(player, device: torch.device):
+    """Ensure a player's agent resides on the target device and clear cached tensors."""
+    agent = getattr(player, "agent", None)
+    if agent is None or agent.device == device:
+        return
+
+    agent.to(device)
+    agent.device = device
+    agent.sp_logits = None
+    agent._values = None
+
+
+def offload_historical_to_cpu(player, active_agents=None):
+    """Push inactive historical checkpoints back to CPU to prevent GPU memory from growing."""
+    if not isinstance(player, Historical):
+        return
+
+    if active_agents is not None:
+        for p in active_agents:
+            if p is player:
+                return
+
+    _move_player_to_device(player, torch.device("cpu"))
 
 
 class League:
@@ -569,6 +596,7 @@ class League:
 
     # TODO: rufe die Methode richtig auf
     def handle_game_end(self, args, agent, writer, active_league_agents, global_step, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, last_logged_selfplay_games):
+        old_opp = active_league_agents[done_idx + 1]
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
         print(f"Game {int(done_idx/2)} ended: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {getattr(active_league_agents[done_idx + 1], 'name', active_league_agents[done_idx + 1].__class__.__name__)}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
@@ -597,6 +625,8 @@ class League:
             _on_checkpoint(hist_reward=hist_reward, args=args)
         # neuen gegner in diesem environment auswählen
         opp = done_agent.get_match()[0]
+        if args.save_gpu_memory:
+            _move_player_to_device(opp, agent.device)
         # TODO: vorher active_league_agents[1] statt active_league_agents[1 + done_idx] ist es jetzt richtig?
         if isinstance(opp, MainPlayer):
             a_type = SelfplayAgentType.CUR_MAIN
@@ -616,7 +646,7 @@ class League:
 
         print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}\n")
 
-        return opp, a_type, last_logged_selfplay_games
+        return opp, a_type, last_logged_selfplay_games, old_opp
 
 
 def initialize_league(args, device, agent):

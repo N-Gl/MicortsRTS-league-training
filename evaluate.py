@@ -25,15 +25,6 @@ def bot_evaluate_agent(
     start_time = time.time()
     
 
-    target_episodes = args.num_eval_episodes
-    mapsize = 16 * 16
-    position_indices = (
-        torch.arange(mapsize, device=device, dtype=torch.int64)
-        .unsqueeze(0)
-        .repeat(args.num_envs, 1)
-        .unsqueeze(2)
-    )
-
     aggregate_stats = {"win": 0, "draw": 0, "loss": 0}
     aggregate_episode_rewards: List[float] = []
     opponent_table_rows: List[Tuple] = []
@@ -43,6 +34,13 @@ def bot_evaluate_agent(
 
     for opponent_name, opponent_ai in opponents:
         eval_env = _make_eval_env(opponent_ai, args, reward_weight, vecstats_monitor_cls)
+        mapsize = 16 * 16
+        position_indices = (
+            torch.arange(mapsize, device=device, dtype=torch.int64)
+            .unsqueeze(0)
+            .repeat(args.num_envs, 1)
+            .unsqueeze(2)
+        )
 
         agent = agent_model.Agent(eval_env.action_plane_space.nvec, device).to(device)
         agent.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=True))
@@ -58,6 +56,12 @@ def bot_evaluate_agent(
             local_stats = {"win": 0, "draw": 0, "loss": 0}
             local_episode_rewards: List[float] = []
             completed = 0
+            target_episodes = args.num_eval_episodes
+
+            # Track per-environment completion so each env contributes once per round.
+            round_completed = 0
+            env_done_in_round = [False for _ in range(args.num_envs)]
+            round_target = min(args.num_envs, target_episodes - completed)
 
             with torch.inference_mode():
                 while completed < target_episodes:
@@ -86,7 +90,10 @@ def bot_evaluate_agent(
 
                     global_step += args.num_envs
 
-                    for info in infos:
+                    for env_index, info in enumerate(infos):
+                        if env_done_in_round[env_index]:
+                            continue
+
                         stats_entry = info.get("microrts_stats")
                         if not stats_entry:
                             continue
@@ -106,13 +113,20 @@ def bot_evaluate_agent(
                                 + info["microrts_stats"]["AttackRewardFunction"] * attack_weight
                             )
 
+                        env_done_in_round[env_index] = True
+                        round_completed += 1
                         completed += 1
                         if completed >= target_episodes:
                             break
-                        else:
-                            if completed % (target_episodes//10) == 0:
-                                print()
-                                print(f"Evaluation vs {opponent_name}: {completed}/{target_episodes} games completed, {local_stats}")
+                    
+                    if completed >= target_episodes:
+                        break
+
+                    if round_completed >= round_target:
+                        print(f"Evaluation vs {opponent_name}: {completed}/{target_episodes} games completed, {local_stats}")
+                        env_done_in_round = [False for _ in range(args.num_envs)]
+                        round_completed = 0
+                        round_target = min(args.num_envs, target_episodes - completed)
                                 
         finally:
             _force_close_java_windows()

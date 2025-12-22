@@ -43,7 +43,7 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/main.py",
-      "args": ["--config-name", "evaluation_config",],
+      "args": ["--config-name", "debugging_evaluation_config",],
       //"args": ["--dbg", "--num-bot-envs","2","--num-selfplay-envs","6", "--BCtraining", "False", "--model-path", "selfplay_test_Basis_thesis_BC", "--render", "--render_all", "--prod-mode", "--wandb-project-name", "debugging"],
       //"args": ["--dbg", "--num-bot-envs","9", "--BCtraining", "False", "--total-timesteps", "50000000", "--model-path", "selfplay_test_Basis_thesis_BC", "--render", "--prod-mode", "--wandb-project-name", "selfplaytest"],
       //"args": ["--num-bot-envs","9", "--BCtraining", "False", "--total-timesteps", "50000000", "--model-path", "selfplay_test_Basis_thesis_BC", "--prod-mode", "--wandb-project-name", "selfplaytest"],
