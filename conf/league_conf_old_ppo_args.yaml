@@ -44,6 +44,7 @@ ExperimentConfig:
   endgame_maps: false
 
   PPO_learning_rate: 2.5e-5 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  exploiter_PPO_learning_rate: 2.5e-5
   PPO_weight_decay: 0.0
 
   sp: false

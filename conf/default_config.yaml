@@ -21,6 +21,7 @@ ExperimentConfig:
   BC_learning_rate: 1e-6
   BC_weight_decay: 0.0
   PPO_learning_rate: 2.5e-5     # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  exploiter_PPO_learning_rate:
   PPO_weight_decay: 0.0
 
   torch_deterministic: true

@@ -21,6 +21,7 @@ ExperimentConfig:
   num_league_exploiters: 6
 
   selfplay_save_interval: 2.5e5   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
+  exploiter_PPO_learning_rate: 2.5e-5
   checkpoint_frequency: 10        # (in Updates) Frequency to save main model checkpoints during training
 
   sp: false
