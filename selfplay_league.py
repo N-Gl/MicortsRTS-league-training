@@ -239,6 +239,7 @@ class LeagueTrainer:
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:
             lr_fn = lambda frac: frac * args.PPO_learning_rate  # noqa: E731
+            exploiter_lr_fn = lambda frac: frac * args.exploiter_PPO_learning_rate  # noqa: E731
         else:
             lr_fn = None
 
@@ -298,6 +299,7 @@ class LeagueTrainer:
                 frac = 1.0 - (update - 1.0) / num_updates
                 lrnow = lr_fn(frac)
                 optimizer.param_groups[0]["lr"] = lrnow
+                exploiter_lrnow = exploiter_lr_fn(frac) or lrnow
 
             for step in range(args.num_steps):
                 if args.render:
@@ -740,7 +742,7 @@ class LeagueTrainer:
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
                             "ent_coef": args.exploiter_ent_coef
                         }
-                    exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = lrnow
+                    exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
 
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                         args,
