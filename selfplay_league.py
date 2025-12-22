@@ -199,7 +199,6 @@ class LeagueTrainer:
         self.experiment_name = experiment_name
         self.get_scalar_features = get_scalar_features
         self.active_league_agents = []
-        self.agent_type = []
         self.league_agent = Selfplay_agent(agent)
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
         self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
@@ -235,7 +234,7 @@ class LeagueTrainer:
         if args.num_main_agents == 0:
             raise ValueError("league training requires at least one main agent")
         
-        league_instance, self.active_league_agents, self.agent_type = league.initialize_league(args, device, agent)
+        league_instance, self.active_league_agents = league.initialize_league(args, device, agent)
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:
@@ -559,7 +558,7 @@ class LeagueTrainer:
 
                         elif done_idx % 2 == 0:
                             # update League match results
-                            self.active_league_agents[done_idx + 1], self.agent_type[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
+                            self.active_league_agents[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
                                 args,
                                 agent,
                                 writer,
@@ -678,11 +677,11 @@ class LeagueTrainer:
             main_indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.int).to(device)
             b_main_indices = torch.tensor(range(args.num_selfplay_envs // 2, args.num_envs - args.num_selfplay_envs // 2), dtype=torch.int).to(device)
             if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-                selfplay_mains = torch.where((self.agent_type == league.SelfplayAgentType.CUR_MAIN) | (self.agent_type == league.SelfplayAgentType.OLD_MAIN))
+                selfplay_mains = torch.where((isinstance(self.active_league_agents, league.MainPlayer)))
                 main_indices = torch.cat((selfplay_mains)[0], main_indices)
                 b_main_indices = torch.cat((selfplay_mains)[0], b_main_indices)
             else:
-                selfplay_mains = torch.where(self.agent_type[0:args.num_selfplay_envs:2] == league.SelfplayAgentType.CUR_MAIN)[0]
+                selfplay_mains = torch.where(isinstance(self.active_league_agents[::2], league.MainPlayer))[0]
                 main_indices = torch.cat((selfplay_mains * 2, main_indices))
                 b_main_indices = torch.cat((selfplay_mains, b_main_indices))
 
@@ -722,7 +721,7 @@ class LeagueTrainer:
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
             # TODO: leagueexploiter können so nicht gegen Bots trainieren
-            b_exploiter_indices = torch.where((self.agent_type[::2] == league.SelfplayAgentType.MAIN_EXPLOITER) | (self.agent_type[::2] == league.SelfplayAgentType.LEAGUE_EXPLOITER))[0].to(device)
+            b_exploiter_indices = torch.where((isinstance(self.active_league_agents[::2], (league.MainExploiter, league.LeagueExploiter))))[0].to(device)
             exploiter_indices = (b_exploiter_indices * 2).to(device)
 
             if exploiter_indices.numel() > 0:
@@ -902,11 +901,9 @@ class LeagueTrainer:
         if len(self.active_league_agents) < args.num_envs:
             # assert isinstance(self.active_league_agents[0], league.MainPlayer) "self.active_league_agents[0] must be an MainPlayer"
             self.active_league_agents.append(self.active_league_agents[0])
-            self.agent_type.append(league.SelfplayAgentType.CUR_MAIN)
             self.indices = torch.cat((self.indices, torch.tensor([args.num_envs - 1], device=self.device)))
         else:
             self.active_league_agents = self.active_league_agents[:args.num_envs]
-            self.agent_type = self.agent_type[:args.num_envs]
             self.indices = self.indices[:-1]
 
 

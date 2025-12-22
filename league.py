@@ -627,17 +627,6 @@ class League:
         opp = done_agent.get_match()[0]
         if args.save_gpu_memory:
             _move_player_to_device(opp, agent.device)
-        # TODO: vorher active_league_agents[1] statt active_league_agents[1 + done_idx] ist es jetzt richtig?
-        if isinstance(opp, MainPlayer):
-            a_type = SelfplayAgentType.CUR_MAIN
-        elif isinstance(opp, LeagueExploiter) or isinstance(opp._parent, LeagueExploiter):
-            a_type = SelfplayAgentType.LEAGUE_EXPLOITER
-        elif isinstance(opp, MainExploiter) or isinstance(opp._parent, MainExploiter):
-            a_type = SelfplayAgentType.MAIN_EXPLOITER
-        elif isinstance(opp._parent, MainPlayer):
-            a_type = SelfplayAgentType.OLD_MAIN
-        else:
-            raise ValueError("Unknown agent type")
 
         if isinstance(opp, Historical):
             opp_name = getattr(opp, "name", opp.__class__.__name__) + "_" + getattr(opp._parent, "name", opp._parent.__class__.__name__)
@@ -646,31 +635,20 @@ class League:
 
         print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}\n")
 
-        return opp, a_type, last_logged_selfplay_games, old_opp
+        return opp, last_logged_selfplay_games, old_opp
 
 
 def initialize_league(args, device, agent):
-    agent_type = _init_agent_type(args, device)
     # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
     league_instance = League(initial_agent=agent, args=args)
 
     # initiale Environments mit den jeweiligen Gegnern gefüllt
     active_league_agents = []
     assert len(league_instance.learning_agents) == args.num_selfplay_envs // 2, "Number of learning agents must be half of the number of selfplay envs"
-    for idx, player0 in enumerate(league_instance.learning_agents):
+    for player0 in league_instance.learning_agents:
         opp = player0.get_match()[0]
         active_league_agents.append(player0)
         active_league_agents.append(opp)
-        if isinstance(opp, MainPlayer):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.CUR_MAIN
-        elif isinstance(opp, LeagueExploiter) or isinstance(opp._parent, LeagueExploiter):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.LEAGUE_EXPLOITER
-        elif isinstance(opp, MainExploiter) or isinstance(opp._parent, MainExploiter):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.MAIN_EXPLOITER
-        elif isinstance(opp._parent, MainPlayer):
-            agent_type[idx * 2 + 1] = SelfplayAgentType.OLD_MAIN
-        else:
-            raise ValueError("Unknown agent type")
 
         # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
 
@@ -678,7 +656,7 @@ def initialize_league(args, device, agent):
     while len(active_league_agents) < args.num_envs:
         active_league_agents.append(league_instance.learning_agents[0])
 
-    return league_instance, active_league_agents, agent_type
+    return league_instance, active_league_agents
 
 def log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack_weight, done_idx, hist_reward):
     writer.add_scalar("main_charts/old_episode_reward", infos[done_idx]['episode']['r'], global_step)
