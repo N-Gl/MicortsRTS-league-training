@@ -27,7 +27,8 @@ ExperimentConfig:
   num_main_exploiters: 5
   num_league_exploiters: 5
 
-  selfplay_save_interval: 2e4   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
+  selfplay_ready_save_interval: 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
+  selfplay_save_interval: 1e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
 
   even_opponent_split: true # TODO
 

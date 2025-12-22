@@ -674,17 +674,16 @@ class LeagueTrainer:
 
             # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
             # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
-            main_indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.int).to(device)
-            b_main_indices = torch.tensor(range(args.num_selfplay_envs // 2, args.num_envs - args.num_selfplay_envs // 2), dtype=torch.int).to(device)
+            main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
+            b_main_indices = main_indices - (args.num_selfplay_envs // 2)
             if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-                selfplay_mains = torch.where((isinstance(self.active_league_agents, league.MainPlayer)))
-                main_indices = torch.cat((selfplay_mains)[0], main_indices)
-                b_main_indices = torch.cat((selfplay_mains)[0], b_main_indices)
+                selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
+                main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)
+                b_main_indices = np.concatenate((b_main_indices, selfplay_mains // 2), axis=0)
             else:
-                selfplay_mains = torch.where(isinstance(self.active_league_agents[::2], league.MainPlayer))[0]
-                main_indices = torch.cat((selfplay_mains * 2, main_indices))
-                b_main_indices = torch.cat((selfplay_mains, b_main_indices))
-
+                selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+                main_indices = np.concatenate((selfplay_mains * 2, main_indices))
+                b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
             
 
             # inds: indices from the batch
@@ -720,11 +719,13 @@ class LeagueTrainer:
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
-            # TODO: leagueexploiter können so nicht gegen Bots trainieren
-            b_exploiter_indices = torch.where((isinstance(self.active_league_agents[::2], (league.MainExploiter, league.LeagueExploiter))))[0].to(device)
-            exploiter_indices = (b_exploiter_indices * 2).to(device)
+            exploiter_indices = np.where([isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
+            b_exploiter_indices = exploiter_indices - (args.num_selfplay_envs // 2)
+            selfplay_exploiters = np.where([isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+            exploiter_indices = np.concatenate((selfplay_exploiters * 2, exploiter_indices))
+            b_exploiter_indices = np.concatenate((selfplay_exploiters, b_exploiter_indices))
 
-            if exploiter_indices.numel() > 0:
+            if exploiter_indices.size > 0:
                 env_shape = envs.single_observation_space.shape
     
                 # update every exploiter individually
