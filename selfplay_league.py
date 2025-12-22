@@ -737,7 +737,8 @@ class LeagueTrainer:
                             "advantages": b_advantages[:, b_exploiter_indices].reshape(-1),
                             "returns": b_returns[:, b_exploiter_indices].reshape(-1),
                             "values": values[:, exploiter_idx].reshape(-1),
-                            "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape)
+                            "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
+                            "ent_coef": args.exploiter_ent_coef
                         }
                     exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = lrnow
 
@@ -961,6 +962,5 @@ class LeagueTrainer:
         else:
             if not torch.allclose(values[0, ::2], agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
-
 
 

@@ -55,7 +55,8 @@ ExperimentConfig:
   num_steps: 512 # (im basis ppo: 256)                
   gamma: 1 # (im basis ppo: 0.99)            
   gae_lambda: 0.95                                   
-  ent_coef: 0.005               
+  ent_coef: 0.003 # TODO (vorher 0.005)
+  exploiter_ent_coef: 0.01      # exploiters explore more without touching main agent settings               
   vf_coef: 0.5               
   max_grad_norm: 0.5                                 
   clip_coef: 0.15 # bis 0.2

@@ -38,6 +38,7 @@ class ExperimentConfig:
     gamma: float
     gae_lambda: float
     ent_coef: float
+    exploiter_ent_coef: float
     vf_coef: float
     max_grad_norm: float
     clip_coef: float

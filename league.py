@@ -801,7 +801,7 @@ def train_exploiters(
                     else:
                         v_loss = 0.5 * ((new_values - entry["returns"][minibatch_ind]) ** 2)
 
-                    loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss
+                    loss = pg_loss - args.exploiter_ent_coef * entropy_loss + args.vf_coef * v_loss
                     total_loss = loss if total_loss is None else total_loss + loss
 
                 del logprob_splits, entropy_splits
@@ -832,7 +832,7 @@ def train_exploiters(
             writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)
             writer.add_scalar(f"{name}/policy_loss", pg_loss.item(), global_step)
             writer.add_scalar(f"{name}/total_loss", loss.item(), global_step)
-            writer.add_scalar(f"{name}/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
+            writer.add_scalar(f"{name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), global_step)
 
             if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")

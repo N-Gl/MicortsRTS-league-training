@@ -80,6 +80,19 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     b_values, b_advantages, b_returns = agent_batch["values"], agent_batch["advantages"], agent_batch["returns"]
     b_Sc, b_z, b_obs = agent_batch["sc"], agent_batch["z"], agent_batch["obs"]
     b_actions, b_logprobs, b_invalid_action_masks = agent_batch["actions"], agent_batch["logprobs"], agent_batch["masks"]
+    ent_coef = agent_batch.get("ent_coef", args.ent_coef)
+    vf_coef = agent_batch.get("vf_coef", args.vf_coef)
+    clip_coef = agent_batch.get("clip_coef", args.clip_coef)
+    target_kl = agent_batch.get("target_kl", args.target_kl)
+    kl_coeff = agent_batch.get("kl_coeff", args.kl_coeff)
+    max_grad_norm = agent_batch.get("max_grad_norm", args.max_grad_norm)
+    update_epochs = agent_batch.get("update_epochs", args.update_epochs)
+    value_warmup_updates = agent_batch.get("value_warmup_updates", args.value_warmup_updates)
+    kle_stop = agent_batch.get("kle_stop", args.kle_stop)
+    kle_rollback = agent_batch.get("kle_rollback", args.kle_rollback)
+    norm_adv = agent_batch.get("norm_adv", args.norm_adv)
+    clip_vloss = agent_batch.get("clip_vloss", args.clip_vloss)
+    skip_policy_update = agent_batch.get("skip_policy_update", False) or args.dbg_no_main_agent_ppo_update
     
     # Optimizing policy and value network with minibatch updates
     # --num_minibatches, --update-epochs
@@ -94,16 +107,16 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     pgLoss (gegenteil von L_clip) ausrechnen, kombinieren mit Entropie Bonus, KL Divergenz Loss und Value Loss mit Updates minimieren
     '''
 
-    value_only_phase = update <= args.value_warmup_updates
+    value_only_phase = update <= value_warmup_updates
     # Optional rollback: snapshot params before policy epochs
     old_params = None
-    if not value_only_phase and args.kle_rollback:
+    if not value_only_phase and kle_rollback:
         # create a detached copy of parameters for rollback
         old_params = {k: v.detach().clone() for k, v in agent.state_dict().items()}
     pg_stop_iter = -1
 
-    epoch_indices = range(args.update_epochs)
-    if args.dbg_no_main_agent_ppo_update:
+    epoch_indices = range(update_epochs)
+    if skip_policy_update:
         print("\nDebug: skipping PPO update for main agent\n")
         epoch_indices = []
     
@@ -114,7 +127,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             minibatch_ind = inds[start:end]
             mb_advantages = b_advantages[minibatch_ind]
 
-            if args.norm_adv:
+            if norm_adv:
                 # normalize the advantages
                 mb_advantages = (mb_advantages - mb_advantages.mean()) / (mb_advantages.std() + 1e-8)
 
@@ -154,17 +167,17 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 # ≈ 0  ⇒ kaum/keine (geclippte) Verbesserung
                 # > 0  ⇒ Surrogate im Mittel schlechter (schlechter Update)
                 pg_loss1 = -mb_advantages * ratio
-                pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - args.clip_coef, 1 + args.clip_coef)
+                pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - clip_coef, 1 + clip_coef)
                 pg_loss = torch.max(pg_loss1, pg_loss2).mean()
                 entropy_loss = entropy.mean()
 
             # Value loss Clipping
             # --clip_vloss
             # MSE(approximierte Values, returns) with or without clip()
-            if args.clip_vloss:
+            if clip_vloss:
                 v_loss_unclipped = (new_values - b_returns[minibatch_ind]) ** 2
                 v_clipped = b_values[minibatch_ind] + torch.clamp(
-                        new_values - b_values[minibatch_ind], -args.clip_coef, args.clip_coef
+                        new_values - b_values[minibatch_ind], -clip_coef, clip_coef
                     )
                 v_loss_clipped = (v_clipped - b_returns[minibatch_ind]) ** 2
                 v_loss_max = torch.max(v_loss_unclipped, v_loss_clipped)
@@ -183,26 +196,26 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                             b_Sc[minibatch_ind],
                             b_z[minibatch_ind],
                             b_actions.long()[minibatch_ind],
-                            b_invalid_action_masks[minibatch_ind],
-                            envs,
+                        b_invalid_action_masks[minibatch_ind],
+                        envs,
                         )
-                kl_loss = args.kl_coeff * torch.nn.functional.kl_div(
+                kl_loss = kl_coeff * torch.nn.functional.kl_div(
                         newlogproba, sl_logprobs, log_target=True, reduction="batchmean"
                     )
-            loss = pg_loss - args.ent_coef * entropy_loss + args.vf_coef * v_loss + kl_loss
+            loss = pg_loss - ent_coef * entropy_loss + vf_coef * v_loss + kl_loss
 
             optimizer.zero_grad()
             loss.backward()
             # TODO: nur für Debugging (nachher entfernen)
             assert_supervised_grads_zero(supervised_agent)
-            torch.nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
+            torch.nn.utils.clip_grad_norm_(agent.parameters(), max_grad_norm)
             optimizer.step()
 
             # KL early stop / rollback
-            if not value_only_phase and (args.kle_stop or args.kle_rollback):
-                if approx_kl.item() > args.target_kl:
+            if not value_only_phase and (kle_stop or kle_rollback):
+                if approx_kl.item() > target_kl:
                     pg_stop_iter = epoch_pi
-                    if args.kle_rollback and old_params is not None:
+                    if kle_rollback and old_params is not None:
                         # revert to snapshot and exit epochs
                         agent.load_state_dict(old_params)
                     break
