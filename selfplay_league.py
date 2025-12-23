@@ -531,9 +531,9 @@ class LeagueTrainer:
                 infos =  sp_infos + bot_infos
                 if np.any(['episode' in info.keys() for info in infos]):
                     if not hasattr(writer, "recent_bot_winloss"):
-                                writer.recent_bot_winloss = deque([0.0] * 5, maxlen=200)
+                                writer.recent_bot_winloss = deque([0.0] * 10, maxlen=200)
                     if not hasattr(writer, "recent_selfplay_winloss"):
-                                writer.recent_selfplay_winloss = deque([0.0] * 5, maxlen=200)
+                                writer.recent_selfplay_winloss = deque([0.0] * 10, maxlen=200)
 
                     where_done = torch.where(next_done)
                     for done_idx in where_done[0]:

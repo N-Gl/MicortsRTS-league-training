@@ -60,6 +60,7 @@ ExperimentConfig:
   ent_coef: 0.005 # TODO: 0.01               
   exploiter_ent_coef: 0.01      # higher entropy only for exploiters
   vf_coef: 0.5               
+  exploiter_vf_coef: 0.5
   max_grad_norm: 0.5                                 
   clip_coef: 0.1 # changed 0.15
   exploiter_clip_coef: 0.2

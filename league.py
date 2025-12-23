@@ -523,16 +523,17 @@ class League:
 
 
     def _log_selfplay_results(self, args, agent, writer, global_step, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games):
-        writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
+        if isinstance(done_agent, MainPlayer):
+            writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
-        selfplay_with_draw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
-        selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
+            selfplay_with_draw = np.mean(np.add(writer.recent_selfplay_winloss, 1) / 2)
+            selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
 
-        winloss_values = np.array(writer.recent_selfplay_winloss)
-        writer.add_scalar("progress/num_selfplay_games", num_done_selfplaygames, global_step)
-        writer.add_scalar(f"main_winrates/selfplay_Winrate_with_draw", selfplay_with_draw, num_done_selfplaygames)
-        writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
-        writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
+            winloss_values = np.array(writer.recent_selfplay_winloss)
+            writer.add_scalar("progress/num_selfplay_games", num_done_selfplaygames, global_step)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_with_draw", selfplay_with_draw, num_done_selfplaygames)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
 
         # TODO (league training): auch andere Agents loggen? (wäre pro exploiter pro Gegner eine Zeile in der Tabelle)
         if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and isinstance(done_agent, MainPlayer):
@@ -589,8 +590,8 @@ class League:
                 if games > 0:
                     writer.add_scalar(f"winrate_per_opponent/{self_name}_vs_{opp}", r, games)
         # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
-        if selfplay_winrate is not None:
-            print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}")
+        print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}")
+        if isinstance(done_agent, MainPlayer):
             print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_with_draw:.3f}\n")
         return last_logged_selfplay_games
 
