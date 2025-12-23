@@ -61,7 +61,8 @@ ExperimentConfig:
   exploiter_ent_coef: 0.01      # higher entropy only for exploiters
   vf_coef: 0.5               
   max_grad_norm: 0.5                                 
-  clip_coef: 0.15 # bis 0.2
+  clip_coef: 0.1 # changed 0.15
+  exploiter_clip_coef: 0.2
   update_epochs: 4              
   kle_stop: true               
   kle_rollback: true           

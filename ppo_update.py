@@ -92,7 +92,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     kle_rollback = agent_batch.get("kle_rollback", args.kle_rollback)
     norm_adv = agent_batch.get("norm_adv", args.norm_adv)
     clip_vloss = agent_batch.get("clip_vloss", args.clip_vloss)
-    skip_policy_update = agent_batch.get("skip_policy_update", False) or args.dbg_no_main_agent_ppo_update
+    skip_policy_update = agent_batch.get("skip_policy_update", False)# or args.dbg_no_main_agent_ppo_update
     
     # Optimizing policy and value network with minibatch updates
     # --num_minibatches, --update-epochs
@@ -118,7 +118,8 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     epoch_indices = range(update_epochs)
     if skip_policy_update:
         print("\nDebug: skipping PPO update for main agent\n")
-        epoch_indices = []
+        # epoch_indices = []
+        return None, None, None, None, None, None, None
     
     for epoch_pi in epoch_indices:
         np.random.shuffle(inds)

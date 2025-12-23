@@ -586,9 +586,7 @@ class LeagueTrainer:
 
             
 
-            # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
-            if args.dbg_no_main_agent_ppo_update:
-                continue
+            
         # =========================
         # PPO update
         # =========================
@@ -640,6 +638,7 @@ class LeagueTrainer:
 
                 # (returns, advantages werden für exploiters weitergegeben, deshalb muss man sie hier auch berechnen oder unten anpassen)
                 # oder 2 Variablen jeweils speichern. Hier kann man auch nur die obs, ... zusammenstellen, die exploiters brauchen (spart Speicher)
+                # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
                 b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_rewards_score, b_dones, b_next_done)
 
 
@@ -706,16 +705,21 @@ class LeagueTrainer:
                 "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape)
             }
                 
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
-                args,
-                envs,
-                main_agent_batch,
-                device,
-                supervised_agent,
-                update,
-                main_batch_size,
-                main_minibatch_size
-                )
+            if not args.dbg_no_main_agent_ppo_update:
+                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
+                    args,
+                    envs,
+                    main_agent_batch,
+                    device,
+                    supervised_agent,
+                    update,
+                    main_batch_size,
+                    main_minibatch_size
+                    )
+            else:
+                print("\nDebug: skipping PPO update for main agent\n")
+                pg_stop_iter = -2
+                pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = None, None, None, None, None, None
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
@@ -744,7 +748,8 @@ class LeagueTrainer:
                             "returns": b_returns[:, b_exploiter_indices].reshape(-1),
                             "values": values[:, exploiter_idx].reshape(-1),
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
-                            "ent_coef": args.exploiter_ent_coef
+                            "ent_coef": args.exploiter_ent_coef,
+                            "vf_coef": args.exploiter_vf_coef
                         }
                     exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
 

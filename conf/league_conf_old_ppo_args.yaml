@@ -9,7 +9,7 @@ ExperimentConfig:
   model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08
+  exp_name: 22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08_only_updating_exploiters
   wandb_project_name: league_training
 
   prod_mode: true
@@ -50,23 +50,24 @@ ExperimentConfig:
   PPO_weight_decay: 0.0
 
   sp: false
-  dbg_no_main_agent_ppo_update: false # TODO
+  dbg_no_main_agent_ppo_update: true # TODO
 
 
 
-  num_steps: 512 # (im basis ppo: 256)                
-  gamma: 1 # (im basis ppo: 0.99)            
-  gae_lambda: 0.95                                   
-  ent_coef: 0.003 # TODO: 0.003             
-  exploiter_ent_coef: 0.08      # higher entropy only for exploiters
-  vf_coef: 0.5               
-  max_grad_norm: 0.5                                 
-  clip_coef: 0.15 # bis 0.2
-  update_epochs: 4              
-  kle_stop: true               
-  kle_rollback: true           
+  num_steps: 512 # (im basis ppo: 256)
+  gamma: 1 # (im basis ppo: 0.99)
+  gae_lambda: 0.95
+  ent_coef: 0.005 # TODO: 0.003
+  exploiter_ent_coef: 0.1      # higher entropy only for exploiters
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  clip_coef: 0.1 # changed 0.15
+  exploiter_clip_coef: 0.2
+  update_epochs: 4
+  kle_stop: true
+  kle_rollback: true
   target_kl: 0.01 # changed from 0.03
-  kl_coeff: 0.4                                      
-  norm_adv: true                
-  anneal_lr: true               
+  kl_coeff: 0.4
+  norm_adv: true
+  anneal_lr: true
   clip_vloss: true
