@@ -452,6 +452,7 @@ def main(cfg: ExperimentConfig):
             # ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt", None],
             # ["BCagent", agent_model.Agent, "models/BCagent.pt", None],
             # ["old_ppo_args__12_12_25__04_12_25__PPO", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt", None],
+            # # ["22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08", agent_model.Agent, "league_models/22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08/Main_agent_backups/agent_update_890.pt", None],
             # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
         ]
         # 2nd element: uninitialized Agent class 
@@ -461,18 +462,18 @@ def main(cfg: ExperimentConfig):
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
             ("coacAI", microrts_ai.coacAI),
             ("mayari", microrts_ai.mayari),
-            # ("passiveAI", microrts_ai.passiveAI),
-            # ("workerRushAI", microrts_ai.workerRushAI),
-            # ("lightRushAI", microrts_ai.lightRushAI),
-            # ("randomAI", microrts_ai.randomAI),
-            # ("randomBiasedAI", microrts_ai.randomBiasedAI),
-            # ("rojo", microrts_ai.rojo),
-            # ("mixedBot", microrts_ai.mixedBot),
-            # ("izanagi", microrts_ai.izanagi), 
-            # ("tiamat", microrts_ai.tiamat),
-            # ("droplet", microrts_ai.droplet),
-            # # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("passiveAI", microrts_ai.passiveAI),
+            ("workerRushAI", microrts_ai.workerRushAI),
+            ("lightRushAI", microrts_ai.lightRushAI),
+            ("randomAI", microrts_ai.randomAI),
+            ("randomBiasedAI", microrts_ai.randomBiasedAI),
+            ("rojo", microrts_ai.rojo),
+            ("mixedBot", microrts_ai.mixedBot),
+            ("izanagi", microrts_ai.izanagi), 
+            ("tiamat", microrts_ai.tiamat),
+            ("droplet", microrts_ai.droplet),
+            # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
+            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:

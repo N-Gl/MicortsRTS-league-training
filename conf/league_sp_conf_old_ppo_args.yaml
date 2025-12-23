@@ -19,7 +19,7 @@ ExperimentConfig:
   seed: 
 
   num_bot_envs: 3
-  max_num_bot_envs: 15
+  max_num_bot_envs: 6 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
@@ -43,7 +43,7 @@ ExperimentConfig:
 
   endgame_maps: false
 
-  PPO_learning_rate: 2.5e-5 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  PPO_learning_rate: 5e-5 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   exploiter_PPO_learning_rate: 5e-5
   PPO_weight_decay: 0.0
 
@@ -63,7 +63,7 @@ ExperimentConfig:
   update_epochs: 4
   kle_stop: true
   kle_rollback: true
-  target_kl: 0.03
+  target_kl: 0.01 # changed from 0.03
   kl_coeff: 0.4
   norm_adv: true
   anneal_lr: true

@@ -299,7 +299,7 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // self.args.num_envs * self.args.num_main_agents # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_agents # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
 
 
     def checkpoint(self):
@@ -361,7 +361,7 @@ class MainExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // self.args.num_envs
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)
 
 
 class LeagueExploiter(Player):
@@ -407,7 +407,7 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // self.args.num_envs
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)
     
 
 class Historical(Player):

@@ -5,23 +5,23 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "models/18_12_25__12_12_25__04_12_25__BCagent__selfplay__bot_adding_ent_coef_0.005_last_bot_env_change_20_PPO_learning_rate_0_000025_update_270.pt",
+                          "league_models/22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08/Main_agent_backups/agent_update_890.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "16_12_25__04_12_25__BCagent__selfplay__fixed_non_legal_actions_update_430",
+          "22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08_update_890",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "18_12_25__12_12_25__04_12_25__BCagent__selfplay__bot_adding_ent_coef_0.005_last_bot_env_change_20_PPO_learning_rate_0_000025_update_270"
+  exp_name: "22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08_update_890"
   wandb_project_name: new_Evaluation
   prod_mode: true
 
   seed:
   exact_seed: true
 
-  render: false
+  render: true
   render_all: false
 
   num_eval_episodes: 100
-  num_parallel_eval_envs: 25
+  num_parallel_eval_envs: 100
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
