@@ -181,6 +181,7 @@ class LeagueTrainer:
         self,
         agent,
         supervised_agent,
+        other_historicals,
         envs,
         sp_envs,
         args,
@@ -191,6 +192,7 @@ class LeagueTrainer:
     ):
         self.agent = agent
         self.supervised_agent = supervised_agent
+        self.other_historicals = other_historicals
         self.envs = envs
         self.sp_envs = sp_envs
         self.args = args
@@ -234,7 +236,7 @@ class LeagueTrainer:
         if args.num_main_agents == 0:
             raise ValueError("league training requires at least one main agent")
         
-        league_instance, self.active_league_agents = league.initialize_league(args, device, agent)
+        league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:

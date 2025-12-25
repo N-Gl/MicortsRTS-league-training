@@ -8,7 +8,7 @@ ExperimentConfig:
   pfsp: true
   model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
-  BC_model_path:        # BC_model_path == model_path, falls BC_model_path None ist
+  BC_model_path: models/BCagent.pt        # BC_model_path == model_path, falls BC_model_path None ist
   exp_name: 19_12_25__12_12_25__04_12_25__BCagent__league__bot_sp
   wandb_project_name: testing_league_training
 
@@ -26,6 +26,8 @@ ExperimentConfig:
   num_main_agents: 20   # 1 num_main_agents == 1 env
   num_main_exploiters: 0
   num_league_exploiters: 0
+
+  BC_aget_as_Historical: true
 
   selfplay_save_interval: 30000000   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
 

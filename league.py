@@ -467,7 +467,8 @@ def offload_historical_to_cpu(player, active_agents=None):
 class League:
     def __init__(
         self,
-        initial_agent: torch.nn.Module,
+        initial_main_agent: torch.nn.Module,
+        other_initial_agents: List[torch.nn.Module],
         args,
     ):
         # am Anfang legt man fest, wie viele Environments für das Training von jedem Agententyp genutzt werden (denen gibt man mit .match einen Gegner)
@@ -481,8 +482,12 @@ class League:
         #   main_agent = MainPlayer(initial_agent, self._payoff, args=args)
         #   self._learning_agents.append(main_agent)
 
+        for i in range(len(other_initial_agents)):
+            main_agent_historical = MainPlayer(other_initial_agents[i], self._payoff, args=args)
+            self._payoff.add_player(main_agent_historical.checkpoint())
+
         # only 1 Mainagent:
-        main_agent = MainPlayer(initial_agent, self._payoff, args=args)
+        main_agent = MainPlayer(initial_main_agent, self._payoff, args=args)
         for _ in range(args.num_main_agents):
             self._learning_agents.append(main_agent)
 
@@ -493,12 +498,12 @@ class League:
         self._payoff.add_player(main_agent)
 
         for _ in range(args.num_main_exploiters):
-          main_exploiter = MainExploiter(initial_agent, self._payoff, args=args)
+          main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args)
           self._learning_agents.append(
               main_exploiter)
           self._payoff.add_player(main_exploiter)
         for _ in range(args.num_league_exploiters):
-          league_exploiter = LeagueExploiter(initial_agent, self._payoff, args=args)
+          league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args)
           self._learning_agents.append(
               league_exploiter)
           self._payoff.add_player(league_exploiter)
@@ -639,9 +644,9 @@ class League:
         return opp, last_logged_selfplay_games, old_opp
 
 
-def initialize_league(args, device, agent):
+def initialize_league(args, device, agent, other_initial_agents=[]):
     # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
-    league_instance = League(initial_agent=agent, args=args)
+    league_instance = League(initial_main_agent=agent, other_initial_agents=other_initial_agents, args=args)
 
     # initiale Environments mit den jeweiligen Gegnern gefüllt
     active_league_agents = []

@@ -323,11 +323,11 @@ def main(cfg: ExperimentConfig):
         agent = build_agent(action_plane_nvec, device)
 
         # new
-        if args.BC_model_path:
-            path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
+        if args.BC_model_path and not args.league_training:
+            path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
         else:
-            path_BCagent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
-        supervised_agent = build_agent(action_plane_nvec, device)
+            path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
+        initial_agent = build_agent(action_plane_nvec, device)
         # end new
 
         start_epoch = 1
@@ -348,17 +348,17 @@ def main(cfg: ExperimentConfig):
 
             # new (moved out of if-Statement)
             # path_BCagent = f"models/BCagent.pt"
-            # supervised_agent = build_agent(action_plane_nvec, device)
+            # initial_agent = build_agent(action_plane_nvec, device)
             # end new
 
-            supervised_agent.load_state_dict(
+            initial_agent.load_state_dict(
                 torch.load(
-                    path_BCagent,
+                    path_initial_agent,
                     map_location=device,
                     weights_only=True))
-            for param in supervised_agent.parameters():
+            for param in initial_agent.parameters():
                 param.requires_grad = False
-            supervised_agent.eval()
+            initial_agent.eval()
 
 
     if args.initial_BC:
@@ -397,7 +397,7 @@ def main(cfg: ExperimentConfig):
         from ppo import PPOTrainer
         ppo_trainer = PPOTrainer(
             agent=agent,
-            supervised_agent=supervised_agent,
+            supervised_agent=initial_agent,
             envs=envsT,
             args=args,
             writer=writer,
@@ -413,7 +413,7 @@ def main(cfg: ExperimentConfig):
 
         selfplay_trainer = SelfPlayTrainer(
             agent=agent,
-            supervised_agent=supervised_agent,
+            supervised_agent=initial_agent,
             envs=envsT,
             sp_envs=sp_envsT,
             args=args,
@@ -430,9 +430,22 @@ def main(cfg: ExperimentConfig):
     if args.league_training:
         from selfplay_league import LeagueTrainer
 
+        path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
+        BCagent = build_agent(action_plane_nvec, device)
+        BCagent.load_state_dict(
+                torch.load(
+                    path_BCagent,
+                    map_location=device,
+                    weights_only=True)
+                    )
+        for param in BCagent.parameters():
+            param.requires_grad = False
+        BCagent.eval()
+
         league_trainer = LeagueTrainer(
             agent=agent,
-            supervised_agent=supervised_agent,
+            supervised_agent=initial_agent,
+            other_historicals=[BCagent],
             envs=envsT,
             sp_envs=sp_envsT,
             args=args,
