@@ -63,12 +63,12 @@ ExperimentConfig:
   gamma: 1 # (im basis ppo: 0.99)
   gae_lambda: 0.95
   ent_coef: 0.005 # TODO: 0.003
-  exploiter_ent_coef: 0.01      # higher entropy only for exploiters
+  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
   vf_coef: 0.5
   exploiter_vf_coef: 0.5
   max_grad_norm: 0.5
   clip_coef: 0.1 # changed 0.15
-  exploiter_clip_coef: 0.1
+  exploiter_clip_coef: 0.1 # 0.2
   update_epochs: 4
   kle_stop: true
   kle_rollback: true
