@@ -54,7 +54,8 @@ ExperimentConfig:
   sp: false
   dbg_no_main_agent_ppo_update: false # TODO
 
-
+  log_exploiter_tables: true
+  log_exploiter_winrates: true
 
   num_steps: 512 # (im basis ppo: 256)                
   gamma: 1 # (im basis ppo: 0.99)            

@@ -9,8 +9,8 @@ ExperimentConfig:
   model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt        # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08_only_updating_exploiters
-  wandb_project_name: league_training
+  exp_name: temp
+  wandb_project_name: testing_league_training
 
   prod_mode: true
   render: false
@@ -54,7 +54,8 @@ ExperimentConfig:
   sp: false
   dbg_no_main_agent_ppo_update: true # TODO
 
-
+  log_exploiter_tables: true
+  log_exploiter_winrates: true
 
   num_steps: 512 # (im basis ppo: 256)
   gamma: 1 # (im basis ppo: 0.99)

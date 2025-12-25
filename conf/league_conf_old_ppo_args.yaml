@@ -55,6 +55,8 @@ ExperimentConfig:
   sp: false
   dbg_no_main_agent_ppo_update: true # TODO
 
+  log_exploiter_tables: true
+
 
 
   num_steps: 512 # (im basis ppo: 256)
