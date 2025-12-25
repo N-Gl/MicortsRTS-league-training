@@ -19,7 +19,7 @@ ExperimentConfig:
   seed:
   exact_seed: true
 
-  render: true
+  render: false
   render_all: false
 
   num_eval_episodes: 100
