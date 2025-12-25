@@ -9,7 +9,7 @@ ExperimentConfig:
   model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08_only_updating_exploiters
+  exp_name: 25_12_25__12_12_25__04_12_25__BCagent__league__with_BC_agent_as_historical_0
   wandb_project_name: league_training
 
   prod_mode: true
@@ -23,7 +23,7 @@ ExperimentConfig:
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
-  num_main_agents: 2   # 1 num_main_agents == 1 env
+  num_main_agents: 10   # 1 num_main_agents == 1 env
   num_main_exploiters: 5
   num_league_exploiters: 5
 
