@@ -541,7 +541,13 @@ class League:
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
 
         # TODO (league training): auch andere Agents loggen? (wäre pro exploiter pro Gegner eine Zeile in der Tabelle)
-        if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and isinstance(done_agent, MainPlayer):
+        if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
+
+            if done_agent.agent is agent:
+                self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
+            else:
+                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx.item())
+
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates = []
             opp_names = []
@@ -578,22 +584,19 @@ class League:
                 else:
                     count_league_players += 1
 
-            if done_agent.agent is agent:
-                self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
-            else:
-                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx.item())
             Logger.log_wandb_summary(
                                     args,
                                     opponent_table_rows,
                                     no_reward=True,
                                     step=global_step,
-                                    table_name="league/games_summary",
+                                    table_name=f"league/{self_name}_summary",
                                     with_name=self_name
                                     )
-            self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
-            for opp, games, r in zip(opp_names, game_count, win_rates):
-                if games > 0:
-                    writer.add_scalar(f"winrate_per_opponent/{self_name}_vs_{opp}", r, games)
+            
+            if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
+                for opp, games, r in zip(opp_names, game_count, win_rates):
+                    if games > 0:
+                        writer.add_scalar(f"winrate_per_opponent/{self_name}_vs_{opp}", r, games)
         # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
         print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}")
         if isinstance(done_agent, MainPlayer):
