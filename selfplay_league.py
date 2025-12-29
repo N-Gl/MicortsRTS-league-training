@@ -743,7 +743,7 @@ class LeagueTrainer:
                 env_shape = envs.single_observation_space.shape
     
                 # update every exploiter individually
-                for idx, exploiter_idx in enumerate(exploiter_indices):
+                for idx, (exploiter_idx, b_exploiter_idx) in enumerate(zip(exploiter_indices, b_exploiter_indices)):
                     player = self.active_league_agents[exploiter_idx]
                     exploiter_agent_batch = {
                             "player": player,
@@ -754,8 +754,8 @@ class LeagueTrainer:
                             "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),
                             "actions": actions[:, exploiter_idx].reshape((-1,) + action_space_shape),
                             "logprobs": logprobs[:, exploiter_idx].reshape(-1),
-                            "advantages": b_advantages[:, b_exploiter_indices].reshape(-1),
-                            "returns": b_returns[:, b_exploiter_indices].reshape(-1),
+                            "advantages": b_advantages[:, b_exploiter_idx].reshape(-1),
+                            "returns": b_returns[:, b_exploiter_idx].reshape(-1),
                             "values": values[:, exploiter_idx].reshape(-1),
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
                             "ent_coef": args.exploiter_ent_coef,
@@ -983,5 +983,4 @@ class LeagueTrainer:
         else:
             if not torch.allclose(values[0, ::2], agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
-
 
