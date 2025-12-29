@@ -350,8 +350,7 @@ class MainExploiter(Player):
         checkpoint = self._create_checkpoint()
 
         self.agent.set_weights(self._initial_weights)
-        if self.optimizer is not None:
-            self.optimizer.state = {}
+        self.optimizer = None
 
         self._checkpoint_step = self.agent.get_steps()
         return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
@@ -402,8 +401,7 @@ class LeagueExploiter(Player):
 
         if np.random.random() < 0.25:
             self.agent.set_weights(self._initial_weights)
-            if self.optimizer is not None:
-                self.optimizer.state = {}
+            self.optimizer = None
 
         self._checkpoint_step = self.agent.get_steps()
         return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
