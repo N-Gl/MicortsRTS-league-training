@@ -675,8 +675,13 @@ class LeagueTrainer:
 
             # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
             # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
-            main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
-            b_main_indices = main_indices - (args.num_selfplay_envs // 2)
+            if args.training_on_bot_envs:
+                main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
+                b_main_indices = main_indices - (args.num_selfplay_envs // 2)
+            else:
+                main_indices = np.array([], dtype=np.int64)
+                b_main_indices = np.array([], dtype=np.int64)
+
             if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
                 selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
                 main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)

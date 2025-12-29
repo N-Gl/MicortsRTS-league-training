@@ -6,10 +6,10 @@ ExperimentConfig:
   league_training: true
   train_on_old_mains: false
   pfsp: true
-  model_path: league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt
+  model_path: models/BCagent.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 25_12_25__12_12_25__04_12_25__BCagent__league__with_BC_agent_as_historical_0__more_logging
+  exp_name: 25_12_25__BCagent__exploiters__with__more_logging
   wandb_project_name: league_training
 
   prod_mode: true
@@ -18,8 +18,8 @@ ExperimentConfig:
 
   seed: 
 
-  num_bot_envs: 1
-  max_num_bot_envs: 3 # changed from 9
+  num_bot_envs: 1 # 3
+  max_num_bot_envs: 3 # 6 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
@@ -27,8 +27,8 @@ ExperimentConfig:
   num_main_exploiters: 5
   num_league_exploiters: 5
 
-  BC_aget_as_Historical: true
-  
+  BC_aget_as_Historical: false
+  training_on_bot_envs: false   # false
 
   selfplay_ready_save_interval: 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
   selfplay_save_interval: 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)

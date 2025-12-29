@@ -442,10 +442,15 @@ def main(cfg: ExperimentConfig):
             param.requires_grad = False
         BCagent.eval()
 
+        if args.BC_aget_as_Historical:
+            other_historicals = [BCagent]
+        else:
+            other_historicals = []
+
         league_trainer = LeagueTrainer(
             agent=agent,
             supervised_agent=initial_agent,
-            other_historicals=[BCagent],
+            other_historicals=other_historicals,
             envs=envsT,
             sp_envs=sp_envsT,
             args=args,
