@@ -321,14 +321,15 @@ def main(cfg: ExperimentConfig):
         action_plane_nvec = envsT.action_plane_space.nvec
 
         agent = build_agent(action_plane_nvec, device)
+        # TODO (optimize): check if torch.compile is beneficial here (for initial_agent as well)
+        # agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
 
-        # new
         if args.BC_model_path and not args.league_training:
             path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
         else:
             path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
         initial_agent = build_agent(action_plane_nvec, device)
-        # end new
+        # initial_agent = torch.compile(initial_agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else initial_agent
 
         start_epoch = 1
         if args.prod_mode and wandb.run.resumed:
