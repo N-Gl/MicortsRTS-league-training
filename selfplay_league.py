@@ -523,7 +523,7 @@ class LeagueTrainer:
                 else:
                     rewards_attack[step] = attack_tensor * attack
 
-                rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew]) * winloss).to(device)
+                rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew])).to(device)
                 rewards_score[step] = torch.Tensor(np.concatenate([sp_scorerew, bot_scorerew])).to(device)
                 next_done = torch.Tensor(np.concatenate([sp_ds, bot_ds])).to(device)
 
@@ -628,6 +628,9 @@ class LeagueTrainer:
                     next_obs=next_obs, 
                     flatten=False
                     )
+                
+                rewards_winloss = rewards_winloss * winloss
+                rewards_score = rewards_score * args.rewardscore
 
                 # dont calculate GAE for Player 1 Environments
                 b_next_value = next_value[:, self.indices]
