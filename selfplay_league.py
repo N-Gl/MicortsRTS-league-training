@@ -745,10 +745,14 @@ class LeagueTrainer:
                 # update every exploiter individually
                 for idx, (exploiter_idx, b_exploiter_idx) in enumerate(zip(exploiter_indices, b_exploiter_indices)):
                     player = self.active_league_agents[exploiter_idx]
+
+                    if player.optimizer is None:
+                        player.optimizer = optim.Adam(player.agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
+
                     exploiter_agent_batch = {
                             "player": player,
                             "agent": player.agent,
-                            "optimizer": optim.Adam(player.agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5),
+                            "optimizer": player.optimizer,
                             "obs": obs[:, exploiter_idx].reshape((-1,) + env_shape),
                             "sc": scalar_features[:, exploiter_idx].reshape(-1, scalar_features.shape[-1]),
                             "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),

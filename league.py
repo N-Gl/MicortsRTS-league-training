@@ -313,7 +313,8 @@ class MainExploiter(Player):
         self,
         initial_agent: torch.nn.Module,
         payoff: Payoff,
-        args
+        args,
+        optimizer=None
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
@@ -321,6 +322,7 @@ class MainExploiter(Player):
         self._payoff = payoff
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
+        self.optimizer = optimizer
 
     def get_match(self):
         '''wählt einen zufälligen main agenten als gegner, wenn die winrate gegen diesen gegner > 0.1 ist.
@@ -346,7 +348,11 @@ class MainExploiter(Player):
     def checkpoint(self):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
         checkpoint = self._create_checkpoint()
+
         self.agent.set_weights(self._initial_weights)
+        if self.optimizer is not None:
+            self.optimizer.state = {}
+
         self._checkpoint_step = self.agent.get_steps()
         return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
     
@@ -369,7 +375,8 @@ class LeagueExploiter(Player):
         self,
         initial_agent: torch.nn.Module,
         payoff: Payoff,
-        args
+        args,
+        optimizer=None
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
@@ -377,6 +384,7 @@ class LeagueExploiter(Player):
         self._payoff = payoff
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
+        self.optimizer = optimizer
 
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
@@ -391,8 +399,12 @@ class LeagueExploiter(Player):
     def checkpoint(self):
         '''Resets agent zu den initialen gewichten mit 25% chance und erstellt einen neuen checkpoint.'''
         checkpoint = self._create_checkpoint()
+
         if np.random.random() < 0.25:
             self.agent.set_weights(self._initial_weights)
+            if self.optimizer is not None:
+                self.optimizer.state = {}
+
         self._checkpoint_step = self.agent.get_steps()
         return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
     
