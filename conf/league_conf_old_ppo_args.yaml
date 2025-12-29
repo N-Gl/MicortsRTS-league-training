@@ -6,10 +6,10 @@ ExperimentConfig:
   league_training: true
   train_on_old_mains: false
   pfsp: true
-  model_path: models/BCagent.pt
+  model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 25_12_25__BCagent__exploiters__with__more_logging__lr_2.5e-6
+  exp_name: 25_12_25__finished_PPO_Basis_thesis__exploiters__no_training_on_bot_envs__b_exploiter_idx
   wandb_project_name: league_training
 
   prod_mode: true
@@ -19,7 +19,7 @@ ExperimentConfig:
   seed: 
 
   num_bot_envs: 1 # 3
-  max_num_bot_envs: 3 # 6 # changed from 9
+  max_num_bot_envs: 1 # 6 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
@@ -49,7 +49,7 @@ ExperimentConfig:
   endgame_maps: false
 
   PPO_learning_rate: 5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
-  exploiter_PPO_learning_rate: 2.5e-6 # changed from 2.5e-5
+  exploiter_PPO_learning_rate: 2.5e-5 # changed from 2.5e-5
   PPO_weight_decay: 0.0
 
   sp: false
