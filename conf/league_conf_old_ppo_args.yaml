@@ -9,7 +9,7 @@ ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 25_12_25__finished_PPO_Basis_thesis__exploiters__no_training_on_bot_envs__saving_optimizers
+  exp_name: 30_12_25__finished_PPO_Basis_thesis__no_resetting
   wandb_project_name: league_training
 
   prod_mode: true
@@ -28,10 +28,10 @@ ExperimentConfig:
   num_league_exploiters: 5
 
   BC_aget_as_Historical: false
-  training_on_bot_envs: false   # false
+  training_on_bot_envs: false   # true
 
-  selfplay_ready_save_interval: 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
-  selfplay_save_interval: 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
+  selfplay_ready_save_interval: 30000000 # 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
+  selfplay_save_interval: 30000000 # 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
   # changed from 1e6
 
   even_opponent_split: true
@@ -79,7 +79,7 @@ ExperimentConfig:
 
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
-  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_ent_coef: 0.005 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.1 # 0.2
