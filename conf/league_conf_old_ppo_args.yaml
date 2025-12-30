@@ -84,9 +84,9 @@ ExperimentConfig:
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.1 # 0.2
   exploiter_update_epochs: 4
-  exploiter_kle_stop: true
-  exploiter_kle_rollback: true
-  exploiter_target_kl: 0.01
+  exploiter_kle_stop: false
+  exploiter_kle_rollback: false
+  exploiter_target_kl: 0.03
   exploiter_kl_coeff: 0.4
   exploiter_norm_adv: true
   exploiter_anneal_lr: true
