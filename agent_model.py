@@ -231,7 +231,10 @@ class Agent(nn.Module):
         selfplay_envs: bool = False,
         num_selfplay_envs: int = 0,
         logits: Optional[torch.Tensor] = None,
+        process_envs: Optional[Any] = None,
     ):
+        if process_envs is None:
+            process_envs = range(envs.num_envs)
         if logits is None:
             logits = self.actor(self.forward(x, sc, z))
         grid_logits = logits.view(-1, self.action_dim)
@@ -240,7 +243,7 @@ class Agent(nn.Module):
         # np.any([torch.where(z[i] != z[i+1])[0].shape[0] != 0 or torch.where(x[i] != x[i+1])[0].shape[0] != 0 or torch.where(sc[i] != sc[i+1])[0].shape[0] != 0 for i in range(0, num_selfplay_envs//2, 2)])
 
         if action is None:
-            invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in range(envs.num_envs)]).to(self.device)
+            invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in process_envs]).to(self.device)
             
             if selfplay_envs and num_selfplay_envs > 1:
                 invalid_action_masks = invalid_action_masks.clone()
@@ -260,7 +263,7 @@ class Agent(nn.Module):
             dim=1,
         )
         if action is None and selfplay_envs and num_selfplay_envs > 1 and envs is not None:
-            self._adjust_selfplay_masks(split_invalid_action_masks, num_selfplay_envs, envs.num_envs)
+            self._adjust_selfplay_masks(split_invalid_action_masks, num_selfplay_envs, len(process_envs))
         multi_categoricals = [
             CategoricalMasked(logits=logits, masks=masks, device=self.device)
             for logits, masks in zip(split_logits, split_invalid_action_masks)

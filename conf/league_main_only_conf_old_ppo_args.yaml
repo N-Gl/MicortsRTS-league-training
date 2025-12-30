@@ -58,21 +58,33 @@ ExperimentConfig:
   log_exploiter_tables: true
   log_exploiter_winrates: true
 
-  num_steps: 512 # (im basis ppo: 256)                
-  gamma: 1 # (im basis ppo: 0.99)            
-  gae_lambda: 0.95                                   
+  num_steps: 512 # (im basis ppo: 256)
+  gamma: 1 # (im basis ppo: 0.99)
+  gae_lambda: 0.95
   ent_coef: 0.003 # TODO (vorher 0.005)
-  exploiter_ent_coef: 0.01      # exploiters explore more without touching main agent settings               
-  vf_coef: 0.5               
-  exploiter_vf_coef: 0.5
-  max_grad_norm: 0.5                                 
+  vf_coef: 0.5
+  max_grad_norm: 0.5
   clip_coef: 0.1 # changed 0.15
-  exploiter_clip_coef: 0.2
-  update_epochs: 4              
-  kle_stop: true               
-  kle_rollback: true           
+  update_epochs: 4
+  kle_stop: true
+  kle_rollback: true
   target_kl: 0.01 # changed from 0.03
-  kl_coeff: 0.4                                      
-  norm_adv: true                
-  anneal_lr: true               
+  kl_coeff: 0.4
+  norm_adv: true
+  anneal_lr: true
   clip_vloss: true
+
+  exploiter_gamma: 1
+  exploiter_gae_lambda: 0.95
+  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_vf_coef: 0.5
+  exploiter_max_grad_norm: 0.5
+  exploiter_clip_coef: 0.1 # 0.2
+  exploiter_update_epochs: 4
+  exploiter_kle_stop: true
+  exploiter_kle_rollback: true
+  exploiter_target_kl: 0.01
+  exploiter_kl_coeff: 0.4
+  exploiter_norm_adv: true
+  exploiter_anneal_lr: true
+  exploiter_clip_vloss: true
