@@ -197,8 +197,8 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                             b_Sc[minibatch_ind],
                             b_z[minibatch_ind],
                             b_actions.long()[minibatch_ind],
-                        b_invalid_action_masks[minibatch_ind],
-                        envs,
+                            b_invalid_action_masks[minibatch_ind],
+                            envs
                         )
                 kl_loss = kl_coeff * torch.nn.functional.kl_div(
                         newlogproba, sl_logprobs, log_target=True, reduction="batchmean"

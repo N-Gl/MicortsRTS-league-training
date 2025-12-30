@@ -307,7 +307,7 @@ class LeagueTrainer:
                 if args.render:
                     if args.render_all:
                         # TODO: funktioniert nicht richtig
-                        Rendering.render_all_envs(envs)
+                        # Rendering.render_all_envs(envs)
                         Rendering.render_all_envs(sp_envs)
                     else:
                         envs.render("human")
@@ -733,21 +733,23 @@ class LeagueTrainer:
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
-            exploiter_indices = np.where([isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
-            b_exploiter_indices = exploiter_indices - (args.num_selfplay_envs // 2)
+
+            bot_exploiters = np.where(
+                [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
+            )[0] + args.num_selfplay_envs
             selfplay_exploiters = np.where([isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-            exploiter_indices = np.concatenate((selfplay_exploiters * 2, exploiter_indices))
-            b_exploiter_indices = np.concatenate((selfplay_exploiters, b_exploiter_indices))
+            exploiter_indices = np.concatenate((selfplay_exploiters * 2, bot_exploiters))
+            b_exploiter_indices = np.concatenate((selfplay_exploiters, bot_exploiters - (args.num_selfplay_envs // 2)))
 
             if exploiter_indices.size > 0:
-                env_shape = envs.single_observation_space.shape
+                env_shape = sp_envs.single_observation_space.shape
     
                 # update every exploiter individually
                 for idx, (exploiter_idx, b_exploiter_idx) in enumerate(zip(exploiter_indices, b_exploiter_indices)):
                     player = self.active_league_agents[exploiter_idx]
 
                     if player.optimizer is None:
-                        player.optimizer = optim.Adam(player.agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
+                        player.optimizer = optim.Adam(player.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
 
                     exploiter_agent_batch = {
                             "player": player,
@@ -762,14 +764,27 @@ class LeagueTrainer:
                             "returns": b_returns[:, b_exploiter_idx].reshape(-1),
                             "values": values[:, exploiter_idx].reshape(-1),
                             "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
+                            "gamma": args.exploiter_gamma,
+                            "gae_lambda": args.exploiter_gae_lambda,
                             "ent_coef": args.exploiter_ent_coef,
-                            "vf_coef": args.exploiter_vf_coef
+                            "vf_coef": args.exploiter_vf_coef,
+                            "max_grad_norm": args.exploiter_max_grad_norm,
+                            "clip_coef": args.exploiter_clip_coef,
+                            "update_epochs": args.exploiter_update_epochs,
+                            "kle_stop": args.exploiter_kle_stop,
+                            "kle_rollback": args.exploiter_kle_rollback,
+                            "target_kl": args.exploiter_target_kl,
+                            "kl_coeff": args.exploiter_kl_coeff,
+                            "norm_adv": args.exploiter_norm_adv,
+                            "anneal_lr": args.exploiter_anneal_lr,
+                            "clip_vloss": args.exploiter_clip_vloss
                         }
+                        
                     exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
 
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                         args,
-                        envs,
+                        sp_envs,
                         exploiter_agent_batch,
                         device,
                         supervised_agent,
@@ -777,6 +792,16 @@ class LeagueTrainer:
                         args.num_steps,
                         max(args.num_steps // max(args.n_minibatch, 1), 1)
                         )
+                    
+
+                    # TODO: debugging löschen
+                    # if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
+                    #     print("Exploiter obs different from main agent obs")
+                    # if not torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]):
+                    #     print("Exploiter sc different from main agent sc")
+                    # if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
+                    #     print("Exploiter z different from main agent z")
+                    
                     
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, idx)
 
@@ -987,4 +1012,3 @@ class LeagueTrainer:
         else:
             if not torch.allclose(values[0, ::2], agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
-

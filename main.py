@@ -216,7 +216,7 @@ def main(cfg: ExperimentConfig):
             always_player_1=True,
             bot_envs_alternate_player=False,
             render_theme=1,
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+            map_paths=map_list, # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
             reward_weight=reward_weight,
         )
         sp_envsT = MicroRTSSpaceTransform(sp_envs)
