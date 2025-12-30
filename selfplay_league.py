@@ -307,7 +307,7 @@ class LeagueTrainer:
                 if args.render:
                     if args.render_all:
                         # TODO: funktioniert nicht richtig
-                        Rendering.render_all_envs(envs)
+                        # Rendering.render_all_envs(envs)
                         Rendering.render_all_envs(sp_envs)
                     else:
                         envs.render("human")
@@ -747,7 +747,7 @@ class LeagueTrainer:
                     player = self.active_league_agents[exploiter_idx]
 
                     if player.optimizer is None:
-                        player.optimizer = optim.Adam(player.agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
+                        player.optimizer = optim.Adam(player.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
 
                     exploiter_agent_batch = {
                             "player": player,
@@ -777,6 +777,16 @@ class LeagueTrainer:
                         args.num_steps,
                         max(args.num_steps // max(args.n_minibatch, 1), 1)
                         )
+                    
+
+                    # TODO: debugging löschen
+                    if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
+                        print("Exploiter obs different from main agent obs")
+                    if not torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]):
+                        print("Exploiter sc different from main agent sc")
+                    if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
+                        print("Exploiter z different from main agent z")
+                    
                     
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, idx)
 

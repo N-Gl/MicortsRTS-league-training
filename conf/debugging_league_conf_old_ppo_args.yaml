@@ -12,23 +12,23 @@ ExperimentConfig:
   exp_name: temp
   wandb_project_name: testing_league_training
 
-  prod_mode: true
+  prod_mode: false
   render: true
-  render_all: false
+  render_all: true
 
   seed: 
 
-  num_bot_envs: 3
-  max_num_bot_envs: 6 # changed from 9
+  num_bot_envs: 1
+  max_num_bot_envs: 1 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
-  num_main_agents: 2   # 1 num_main_agents == 1 env
-  num_main_exploiters: 5
-  num_league_exploiters: 5
+  num_main_agents: 1   # 1 num_main_agents == 1 env
+  num_main_exploiters: 3
+  num_league_exploiters: 0
 
   BC_aget_as_Historical: false
-  training_on_bot_envs: true   # true
+  training_on_bot_envs: false   # true
 
   selfplay_ready_save_interval: 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
   selfplay_save_interval: 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
@@ -42,7 +42,7 @@ ExperimentConfig:
 
   attack_reward_weight: 0.05 # (im basis ppo: 1)
   dyn_attack_reward: 0.0
-  rewardscore: 1.0
+  rewardscore: 0.0
   value_warmup_updates: 0
   # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
 
@@ -58,7 +58,7 @@ ExperimentConfig:
   log_exploiter_tables: true
   log_exploiter_winrates: true
 
-  num_steps: 512 # (im basis ppo: 256)
+  num_steps: 30 # (im basis ppo: 256)
   gamma: 1 # (im basis ppo: 0.99)
   gae_lambda: 0.95
   ent_coef: 0.005 # TODO: 0.003
