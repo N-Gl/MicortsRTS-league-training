@@ -9,7 +9,7 @@ ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 25_12_25__finished_PPO_Basis_thesis__exploiters__no_training_on_bot_envs__b_exploiter_idx
+  exp_name: 25_12_25__finished_PPO_Basis_thesis__exploiters__no_training_on_bot_envs__saving_optimizers
   wandb_project_name: league_training
 
   prod_mode: true
