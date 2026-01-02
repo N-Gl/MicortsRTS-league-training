@@ -61,7 +61,7 @@ def main(cfg: ExperimentConfig):
     if args.evaluate:
         args.__dict__.setdefault('num_selfplay_envs', args.num_parallel_eval_envs)
     else:
-        args.__dict__.setdefault('num_selfplay_envs', (args.num_main_agents + args.num_main_exploiters + args.num_league_exploiters) * 2)
+        args.__dict__.setdefault('num_selfplay_envs', (args.num_main_agents + args.num_main_exploiters * args.num_envs_per_main_exploiters + args.num_league_exploiters * args.num_envs_per_league_exploiters) * 2)
 
     args.num_envs = args.num_selfplay_envs + args.num_bot_envs
     # args.__dict__.setdefault('num_envs', args.num_selfplay_envs + args.num_bot_envs)

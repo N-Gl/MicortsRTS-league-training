@@ -508,15 +508,17 @@ class League:
         self._payoff.add_player(main_agent)
 
         for _ in range(args.num_main_exploiters):
-          main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args)
-          self._learning_agents.append(
-              main_exploiter)
-          self._payoff.add_player(main_exploiter)
+            main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args)
+            for _ in range(args.num_envs_per_main_exploiters):
+                self._learning_agents.append(
+                    main_exploiter)
+            self._payoff.add_player(main_exploiter)
         for _ in range(args.num_league_exploiters):
-          league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args)
-          self._learning_agents.append(
-              league_exploiter)
-          self._payoff.add_player(league_exploiter)
+            league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args)
+            for _ in range(args.num_envs_per_league_exploiters):
+                self._learning_agents.append(
+                    league_exploiter)
+            self._payoff.add_player(league_exploiter)
 
     def update(self, home, away, result):
         return self._payoff.update(home, away, result)
@@ -703,8 +705,9 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
 
-def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, exploiter_idx):
-    name = getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[exploiter_idx].item())
+def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update):
+    player = exploiter_agent_batch["player"]
+    name = getattr(player, "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[player])
 
     writer.add_scalar(f"{name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], global_step)
     writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)
