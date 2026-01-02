@@ -14,21 +14,23 @@ ExperimentConfig:
 
   prod_mode: true
   render: true
-  render_all: true
+  render_all: false
 
   seed: 
 
-  num_bot_envs: 3
-  max_num_bot_envs: 6 # changed from 9
+  num_bot_envs: 1
+  max_num_bot_envs: 1 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
   num_main_agents: 2   # 1 num_main_agents == 1 env
-  num_main_exploiters: 5
-  num_league_exploiters: 5
+  num_main_exploiters: 3
+  num_league_exploiters: 4
+  num_envs_per_main_exploiters: 3
+  num_envs_per_league_exploiters: 2
 
   BC_aget_as_Historical: false
-  training_on_bot_envs: true   # true
+  training_on_bot_envs: false   # true
 
   selfplay_ready_save_interval: 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
   selfplay_save_interval: 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
@@ -48,12 +50,12 @@ ExperimentConfig:
 
   endgame_maps: false
 
-  PPO_learning_rate: 5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  PPO_learning_rate: 2.5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   exploiter_PPO_learning_rate: 2.5e-5
   PPO_weight_decay: 0.0
 
   sp: false
-  dbg_no_main_agent_ppo_update: true # TODO
+  dbg_no_main_agent_ppo_update: false # false
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
@@ -76,7 +78,7 @@ ExperimentConfig:
 
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
-  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_ent_coef: 0.005 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.1 # 0.2

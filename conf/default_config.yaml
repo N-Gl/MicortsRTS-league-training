@@ -50,6 +50,8 @@ ExperimentConfig:
   num_main_agents: 0
   num_main_exploiters: 0
   num_league_exploiters: 0
+  num_envs_per_main_exploiters: 1
+  num_envs_per_league_exploiters: 1
   lower_selfplay_winrate_offset:
   upper_selfplay_winrate_offset:
 

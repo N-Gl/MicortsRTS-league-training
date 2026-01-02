@@ -26,6 +26,8 @@ ExperimentConfig:
   num_main_agents: 2   # 1 num_main_agents == 1 env # TODO
   num_main_exploiters: 5
   num_league_exploiters: 5
+  num_envs_per_main_exploiters: 1
+  num_envs_per_league_exploiters: 1
 
   BC_aget_as_Historical: false
   training_on_bot_envs: false   # true
