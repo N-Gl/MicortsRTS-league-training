@@ -539,7 +539,7 @@ class League:
     
 
 
-    def _log_selfplay_results(self, args, agent, writer, global_step, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games):
+    def _log_selfplay_results(self, args, agent, writer, global_step, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games, indices_per_exploiter):
         if isinstance(done_agent, MainPlayer):
             writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
@@ -558,7 +558,7 @@ class League:
             if done_agent.agent is agent:
                 self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
             else:
-                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx.item())
+                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(indices_per_exploiter[done_agent])
 
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates = []
@@ -616,7 +616,7 @@ class League:
         return last_logged_selfplay_games
 
     # TODO: rufe die Methode richtig auf
-    def handle_game_end(self, args, agent, writer, active_league_agents, global_step, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, last_logged_selfplay_games):
+    def handle_game_end(self, args, agent, writer, active_league_agents, global_step, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, indices_per_exploiter, last_logged_selfplay_games):
         old_opp = active_league_agents[done_idx + 1]
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
@@ -633,12 +633,13 @@ class League:
             attack_weight,
             num_done_selfplaygames,
             last_logged_selfplay_games,
+            indices_per_exploiter
         )
         if done_agent.ready_to_checkpoint():
             self.add_player(done_agent.checkpoint())
 
             if isinstance(done_agent, MainExploiter) or isinstance(done_agent, LeagueExploiter):
-                exploiter_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(done_idx.item())
+                exploiter_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(indices_per_exploiter[done_agent])
                 done_agent.num_resets_checkpoints += 1
                 print(exploiter_name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")
                 writer.add_scalar(f"{exploiter_name}/num_resets_checkpoints", done_agent.num_resets_checkpoints, global_step)
