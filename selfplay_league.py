@@ -209,6 +209,9 @@ class LeagueTrainer:
         )
         self.hist_reward: int = 0
 
+        self.indices_per_exploiter = {}
+        self.b_indices_per_exploiter = {}
+
         # TODO: nachher entfernen:
         assert args.selfplay_ready_save_interval > 0, "selfplay_ready_save_interval muss größer 0 sein"
 
@@ -237,6 +240,11 @@ class LeagueTrainer:
             raise ValueError("league training requires at least one main agent")
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
+
+        for idx, p in enumerate(self.active_league_agents):
+            if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
+                self.indices_per_exploiter.setdefault(p, []).append(idx)
+                self.b_indices_per_exploiter.setdefault(p, []).append(idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2)
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:
@@ -573,6 +581,7 @@ class LeagueTrainer:
                                 dyn_winloss,
                                 self.hist_reward,
                                 num_done_selfplaygames,
+                                self.indices_per_exploiter,
                                 last_logged_selfplay_games
                             )
                             num_done_selfplaygames += 1
@@ -733,14 +742,6 @@ class LeagueTrainer:
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
-            indices_per_exploiter = {}
-            b_indices_per_exploiter = {}
-            for idx, p in enumerate(self.active_league_agents):
-                if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
-                    indices_per_exploiter.setdefault(p, []).append(idx)
-                    b_indices_per_exploiter.setdefault(p, []).append(idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2)
-
-
             # bot_exploiters = np.where(
             #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
             # )[0] + args.num_selfplay_envs
@@ -748,12 +749,12 @@ class LeagueTrainer:
             # exploiter_indices = np.concatenate((selfplay_exploiters * 2, bot_exploiters))
             # b_exploiter_indices = np.concatenate((selfplay_exploiters, bot_exploiters - (args.num_selfplay_envs // 2)))
 
-            if len(indices_per_exploiter) > 0:
+            if len(self.indices_per_exploiter) > 0:
                 env_shape = sp_envs.single_observation_space.shape
     
                 # update every exploiter individually
-                for exploiter, exploiter_idx in indices_per_exploiter.items():
-                    b_exploiter_idx = b_indices_per_exploiter[exploiter]
+                for exploiter, exploiter_idx in self.indices_per_exploiter.items():
+                    b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
 
                     if exploiter.optimizer is None:
                         exploiter.optimizer = optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
@@ -810,7 +811,7 @@ class LeagueTrainer:
                     # if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
                     #     print("Exploiter z different from main agent z")
                     
-                    league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update)
+                    league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update)
 
                 
                 # TODO: wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
