@@ -327,6 +327,10 @@ class MainExploiter(Player):
     def get_match(self):
         '''wählt einen zufälligen main agenten als gegner, wenn die winrate gegen diesen gegner > 0.1 ist.
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
+
+        if self.args.sp:
+            return self._payoff.players[0], True
+        
         main_agents = [
             player for player in self._payoff.players
             if isinstance(player, MainPlayer)
@@ -387,6 +391,10 @@ class LeagueExploiter(Player):
 
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
+
+        if self.args.sp:
+            return self._payoff.players[0], True
+        
         historical = [
             player for player in self._payoff.players
             if isinstance(player, Historical)

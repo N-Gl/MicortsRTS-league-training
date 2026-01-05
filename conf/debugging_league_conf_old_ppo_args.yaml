@@ -14,19 +14,21 @@ ExperimentConfig:
 
   prod_mode: true
   render: true
-  render_all: false
+  render_all: true
 
   seed: 
+  dbg_deterministic_actions: true # TODO # false
+  dbg_exploiter_update: true # TODO # false
 
   num_bot_envs: 1
   max_num_bot_envs: 1 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
-  num_main_agents: 3   # 1 num_main_agents == 1 env
+  num_main_agents: 4   # 1 num_main_agents == 1 env
   num_main_exploiters: 1
   num_league_exploiters: 0
-  num_envs_per_main_exploiters: 3
+  num_envs_per_main_exploiters: 4
   num_envs_per_league_exploiters: 2
 
   BC_aget_as_Historical: false
@@ -54,7 +56,7 @@ ExperimentConfig:
   exploiter_PPO_learning_rate: 2.5e-5
   PPO_weight_decay: 0.0
 
-  sp: false
+  sp: true
   dbg_no_main_agent_ppo_update: false # false
 
   log_exploiter_tables: true

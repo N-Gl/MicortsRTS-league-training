@@ -28,6 +28,8 @@ ExperimentConfig:
   deterministic: true
   seed:                        # if None -> seed = time.time()
   exact_seed: true
+  dbg_deterministic_actions: false
+  dbg_exploiter_update: false
 
   total_timesteps: 30000000     # new (BA Parameter) (Training was run for 30 million steps)
 
