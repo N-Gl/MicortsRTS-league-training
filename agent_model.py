@@ -273,7 +273,6 @@ class Agent(nn.Module):
         if action is None:
             # TODO: debugging (nachher entfernen)
             if dbg_deterministic_actions:
-                print("actions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)")
                 action = torch.stack([categorical.logits.argmax(dim=-1) for categorical in multi_categoricals])
             else:
                 action = torch.stack([categorical.sample() for categorical in multi_categoricals])

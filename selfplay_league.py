@@ -724,7 +724,15 @@ class LeagueTrainer:
                 "values": values[:, main_indices].reshape(-1),
                 "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape)
             }
-                
+            
+            if args.dbg_deterministic_actions:
+                print("\nactions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)\n")
+
+            if args.dbg_exploiter_update:
+                if not args.dbg_deterministic_actions:
+                    print("\nuse deterministic actions for main agent PPO update for dbg_deterministic_actions\n")
+                self.dbg_prep()
+
             if not args.dbg_no_main_agent_ppo_update:
                 pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                     args,
@@ -794,6 +802,9 @@ class LeagueTrainer:
                     exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
                     exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
 
+                    if args.dbg_exploiter_update:
+                        self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
+
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                         args,
                         sp_envs,
@@ -814,6 +825,10 @@ class LeagueTrainer:
                     #     print("Exploiter sc different from main agent sc")
                     # if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
                     #     print("Exploiter z different from main agent z")
+
+
+                    if args.dbg_exploiter_update:
+                        self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
                     
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update)
 
@@ -1024,3 +1039,89 @@ class LeagueTrainer:
         else:
             if not torch.allclose(values[0, ::2], agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)[0, ::2], rtol=1e-3, atol=1e-5):
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
+
+
+    # TODO: Debugging (nachher entfernen?)
+    def dbg_prep(self):
+        import random
+        random.seed(1)
+        np.random.seed(1)
+        torch.manual_seed(1)
+        torch.cuda.manual_seed_all(1)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        import copy
+        self.db_sd = copy.deepcopy(self.active_league_agents[0].agent.state_dict())
+    
+    def dbg_post_first_update(self, exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
+
+        self.dbg_prep()
+        
+        if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
+            print("Exploiter obs not same as main agent obs")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]):
+            print("Exploiter sc not same as main agent sc")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
+            print("Exploiter z not same as main agent z")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["actions"] == main_agent_batch["actions"]):
+            print("Exploiter actions not same as main agent actions")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["logprobs"] == main_agent_batch["logprobs"]):
+            print("Exploiter logprobs not same as main agent logprobs")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["advantages"] == main_agent_batch["advantages"]):
+            print("Exploiter advantages not same as main agent advantages")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["returns"] == main_agent_batch["returns"]):
+            print("Exploiter returns not same as main agent returns")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["values"] == main_agent_batch["values"]):
+            print("Exploiter values not same as main agent values")
+            breakpoint()
+        if not torch.all(exploiter_agent_batch["masks"] == main_agent_batch["masks"]):
+            print("Exploiter masks not same as main agent masks")
+            breakpoint()
+        print("\nare inputs the same for exploiter and main agent:")
+        print(torch.all(torch.tensor([
+                    torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]),
+                    torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]),
+                    torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]),
+                    torch.all(exploiter_agent_batch["actions"] == main_agent_batch["actions"]),
+                    torch.all(exploiter_agent_batch["logprobs"] == main_agent_batch["logprobs"]),
+                    torch.all(exploiter_agent_batch["advantages"] == main_agent_batch["advantages"]),
+                    torch.all(exploiter_agent_batch["returns"] == main_agent_batch["returns"]),
+                    torch.all(exploiter_agent_batch["values"] == main_agent_batch["values"]),
+                    torch.all(exploiter_agent_batch["masks"] == main_agent_batch["masks"])
+                    ])).item())
+
+        self.db_pg_stop_iter, self.db_pg_loss, self.db_entropy_loss, self.db_kl_loss, self.db_approx_kl, self.db_v_loss, self.db_loss = pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss
+
+    def dbg_post_updates(self, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
+        print("\nchecks for exploiter PPO update:")
+        print(torch.all(torch.tensor([
+                    self.db_pg_stop_iter == pg_stop_iter,
+                    self.db_pg_loss == pg_loss,
+                    self.db_entropy_loss == entropy_loss,
+                    self.db_kl_loss == kl_loss,
+                    self.db_approx_kl == approx_kl,
+                    self.db_v_loss == v_loss,
+                    self.db_loss == loss
+                    ])).item())
+
+        # for k in self.active_league_agents[0].agent.state_dict().keys():
+        #    print(torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.db_sd[k])))
+        print("\ndid update:")
+        print(not torch.all(torch.tensor([torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.db_sd[k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item())
+        # for k in self.active_league_agents[0].agent.state_dict().keys():
+        #     print(torch.all((self.active_league_agents[0].agent.state_dict()[k] ==   self.active_league_agents[8].agent.state_dict()[k])))
+        print(f"\n{self.active_league_agents[0]} and {self.active_league_agents[8]} are equal:")
+        equal = torch.all(torch.tensor([torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.active_league_agents[8].agent.state_dict()[k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item()
+        print(equal)
+        if not equal:
+            breakpoint()
+        return
+
+

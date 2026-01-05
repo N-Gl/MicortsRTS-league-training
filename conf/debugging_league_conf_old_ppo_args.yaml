@@ -17,7 +17,8 @@ ExperimentConfig:
   render_all: true
 
   seed: 
-  dbg_deterministic_actions: true # TODO
+  dbg_deterministic_actions: true # TODO # false
+  dbg_exploiter_update: true # TODO # false
 
   num_bot_envs: 1
   max_num_bot_envs: 1 # changed from 9
