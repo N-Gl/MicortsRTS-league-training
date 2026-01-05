@@ -790,6 +790,9 @@ class LeagueTrainer:
                         
                     exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
 
+                    exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
+                    exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
+
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                         args,
                         sp_envs,
@@ -797,8 +800,8 @@ class LeagueTrainer:
                         device,
                         supervised_agent,
                         update,
-                        args.num_steps,
-                        max(args.num_steps // max(args.n_minibatch, 1), 1)
+                        exploiter_batch_size,
+                        exploiter_minibatch_size
                         )
                     
                     
