@@ -336,6 +336,7 @@ class Agent(nn.Module):
         bot_replacements = []
         # TODO (optimize): indices als Tensor statt Python-Liste
         for agent, indices in unique_agents.items():
+
             if not indices:
                 continue
 

@@ -483,6 +483,11 @@ class LeagueTrainer:
                 
                 adjust_obs_selfplay(args, sp_next_obs)
 
+                if args.dbg_exploiter_update:
+                    for i in range(0, args.num_selfplay_envs, 2):
+                        if not torch.all(sp_next_obs[0] == sp_next_obs[i]):
+                            breakpoint()
+
                 '''winloss = min(0.01, 6.72222222e-9 * global_step)
                 densereward = max(0, 0.8 + (-4.44444444e-9 * global_step))
 
@@ -731,6 +736,9 @@ class LeagueTrainer:
             if args.dbg_exploiter_update:
                 if not args.dbg_deterministic_actions:
                     print("\nuse deterministic actions for main agent PPO update for dbg_deterministic_actions\n")
+
+                if not args.sp:
+                    print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
                 self.dbg_prep()
 
             if not args.dbg_no_main_agent_ppo_update:
@@ -1056,7 +1064,7 @@ class LeagueTrainer:
     def dbg_post_first_update(self, exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
 
         self.dbg_prep()
-        
+
         if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
             print("Exploiter obs not same as main agent obs")
             breakpoint()
