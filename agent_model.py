@@ -232,6 +232,7 @@ class Agent(nn.Module):
         num_selfplay_envs: int = 0,
         logits: Optional[torch.Tensor] = None,
         process_envs: Optional[Any] = None,
+        dbg_deterministic_actions: bool = False
     ):
         if process_envs is None:
             process_envs = range(envs.num_envs)
@@ -270,7 +271,12 @@ class Agent(nn.Module):
         ]
 
         if action is None:
-            action = torch.stack([categorical.sample() for categorical in multi_categoricals])
+            # TODO: debugging (nachher entfernen)
+            if dbg_deterministic_actions:
+                print("actions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)")
+                action = torch.stack([categorical.logits.argmax(dim=-1) for categorical in multi_categoricals])
+            else:
+                action = torch.stack([categorical.sample() for categorical in multi_categoricals])
 
         logprob = torch.stack(
             [categorical.log_prob(act) for act, categorical in zip(action, multi_categoricals)]
@@ -312,7 +318,8 @@ class Agent(nn.Module):
         invalid_action_masks: Optional[torch.Tensor] = None,
         envs=None,
         active_league_agents = None,
-        unique_agents: Optional[Dict] = None
+        unique_agents: Optional[Dict] = None,
+        dbg_deterministic_actions: bool = False
     ):
         '''
         returns action, logprob, entropy, invalid_action_masks for selfplay and bot envs combined.
@@ -360,7 +367,8 @@ class Agent(nn.Module):
             envs=envs,
             selfplay_envs=num_selfplay_envs > 0,
             num_selfplay_envs=num_selfplay_envs,
-            logits=self.sp_logits[:num_selfplay_envs]
+            logits=self.sp_logits[:num_selfplay_envs],
+            dbg_deterministic_actions=dbg_deterministic_actions
         )
 
         for bot_agent, indices in bot_replacements:

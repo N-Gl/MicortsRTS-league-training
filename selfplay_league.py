@@ -401,7 +401,8 @@ class LeagueTrainer:
                         num_envs=args.num_selfplay_envs,
                         envs=sp_envs,
                         active_league_agents=self.active_league_agents,
-                        unique_agents=sp_only_unique_agents
+                        unique_agents=sp_only_unique_agents,
+                        dbg_deterministic_actions=args.dbg_deterministic_actions
                     )
 
                 # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
