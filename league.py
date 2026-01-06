@@ -344,7 +344,7 @@ class MainExploiter(Player):
 
         if self.args.sp:
             opp = historical[0]
-            if opp.parent is not self._payoff.players[0]:
+            if not isinstance(opp.parent, MainPlayer):
                 print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
             return opp, True
         
@@ -405,7 +405,7 @@ class LeagueExploiter(Player):
 
         if self.args.sp:
             opp = historical[0]
-            if opp.parent is not self._payoff.players[0]:
+            if not isinstance(opp.parent, MainPlayer):
                 print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
             return opp, True
 
