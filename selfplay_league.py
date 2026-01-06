@@ -1056,13 +1056,20 @@ class LeagueTrainer:
         torch.cuda.manual_seed_all(1)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
-        import copy
 
+        import copy
+        self.db_agents = copy.deepcopy(self.active_league_agents)
         self.db_sd = [copy.deepcopy(self.active_league_agents[i].agent.state_dict()) for i in range(len(self.active_league_agents))]
     
     def dbg_post_first_update(self, exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
 
-        self.dbg_prep()
+        import random
+        random.seed(1)
+        np.random.seed(1)
+        torch.manual_seed(1)
+        torch.cuda.manual_seed_all(1)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
         if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
             print("Exploiter obs not same as main agent obs")
@@ -1091,7 +1098,7 @@ class LeagueTrainer:
         if not torch.all(exploiter_agent_batch["masks"] == main_agent_batch["masks"]):
             print("Exploiter masks not same as main agent masks")
             breakpoint()
-        print("\nare inputs the same for exploiter and main agent:")
+        print("\ninputs are equal:")
         print(torch.all(torch.tensor([
                     torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]),
                     torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]),
@@ -1107,7 +1114,7 @@ class LeagueTrainer:
         self.db_pg_stop_iter, self.db_pg_loss, self.db_entropy_loss, self.db_kl_loss, self.db_approx_kl, self.db_v_loss, self.db_loss = pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss
 
     def dbg_post_updates(self, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
-        print("\nchecks for exploiter PPO update:")
+        print("\noutputs are equal:")
         print(torch.all(torch.tensor([
                     self.db_pg_stop_iter == pg_stop_iter,
                     self.db_pg_loss == pg_loss,
@@ -1123,14 +1130,8 @@ class LeagueTrainer:
         print("\nMain changed:")
         print(not torch.all(torch.tensor([torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.db_sd[0][k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item())
         
-        print("\nExploiter changed:")
-        changed = False
-        for i in range(1, len(self.active_league_agents)):
-            if isinstance(self.active_league_agents[i], league.MainExploiter) or isinstance(self.active_league_agents[i], league.LeagueExploiter):
-                if not torch.all(torch.tensor([torch.all((self.active_league_agents[i].agent.state_dict()[k] == self.db_sd[i][k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item():
-                    changed = True
-                    break
-        print(changed)
+        print(f"\n{self.active_league_agents[8]} changed:")
+        print(not torch.all(torch.tensor([torch.all((self.active_league_agents[8].agent.state_dict()[k] == self.db_sd[8][k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item())
 
         # for k in self.active_league_agents[0].agent.state_dict().keys():
         #     print(torch.all((self.active_league_agents[0].agent.state_dict()[k] ==   self.active_league_agents[8].agent.state_dict()[k])))

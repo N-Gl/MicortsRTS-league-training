@@ -51,7 +51,7 @@ ExperimentConfig:
   endgame_maps: false
 
   PPO_learning_rate: 5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
-  exploiter_PPO_learning_rate: 2.5e-5 # changed from 2.5e-5
+  exploiter_PPO_learning_rate: 5e-5 # changed from 2.5e-5
   PPO_weight_decay: 0.0
 
   sp: false
@@ -81,10 +81,10 @@ ExperimentConfig:
 
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
-  exploiter_ent_coef: 0.005 # 0.1     # higher entropy only for exploiters
+  exploiter_ent_coef: 0.005 # TODO 0.01     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
-  exploiter_clip_coef: 0.1 # 0.2
+  exploiter_clip_coef: 0.1 # TODO 0.2
   exploiter_update_epochs: 4
   exploiter_kle_stop: true
   exploiter_kle_rollback: true
