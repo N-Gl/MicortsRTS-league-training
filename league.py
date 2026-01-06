@@ -327,14 +327,6 @@ class MainExploiter(Player):
     def get_match(self):
         '''wählt einen zufälligen main agenten als gegner, wenn die winrate gegen diesen gegner > 0.1 ist.
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
-
-        if self.args.sp:
-            opp = self._payoff.players[1]
-            if not isinstance(opp, Historical):
-                print("Warning: In selfplay mode, the expoiter is playing against a non-historical.")
-            elif opp.parent is not self._payoff.players[0]:
-                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
-            return opp, True
         
         main_agents = [
             player for player in self._payoff.players
@@ -342,13 +334,20 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if self._payoff[self, opponent] > 0.1:
+        if self._payoff[self, opponent] > 0.1 and not self.args.sp:
             return opponent, True
 
         historical = [
             player for player in self._payoff.players
             if isinstance(player, Historical) and player.parent == opponent
         ]
+
+        if self.args.sp:
+            opp = historical[0]
+            if opp.parent is not self._payoff.players[0]:
+                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
+            return opp, True
+        
         win_rates = self._payoff[self, historical]
 
         return np.random.choice(
@@ -397,18 +396,19 @@ class LeagueExploiter(Player):
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
 
-        if self.args.sp:
-            opp = self._payoff.players[1]
-            if not isinstance(opp, Historical):
-                print("Warning: In selfplay mode, the expoiter is playing against a non-historical.")
-            elif opp.parent is not self._payoff.players[0]:
-                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
-            return opp, True
+        
         
         historical = [
             player for player in self._payoff.players
             if isinstance(player, Historical)
         ]
+
+        if self.args.sp:
+            opp = historical[0]
+            if opp.parent is not self._payoff.players[0]:
+                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
+            return opp, True
+
         win_rates = self._payoff[self, historical]
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp)), True
