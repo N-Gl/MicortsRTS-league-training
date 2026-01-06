@@ -5,7 +5,7 @@ import time
 def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=True):
     writer.add_scalar("main_charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
     writer.add_scalar("progress/update", update, global_step)
-    if not args.dbg_no_main_agent_ppo_update:
+    if loss is not None:
         writer.add_scalar("losses/value_loss", args.vf_coef * v_loss.item(), global_step)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
         writer.add_scalar("losses/kl_loss", kl_loss.item(), global_step)
@@ -13,7 +13,7 @@ def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, 
         writer.add_scalar("losses/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
 
-    if args.kle_stop or args.kle_rollback:
+    if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None:
         writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
 
     if log_SPS:
