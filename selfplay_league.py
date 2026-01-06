@@ -740,7 +740,7 @@ class LeagueTrainer:
 
                 if not args.sp:
                     print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
-                self.dbg_prep()
+                self.dbg_prep(main_batch_size)
 
             pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                 args,
@@ -809,7 +809,7 @@ class LeagueTrainer:
                     exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
 
                     if args.dbg_exploiter_update:
-                        self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
+                        self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
 
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
                         args,
@@ -834,7 +834,7 @@ class LeagueTrainer:
 
 
                     if args.dbg_exploiter_update:
-                        self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
+                        self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
                     
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update)
 
@@ -1048,7 +1048,7 @@ class LeagueTrainer:
 
 
     # TODO: Debugging (nachher entfernen?)
-    def dbg_prep(self):
+    def dbg_prep(self, main_batch_size):
         import random
         random.seed(1)
         np.random.seed(1)
@@ -1060,8 +1060,12 @@ class LeagueTrainer:
         import copy
         self.db_agents = copy.deepcopy(self.active_league_agents)
         self.db_sd = [copy.deepcopy(self.active_league_agents[i].agent.state_dict()) for i in range(len(self.active_league_agents))]
+        
+        inds = np.arange(main_batch_size)
+        np.random.shuffle(inds)
+        print(f"main_batch_size: {main_batch_size}, main_inds: {inds[:10]}")
     
-    def dbg_post_first_update(self, exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
+    def dbg_post_first_update(self, exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size):
 
         import random
         random.seed(1)
@@ -1070,6 +1074,10 @@ class LeagueTrainer:
         torch.cuda.manual_seed_all(1)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+
+        inds = np.arange(exploiter_batch_size)
+        np.random.shuffle(inds)
+        print(f"exploiter_batch_size: {exploiter_batch_size}, exploiter_inds: {inds[:10]}")
 
         if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
             print("Exploiter obs not same as main agent obs")
@@ -1113,7 +1121,13 @@ class LeagueTrainer:
 
         self.db_pg_stop_iter, self.db_pg_loss, self.db_entropy_loss, self.db_kl_loss, self.db_approx_kl, self.db_v_loss, self.db_loss = pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss
 
-    def dbg_post_updates(self, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
+    def dbg_post_updates(self, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer):
+        print("\noptimizers are equal:")
+        print("  lr:")
+        print(f"  {torch.all(torch.tensor([optimizer.param_groups[0]['lr'] == self.active_league_agents[8].optimizer.param_groups[0]['lr']])).item()}")
+        print("  params:")
+        print(f"  {torch.all(torch.tensor([torch.all((optimizer.param_groups[0]['params'][i].data == self.active_league_agents[8].optimizer.param_groups[0]['params'][i].data)) for i in range(len(optimizer.param_groups[0]['params']))])).item()}")
+
         print("\noutputs are equal:")
         print(torch.all(torch.tensor([
                     self.db_pg_stop_iter == pg_stop_iter,
