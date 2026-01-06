@@ -727,7 +727,8 @@ class LeagueTrainer:
                 "advantages": b_advantages[:, b_main_indices].reshape(-1),
                 "returns": b_returns[:, b_main_indices].reshape(-1),
                 "values": values[:, main_indices].reshape(-1),
-                "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape)
+                "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape),
+                "skip_policy_update": args.dbg_no_main_agent_ppo_update
             }
             
             if args.dbg_deterministic_actions:
@@ -741,21 +742,18 @@ class LeagueTrainer:
                     print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
                 self.dbg_prep()
 
-            if not args.dbg_no_main_agent_ppo_update:
-                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
-                    args,
-                    envs,
-                    main_agent_batch,
-                    device,
-                    supervised_agent,
-                    update,
-                    main_batch_size,
-                    main_minibatch_size
-                    )
-            else:
-                print("\nDebug: skipping PPO update for main agent\n")
+            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
+                args,
+                envs,
+                main_agent_batch,
+                device,
+                supervised_agent,
+                update,
+                main_batch_size,
+                main_minibatch_size
+                )
+            if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
                 pg_stop_iter = -2
-                pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = None, None, None, None, None, None
 
             ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False)
 
@@ -1059,7 +1057,8 @@ class LeagueTrainer:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
         import copy
-        self.db_sd = copy.deepcopy(self.active_league_agents[0].agent.state_dict())
+
+        self.db_sd = [copy.deepcopy(self.active_league_agents[i].agent.state_dict()) for i in range(len(self.active_league_agents))]
     
     def dbg_post_first_update(self, exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss):
 
@@ -1121,8 +1120,18 @@ class LeagueTrainer:
 
         # for k in self.active_league_agents[0].agent.state_dict().keys():
         #    print(torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.db_sd[k])))
-        print("\ndid update:")
-        print(not torch.all(torch.tensor([torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.db_sd[k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item())
+        print("\nMain changed:")
+        print(not torch.all(torch.tensor([torch.all((self.active_league_agents[0].agent.state_dict()[k] == self.db_sd[0][k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item())
+        
+        print("\nExploiter changed:")
+        changed = False
+        for i in range(1, len(self.active_league_agents)):
+            if isinstance(self.active_league_agents[i], league.MainExploiter) or isinstance(self.active_league_agents[i], league.LeagueExploiter):
+                if not torch.all(torch.tensor([torch.all((self.active_league_agents[i].agent.state_dict()[k] == self.db_sd[i][k])) for k in self.active_league_agents[0].agent.state_dict().keys()])).item():
+                    changed = True
+                    break
+        print(changed)
+
         # for k in self.active_league_agents[0].agent.state_dict().keys():
         #     print(torch.all((self.active_league_agents[0].agent.state_dict()[k] ==   self.active_league_agents[8].agent.state_dict()[k])))
         print(f"\n{self.active_league_agents[0]} and {self.active_league_agents[8]} are equal:")
@@ -1131,5 +1140,4 @@ class LeagueTrainer:
         if not equal:
             breakpoint()
         return
-
 

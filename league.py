@@ -329,7 +329,12 @@ class MainExploiter(Player):
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
 
         if self.args.sp:
-            return self._payoff.players[0], True
+            opp = self._payoff.players[1]
+            if not isinstance(opp, Historical):
+                print("Warning: In selfplay mode, the expoiter is playing against a non-historical.")
+            elif opp.parent is not self._payoff.players[0]:
+                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
+            return opp, True
         
         main_agents = [
             player for player in self._payoff.players
@@ -393,7 +398,12 @@ class LeagueExploiter(Player):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
 
         if self.args.sp:
-            return self._payoff.players[0], True
+            opp = self._payoff.players[1]
+            if not isinstance(opp, Historical):
+                print("Warning: In selfplay mode, the expoiter is playing against a non-historical.")
+            elif opp.parent is not self._payoff.players[0]:
+                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
+            return opp, True
         
         historical = [
             player for player in self._payoff.players
