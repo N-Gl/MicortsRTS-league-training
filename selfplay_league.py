@@ -10,7 +10,6 @@ import torch
 from jpype.types import JArray, JInt
 from stable_baselines3.common.vec_env import VecVideoRecorder
 from VecstatsMonitor import VecstatsMonitor
-import torch.optim as optim
 
 from microrts_space_transform import MicroRTSSpaceTransform
 from gym_microrts.envs.microrts_vec_env import  MicroRTSGridModeVecEnv
@@ -772,7 +771,8 @@ class LeagueTrainer:
                     b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
 
                     if exploiter.optimizer is None:
-                        exploiter.optimizer = optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
+                        exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
+                        print(f"Created optimizer for exploiter {exploiter}")
 
                     exploiter_agent_batch = {
                             "player": exploiter,
