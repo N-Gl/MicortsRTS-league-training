@@ -9,7 +9,7 @@ ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 02_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs
+  exp_name: 06_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs_dbg_no_main_agent_ppo_update_true__new_selfplay_args
   wandb_project_name: league_training
 
   prod_mode: true
@@ -51,10 +51,10 @@ ExperimentConfig:
   endgame_maps: false
 
   PPO_learning_rate: 5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
-  exploiter_PPO_learning_rate: 2.5e-5 # changed from 2.5e-5
+  exploiter_PPO_learning_rate: 5e-5 # changed from 2.5e-5
   PPO_weight_decay: 0.0
 
-  sp: false
+  sp: true
   dbg_no_main_agent_ppo_update: true # TODO
 
   log_exploiter_tables: true
@@ -81,10 +81,10 @@ ExperimentConfig:
 
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
-  exploiter_ent_coef: 0.005 # 0.1     # higher entropy only for exploiters
+  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
-  exploiter_clip_coef: 0.1 # 0.2
+  exploiter_clip_coef: 0.2 # 0.2
   exploiter_update_epochs: 4
   exploiter_kle_stop: true
   exploiter_kle_rollback: true
