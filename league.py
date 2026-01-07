@@ -724,7 +724,7 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
 
-def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update):
+def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, grad_norm=None):
     player = exploiter_agent_batch["player"]
     name = getattr(player, "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[player])
 
@@ -735,6 +735,7 @@ def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indi
     writer.add_scalar(f"{name}/total_loss", loss.item(), global_step)
     writer.add_scalar(f"{name}/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
     writer.add_scalar(f"{name}/approx_kl", approx_kl.item(), global_step)
+    writer.add_scalar(f"{name}/grad_norm_before_clipping", grad_norm, global_step)
 
     if args.kle_stop or args.kle_rollback:
         writer.add_scalar(f"{name}/pg_stop_iter", pg_stop_iter, global_step)

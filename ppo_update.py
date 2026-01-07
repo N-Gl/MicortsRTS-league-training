@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import time
 
-def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=True):
+def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=True, grad_norm=None):
     writer.add_scalar("main_charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
     writer.add_scalar("progress/update", update, global_step)
     if loss is not None:
@@ -12,6 +12,7 @@ def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, 
         writer.add_scalar("losses/total_loss", loss.item(), global_step)
         writer.add_scalar("losses/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
+        writer.add_scalar("main_charts/grad_norm_before_clipping", grad_norm, global_step)
 
     if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None:
         writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
@@ -114,12 +115,13 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
         # create a detached copy of parameters for rollback
         old_params = {k: v.detach().clone() for k, v in agent.state_dict().items()}
     pg_stop_iter = update_epochs
+    grad_norm = None
 
     epoch_indices = range(update_epochs)
     if skip_policy_update:
         print("\nDebug: skipping PPO update for main agent\n")
         # epoch_indices = []
-        return None, None, None, None, None, None, None
+        return None, None, None, None, None, None, None, None
     
     for epoch_pi in epoch_indices:
         np.random.shuffle(inds)
@@ -209,7 +211,8 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             loss.backward()
             # TODO: nur für Debugging (nachher entfernen)
             assert_supervised_grads_zero(supervised_agent)
-            torch.nn.utils.clip_grad_norm_(agent.parameters(), max_grad_norm)
+            grad_norm = torch.nn.utils.clip_grad_norm_(agent.parameters(), max_grad_norm)
+            grad_norm = grad_norm.item()
             optimizer.step()
 
             # KL early stop / rollback
@@ -222,4 +225,4 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                     break
         if pg_stop_iter != -1:
             break
-    return pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss
+    return pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm

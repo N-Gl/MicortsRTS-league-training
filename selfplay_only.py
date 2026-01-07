@@ -682,7 +682,7 @@ class SelfPlayTrainer:
                 "masks": b_invalid_action_masks,
             }
                 
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(
+            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
                 args,
                 envs,
                 main_agent_batch,

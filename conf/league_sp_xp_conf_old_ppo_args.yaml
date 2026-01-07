@@ -9,14 +9,14 @@ ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 06_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs_dbg_no_main_agent_ppo_update_false__new_selfplay_args__dbg_seed_true
+  exp_name: 06_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs_dbg_no_main_agent_ppo_update_true__new_selfplay_args
   wandb_project_name: league_training
 
   prod_mode: true
   render: false
   render_all: false
 
-  seed: 1
+  seed: 
 
   num_bot_envs: 1 # 3
   max_num_bot_envs: 1 # 6 # changed from 9
@@ -55,8 +55,7 @@ ExperimentConfig:
   PPO_weight_decay: 0.0
 
   sp: true
-  dbg_no_main_agent_ppo_update: false # TODO
-  dbg_seed: true
+  dbg_no_main_agent_ppo_update: true # TODO
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
