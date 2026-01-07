@@ -1055,7 +1055,7 @@ class LeagueTrainer:
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
 
 
-    def _seed_for_update(offset: int, base_seed) -> None:
+    def _seed_for_update(self, offset: int, base_seed) -> None:
         update_seed = int(base_seed) + int(offset)
         random.seed(update_seed)
         np.random.seed(update_seed)
