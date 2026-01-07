@@ -318,7 +318,8 @@ class MainExploiter(Player):
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
-        self._initial_weights = initial_agent.state_dict()
+        self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
+        # self._initial_weights = initial_agent.state_dict() und copy later -> to reset the exploiter back to the main agent weights after each checkpoint.
         self._payoff = payoff
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
@@ -387,7 +388,7 @@ class LeagueExploiter(Player):
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
-        self._initial_weights = initial_agent.state_dict()
+        self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         self._payoff = payoff
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
