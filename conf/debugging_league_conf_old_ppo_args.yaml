@@ -14,7 +14,7 @@ ExperimentConfig:
 
   prod_mode: true
   render: true
-  render_all: true
+  render_all: false
 
   seed: 
 
@@ -56,9 +56,10 @@ ExperimentConfig:
 
   sp: true
 
-  dbg_no_main_agent_ppo_update: true # false
+  dbg_no_main_agent_ppo_update: false # false
   dbg_deterministic_actions: true # TODO # false
   dbg_exploiter_update: true # TODO # false
+  dbg_seed: true
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
