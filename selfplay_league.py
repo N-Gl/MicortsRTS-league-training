@@ -2,6 +2,7 @@ from collections import deque
 import os
 import sys
 import time
+import random
 from typing import Callable
 import signal
 import threading
@@ -303,6 +304,9 @@ class LeagueTrainer:
         
 
         for update in range(1, num_updates + 1):
+            # TODO: debugging löschen
+            if args.dbg_seed:
+                self._seed_for_update(update, args.seed)
 
             if lr_fn is not None:
                 frac = 1.0 - (update - 1.0) / num_updates
@@ -768,6 +772,10 @@ class LeagueTrainer:
     
                 # update every exploiter individually
                 for exploiter, exploiter_idx in self.indices_per_exploiter.items():
+
+                    # TODO: debugging löschen
+                    if args.dbg_seed:
+                        self._seed_for_update(update, args.seed)
                     b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
 
                     if exploiter.optimizer is None:
@@ -1047,13 +1055,24 @@ class LeagueTrainer:
                 print(f"\n\nValue mismatch at (reshape) step: {step}, distance: {values[0, ::2] - agent.get_value(next_obs, scalar_features[-1], z_features[-1]).reshape(1, -1)[0, ::2]}\n\n")
 
 
+    def _seed_for_update(offset: int, base_seed) -> None:
+        update_seed = int(base_seed) + int(offset)
+        random.seed(update_seed)
+        np.random.seed(update_seed)
+        torch.manual_seed(update_seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(update_seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
     # TODO: Debugging (nachher entfernen?)
     def dbg_prep(self, main_batch_size):
         import random
         random.seed(1)
         np.random.seed(1)
         torch.manual_seed(1)
-        torch.cuda.manual_seed_all(1)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(1)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
@@ -1071,7 +1090,8 @@ class LeagueTrainer:
         random.seed(1)
         np.random.seed(1)
         torch.manual_seed(1)
-        torch.cuda.manual_seed_all(1)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(1)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
@@ -1155,4 +1175,3 @@ class LeagueTrainer:
         if not equal:
             breakpoint()
         return
-
