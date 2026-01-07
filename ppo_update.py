@@ -113,7 +113,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     if not value_only_phase and kle_rollback:
         # create a detached copy of parameters for rollback
         old_params = {k: v.detach().clone() for k, v in agent.state_dict().items()}
-    pg_stop_iter = -1
+    pg_stop_iter = update_epochs
 
     epoch_indices = range(update_epochs)
     if skip_policy_update:
