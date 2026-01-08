@@ -253,8 +253,8 @@ class LeagueTrainer:
         else:
             lr_fn = None
 
-        
-        cleanup_break = break_on_stdout("Issuing a non legal action")
+        if args.dbg_non_legal_action:
+            cleanup_break = break_on_stdout("Issuing a non legal action")
 
         mapsize = 16 * 16
         action_space_shape = (mapsize, envs.action_plane_space.shape[0])
@@ -973,7 +973,7 @@ class LeagueTrainer:
 
             writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
 
-        if cleanup_break:
+        if args.dbg_non_legal_action and cleanup_break:
             cleanup_break()
 
 

@@ -60,6 +60,7 @@ ExperimentConfig:
   dbg_deterministic_actions: true # TODO # false
   dbg_exploiter_update: true # TODO # false
   dbg_seed: true
+  dbg_non_legal_actions: false
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
