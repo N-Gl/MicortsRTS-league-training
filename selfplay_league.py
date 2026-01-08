@@ -252,6 +252,7 @@ class LeagueTrainer:
             exploiter_lr_fn = lambda frac: frac * args.exploiter_PPO_learning_rate  # noqa: E731
         else:
             lr_fn = None
+            exploiter_lr_fn = None
 
         if args.dbg_non_legal_action:
             cleanup_break = break_on_stdout("Issuing a non legal action")
@@ -290,7 +291,17 @@ class LeagueTrainer:
         scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
         z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long).to(device)
 
-        num_updates = args.total_timesteps // args.batch_size
+        main_num_updates = max(args.total_timesteps // max(args.batch_size, 1), 1)
+        exploiter_num_updates = {}
+        for exploiter, exploiter_idx in self.indices_per_exploiter.items():
+            exploiter_batch_size = len(exploiter_idx) * args.num_steps
+            if exploiter_batch_size <= 0:
+                continue
+            exploiter_num_updates[exploiter] = max(args.total_timesteps // exploiter_batch_size, 1)
+
+        num_updates = main_num_updates
+        if exploiter_num_updates:
+            num_updates = max(num_updates, max(exploiter_num_updates.values()))
         bot_position_indices = (
             torch.arange(mapsize, device=device, dtype=torch.int64).unsqueeze(0).repeat(args.num_bot_envs, 1).unsqueeze(2)
         )
@@ -309,10 +320,11 @@ class LeagueTrainer:
                 self._seed_for_update(update, args.seed)
 
             if lr_fn is not None:
-                frac = 1.0 - (update - 1.0) / num_updates
-                lrnow = lr_fn(frac)
+                main_frac = 1.0 - (update - 1.0) / main_num_updates
+                if main_frac < 0.0:
+                    main_frac = 0.0
+                lrnow = lr_fn(main_frac)
                 optimizer.param_groups[0]["lr"] = lrnow
-                exploiter_lrnow = exploiter_lr_fn(frac) or lrnow
 
             for step in range(args.num_steps):
                 if args.render:
@@ -737,7 +749,10 @@ class LeagueTrainer:
             if args.dbg_deterministic_actions:
                 print("\nactions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)\n")
 
-            if args.dbg_exploiter_update:
+            do_main_update = update <= main_num_updates
+            pg_stop_iter = pg_loss = entropy_loss = kl_loss = approx_kl = v_loss = loss = grad_norm = None
+
+            if args.dbg_exploiter_update and do_main_update:
                 if not args.dbg_deterministic_actions:
                     print("\nuse deterministic actions for main agent PPO update for dbg_deterministic_actions\n")
 
@@ -745,20 +760,21 @@ class LeagueTrainer:
                     print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
                 self.dbg_prep(main_batch_size)
 
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
-                args,
-                envs,
-                main_agent_batch,
-                device,
-                supervised_agent,
-                update,
-                main_batch_size,
-                main_minibatch_size
-                )
-            if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
-                pg_stop_iter = -2
+            if do_main_update:
+                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
+                    args,
+                    envs,
+                    main_agent_batch,
+                    device,
+                    supervised_agent,
+                    update,
+                    main_batch_size,
+                    main_minibatch_size
+                    )
+                if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
+                    pg_stop_iter = -2
 
-            ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
+                ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
 
             # bot_exploiters = np.where(
             #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
@@ -811,12 +827,24 @@ class LeagueTrainer:
                             "clip_vloss": args.exploiter_clip_vloss
                         }
                         
+                    exploiter_update_limit = exploiter_num_updates.get(exploiter, num_updates)
+                    if exploiter_update_limit and update > exploiter_update_limit:
+                        continue
+
+                    if exploiter_lr_fn is not None:
+                        exploiter_frac = 1.0 - (update - 1.0) / exploiter_update_limit
+                        if exploiter_frac < 0.0:
+                            exploiter_frac = 0.0
+                        exploiter_lrnow = exploiter_lr_fn(exploiter_frac)
+                    else:
+                        exploiter_lrnow = args.exploiter_PPO_learning_rate
+
                     exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
 
                     exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
                     exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
 
-                    if args.dbg_exploiter_update:
+                    if args.dbg_exploiter_update and do_main_update:
                         self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
 
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
@@ -841,7 +869,7 @@ class LeagueTrainer:
                     #     print("Exploiter z different from main agent z")
 
 
-                    if args.dbg_exploiter_update:
+                    if args.dbg_exploiter_update and do_main_update:
                         self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
                     
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, grad_norm=grad_norm)
@@ -861,7 +889,7 @@ class LeagueTrainer:
                 #     exploiter_indices
                 # )
 
-            if not args.dbg_no_main_agent_ppo_update:
+            if do_main_update and not args.dbg_no_main_agent_ppo_update:
                 if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")
                     if (update < 500 and not args.early_updates):
