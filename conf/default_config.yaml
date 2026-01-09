@@ -31,7 +31,7 @@ ExperimentConfig:
   dbg_deterministic_actions: false
   dbg_exploiter_update: false
   dbg_seed: false
-  dbg_non_legal_actions: false
+  dbg_non_legal_action: false
 
   total_timesteps: 30000000     # new (BA Parameter) (Training was run for 30 million steps)
 
