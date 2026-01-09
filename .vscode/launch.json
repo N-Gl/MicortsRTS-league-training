@@ -142,6 +142,19 @@
     },
 
     {
+      "name": "Python: debugging_league_conf_old_ppo_args_2",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "debugging_league_conf_old_ppo_args_2",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: debugging_league_conf_old_ppo_args",
       "type": "debugpy",
       "request": "launch",

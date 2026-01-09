@@ -210,11 +210,14 @@ class Agent(nn.Module):
         kl_loss = kl / (B * H * W)
         return bc_loss + 0.01 * kl_loss
     
-    def get_unique_agents(self, active_league_agents, selfplay_only = False) -> Dict:
+    def get_unique_agents(self, active_league_agents, selfplay_only = False, output_league_agents = False) -> Dict:
         unique_agents = {}
         if selfplay_only:
             for idx, _ in enumerate(active_league_agents):
                 unique_agents.setdefault(self, []).append(idx)
+        elif output_league_agents:
+            for idx, p in enumerate(active_league_agents):
+                unique_agents.setdefault(p, []).append(idx)
         else:
             for idx, p in enumerate(active_league_agents):
                 unique_agents.setdefault(p.agent, []).append(idx)

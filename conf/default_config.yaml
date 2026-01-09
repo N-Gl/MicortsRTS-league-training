@@ -58,6 +58,7 @@ ExperimentConfig:
   num_envs_per_league_exploiters: 1
   lower_selfplay_winrate_offset:
   upper_selfplay_winrate_offset:
+  num_bot_envs_per_main_exploiter: 0
 
   selfplay_save_interval: 10
   checkpoint_frequency: 10

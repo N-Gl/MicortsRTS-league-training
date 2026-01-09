@@ -1,0 +1,99 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  # args from https://github.com/Farama-Foundation/MicroRTS-Py/blob/master/experiments/ppo_gridnet.py
+  league_training: true
+  train_on_old_mains: false
+  pfsp: true
+  model_path: models/finished_PPO_Basis_thesis.pt
+  # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
+  BC_model_path: models/BCagent.pt        # BC_model_path == model_path, falls BC_model_path None ist
+  exp_name: temp
+  wandb_project_name: testing_league_training
+
+  prod_mode: true
+  render: true
+  render_all: false
+
+  seed: 
+
+  num_bot_envs: 3 # 3
+  max_num_bot_envs: 3 # 6 # changed from 9
+  bot_adding_done_training_ratio: 0.5
+  bot_removing_done_training_ratio: 0.75
+  bot_removing_winrate_threshold: 0.97
+  num_main_envs: 1   # 1 num_main_envs == 1 env # TODO
+  num_main_exploiters: 1
+  num_league_exploiters: 0
+  num_envs_per_main_exploiters: 20
+  num_envs_per_league_exploiters: 0
+  num_bot_envs_per_main_exploiter: 3
+
+  BC_aget_as_Historical: false
+  training_on_bot_envs: false   # true
+
+  selfplay_ready_save_interval: 30000000 # 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
+  selfplay_save_interval: 30000000 # 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
+  # changed from 1e6
+
+  even_opponent_split: true
+
+  total_timesteps: 30000000
+
+  early_updates: true
+
+  attack_reward_weight: 0.05 # (im basis ppo: 1)
+  dyn_attack_reward: 0.0
+  rewardscore: 0.0
+  value_warmup_updates: 0
+  # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
+
+  endgame_maps: false
+
+  PPO_learning_rate: 5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  exploiter_PPO_learning_rate: 5e-5 # changed from 2.5e-5
+  PPO_weight_decay: 0.0
+
+  sp: true
+
+  dbg_no_main_agent_ppo_update: false # false
+  dbg_deterministic_actions: false # TODO # false
+  dbg_exploiter_update: false # TODO # false
+  dbg_seed: false
+  dbg_non_legal_action: false
+
+  log_exploiter_tables: true
+  log_exploiter_winrates: true
+
+  num_steps: 512 # (im basis ppo: 256)
+  
+  gamma: 1 # (im basis ppo: 0.99)
+  gae_lambda: 0.95
+  ent_coef: 0.005 # TODO: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  clip_coef: 0.1 # changed 0.15
+  update_epochs: 4
+  kle_stop: true
+  kle_rollback: true
+  target_kl: 0.01 # changed from 0.03
+  kl_coeff: 0.4
+  norm_adv: true
+  anneal_lr: true
+  clip_vloss: true
+
+  exploiter_gamma: 1
+  exploiter_gae_lambda: 0.95
+  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_vf_coef: 0.5
+  exploiter_max_grad_norm: 0.5
+  exploiter_clip_coef: 0.2 # 0.2
+  exploiter_update_epochs: 4
+  exploiter_kle_stop: true
+  exploiter_kle_rollback: true
+  exploiter_target_kl: 0.01
+  exploiter_kl_coeff: 0.4
+  exploiter_norm_adv: true
+  exploiter_anneal_lr: true
+  exploiter_clip_vloss: true

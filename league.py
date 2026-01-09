@@ -693,6 +693,12 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
 
         # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
 
+    unique_agents = agent.get_unique_agents(active_league_agents, output_league_agents=True)
+    for m_exp in unique_agents.keys():
+            if isinstance(m_exp, MainExploiter):
+                for _ in range(args.num_bot_envs_per_main_exploiter):
+                    active_league_agents.append(m_exp)
+
     # ( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
     while len(active_league_agents) < args.num_envs:
         active_league_agents.append(league_instance.learning_agents[0])
