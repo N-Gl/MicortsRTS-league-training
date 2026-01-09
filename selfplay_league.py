@@ -320,12 +320,6 @@ class LeagueTrainer:
 
 
         num_updates = args.total_timesteps // args.batch_size
-        main_batch_size = int(len(self.main_indices) * args.num_steps)
-        
-        main_num_updates = max(((args.total_timesteps // args.num_envs) * len(self.main_indices)) // args.num_steps, 1)
-        exploiter_num_updates = {}
-        for exploiter, exploiter_idx in self.indices_per_exploiter.items():
-            exploiter_num_updates[exploiter] = max(((args.total_timesteps // args.num_envs) * len(exploiter_idx)) // args.num_steps, 1)
 
         bot_position_indices = (
             torch.arange(mapsize, device=device, dtype=torch.int64).unsqueeze(0).repeat(args.num_bot_envs, 1).unsqueeze(2)
@@ -343,7 +337,7 @@ class LeagueTrainer:
                 self._seed_for_update(update, args.seed)
 
             if lr_fn is not None:
-                main_frac = 1.0 - (update - 1.0) / main_num_updates
+                main_frac = 1.0 - (update - 1.0) / num_updates
                 if main_frac < 0.0:
                     main_frac = 0.0
                 lrnow = lr_fn(main_frac)
@@ -726,6 +720,7 @@ class LeagueTrainer:
             
 
             # inds: indices from the batch
+            main_batch_size = int(len(self.main_indices) * args.num_steps)
             main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
 
             
@@ -824,7 +819,7 @@ class LeagueTrainer:
                         
 
                     if exploiter_lr_fn is not None:
-                        exploiter_frac = 1.0 - (update - 1.0) / exploiter_num_updates[exploiter]
+                        exploiter_frac = 1.0 - (update - 1.0) / num_updates
                         if exploiter_frac < 0.0:
                             exploiter_frac = 0.0
                         exploiter_lrnow = exploiter_lr_fn(exploiter_frac)

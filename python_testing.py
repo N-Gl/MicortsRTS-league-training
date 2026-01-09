@@ -23,16 +23,6 @@ def _pick_param(agent):
     raise AssertionError("Agent has no parameters to test.")
 
 
-def _compute_lr_schedule(args, main_envs: int, exploiter_envs: int, update: int):
-        
-    main_num_updates = max(((args.total_timesteps // args.num_envs) * main_envs) // args.num_steps, 1)
-    exploiter_num_updates = max(((args.total_timesteps // args.num_envs) * exploiter_envs) // args.num_steps, 1)
-
-    main_frac = 1.0 - (update - 1.0) / main_num_updates
-    exploiter_frac = 1.0 - (update - 1.0) / exploiter_num_updates
-    return main_num_updates, exploiter_num_updates, main_frac, exploiter_frac
-
-
 def _assert_exploiter_initial_weights_are_independent(exploiter_cls):
     device = torch.device("cpu")
     main_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
@@ -90,32 +80,6 @@ def test_pfsp_returns_uniform_when_all_zero_weight():
     win_rates = np.ones(4)
     probs = league.pfsp(win_rates, weighting="linear", enabled=True)
     assert np.allclose(probs, np.ones(4) / 4)
-
-
-def test_lr_equal_when_main_and_exploiter_envs_match():
-    args = _make_args(
-        total_timesteps=640,
-        num_envs=8,
-        num_steps=4,
-        num_main_envs=4,
-        PPO_learning_rate=5e-5,
-        exploiter_PPO_learning_rate=5e-5,
-    )
-    main_envs = args.num_main_envs
-    exploiter_envs = main_envs
-    update = 3
-
-    main_num_updates, exploiter_num_updates, main_frac, exploiter_frac = _compute_lr_schedule(
-        args, main_envs, exploiter_envs, update
-    )
-
-    assert (
-        main_num_updates == exploiter_num_updates
-    ), "Expected equal update counts when main/exploiter env counts match."
-
-    main_lr = args.PPO_learning_rate * main_frac
-    exploiter_lr = args.exploiter_PPO_learning_rate * exploiter_frac
-    assert main_lr == pytest.approx(exploiter_lr)
 
 
 def test_payoff_update_tracks_symmetric_results():
