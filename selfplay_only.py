@@ -212,7 +212,7 @@ class SelfPlayTrainer:
         self.league_agent = Selfplay_agent(agent)
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
         args.num_envs = args.num_envs
-        for _ in range(args.num_main_agents):
+        for _ in range(args.num_main_envs):
             self.active_league_agents.append(self.league_agent)
             self.active_league_agents.append(self.league_supervised_agent)
         for _ in range(args.num_bot_envs):
@@ -314,8 +314,8 @@ class SelfPlayTrainer:
                         envs.render("human")
                         sp_envs.render("human")
                         
-                global_step += args.num_main_agents + args.num_bot_envs
-                # global_step += (args.num_main_agents // 2) + args.num_bot_envs
+                global_step += args.num_main_envs + args.num_bot_envs
+                # global_step += (args.num_main_envs // 2) + args.num_bot_envs
                 bot_obs[step] = bot_next_obs
                 sp_obs[step] = sp_next_obs
                 next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)

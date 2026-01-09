@@ -16,7 +16,7 @@ ExperimentConfig:
   seed: 
 
   num_bot_envs: 0
-  num_main_agents: 12         # 1 num_main_agents == 1 env
+  num_main_envs: 12         # 1 num_main_envs == 1 env
   num_main_exploiters: 6
   num_league_exploiters: 6
 

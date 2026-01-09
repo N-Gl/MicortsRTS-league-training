@@ -29,7 +29,7 @@ class ExperimentConfig:
     max_num_bot_envs: int
     num_league_exploiters: int
     num_main_exploiters: int
-    num_main_agents: int
+    num_main_envs: int
     new_hist_rewards: int
     attack_reward_weight: float
     dyn_attack_reward: float

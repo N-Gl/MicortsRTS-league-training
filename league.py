@@ -56,7 +56,7 @@ def pfsp(win_rates, weighting="linear", enabled=True):
 def _init_agent_type(args, device):
     agent_type = []
     if args.num_selfplay_envs > 0:
-        for i in range(args.num_main_agents):
+        for i in range(args.num_main_envs):
             agent_type.append(SelfplayAgentType.CUR_MAIN)
             agent_type.append(-1)
         for i in range(args.num_main_exploiters):
@@ -291,7 +291,7 @@ class MainPlayer(Player):
         oder mehr als args.selfplay_save_interval steps vergangen sind)'''
         # weil nur eine Instanz von dem agent für Mainagent ex, ist checkpoint_step in agent gespeichert
         steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
-        if steps_passed < (self.args.selfplay_ready_save_interval) * self.args.num_main_agents: # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+        if steps_passed < (self.args.selfplay_ready_save_interval) * self.args.num_main_envs: # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
           return False
 
         historical = [
@@ -299,7 +299,7 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_agents # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
     def checkpoint(self):
@@ -375,7 +375,7 @@ class MainExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
 
 class LeagueExploiter(Player):
@@ -436,7 +436,7 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
     
 
 class Historical(Player):
@@ -507,7 +507,7 @@ class League:
 
         # nur aktive Spieler (nicht Historical)
         self._learning_agents =  []
-        # for _ in range(args.num_main_agents):
+        # for _ in range(args.num_main_envs):
         #   main_agent = MainPlayer(initial_agent, self._payoff, args=args)
         #   self._learning_agents.append(main_agent)
 
@@ -517,7 +517,7 @@ class League:
 
         # only 1 Mainagent:
         main_agent = MainPlayer(initial_main_agent, self._payoff, args=args)
-        for _ in range(args.num_main_agents):
+        for _ in range(args.num_main_envs):
             self._learning_agents.append(main_agent)
 
         # (TODO (League training): müssen die main_agents ihre Gewichte unterschiedlich updaten können, um besser gegen andere main_agents zu trainieren?

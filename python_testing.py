@@ -23,6 +23,16 @@ def _pick_param(agent):
     raise AssertionError("Agent has no parameters to test.")
 
 
+def _compute_lr_schedule(args, main_envs: int, exploiter_envs: int, update: int):
+        
+    main_num_updates = max(((args.total_timesteps // args.num_envs) * main_envs) // args.num_steps, 1)
+    exploiter_num_updates = max(((args.total_timesteps // args.num_envs) * exploiter_envs) // args.num_steps, 1)
+
+    main_frac = 1.0 - (update - 1.0) / main_num_updates
+    exploiter_frac = 1.0 - (update - 1.0) / exploiter_num_updates
+    return main_num_updates, exploiter_num_updates, main_frac, exploiter_frac
+
+
 def _assert_exploiter_initial_weights_are_independent(exploiter_cls):
     device = torch.device("cpu")
     main_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
@@ -82,6 +92,32 @@ def test_pfsp_returns_uniform_when_all_zero_weight():
     assert np.allclose(probs, np.ones(4) / 4)
 
 
+def test_lr_equal_when_main_and_exploiter_envs_match():
+    args = _make_args(
+        total_timesteps=640,
+        num_envs=8,
+        num_steps=4,
+        num_main_envs=4,
+        PPO_learning_rate=5e-5,
+        exploiter_PPO_learning_rate=5e-5,
+    )
+    main_envs = args.num_main_envs
+    exploiter_envs = main_envs
+    update = 3
+
+    main_num_updates, exploiter_num_updates, main_frac, exploiter_frac = _compute_lr_schedule(
+        args, main_envs, exploiter_envs, update
+    )
+
+    assert (
+        main_num_updates == exploiter_num_updates
+    ), "Expected equal update counts when main/exploiter env counts match."
+
+    main_lr = args.PPO_learning_rate * main_frac
+    exploiter_lr = args.exploiter_PPO_learning_rate * exploiter_frac
+    assert main_lr == pytest.approx(exploiter_lr)
+
+
 def test_payoff_update_tracks_symmetric_results():
     payoff = league.Payoff()
     p1, p2 = object(), object()
@@ -108,43 +144,61 @@ def test_payoff_update_tracks_draw_results():
 
 def test_adjust_action_selfplay_transforms_odd_envs():
     selfplay_league = pytest.importorskip("selfplay_league")
-    args = _make_args(num_selfplay_envs=2)
-    valid_actions_counts = np.array([2, 2], dtype=np.int64)
-    valid_actions = np.zeros((4, 8), dtype=np.int64)
+    args = _make_args(num_selfplay_envs=4)
+    valid_actions_counts = np.array([2, 2, 2, 2], dtype=np.int64)
+    valid_actions = np.zeros((8, 8), dtype=np.int64)
 
     valid_actions[0, 0] = 10
     valid_actions[1, 0] = 20
     valid_actions[0, 2:6] = [0, 1, 2, 3]
-    valid_actions[1, 2:6] = [3, 2, 1, 0]
+    valid_actions[1, 2:6] = [0, 1, 2, 3]
     valid_actions[0, 7] = 5
-    valid_actions[1, 7] = 25
+    valid_actions[2, 7] = 25
+    valid_actions[1, 0] = 100
 
-    valid_actions[2, 0] = 100
     valid_actions[3, 0] = 200
     valid_actions[2, 2:6] = [0, 1, 2, 3]
     valid_actions[3, 2:6] = [3, 2, 1, 0]
-    valid_actions[2, 7] = 7
     valid_actions[3, 7] = 1
 
+    valid_actions[4, 0] = 10
+    valid_actions[5, 0] = 20
+    valid_actions[4, 2:6] = [0, 1, 2, 3]
+    valid_actions[5, 2:6] = [0, 1, 2, 3]
+    valid_actions[4, 7] = 7
+    valid_actions[5, 7] = 25
+    valid_actions[5, 0] = 100
+
+    valid_actions[7, 0] = 200
+    valid_actions[6, 2:6] = [0, 1, 2, 3]
+    valid_actions[7, 2:6] = [3, 2, 1, 0]
+    valid_actions[6, 7] = 7
+    valid_actions[7, 7] = 1
     selfplay_league.adjust_action_selfplay(args, valid_actions, valid_actions_counts)
 
     assert valid_actions[0, 0] == 10
-    assert valid_actions[2, 0] == 100
+    assert valid_actions[1, 0] == 100
     assert valid_actions[3, 0] == 55
+    assert valid_actions[7, 0] == 55
     assert np.array_equal(valid_actions[0, 2:6], [0, 1, 2, 3])
-    assert np.array_equal(valid_actions[1, 2:6], [1, 0, 3, 2])
-    assert np.array_equal(valid_actions[2, 2:6], [0, 1, 2, 3])
+    assert np.array_equal(valid_actions[1, 2:6], [0, 1, 2, 3])
+    assert np.array_equal(valid_actions[2, 2:6], [2, 3, 0, 1])
     assert np.array_equal(valid_actions[3, 2:6], [1, 0, 3, 2])
+    assert np.array_equal(valid_actions[5, 2:6], [0, 1, 2, 3])
+    assert np.array_equal(valid_actions[7, 2:6], [1, 0, 3, 2])
     assert valid_actions[0, 7] == 5
-    assert valid_actions[1, 7] == 23
-    assert valid_actions[2, 7] == 7
+    assert valid_actions[2, 7] == 23
+    assert valid_actions[4, 7] == 7
     assert valid_actions[3, 7] == 47
 
 
 def test_adjust_obs_selfplay():
     selfplay_league = pytest.importorskip("selfplay_league")
-    args = _make_args(num_selfplay_envs=2)
-    next_obs = torch.zeros((4, 3, 3, 73), dtype=torch.int64)
+    args = _make_args(num_selfplay_envs=4)
+    next_obs = torch.zeros((4, 3, 3, 73))
+    
+    expected = next_obs.clone()
+
     next_obs[:, 2, 1] = torch.tensor([0.1000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000,
         0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000,
         0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,
@@ -163,10 +217,8 @@ def test_adjust_obs_selfplay():
         1.0000, 0.0588, 1.0000, 1.0000, 1.0000, 0.2812, 1.0000, 1.0000, 1.0000,
         1.0000, 0.0000, 0.0000, 0.2812, 1.0000, 1.0000, 1.0000, 1.0000, 0.0000,
         0.0000])
-    
-    expected = next_obs.clone()
 
-    selfplay_league.adjust_obs_selfplay(args, next_obs, is_new_env=True)
+    selfplay_league.adjust_obs_selfplay(args, next_obs)
 
     
 
@@ -208,9 +260,19 @@ def test_adjust_obs_selfplay():
         1.0000, 0.0000, 0.0000, 0.2812, 1.0000, 1.0000, 1.0000, 1.0000, 0.0000,
         0.0000])
 
-    assert torch.equal(next_obs, expected)
+    assert torch.equal(next_obs[1, 0, 1], expected[1, 0, 1])
+    assert torch.equal(next_obs[1, 2, 0], expected[1, 2, 0])
+    assert torch.equal(next_obs[3, 0, 1], expected[3, 0, 1])
+    assert torch.equal(next_obs[3, 2, 0], expected[3, 2, 0])
 
-
+def test_adjust_obs_selfplay_adjusted_2_times():
+    selfplay_league = pytest.importorskip("selfplay_league")
+    args = _make_args(num_selfplay_envs=8)
+    next_obs = torch.rand((8, 16, 16, 73))
+    original = next_obs.clone()
+    selfplay_league.adjust_obs_selfplay(args, next_obs)
+    selfplay_league.adjust_obs_selfplay(args, next_obs)
+    assert torch.equal(next_obs, original)
 
 def test_gae_accumulates_rewards():
     args = _make_args(num_steps=3, gamma=1.0, gae_lambda=1.0)
@@ -333,7 +395,7 @@ def test_league_sp_xp_config_defaults():
     assert cfg.selfplay is False
     assert cfg.sp is True
     expected_selfplay_envs = (
-        cfg.num_main_agents
+        cfg.num_main_envs
         + cfg.num_main_exploiters * cfg.num_envs_per_main_exploiters
         + cfg.num_league_exploiters * cfg.num_envs_per_league_exploiters
     ) * 2

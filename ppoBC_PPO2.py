@@ -151,7 +151,7 @@ if args.model_path is None:
     raise ValueError("Please provide a model path using --model-path")
 
 
-args.num_selfplay_envs = (args.num_main_agents + args.num_main_exploiters + args.num_league_exploiters) * 2
+args.num_selfplay_envs = (args.num_main_envs + args.num_main_exploiters + args.num_league_exploiters) * 2
 args.num_envs = args.num_selfplay_envs + args.num_bot_envs
 args.batch_size = int(args.num_envs * args.num_steps)
 args.hist_reward = 0
@@ -436,7 +436,7 @@ class SelfplayAgentType(IntEnum):
 
 agent_type = []
 if args.num_selfplay_envs > 0:
-    for i in range(args.num_main_agents):
+    for i in range(args.num_main_envs):
         agent_type.append(SelfplayAgentType.CUR_MAIN)
         agent_type.append(-1)
 
@@ -1513,7 +1513,7 @@ class MainPlayer(Player):
     oder mehr als args.selfplay_save_interval steps vergangen sind)'''
     # weil nur eine Instanz von dem agent für Mainagent ex, ist checkpoint_step in agent gespeichert
     steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
-    if steps_passed < (args.selfplay_save_interval // 20) * args.num_main_agents: # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+    if steps_passed < (args.selfplay_save_interval // 20) * args.num_main_envs: # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
       return False
 
     historical = [
@@ -1521,7 +1521,7 @@ class MainPlayer(Player):
         if isinstance(player, Historical)
     ]
     win_rates = self._payoff[self, historical]
-    return win_rates.min() > 0.7 or steps_passed > args.selfplay_save_interval * args.num_main_agents # TODO (league training): * args.num_main_agents entfernen, wenn mehrere main agents genutzt werden
+    return win_rates.min() > 0.7 or steps_passed > args.selfplay_save_interval * args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
   def checkpoint(self):
     '''Creates a new checkpoint of the agent.'''
@@ -1647,7 +1647,7 @@ class League(object):
 
   def __init__(self,
                initial_agent,
-               main_agents=args.num_main_agents,
+               main_agents=args.num_main_envs,
                main_exploiters=args.num_main_exploiters,
                league_exploiters=args.num_league_exploiters):
     self._payoff = Payoff()
@@ -1689,7 +1689,7 @@ class League(object):
 # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
 
 league = League(initial_agent=global_agent,
-                main_agents=args.num_main_agents,
+                main_agents=args.num_main_envs,
                 main_exploiters=args.num_main_exploiters,
                 league_exploiters=args.num_league_exploiters)
 

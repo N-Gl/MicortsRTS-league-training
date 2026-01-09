@@ -51,13 +51,15 @@ def adjust_obs_selfplay(args, next_obs, is_new_env: bool = False):
             # next_obs[1:args.num_selfplay_envs:2, :, :, 66:73] = tmp[:, :, :, 59:66]
 
             # rottate directions 180°
-            for i in range(0, 4):
-                next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
-                    next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
-                )
-            next_obs[1:args.num_selfplay_envs:2, :, :, 50:54] = next_obs[1:args.num_selfplay_envs:2, :, :, 50:54].roll(
-                shifts=2, dims=3
-            )
+            next_obs[1:args.num_selfplay_envs:2, :, :, 22:26] = next_obs[1:args.num_selfplay_envs:2, :, :, 22:26].roll(shifts=2, dims=3)
+            next_obs[1:args.num_selfplay_envs:2, :, :, 27:31] = next_obs[1:args.num_selfplay_envs:2, :, :, 27:31].roll(shifts=2, dims=3)
+            next_obs[1:args.num_selfplay_envs:2, :, :, 32:36] = next_obs[1:args.num_selfplay_envs:2, :, :, 32:36].roll(shifts=2, dims=3)
+            next_obs[1:args.num_selfplay_envs:2, :, :, 37:41] = next_obs[1:args.num_selfplay_envs:2, :, :, 37:41].roll(shifts=2, dims=3)
+            # for i in range(0, 4):
+            #     next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
+            #         next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
+            #     )
+            next_obs[1:args.num_selfplay_envs:2, :, :, 50:54] = next_obs[1:args.num_selfplay_envs:2, :, :, 50:54].roll(shifts=2, dims=3)
         else:
             tmp = next_obs[1].flip(0, 1).contiguous().clone()
             next_obs[1] = tmp
@@ -236,7 +238,7 @@ class LeagueTrainer:
 
         if args.num_selfplay_envs == 0:
             raise ValueError("league training requires num_selfplay_envs > 0")
-        if args.num_main_agents == 0:
+        if args.num_main_envs == 0:
             raise ValueError("league training requires at least one main agent")
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
@@ -245,6 +247,31 @@ class LeagueTrainer:
             if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
                 self.indices_per_exploiter.setdefault(p, []).append(idx)
                 self.b_indices_per_exploiter.setdefault(p, []).append(idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2)
+
+
+        # (League training): entferne alle Environments, die keine main agenten sind (Exploiter)
+        # TODO (training): oder einfach wie in BC von den Exploitern auch trainieren (vielleicht schlechter, da die Exploiter nicht optimal spielen und ein Bias in die Richtung entsteht (nur mit alten main Agenten, weil es gibt so oder so den ratio, der nach
+        # Ähnlichkeit zu den eigenen logprobs guckt?))
+        # TODO (optimize): ich brauche keine obs, mask, actions, logprobs etc. von den player 1 Environments (kann Speicher sparen)
+
+        # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
+        # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
+        if args.training_on_bot_envs:
+            self.main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
+            self.b_main_indices = self.main_indices - (args.num_selfplay_envs // 2)
+        else:
+           self.main_indices = np.array([], dtype=np.int64)
+           self.b_main_indices = np.array([], dtype=np.int64)
+
+        if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
+            selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
+            self.main_indices = np.concatenate((selfplay_mains, self.main_indices), axis=0)
+            self.b_main_indices = np.concatenate((self.b_main_indices, selfplay_mains // 2), axis=0)
+        else:
+            selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+            self.main_indices = np.concatenate((selfplay_mains * 2, self.main_indices))
+            self.b_main_indices = np.concatenate((selfplay_mains, self.b_main_indices))
+
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
         if args.anneal_lr:
@@ -291,25 +318,21 @@ class LeagueTrainer:
         scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
         z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long).to(device)
 
-        main_num_updates = max(args.total_timesteps // max(args.batch_size, 1), 1)
+
+        num_updates = args.total_timesteps // args.batch_size
+        main_batch_size = int(len(self.main_indices) * args.num_steps)
+        
+        main_num_updates = max(((args.total_timesteps // args.num_envs) * len(self.main_indices)) // args.num_steps, 1)
         exploiter_num_updates = {}
         for exploiter, exploiter_idx in self.indices_per_exploiter.items():
-            exploiter_batch_size = len(exploiter_idx) * args.num_steps
-            if exploiter_batch_size <= 0:
-                continue
-            exploiter_num_updates[exploiter] = max(args.total_timesteps // exploiter_batch_size, 1)
+            exploiter_num_updates[exploiter] = max(((args.total_timesteps // args.num_envs) * len(exploiter_idx)) // args.num_steps, 1)
 
-        num_updates = main_num_updates
-        if exploiter_num_updates:
-            num_updates = max(num_updates, max(exploiter_num_updates.values()))
         bot_position_indices = (
             torch.arange(mapsize, device=device, dtype=torch.int64).unsqueeze(0).repeat(args.num_bot_envs, 1).unsqueeze(2)
         )
         sp_position_indices = (
             torch.arange(mapsize, device=device, dtype=torch.int64).unsqueeze(0).repeat(args.num_selfplay_envs, 1).unsqueeze(2)
         )
-
-        
 
         print("League PPO training started")
         
@@ -700,33 +723,9 @@ class LeagueTrainer:
             # dasselbe mit invalid_action_masks                     (shape (steps*envs, 256, 79))
             # b_invalid_action_masks = invalid_action_masks[:, self.indices].reshape((-1,) + invalid_action_shape)
             
-
-            # (League training): entferne alle Environments, die keine main agenten sind (Exploiter)
-            # TODO (training): oder einfach wie in BC von den Exploitern auch trainieren (vielleicht schlechter, da die Exploiter nicht optimal spielen und ein Bias in die Richtung entsteht (nur mit alten main Agenten, weil es gibt so oder so den ratio, der nach
-            # Ähnlichkeit zu den eigenen logprobs guckt?))
-            # TODO (optimize): ich brauche keine obs, mask, actions, logprobs etc. von den player 1 Environments (kann Speicher sparen)
-
-            # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
-            # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
-            if args.training_on_bot_envs:
-                main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
-                b_main_indices = main_indices - (args.num_selfplay_envs // 2)
-            else:
-                main_indices = np.array([], dtype=np.int64)
-                b_main_indices = np.array([], dtype=np.int64)
-
-            if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-                selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
-                main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)
-                b_main_indices = np.concatenate((b_main_indices, selfplay_mains // 2), axis=0)
-            else:
-                selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-                main_indices = np.concatenate((selfplay_mains * 2, main_indices))
-                b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
             
 
             # inds: indices from the batch
-            main_batch_size = int(len(main_indices) * args.num_steps)
             main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
 
             
@@ -734,25 +733,22 @@ class LeagueTrainer:
             main_agent_batch = {
                 "agent": agent,
                 "optimizer": optimizer,
-                "obs": obs[:, main_indices].reshape((-1,) + envs.single_observation_space.shape),
-                "sc": scalar_features[:, main_indices].reshape(-1, scalar_features.shape[-1]),
-                "z": z_features[:, main_indices].reshape(-1, z_features.shape[-1]),
-                "actions": actions[:, main_indices].reshape((-1,) + action_space_shape),
-                "logprobs": logprobs[:, main_indices].reshape(-1),
-                "advantages": b_advantages[:, b_main_indices].reshape(-1),
-                "returns": b_returns[:, b_main_indices].reshape(-1),
-                "values": values[:, main_indices].reshape(-1),
-                "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape),
+                "obs": obs[:, self.main_indices].reshape((-1,) + envs.single_observation_space.shape),
+                "sc": scalar_features[:, self.main_indices].reshape(-1, scalar_features.shape[-1]),
+                "z": z_features[:, self.main_indices].reshape(-1, z_features.shape[-1]),
+                "actions": actions[:, self.main_indices].reshape((-1,) + action_space_shape),
+                "logprobs": logprobs[:, self.main_indices].reshape(-1),
+                "advantages": b_advantages[:, self.b_main_indices].reshape(-1),
+                "returns": b_returns[:, self.b_main_indices].reshape(-1),
+                "values": values[:, self.main_indices].reshape(-1),
+                "masks": invalid_action_masks[:, self.main_indices].reshape((-1,) + invalid_action_shape),
                 "skip_policy_update": args.dbg_no_main_agent_ppo_update
             }
             
             if args.dbg_deterministic_actions:
                 print("\nactions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)\n")
 
-            do_main_update = update <= main_num_updates
-            pg_stop_iter = pg_loss = entropy_loss = kl_loss = approx_kl = v_loss = loss = grad_norm = None
-
-            if args.dbg_exploiter_update and do_main_update:
+            if args.dbg_exploiter_update:
                 if not args.dbg_deterministic_actions:
                     print("\nuse deterministic actions for main agent PPO update for dbg_deterministic_actions\n")
 
@@ -760,21 +756,20 @@ class LeagueTrainer:
                     print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
                 self.dbg_prep(main_batch_size)
 
-            if do_main_update:
-                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
-                    args,
-                    envs,
-                    main_agent_batch,
-                    device,
-                    supervised_agent,
-                    update,
-                    main_batch_size,
-                    main_minibatch_size
-                    )
-                if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
-                    pg_stop_iter = -2
+            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
+                args,
+                envs,
+                main_agent_batch,
+                device,
+                supervised_agent,
+                update,
+                main_batch_size,
+                main_minibatch_size
+                )
+            if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
+                pg_stop_iter = -2
 
-                ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
+            ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
 
             # bot_exploiters = np.where(
             #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
@@ -827,12 +822,9 @@ class LeagueTrainer:
                             "clip_vloss": args.exploiter_clip_vloss
                         }
                         
-                    exploiter_update_limit = exploiter_num_updates.get(exploiter, num_updates)
-                    if exploiter_update_limit and update > exploiter_update_limit:
-                        continue
 
                     if exploiter_lr_fn is not None:
-                        exploiter_frac = 1.0 - (update - 1.0) / exploiter_update_limit
+                        exploiter_frac = 1.0 - (update - 1.0) / exploiter_num_updates[exploiter]
                         if exploiter_frac < 0.0:
                             exploiter_frac = 0.0
                         exploiter_lrnow = exploiter_lr_fn(exploiter_frac)
@@ -844,7 +836,7 @@ class LeagueTrainer:
                     exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
                     exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
 
-                    if args.dbg_exploiter_update and do_main_update:
+                    if args.dbg_exploiter_update:
                         self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
 
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
@@ -869,7 +861,7 @@ class LeagueTrainer:
                     #     print("Exploiter z different from main agent z")
 
 
-                    if args.dbg_exploiter_update and do_main_update:
+                    if args.dbg_exploiter_update:
                         self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
                     
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, grad_norm=grad_norm)
@@ -889,7 +881,7 @@ class LeagueTrainer:
                 #     exploiter_indices
                 # )
 
-            if do_main_update and not args.dbg_no_main_agent_ppo_update:
+            if not args.dbg_no_main_agent_ppo_update:
                 if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")
                     if (update < 500 and not args.early_updates):

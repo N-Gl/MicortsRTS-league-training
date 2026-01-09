@@ -18,7 +18,7 @@ ExperimentConfig:
   max_num_bot_envs: 5
   lower_selfplay_winrate_offset: 0.25
   upper_selfplay_winrate_offset: 0.25
-  num_main_agents: 2   # 1 num_main_agents == 2 env == 1 Game
+  num_main_envs: 2   # 1 num_main_envs == 2 env == 1 Game
 
   even_opponent_split: false # TODO
 

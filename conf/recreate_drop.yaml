@@ -27,7 +27,7 @@ ExperimentConfig:
   n_minibatch: 4
   num_bot_envs: 0
   num_selfplay_envs: 0
-  num_main_agents: 27
+  num_main_envs: 27
   num_main_exploiters: 0
   num_league_exploiters: 0
   selfplay_save_interval: 10
