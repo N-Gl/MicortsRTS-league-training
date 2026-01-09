@@ -9,7 +9,7 @@ ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  exp_name: 06_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs_dbg_no_main_agent_ppo_update_true__new_selfplay_args
+  exp_name: 07_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs_dbg_no_main_agent_ppo_update_true__new_selfplay_args__fixed_weights__lr_anneal
   wandb_project_name: league_training
 
   prod_mode: true
