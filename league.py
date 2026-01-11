@@ -338,16 +338,10 @@ class MainExploiter(Player):
         if self._payoff[self, opponent] > 0.1 and not self.args.sp:
             return opponent, True
 
-        if not self.args.sp:
-            historical = [
-                player for player in self._payoff.players
-                if isinstance(player, Historical) and player.parent == opponent
-            ]
-        else:
-            historical = [
-                player for player in self._payoff.players
-                if isinstance(player, Historical)
-            ]
+        historical = [
+            player for player in self._payoff.players
+            if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
+        ]
 
         # args.sp gibt jetzt auch andere Historical as Gegner
         # if self.args.sp:
