@@ -448,6 +448,23 @@ def main(cfg: ExperimentConfig):
         else:
             other_historicals = []
 
+        if args.other_historicals_paths is not None:
+            for historical_path in args.other_historicals_paths:
+                path_historical = _resolve_checkpoint_path(historical_path, args.exp_name, resume=args.resume)
+                historical_agent = build_agent(action_plane_nvec, device)
+                historical_agent.load_state_dict(
+                    torch.load(
+                        path_historical,
+                        map_location=device,
+                        weights_only=True)
+                        )
+                for param in historical_agent.parameters():
+                    param.requires_grad = False
+                historical_agent.eval()
+                other_historicals.append(historical_agent)
+                print(f"Added historical agent from {historical_path}")
+
+
         league_trainer = LeagueTrainer(
             agent=agent,
             supervised_agent=initial_agent,
