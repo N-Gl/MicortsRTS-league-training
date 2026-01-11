@@ -351,7 +351,7 @@ class MainExploiter(Player):
         #     return opp, True
         
         win_rates = self._payoff[self, historical]
-
+        print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp)), True
 
@@ -413,6 +413,7 @@ class LeagueExploiter(Player):
         #     return opp, True
 
         win_rates = self._payoff[self, historical]
+        print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp)), True
     
