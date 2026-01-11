@@ -343,11 +343,12 @@ class MainExploiter(Player):
             if isinstance(player, Historical) and player.parent == opponent
         ]
 
-        if self.args.sp:
-            opp = historical[0]
-            if not isinstance(opp.parent, MainPlayer):
-                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
-            return opp, True
+        # args.sp gibt jetzt auch andere Historical as Gegner
+        # if self.args.sp:
+        #     opp = historical[0]
+        #     if not isinstance(opp.parent, MainPlayer):
+        #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
+        #     return opp, True
         
         win_rates = self._payoff[self, historical]
 
@@ -404,11 +405,12 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
 
-        if self.args.sp:
-            opp = historical[0]
-            if not isinstance(opp.parent, MainPlayer):
-                print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
-            return opp, True
+        # args.sp gibt jetzt auch andere Historical as Gegner
+        # if self.args.sp:
+        #     opp = historical[0]
+        #     if not isinstance(opp.parent, MainPlayer):
+        #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
+        #     return opp, True
 
         win_rates = self._payoff[self, historical]
         return np.random.choice(
