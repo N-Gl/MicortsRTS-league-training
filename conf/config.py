@@ -40,6 +40,7 @@ class ExperimentConfig:
     ent_coef: float
     exploiter_ent_coef: float
     main_exploiter_no_draw_winrate_threshold: float
+    pfsp_min_prob_factor: float
     vf_coef: float
     max_grad_norm: float
     clip_coef: float

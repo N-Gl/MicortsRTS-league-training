@@ -36,22 +36,31 @@ def remove_monotonic_suffix(win_rates, players):
     return np.array([]), []
 
 
-def pfsp(win_rates, weighting="linear", enabled=True):
+def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
     weightings = {
         "variance": lambda x: x * (1 - x),
         "linear": lambda x: 1 - x,
         "linear_capped": lambda x: np.minimum(0.5, 1 - x),
         "squared": lambda x: (1 - x) ** 2,
     }
+    win_rates = np.asarray(win_rates)
+    if win_rates.size == 0:
+        return win_rates
     fn = weightings[weighting]
     if enabled:
-        probs = fn(np.asarray(win_rates))
+        probs = fn(win_rates)
     else:
         probs = np.ones_like(win_rates)
     norm = probs.sum()
     if norm < 1e-10:
-        return np.ones_like(win_rates) / len(win_rates)
-    return probs / norm
+        probs = np.ones_like(win_rates) / len(win_rates)
+    else:
+        probs = probs / norm
+    if min_prob_factor:
+        min_prob_factor = min(max(float(min_prob_factor), 0.0), 1.0)
+        uniform = np.ones_like(probs) / len(probs)
+        probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
+    return probs
 
 def _init_agent_type(args, device):
     agent_type = []
@@ -208,7 +217,7 @@ class MainPlayer(Player):
         ]
         win_rates = self._payoff[self, historical]
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def _selfplay_branch(self, opponent):
         '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
@@ -225,7 +234,7 @@ class MainPlayer(Player):
         ]
         win_rates = self._payoff[self, historical]
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def _verification_branch(self, opponent):
         '''sucht einen neuen exploiter gegner für selfplay, wenn min einer der Exploiter self oft self schlägt (winrate gegen ihn < 0.3) (jetzt: 0,35). -> Es wird checkpoint eines Exploiters aus der vergangenheit als gegner gewählt mit pfsp Verteilung.
@@ -242,7 +251,7 @@ class MainPlayer(Player):
         win_rates = self._payoff[self, exp_historical]
         if len(win_rates) and win_rates.min() < 0.35:
             return np.random.choice(
-                exp_historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp)), True
+                exp_historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
         
         # Check forgetting
         historical = [
@@ -253,7 +262,7 @@ class MainPlayer(Player):
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
         if len(win_rates) and win_rates.min() < 0.7:
             return np.random.choice(
-                historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp)), True
+                historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
         return None
 
@@ -369,7 +378,7 @@ class MainExploiter(Player):
         
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def checkpoint(self):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
@@ -431,7 +440,7 @@ class LeagueExploiter(Player):
         win_rates = self._payoff[self, historical]
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
     
     def checkpoint(self):
         '''Resets agent zu den initialen gewichten mit 25% chance und erstellt einen neuen checkpoint.'''
