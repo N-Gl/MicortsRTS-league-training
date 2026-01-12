@@ -52,3 +52,5 @@ ExperimentConfig:
   norm_adv: true                
   anneal_lr: true               
   clip_vloss: true
+
+  main_exploiter_no_draw_winrate_threshold: 0.25

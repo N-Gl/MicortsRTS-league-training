@@ -90,3 +90,5 @@ ExperimentConfig:
   exploiter_norm_adv: true
   exploiter_anneal_lr: true
   exploiter_clip_vloss: true
+  
+  main_exploiter_no_draw_winrate_threshold: 0.25
