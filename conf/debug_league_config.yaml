@@ -41,7 +41,6 @@ ExperimentConfig:
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
   gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
   ent_coef: 0.005               # new (BA Parameter) (Entropy coefficient η = 0.005)
-  main_exploiter_no_draw_winrate_threshold: 0.25
   vf_coef: 0.01                 # new (BA Parameter) (Value function coefficient β = 0.01)
   max_grad_norm: 0.5            # new (BA Parameter) (Gradient norm threshold ω = 0.5)
   clip_coef: 0.1                # new (BA Parameter) (Clipping coefficient = 0.1)
@@ -53,3 +52,5 @@ ExperimentConfig:
   norm_adv: true                
   anneal_lr: true               
   clip_vloss: true
+
+  main_exploiter_no_draw_winrate_threshold: 0.25

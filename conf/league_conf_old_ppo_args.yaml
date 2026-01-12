@@ -82,7 +82,6 @@ ExperimentConfig:
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
   exploiter_ent_coef: 0.005 # 0.1     # higher entropy only for exploiters
-  main_exploiter_no_draw_winrate_threshold: 0.25
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.1 # 0.2
@@ -94,3 +93,5 @@ ExperimentConfig:
   exploiter_norm_adv: true
   exploiter_anneal_lr: true
   exploiter_clip_vloss: true
+  
+  main_exploiter_no_draw_winrate_threshold: 0.25
