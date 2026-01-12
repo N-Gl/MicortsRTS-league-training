@@ -36,22 +36,31 @@ def remove_monotonic_suffix(win_rates, players):
     return np.array([]), []
 
 
-def pfsp(win_rates, weighting="linear", enabled=True):
+def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
     weightings = {
         "variance": lambda x: x * (1 - x),
         "linear": lambda x: 1 - x,
         "linear_capped": lambda x: np.minimum(0.5, 1 - x),
         "squared": lambda x: (1 - x) ** 2,
     }
+    win_rates = np.asarray(win_rates)
+    if win_rates.size == 0:
+        return win_rates
     fn = weightings[weighting]
     if enabled:
-        probs = fn(np.asarray(win_rates))
+        probs = fn(win_rates)
     else:
         probs = np.ones_like(win_rates)
     norm = probs.sum()
     if norm < 1e-10:
-        return np.ones_like(win_rates) / len(win_rates)
-    return probs / norm
+        probs = np.ones_like(win_rates) / len(win_rates)
+    else:
+        probs = probs / norm
+    if min_prob_factor:
+        min_prob_factor = min(max(float(min_prob_factor), 0.0), 1.0)
+        uniform = np.ones_like(probs) / len(probs)
+        probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
+    return probs
 
 def _init_agent_type(args, device):
     agent_type = []
@@ -208,7 +217,7 @@ class MainPlayer(Player):
         ]
         win_rates = self._payoff[self, historical]
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def _selfplay_branch(self, opponent):
         '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
@@ -225,7 +234,7 @@ class MainPlayer(Player):
         ]
         win_rates = self._payoff[self, historical]
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def _verification_branch(self, opponent):
         '''sucht einen neuen exploiter gegner für selfplay, wenn min einer der Exploiter self oft self schlägt (winrate gegen ihn < 0.3) (jetzt: 0,35). -> Es wird checkpoint eines Exploiters aus der vergangenheit als gegner gewählt mit pfsp Verteilung.
@@ -242,7 +251,7 @@ class MainPlayer(Player):
         win_rates = self._payoff[self, exp_historical]
         if len(win_rates) and win_rates.min() < 0.35:
             return np.random.choice(
-                exp_historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp)), True
+                exp_historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
         
         # Check forgetting
         historical = [
@@ -253,7 +262,7 @@ class MainPlayer(Player):
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
         if len(win_rates) and win_rates.min() < 0.7:
             return np.random.choice(
-                historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp)), True
+                historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
         return None
 
@@ -369,7 +378,7 @@ class MainExploiter(Player):
         
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def checkpoint(self):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
@@ -431,7 +440,7 @@ class LeagueExploiter(Player):
         win_rates = self._payoff[self, historical]
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp)), True
+            historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
     
     def checkpoint(self):
         '''Resets agent zu den initialen gewichten mit 25% chance und erstellt einen neuen checkpoint.'''
@@ -601,7 +610,9 @@ class League:
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates = []
             opp_names = []
+            opp_players = []
             game_count = []
+            no_decay_game_count = []
             opponent_table_rows: List[Tuple] = []
             count_league_players = 0
             for i, p1 in enumerate(done_agent.payoff.players):
@@ -612,8 +623,10 @@ class League:
                         name = getattr(p1, "name", p1.__class__.__name__) + "_" + str(i)
 
                     opp_names.append(name)
+                    opp_players.append(p1)
                     game_count.append(done_agent._payoff._games[done_agent, p1])
                     win_rates.append(done_agent.payoff._win_rate(done_agent, p1))
+                    no_decay_game_count.append(done_agent.payoff._no_decay_games[done_agent, p1])
 
                     wins = done_agent.payoff._wins[done_agent, p1]
                     losses = done_agent.payoff._losses[done_agent, p1]
@@ -647,6 +660,18 @@ class League:
                 for opp, games, r in zip(opp_names, game_count, win_rates):
                     if games > 0:
                         writer.add_scalar(f"winrate_per_opponent/{self_name}_vs_{opp}", r, games)
+
+            historicals = [
+                player for player in done_agent.payoff.players
+                if isinstance(player, Historical)
+            ]
+            main_hist = sum(isinstance(player.parent, MainPlayer) for player in historicals)
+            main_exploiter_hist = sum(isinstance(player.parent, MainExploiter) for player in historicals)
+            league_exploiter_hist = sum(isinstance(player.parent, LeagueExploiter) for player in historicals)
+            writer.add_scalar("charts/main_player_historicals", main_hist, global_step)
+            writer.add_scalar("charts/main_exploiter_historicals", main_exploiter_hist, global_step)
+            writer.add_scalar("charts/league_exploiter_historicals", league_exploiter_hist, global_step)
+            writer.add_scalar("charts/total_historicals", len(historicals), global_step)
         # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
         print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}")
         if isinstance(done_agent, MainPlayer):
@@ -724,7 +749,7 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
 
     return league_instance, active_league_agents
 
-def log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack_weight, done_idx, hist_reward):
+def log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack_weight, done_idx, hist_reward, main_agent):
     writer.add_scalar("main_charts/old_episode_reward", infos[done_idx]['episode']['r'], global_step)
     writer.add_scalar("main_charts/Game_length", game_length, global_step)
     writer.add_scalar("main_charts/Episode_reward_with_hist_reward", hist_reward + infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + 
@@ -733,6 +758,9 @@ def log_general_main_results(writer, global_step, infos, dyn_winloss, game_lengt
                                           infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
     writer.add_scalar("main_charts/AttackReward", infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
     writer.add_scalar("main_charts/WinLossRewardFunction", infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss, global_step)
+    steps_since_checkpoint = main_agent.agent.get_steps() - main_agent.agent.checkpoint_step
+    writer.add_scalar("main_charts/steps_since_checkpoint", steps_since_checkpoint, global_step)
+        
 
 def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_idx, dyn_winloss, num_done_botgames):
     print(f"Game {int(args.num_selfplay_envs/2 + int(done_idx - (args.num_selfplay_envs - 1)))} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
@@ -762,6 +790,8 @@ def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indi
     writer.add_scalar(f"{name}/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
     writer.add_scalar(f"{name}/approx_kl", approx_kl.item(), global_step)
     writer.add_scalar(f"{name}/grad_norm_before_clipping", grad_norm, global_step)
+    steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
+    writer.add_scalar(f"{name}/steps_since_checkpoint", steps_since_checkpoint, global_step)
 
     if args.kle_stop or args.kle_rollback:
         writer.add_scalar(f"{name}/pg_stop_iter", pg_stop_iter, global_step)

@@ -104,6 +104,7 @@ ExperimentConfig:
 
   
   main_exploiter_no_draw_winrate_threshold: 0.1
+  pfsp_min_prob_factor: 0.1
 
 
 hydra:

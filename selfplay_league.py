@@ -597,7 +597,7 @@ class LeagueTrainer:
                             if isinstance(done_agent, league.MainPlayer):
                                 # game_length = infos[done_idx]["episode"]["l"]
                                 # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500 TODO (training): für die ersten 3 millionen steps nur, wenn man gewinnt == 0?
-                                league.log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward)
+                                league.log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
                             league.log_bot_game_results(args, writer, global_step, infos, attack, done_idx, dyn_winloss, num_done_botgames)
