@@ -332,7 +332,8 @@ class MainExploiter(Player):
         self.optimizer = optimizer
 
     def get_match(self):
-        '''wählt einen zufälligen main agenten als gegner, wenn die winrate ohne draws gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
+        '''wählt  main agenten als gegner, wenn die winrate ohne draws gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
+        Wenn die min winrate gegen historische Mainagenten > 0.8 ist, wird in 50% der Fälle der Mainagent gewählt.
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
         
         main_agents = [
@@ -352,6 +353,12 @@ class MainExploiter(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
+        win_rates = self._payoff[self, historical]
+
+        if not self.args.sp:
+            if len(win_rates) and win_rates.min() > 0.8:
+                if np.random.random() < 0.5:
+                    return opponent, True
 
         # args.sp gibt jetzt auch andere Historical as Gegner
         # if self.args.sp:
@@ -360,7 +367,6 @@ class MainExploiter(Player):
         #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
         #     return opp, True
         
-        win_rates = self._payoff[self, historical]
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp)), True
