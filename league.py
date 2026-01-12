@@ -100,6 +100,12 @@ class Payoff:
     
         return (self._wins[_home, _away] +
                 0.5 * self._draws[_home, _away]) / self._games[_home, _away]
+    
+    def _win_rate_no_draw(self, _home, _away):
+        if self._games[_home, _away] == 0:
+          return 0.5
+    
+        return self._wins[_home, _away] / self._games[_home, _away]
 
     def __getitem__(self, match):
         home, away = match
@@ -225,13 +231,13 @@ class MainPlayer(Player):
         '''sucht einen neuen exploiter gegner für selfplay, wenn min einer der Exploiter self oft self schlägt (winrate gegen ihn < 0.3) (jetzt: 0,35). -> Es wird checkpoint eines Exploiters aus der vergangenheit als gegner gewählt mit pfsp Verteilung.
         Sonst wird ein checkpoint eines historischen gegners gewählt, wenn mainagent gegen min einer der Gegner eine kleinere winrate als 0.7 hat (Sonst None).'''
         # Check exploitation
-        exploiters = set([
-            player for player in self._payoff.players
-            if isinstance(player, MainExploiter)
-        ])
+        # exploiters = set([
+        #     player for player in self._payoff.players
+        #     if isinstance(player, MainExploiter)
+        # ])
         exp_historical = [
             player for player in self._payoff.players
-            if isinstance(player, Historical) and player.parent in exploiters
+            if isinstance(player, Historical) and isinstance(player.parent, MainExploiter) # TODO: funktioniert das statt if isinstance(player, Historical) and player.parent in exploiters?
         ]
         win_rates = self._payoff[self, exp_historical]
         if len(win_rates) and win_rates.min() < 0.35:
@@ -241,7 +247,7 @@ class MainPlayer(Player):
         # Check forgetting
         historical = [
             player for player in self._payoff.players
-            if isinstance(player, Historical) and player.parent == opponent
+            if isinstance(player, Historical) and isinstance(player.parent, MainPlayer) # TODO: funktioniert das statt if isinstance(player, Historical) and player.parent == opponent?
         ]
         win_rates = self._payoff[self, historical]
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
@@ -326,7 +332,7 @@ class MainExploiter(Player):
         self.optimizer = optimizer
 
     def get_match(self):
-        '''wählt einen zufälligen main agenten als gegner, wenn die winrate gegen diesen gegner > 0.1 ist.
+        '''wählt einen zufälligen main agenten als gegner, wenn die winrate ohne draws gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
         
         main_agents = [
@@ -335,8 +341,12 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if self._payoff[self, opponent] > 0.1 and not self.args.sp:
+        # TODO: ist das besser als self._payoff._win_rate?
+        if self._payoff._win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
             return opponent, True
+
+        # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
+        #     return opponent, True
 
         historical = [
             player for player in self._payoff.players
