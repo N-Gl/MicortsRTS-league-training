@@ -10,7 +10,7 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 11_01_26__finished_PPO_Basis_thesis_old_league_new_seed_with_new_selfplay_model_Historicals
+  exp_name: 12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals
   wandb_project_name: league_training
 
   prod_mode: true
@@ -24,11 +24,11 @@ ExperimentConfig:
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
-  num_main_envs: 10   # 1 num_main_envs == 1 env # TODO
-  num_main_exploiters: 5
-  num_league_exploiters: 5
-  num_envs_per_main_exploiters: 1
-  num_envs_per_league_exploiters: 1
+  num_main_envs: 6   # 1 num_main_envs == 1 env # TODO
+  num_main_exploiters: 3
+  num_league_exploiters: 3
+  num_envs_per_main_exploiters: 3
+  num_envs_per_league_exploiters: 3
 
   BC_aget_as_Historical: false
   training_on_bot_envs: false   # true
