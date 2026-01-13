@@ -113,8 +113,7 @@ class Payoff:
     
         return self._wins[_home, _away] / self._games[_home, _away]
 
-    def array_win_rate_no_draw(self, match):
-        home, away = match
+    def array_win_rate_no_draw(self, home, away):
     
         if isinstance(home, Player):
           home = [home]
