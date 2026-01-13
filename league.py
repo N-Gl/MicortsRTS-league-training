@@ -113,6 +113,19 @@ class Payoff:
     
         return self._wins[_home, _away] / self._games[_home, _away]
 
+    def array_win_rate_no_draw(self, match):
+        home, away = match
+    
+        if isinstance(home, Player):
+          home = [home]
+        if isinstance(away, Player):
+          away = [away]
+    
+        win_rates = np.array([[self._win_rate_no_draw(h, a) for a in away] for h in home])
+        if win_rates.shape[0] == 1 or win_rates.shape[1] == 1:
+          win_rates = win_rates.reshape(-1)
+    
+        return win_rates
     def __getitem__(self, match):
         home, away = match
     
@@ -310,7 +323,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical)
         ]
-        win_rates = self._payoff._win_rate_no_draw(self, historical)
+        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
@@ -349,7 +362,7 @@ class MainExploiter(Player):
         opponent = np.random.choice(main_agents)
 
         # TODO: ist das besser als self._payoff._win_rate?
-        if self._payoff._win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
+        if self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
@@ -359,7 +372,7 @@ class MainExploiter(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
-        win_rates = self._payoff._win_rate_no_draw(self, historical)
+        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
 
         if not self.args.sp:
             if len(win_rates) and win_rates.min() > 0.8:
@@ -434,7 +447,7 @@ class LeagueExploiter(Player):
         #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
         #     return opp, True
 
-        win_rates = self._payoff._win_rate_no_draw(self, historical)
+        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True

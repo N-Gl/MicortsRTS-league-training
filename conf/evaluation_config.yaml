@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals/Main_agent_backups/agent_update_430.pt",
+                          "league_models/12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals_new_match_distribution_2/Main_agent_backups/agent_update_1410.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals_update_430",
+          "12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals_new_match_distribution_2_update_1410",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals_update_430"
+  exp_name: "12_01_26__finished_PPO_Basis_thesis_old_league_entire_league_with_new_selfplay_model_Historicals_new_match_distribution_2_update_1410"
   wandb_project_name: new_Evaluation
   prod_mode: true
 
