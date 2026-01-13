@@ -385,9 +385,10 @@ class MainExploiter(Player):
         #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
         #     return opp, True
         
-        print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
-        return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+        print(f"\nchoosing next opponent for MainExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
+        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor))
+        print(f"mit Wahrscheinlichkeiten: \n{p}")
+        return np.random.choice(historical, p=p), True
 
     def checkpoint(self):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
@@ -448,8 +449,9 @@ class LeagueExploiter(Player):
 
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
-        return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor))
+        print(f"mit Wahrscheinlichkeiten: \n{p}")
+        return np.random.choice(historical, p=p), True
     
     def checkpoint(self):
         '''Resets agent zu den initialen gewichten mit 25% chance und erstellt einen neuen checkpoint.'''
