@@ -386,7 +386,7 @@ class MainExploiter(Player):
         #     return opp, True
         
         print(f"\nchoosing next opponent for MainExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
-        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor))
+        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
 
@@ -449,7 +449,7 @@ class LeagueExploiter(Player):
 
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
-        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor))
+        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
     
