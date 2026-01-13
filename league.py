@@ -43,22 +43,19 @@ def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
         "linear_capped": lambda x: np.minimum(0.5, 1 - x),
         "squared": lambda x: (1 - x) ** 2,
     }
-    win_rates = np.asarray(win_rates)
-    if win_rates.size == 0:
-        return win_rates
     fn = weightings[weighting]
+    win_rates = np.asarray(win_rates)
     if enabled:
         probs = fn(win_rates)
     else:
-        probs = np.ones_like(win_rates)
+        probs = np.ones_like(win_rates, dtype=float)
     norm = probs.sum()
     if norm < 1e-10:
-        probs = np.ones_like(win_rates) / len(win_rates)
+        probs = np.ones_like(win_rates, dtype=float) / len(win_rates)
     else:
         probs = probs / norm
-    if min_prob_factor:
-        min_prob_factor = min(max(float(min_prob_factor), 0.0), 1.0)
-        uniform = np.ones_like(probs) / len(probs)
+    if min_prob_factor > 0.0:
+        uniform = np.ones_like(win_rates, dtype=float) / len(win_rates)
         probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
     return probs
 
@@ -313,7 +310,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical)
         ]
-        win_rates = self._payoff[self, historical]
+        win_rates = self._payoff._win_rate_no_draw(self, historical)
         return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
@@ -362,7 +359,7 @@ class MainExploiter(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
-        win_rates = self._payoff[self, historical]
+        win_rates = self._payoff._win_rate_no_draw(self, historical)
 
         if not self.args.sp:
             if len(win_rates) and win_rates.min() > 0.8:
@@ -401,7 +398,7 @@ class MainExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
+        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
 
 class LeagueExploiter(Player):
@@ -437,7 +434,7 @@ class LeagueExploiter(Player):
         #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
         #     return opp, True
 
-        win_rates = self._payoff[self, historical]
+        win_rates = self._payoff._win_rate_no_draw(self, historical)
         print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="linear_capped", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
