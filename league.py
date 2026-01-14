@@ -374,8 +374,9 @@ class MainExploiter(Player):
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
 
         if not self.args.sp:
-            if len(win_rates) and win_rates.min() > 0.7:
-                if np.random.random() < 0.5:
+            min_win_rate = win_rates.min()
+            if len(win_rates) and min_win_rate > 0.6:
+                if np.random.random() < (min_win_rate-0.6) * (1/0.4) + 0.3:       # etwa ab min_win_rate = 0.9 immer main agent
                     return opponent, True
 
         # args.sp gibt jetzt auch andere Historical as Gegner
@@ -411,7 +412,7 @@ class MainExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
 
 class LeagueExploiter(Player):
@@ -462,7 +463,7 @@ class LeagueExploiter(Player):
             self.optimizer = None
 
         self._checkpoint_step = self.agent.get_steps()
-        return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
+        return checkpoint  # TODO: vorher: return self._create_checkpoint(): resettet man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
     
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. wie bei MainPlayer'''
@@ -475,7 +476,7 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
     
 
 class Historical(Player):
