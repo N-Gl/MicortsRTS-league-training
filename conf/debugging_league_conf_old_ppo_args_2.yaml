@@ -12,7 +12,7 @@ ExperimentConfig:
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
   exp_name: temp
   wandb_project_name: league_training
-  wandb_group_name: testing
+  wandb_group_name: debugging
 
   prod_mode: true
   render: true

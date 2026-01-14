@@ -374,7 +374,7 @@ class MainExploiter(Player):
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
 
         if not self.args.sp:
-            if len(win_rates) and win_rates.min() > 0.8:
+            if len(win_rates) and win_rates.min() > 0.7:
                 if np.random.random() < 0.5:
                     return opponent, True
 
