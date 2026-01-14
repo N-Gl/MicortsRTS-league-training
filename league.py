@@ -686,9 +686,15 @@ class League:
         # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
         score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
         weighted_score_reward_sum = score_reward_sum * args.rewardscore
+        delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
+        episode_reward = (
+            infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
+            + infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
+            + delta_score_sum_weighted
+        )
         writer.add_scalar("charts/selfplay_reward_scores_sum", weighted_score_reward_sum, num_done_selfplaygames)
         print(
-            f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, score_reward_sum={weighted_score_reward_sum:.3f}"
+            f"global_step={global_step}, episode_reward={episode_reward:.3f}, score_reward_sum={weighted_score_reward_sum:.3f}"
         )
         if isinstance(done_agent, MainPlayer):
             print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_with_draw:.3f}\n")
@@ -766,12 +772,24 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
     return league_instance, active_league_agents
 
 def log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack_weight, done_idx, hist_reward, main_agent):
+    delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
     writer.add_scalar("main_charts/old_episode_reward", infos[done_idx]['episode']['r'], global_step)
     writer.add_scalar("main_charts/Game_length", game_length, global_step)
-    writer.add_scalar("main_charts/Episode_reward_with_hist_reward", hist_reward + infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + 
-                                          infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
-    writer.add_scalar("main_charts/Episode_reward", infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + 
-                                          infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
+    writer.add_scalar(
+        "main_charts/Episode_reward_with_hist_reward",
+        hist_reward
+        + infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
+        + infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
+        + delta_score_sum_weighted,
+        global_step,
+    )
+    writer.add_scalar(
+        "main_charts/Episode_reward",
+        infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
+        + infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
+        + delta_score_sum_weighted,
+        global_step,
+    )
     writer.add_scalar("main_charts/AttackReward", infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight, global_step)
     writer.add_scalar("main_charts/WinLossRewardFunction", infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss, global_step)
     steps_since_checkpoint = main_agent.agent.get_steps() - main_agent.agent.checkpoint_step
@@ -792,9 +810,15 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     writer.add_scalar(f"main_winrates/bot_Winrate_with_draw_0.5", with_draw, num_done_botgames)
     score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
     weighted_score_reward_sum = score_reward_sum * args.rewardscore
+    delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
+    episode_reward = (
+        infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
+        + infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
+        + delta_score_sum_weighted
+    )
     writer.add_scalar("charts/bot_reward_scores_sum", weighted_score_reward_sum, num_done_botgames)
     print(
-        f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, score_reward_sum={weighted_score_reward_sum:.3f}, bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}"
+        f"global_step={global_step}, episode_reward={episode_reward:.3f}, score_reward_sum={weighted_score_reward_sum:.3f}, bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}"
     )
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
