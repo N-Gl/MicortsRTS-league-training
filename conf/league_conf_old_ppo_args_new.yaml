@@ -12,6 +12,7 @@ ExperimentConfig:
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
   exp_name: 13_01_26__finished_PPO_Basis_thesis_old_with_new_selfplay_model_Historicals_new_new_match_distribution_no_league_exploiters_selfplay_save_interval_6e6
   wandb_project_name: league_training
+  wandb_group_name:
 
   prod_mode: true
   render: false

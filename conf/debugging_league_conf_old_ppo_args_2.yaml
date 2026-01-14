@@ -11,7 +11,8 @@ ExperimentConfig:
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
   exp_name: temp
-  wandb_project_name: testing_league_training
+  wandb_project_name: league_training
+  wandb_group_name: testing
 
   prod_mode: true
   render: true

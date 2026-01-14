@@ -155,6 +155,19 @@
     },
 
     {
+      "name": "Python: league_conf_testing",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "league_conf_testing",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: debugging_league_conf_old_ppo_args",
       "type": "debugpy",
       "request": "launch",
