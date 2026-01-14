@@ -295,7 +295,7 @@ class LeagueTrainer:
 
         rewards_attack = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_winloss = torch.zeros((args.num_steps, args.num_envs)).to(device)
-        rewards_score = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        delta_rewards_score = torch.zeros((args.num_steps, args.num_envs)).to(device)
         dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
         values = torch.zeros((args.num_steps, args.num_envs)).to(device)
 
@@ -317,6 +317,8 @@ class LeagueTrainer:
         next_done = torch.zeros(args.num_envs).to(device)
         scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
         z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long).to(device)
+        last_sp_scorerew = torch.zeros(args.num_selfplay_envs, device=device)
+        last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
 
 
         num_updates = args.total_timesteps // args.batch_size
@@ -570,7 +572,15 @@ class LeagueTrainer:
                     rewards_attack[step] = attack_tensor * attack
 
                 rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew])).to(device)
-                rewards_score[step] = torch.Tensor(np.concatenate([sp_scorerew, bot_scorerew])).to(device)
+                sp_score_tensor = torch.as_tensor(sp_scorerew, device=device, dtype=torch.float)
+                bot_score_tensor = torch.as_tensor(bot_scorerew, device=device, dtype=torch.float)
+                sp_score_delta = sp_score_tensor - last_sp_scorerew
+                bot_score_delta = bot_score_tensor - last_bot_scorerew
+                sp_done_tensor = torch.as_tensor(sp_ds, device=device, dtype=torch.bool)
+                bot_done_tensor = torch.as_tensor(bot_ds, device=device, dtype=torch.bool)
+                last_sp_scorerew = torch.where(sp_done_tensor, torch.zeros_like(sp_score_tensor), sp_score_tensor) # if done: 0 else: current score
+                last_bot_scorerew = torch.where(bot_done_tensor, torch.zeros_like(bot_score_tensor), bot_score_tensor)
+                delta_rewards_score[step] = torch.cat([sp_score_delta, bot_score_delta])
                 next_done = torch.Tensor(np.concatenate([sp_ds, bot_ds])).to(device)
 
                 # =============
@@ -677,21 +687,21 @@ class LeagueTrainer:
                     )
                 
                 rewards_winloss = rewards_winloss * winloss
-                rewards_score = rewards_score * args.rewardscore
+                delta_rewards_score = delta_rewards_score * args.rewardscore
 
                 # dont calculate GAE for Player 1 Environments
                 b_next_value = next_value[:, self.indices]
                 b_values = values[:, self.indices]
                 b_rewards_attack = rewards_attack[:, self.indices]
                 b_rewards_winloss = rewards_winloss[:, self.indices]
-                b_rewards_score = rewards_score[:, self.indices]
+                b_delta_rewards_score = delta_rewards_score[:, self.indices]
                 b_dones = dones[:, self.indices]
                 b_next_done = next_done[self.indices]
 
                 # (returns, advantages werden für exploiters weitergegeben, deshalb muss man sie hier auch berechnen oder unten anpassen)
                 # oder 2 Variablen jeweils speichern. Hier kann man auch nur die obs, ... zusammenstellen, die exploiters brauchen (spart Speicher)
                 # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
-                b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_rewards_score, b_dones, b_next_done)
+                b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_delta_rewards_score, b_dones, b_next_done)
 
 
 
@@ -908,8 +918,8 @@ class LeagueTrainer:
                 rewards_attack[:, args.num_selfplay_envs:].zero_()
                 rewards_winloss = rewards_winloss[:, :args.num_envs]
                 rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                rewards_score = rewards_score[:, :args.num_envs]
-                rewards_score[:, args.num_selfplay_envs:].zero_()
+                delta_rewards_score = delta_rewards_score[:, :args.num_envs]
+                delta_rewards_score[:, args.num_selfplay_envs:].zero_()
                 # TODO (optimize): muss man die wirklich resetten?
                 dones = dones[:, :args.num_envs]
                 dones[:, args.num_selfplay_envs:].zero_()
@@ -918,6 +928,7 @@ class LeagueTrainer:
 
                 next_obs_np, _, bot_res = envs.reset()
                 bot_next_obs = torch.Tensor(next_obs_np).to(device)
+                last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
 
                 next_done = next_done[:args.num_envs]
                 next_done[args.num_selfplay_envs:].zero_()
@@ -954,14 +965,14 @@ class LeagueTrainer:
                 rewards_winloss = torch.cat(
                     (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
                 )
-                rewards_score = torch.cat(
-                    (rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_score.dtype)), dim=1
+                delta_rewards_score = torch.cat(
+                    (delta_rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=delta_rewards_score.dtype)), dim=1
                 )
                 dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
                 values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
                 rewards_attack[:, args.num_selfplay_envs:].zero_()
                 rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                rewards_score[:, args.num_selfplay_envs:].zero_()
+                delta_rewards_score[:, args.num_selfplay_envs:].zero_()
                 # TODO (optimize): muss man die wirklich resetten?
                 dones[:, args.num_selfplay_envs:].zero_()
                 values[:, args.num_selfplay_envs:].zero_()
@@ -969,6 +980,7 @@ class LeagueTrainer:
 
                 next_obs_np, _, bot_res = envs.reset()
                 bot_next_obs = torch.Tensor(next_obs_np).to(device)
+                last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
 
                 
                 next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))

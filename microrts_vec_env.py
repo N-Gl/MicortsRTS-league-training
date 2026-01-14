@@ -270,8 +270,8 @@ class MicroRTSGridModeVecEnv(MicroRTSInterface):
         obs = to_byte_array_list(responses.observation)
         mask = to_byte_array_list(responses.mask)
         self._resources = to_byte_array_list(responses.resources)
-        score_reward = reward[:, 8]
-        delta_score_reward = score_reward - self.delta_rewards
+
+        infos = self._encode_info(reward, done[:, 0])
         # check if it is in evaluation, if not, then change maps
         if len(self.cycle_maps) > 0:
             # check if an environment is done, if done, reset the client, and replace the observation
@@ -330,11 +330,10 @@ class MicroRTSGridModeVecEnv(MicroRTSInterface):
                     self._terrain[done_idx] = np.array(response.terrain)
                     self._resources[done_idx] = np.array(response.resources)
 
-        self.delta_rewards = np.where(done[:, 0], 0, score_reward)
         infos = [{"raw_rewards": item} for item in reward]
         rewardwinloss = reward[:, 0] * self.reward_weight[0]
 
-        rewardscore = delta_score_reward * self.reward_weight[8]
+        rewardscore = reward[:, 8] * self.reward_weight[8]
         reward = np.delete(reward, 0, axis=1)
         reward = np.delete(reward, 7, axis=1)
         weight = self.reward_weight[1:-1]
