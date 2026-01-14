@@ -684,7 +684,11 @@ class League:
             writer.add_scalar("charts/league_exploiter_historicals", league_exploiter_hist, global_step)
             writer.add_scalar("charts/total_historicals", len(historicals), global_step)
         # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
-        print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}")
+        score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
+        writer.add_scalar("charts/selfplay_reward_scores_sum", score_reward_sum, num_done_selfplaygames)
+        print(
+            f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, score_reward_sum={score_reward_sum:.3f}"
+        )
         if isinstance(done_agent, MainPlayer):
             print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_with_draw:.3f}\n")
         return last_logged_selfplay_games
@@ -785,7 +789,11 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
     writer.add_scalar(f"main_winrates/bot_Winrate_with_Draw_0", bot_winrate, num_done_botgames)
     writer.add_scalar(f"main_winrates/bot_Winrate_std", np.std(winloss_values), num_done_botgames)
     writer.add_scalar(f"main_winrates/bot_Winrate_with_draw_0.5", with_draw, num_done_botgames)
-    print(f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
+    score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
+    writer.add_scalar("charts/bot_reward_scores_sum", score_reward_sum, num_done_botgames)
+    print(
+        f"global_step={global_step}, episode_reward={(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'] * dyn_winloss + infos[done_idx]['microrts_stats']['AttackRewardFunction'] * attack_weight):.3f}, score_reward_sum={score_reward_sum:.3f}, bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}"
+    )
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
 
