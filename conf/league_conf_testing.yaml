@@ -11,7 +11,8 @@ ExperimentConfig:
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
   exp_name: 14_01_26__finished_PPO_Basis_thesis_no_checkpoints__no_attack_reward_weight__rewardscore
-  wandb_project_name: league_training_test
+  wandb_project_name: league_training
+  wandb_group_name: testing
 
   prod_mode: true
   render: false

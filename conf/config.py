@@ -19,6 +19,7 @@ class ExperimentConfig:
     capture_video: bool
     wandb_project_name: str
     wandb_entity: Optional[str]
+    wandb_group_name: Optional[str]
     create_run_id_file: bool
     evaluation_model_paths: Optional[list[str]]
     names: Optional[list[str]]

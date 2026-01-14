@@ -49,6 +49,8 @@ if __name__ == "__main__":
                         help="the wandb's project name")
     parser.add_argument('--wandb-entity', type=str, default=None,
                         help="the entity (team) of wandb's project")
+    parser.add_argument('--wandb-group-name', type=str, default=None,
+                        help="the wandb's group name")
 
     # Algorithm specific arguments
     parser.add_argument('--num-bot-envs', type=int, default=0,
@@ -165,7 +167,7 @@ writer.add_text('hyperparameters', "|param|value|\n|-|-|\n%s" % (
         '\n'.join([f"|{key}|{value}|" for key, value in vars(args).items()])))
 if args.prod_mode:
     import wandb
-    run = wandb.init(project=args.wandb_project_name, entity=args.wandb_entity, sync_tensorboard=True, config=vars(args), name=experiment_name, save_code=True)
+    run = wandb.init(project=args.wandb_project_name, entity=args.wandb_entity, group=args.wandb_group_name, sync_tensorboard=True, config=vars(args), name=experiment_name, save_code=True)
     writer = SummaryWriter(f"/tmp/{experiment_name}")
 
 # TRY NOT TO MODIFY: seeding

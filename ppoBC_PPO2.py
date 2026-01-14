@@ -69,6 +69,8 @@ if __name__ == "__main__":
                         help="the wandb's project name")
     parser.add_argument('--wandb-entity', type=str, default=None,
                         help="the entity (team) of wandb's project")
+    parser.add_argument('--wandb-group-name', type=str, default=None,
+                        help="the wandb's group name")
 
     # Algorithm specific arguments
     parser.add_argument('--n-minibatch', type=int, default=4,
@@ -306,7 +308,7 @@ if args.prod_mode:
         run_id = None
         resume_mode = "allow"
     run = wandb.init(
-        project=args.wandb_project_name, entity=args.wandb_entity,
+        project=args.wandb_project_name, entity=args.wandb_entity, group=args.wandb_group_name,
         # sync_tensorboard=True,
         config=vars(args), name=experiment_name, monitor_gym=True, resume=resume_mode, id=run_id, save_code=False)
 
@@ -2496,7 +2498,6 @@ for update in range(starting_update, num_updates + 1):
 envsT.close()
 writer.close()
 # =========================
-
 
 
 

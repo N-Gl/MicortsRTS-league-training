@@ -97,7 +97,7 @@ def main(cfg: ExperimentConfig):
             run_id = None
             resume_mode = "allow"
         run = wandb.init(
-            project=args.wandb_project_name, entity=args.wandb_entity,
+            project=args.wandb_project_name, entity=args.wandb_entity, group=args.wandb_group_name,
             # sync_tensorboard=True,
             config=vars(args), name=experiment_name, monitor_gym=True, resume=resume_mode,id=run_id, save_code=False,
             settings=wandb.Settings(console="off") # console wird nicht synchronisiert

@@ -44,6 +44,7 @@ ExperimentConfig:
   capture_video: false
 
   wandb_entity:
+  wandb_group_name:
   create_run_id_file: false
 
   n_minibatch: 4
