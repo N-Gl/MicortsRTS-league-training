@@ -104,7 +104,7 @@ ExperimentConfig:
   num_parallel_eval_games: 0
 
 
-  main_winrate_threshold: 0.7
+  main_winrate_threshold: 0.7 # also used as threashold for choosing historical opponents in _verification_branch
   main_exploiter_winrate_threshold: 0.7
   league_exploiter_winrate_threshold: 0.7
   main_exploiter_no_draw_winrate_threshold: 0.1

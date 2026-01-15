@@ -21,7 +21,7 @@ ExperimentConfig:
   num_league_exploiters: 0
 
   selfplay_save_interval: 30000000   # Interval (in steps per Game) between creaing/saving league agent models in league (2e4 -> max 10 games per checkpoint for 1 agent)
-  main_winrate_threshold: 0.7
+  main_winrate_threshold: 0.7 # also used as threashold for choosing historical opponents in _verification_branch
   main_exploiter_winrate_threshold: 0.7
   league_exploiter_winrate_threshold: 0.7
   checkpoint_frequency: 10        # (in Updates) Frequency to save main model checkpoints during training
