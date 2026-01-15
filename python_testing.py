@@ -26,6 +26,9 @@ def _make_ready_to_checkpoint_args(**overrides):
         num_main_envs=1,
         num_envs_per_main_exploiters=1,
         num_envs_per_league_exploiters=1,
+        main_winrate_threshold=0.7,
+        main_exploiter_winrate_threshold=0.7,
+        league_exploiter_winrate_threshold=0.7,
         save_gpu_memory=False,
         exp_name="test_exp",
     )

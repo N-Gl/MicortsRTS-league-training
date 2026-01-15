@@ -270,7 +270,7 @@ class MainPlayer(Player):
         ]
         win_rates = self._payoff[self, historical]
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
-        if len(win_rates) and win_rates.min() < 0.7:
+        if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
                 historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
@@ -324,7 +324,7 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
-        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
+        return win_rates.min() > self.args.main_winrate_threshold or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
     def checkpoint(self):
@@ -424,7 +424,7 @@ class MainExploiter(Player):
 
         win_rates = self._payoff[self, mainplayer]
 
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
+        return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
 
 class LeagueExploiter(Player):
@@ -489,7 +489,7 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
+        return win_rates.min() > self.args.league_exploiter_winrate_threshold or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
     
 
 class Historical(Player):
