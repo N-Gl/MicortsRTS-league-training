@@ -844,14 +844,14 @@ def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indi
 
     if args.prod_mode and update % args.checkpoint_frequency == 0:
             print("Saving model checkpoint...")
-            save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=f"current_{exploiter_agent_batch["player"].__class__.__name__}", file_name=f"{player.name}")
+            save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"current_{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}")
 
             if update < 500:
                 if update % (args.checkpoint_frequency * 5) == 0:
-                    save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch["player"].__class__.__name__}", file_name=f"{player.name}_update_{update}")
+                    save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}_update_{update}")
                     
             else:
-                save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch["player"].__class__.__name__}", file_name=f"{player.name}_update_{update}")
+                save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}_update_{update}")
 
 
 def train_exploiters(
@@ -977,19 +977,18 @@ def train_exploiters(
             # old_w = {k: v.detach().clone() for k, v in self.agent.state_dict().items()}
             # is_changing = {k: not torch.equal(v, old_w[k]) for k, v in self.agent.state_dict().items()}
 
-            writer.add_scalar(f"{entry["player"].name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], global_step)
-            writer.add_scalar(f"{entry["player"].name}/value_loss", args.vf_coef * v_loss.item(), global_step)
-            writer.add_scalar(f"{entry["player"].name}/policy_loss", pg_loss.item(), global_step)
-            writer.add_scalar(f"{entry["player"].name}/total_loss", loss.item(), global_step)
-            writer.add_scalar(f"{entry["player"].name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), global_step)
-
+            writer.add_scalar(f"{entry['player'].name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], global_step)
+            writer.add_scalar(f"{entry['player'].name}/value_loss", args.vf_coef * v_loss.item(), global_step)
+            writer.add_scalar(f"{entry['player'].name}/policy_loss", pg_loss.item(), global_step)
+            writer.add_scalar(f"{entry['player'].name}/total_loss", loss.item(), global_step)
+            writer.add_scalar(f"{entry['player'].name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), global_step)
             if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")
-                    save_league_model(save_agent=entry["player"].agent, experiment_name=experiment_name, dir_name=f"current_{entry["player"].__class__.__name__}", file_name=f"{entry["player"].name}")
+                    save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=f"current_{entry['player'].__class__.__name__}", file_name=f"{entry['player'].name}")
 
                     if update < 500:
                         if update % (args.checkpoint_frequency * 5) == 0:
-                            save_league_model(save_agent=entry["player"].agent, experiment_name=experiment_name, dir_name=entry["player"].__class__.__name__, file_name=f"{entry["player"].name}_update_{update}")
+                            save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=entry['player'].__class__.__name__, file_name=f"{entry['player'].name}_update_{update}")
                             
                     else:
-                        save_league_model(save_agent=entry["player"].agent, experiment_name=experiment_name, dir_name=entry["player"].__class__.__name__, file_name=f"{entry["player"].name}_update_{update}")
+                        save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=entry['player'].__class__.__name__, file_name=f"{entry['player'].name}_update_{update}")
