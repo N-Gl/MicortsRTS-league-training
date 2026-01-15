@@ -10,7 +10,7 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 14_01_26__finished_PPO_Basis_thesis_no_checkpoints__no_attack_reward_weight__rewardscore_delta_rewards_score_rewardscore_0.02__no_other_historicals
+  exp_name: 14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs__no_checkpoints
   wandb_project_name: league_training
   wandb_group_name: testing
 
@@ -25,10 +25,10 @@ ExperimentConfig:
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
-  num_main_envs: 1   # 1 num_main_envs == 1 env # TODO
+  num_main_envs: 12   # 1 num_main_envs == 1 env # TODO
   num_main_exploiters: 1
   num_league_exploiters: 0
-  num_envs_per_main_exploiters: 20
+  num_envs_per_main_exploiters: 12
   num_envs_per_league_exploiters: 0
 
   BC_aget_as_Historical: false

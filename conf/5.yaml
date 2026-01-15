@@ -10,7 +10,7 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 14_01_26__finished_PPO_Basis_thesis_no_checkpoints__no_attack_reward_weight__rewardscore_delta_rewards_score_rewardscore_0.02__no_other_historicals
+  exp_name: 15_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_more_exploiter_exploration_with_bots
   wandb_project_name: league_training
   wandb_group_name: testing
 
@@ -20,22 +20,22 @@ ExperimentConfig:
 
   seed: 
 
-  num_bot_envs: 1 # 3
-  max_num_bot_envs: 1 # 6 # changed from 9
+  num_bot_envs: 3 # 3
+  max_num_bot_envs: 5 # 6 # changed from 9
   bot_adding_done_training_ratio: 0.5
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
-  num_main_envs: 1   # 1 num_main_envs == 1 env # TODO
+  num_main_envs: 11   # 1 num_main_envs == 1 env # TODO
   num_main_exploiters: 1
   num_league_exploiters: 0
-  num_envs_per_main_exploiters: 20
+  num_envs_per_main_exploiters: 11
   num_envs_per_league_exploiters: 0
 
   BC_aget_as_Historical: false
-  training_on_bot_envs: false   # TODO: true
+  training_on_bot_envs: true   # TODO: true
 
-  selfplay_ready_save_interval: 30000000 # 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
-  selfplay_save_interval: 30000000 # 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
+  selfplay_ready_save_interval: 5e5 # 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
+  selfplay_save_interval: 6e6 # 3e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
   # changed from 1e6
 
   even_opponent_split: true
@@ -83,7 +83,7 @@ ExperimentConfig:
 
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
-  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_ent_coef: 0.03 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.2 # 0.2
