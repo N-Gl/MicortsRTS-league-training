@@ -340,7 +340,7 @@ class MainExploiter(Player):
         payoff: Payoff,
         args,
         optimizer=None,
-        in_env = None
+        main_exp_idx = None
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
@@ -350,7 +350,7 @@ class MainExploiter(Player):
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
-        self.name = f"MainExploiter_{in_env}"
+        self.name = f"MainExploiter_{main_exp_idx}"
 
     def get_match(self):
         '''wählt  main agenten als gegner, wenn die winrate ohne draws gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
@@ -434,7 +434,7 @@ class LeagueExploiter(Player):
         payoff: Payoff,
         args,
         optimizer=None,
-        in_env = None
+        league_exp_idx = None
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
@@ -443,8 +443,7 @@ class LeagueExploiter(Player):
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
-        self.name = f"LeagueExploiter_{in_env}"
-
+        self.name = f"LeagueExploiter_{league_exp_idx}"
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
 
@@ -583,14 +582,14 @@ class League:
         self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
 
-        for _ in range(args.num_main_exploiters):
-            main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args, in_env=list(range(len(self._learning_agents), args.num_main_exploiters + len(self._learning_agents))))
+        for main_exp_idx in range(args.num_main_exploiters):
+            main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args, main_exp_idx=main_exp_idx)
             for _ in range(args.num_envs_per_main_exploiters):
                 self._learning_agents.append(
                     main_exploiter)
             self._payoff.add_player(main_exploiter)
-        for _ in range(args.num_league_exploiters):
-            league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args, in_env=list(range(len(self._learning_agents), args.num_league_exploiters + len(self._learning_agents))))
+        for league_exp_idx in range(args.num_league_exploiters):
+            league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args, league_exp_idx=league_exp_idx)
             for _ in range(args.num_envs_per_league_exploiters):
                 self._learning_agents.append(
                     league_exploiter)
