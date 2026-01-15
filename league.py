@@ -410,11 +410,20 @@ class MainExploiter(Player):
         if steps_passed < self.args.selfplay_ready_save_interval:
             return False
 
-        historical = [
+        # TODO: ist es besser mit der Winrate gegen alle historischen gegner oder nur mainplayer?
+        # historical = [
+        #     player for player in self._payoff.players
+        #     if isinstance(player, Historical)
+        # ]
+        # win_rates = self._payoff[self, historical]
+
+        mainplayer = [
             player for player in self._payoff.players
-            if isinstance(player, Historical)
+            if isinstance(player, MainPlayer)
         ]
-        win_rates = self._payoff[self, historical]
+
+        win_rates = self._payoff[self, mainplayer]
+
         return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
 
