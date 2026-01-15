@@ -17,6 +17,22 @@ def _make_args(**kwargs):
     return types.SimpleNamespace(**kwargs)
 
 
+def _make_ready_to_checkpoint_args(**overrides):
+    base = dict(
+        selfplay_ready_save_interval=10,
+        selfplay_save_interval=100,
+        num_selfplay_envs=2,
+        num_bot_envs=0,
+        num_main_envs=1,
+        num_envs_per_main_exploiters=1,
+        num_envs_per_league_exploiters=1,
+        save_gpu_memory=False,
+        exp_name="test_exp",
+    )
+    base.update(overrides)
+    return _make_args(**base)
+
+
 def _pick_param(agent):
     for name, param in agent.named_parameters():
         return name, param
@@ -67,6 +83,148 @@ def test_remove_monotonic_suffix_truncates_on_increase():
     trimmed_rates, trimmed_players = league.remove_monotonic_suffix(win_rates, players)
     assert trimmed_rates.tolist() == [0.9, 0.6, 0.65]
     assert trimmed_players == ["p0", "p1", "p2"]
+
+
+def test_player_ready_to_checkpoint_is_false():
+    player = league.Player()
+    assert not player.ready_to_checkpoint()
+
+
+def test_historical_ready_to_checkpoint_is_false(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    parent_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    parent = league.MainPlayer(parent_agent, payoff, args=args)
+    historical = league.Historical(parent, payoff, args=args, historical_count=0)
+    assert not historical.ready_to_checkpoint()
+
+
+def test_main_player_ready_to_checkpoint_creates_historical_when_ready(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    payoff.add_player(main_player)
+
+    historical = main_player.checkpoint()
+    payoff.add_player(historical)
+    payoff.update(main_player, historical, 1)
+
+    agent.steps = args.selfplay_ready_save_interval * args.num_main_envs - 1
+    assert not main_player.ready_to_checkpoint()
+    agent.steps = args.selfplay_ready_save_interval * args.num_main_envs
+    assert main_player.ready_to_checkpoint()
+    checkpoint = main_player.checkpoint()
+    assert isinstance(checkpoint, league.Historical)
+
+
+def test_main_player_ready_to_checkpoint_uses_raw_save_interval(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args(
+        selfplay_save_interval=100,
+        num_selfplay_envs=4,
+        num_main_envs=3,
+    )
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    payoff.add_player(main_player)
+
+    historical = main_player.checkpoint()
+    payoff.add_player(historical)
+    payoff.update(main_player, historical, 0)
+
+    agent.steps = 120
+    assert main_player.ready_to_checkpoint()
+
+
+def test_main_exploiter_ready_to_checkpoint_creates_historical_when_ready(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(base_agent, payoff, args=args)
+    exploiter = league.MainExploiter(base_agent, payoff, args=args)
+    payoff.add_player(main_player)
+    payoff.add_player(exploiter)
+
+    payoff.update(exploiter, main_player, 1)
+    exploiter.agent.steps = args.selfplay_ready_save_interval - 1
+    assert not exploiter.ready_to_checkpoint()
+    exploiter.agent.steps = args.selfplay_ready_save_interval
+    assert exploiter.ready_to_checkpoint()
+    checkpoint = exploiter.checkpoint()
+    assert isinstance(checkpoint, league.Historical)
+
+
+def test_main_exploiter_ready_to_checkpoint_uses_raw_save_interval(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args(
+        selfplay_save_interval=100,
+        num_selfplay_envs=4,
+        num_envs_per_main_exploiters=3,
+    )
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(base_agent, payoff, args=args)
+    exploiter = league.MainExploiter(base_agent, payoff, args=args)
+    payoff.add_player(main_player)
+    payoff.add_player(exploiter)
+
+    payoff.update(exploiter, main_player, 0)
+    exploiter.agent.steps = 120
+    assert exploiter.ready_to_checkpoint()
+
+
+def test_league_exploiter_ready_to_checkpoint_creates_historical_when_ready(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(base_agent, payoff, args=args)
+    payoff.add_player(main_player)
+    historical = main_player.checkpoint()
+    payoff.add_player(historical)
+
+    exploiter = league.LeagueExploiter(base_agent, payoff, args=args)
+    payoff.add_player(exploiter)
+    payoff.update(exploiter, historical, 1)
+    exploiter.agent.steps = args.selfplay_ready_save_interval - 1
+    assert not exploiter.ready_to_checkpoint()
+    exploiter.agent.steps = args.selfplay_ready_save_interval
+    assert exploiter.ready_to_checkpoint()
+    checkpoint = exploiter.checkpoint()
+    assert isinstance(checkpoint, league.Historical)
+
+
+def test_league_exploiter_ready_to_checkpoint_uses_raw_save_interval(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args(
+        selfplay_save_interval=100,
+        num_selfplay_envs=4,
+        num_envs_per_league_exploiters=3,
+    )
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(base_agent, payoff, args=args)
+    payoff.add_player(main_player)
+    historical = main_player.checkpoint()
+    payoff.add_player(historical)
+
+    exploiter = league.LeagueExploiter(base_agent, payoff, args=args)
+    payoff.add_player(exploiter)
+    payoff.update(exploiter, historical, 0)
+    exploiter.agent.steps = 120
+    assert exploiter.ready_to_checkpoint()
 
 
 def test_remove_monotonic_suffix_handles_none():
