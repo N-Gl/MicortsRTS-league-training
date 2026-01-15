@@ -63,6 +63,9 @@ class ExperimentConfig:
     league_training: bool
     train_on_old_mains: bool
     selfplay_save_interval: int
+    main_selfplay_save_interval: int
+    main_exploiter_selfplay_save_interval: int
+    league_exploiter_selfplay_save_interval: int
     checkpoint_frequency: int
     resume: bool
     epochs: int

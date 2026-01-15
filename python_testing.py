@@ -21,6 +21,9 @@ def _make_ready_to_checkpoint_args(**overrides):
     base = dict(
         selfplay_ready_save_interval=10,
         selfplay_save_interval=100,
+        main_selfplay_save_interval=100,
+        main_exploiter_selfplay_save_interval=100,
+        league_exploiter_selfplay_save_interval=100,
         num_selfplay_envs=2,
         num_bot_envs=0,
         num_main_envs=1,
@@ -128,7 +131,7 @@ def test_main_player_ready_to_checkpoint_creates_historical_when_ready(monkeypat
 def test_main_player_ready_to_checkpoint_uses_raw_save_interval(monkeypatch):
     monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
     args = _make_ready_to_checkpoint_args(
-        selfplay_save_interval=100,
+        main_selfplay_save_interval=100,
         num_selfplay_envs=4,
         num_main_envs=3,
     )
@@ -169,7 +172,7 @@ def test_main_exploiter_ready_to_checkpoint_creates_historical_when_ready(monkey
 def test_main_exploiter_ready_to_checkpoint_uses_raw_save_interval(monkeypatch):
     monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
     args = _make_ready_to_checkpoint_args(
-        selfplay_save_interval=100,
+        main_exploiter_selfplay_save_interval=100,
         num_selfplay_envs=4,
         num_envs_per_main_exploiters=3,
     )
@@ -211,7 +214,7 @@ def test_league_exploiter_ready_to_checkpoint_creates_historical_when_ready(monk
 def test_league_exploiter_ready_to_checkpoint_uses_raw_save_interval(monkeypatch):
     monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
     args = _make_ready_to_checkpoint_args(
-        selfplay_save_interval=100,
+        league_exploiter_selfplay_save_interval=100,
         num_selfplay_envs=4,
         num_envs_per_league_exploiters=3,
     )

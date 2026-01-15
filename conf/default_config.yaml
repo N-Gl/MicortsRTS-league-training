@@ -63,6 +63,9 @@ ExperimentConfig:
   num_bot_envs_per_main_exploiter: 0
 
   selfplay_save_interval: 10
+  main_selfplay_save_interval: 10
+  main_exploiter_selfplay_save_interval: 10
+  league_exploiter_selfplay_save_interval: 10
   checkpoint_frequency: 10
 
   new_hist_rewards: 0
