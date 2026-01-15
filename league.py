@@ -195,9 +195,8 @@ class Player:
         return False
 
     def _create_checkpoint(self):
-        name = getattr(self, 'name', self.__class__.__name__)
-        print(f"Creating Historical Checkpoint of {name}")
-        return Historical(self, self.payoff, args=self.args, payoff_idx=len(self.payoff.players))
+        print(f"Creating Historical Checkpoint of {self.name}")
+        return Historical(self, self.payoff, args=self.args, historical_count=sum(1 for p in self.payoff.players if isinstance(p, Historical)))
     
     def checkpoint(self):
         raise NotImplementedError
@@ -212,11 +211,13 @@ class MainPlayer(Player):
         self,
         agent: torch.nn.Module,
         payoff: Payoff,
-        args
+        args,
+        name = "MainPlayer"
     ):
         self.agent = agent
         self._payoff = payoff
         self.args = args
+        self.name = name
 
     def _pfsp_branch(self):
         '''sucht einen neuen gegner für selfplay mit pfsp verteilung'''
@@ -323,7 +324,7 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
-        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
+        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
     def checkpoint(self):
@@ -338,7 +339,8 @@ class MainExploiter(Player):
         initial_agent: torch.nn.Module,
         payoff: Payoff,
         args,
-        optimizer=None
+        optimizer=None,
+        main_exp_idx = None
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
@@ -348,6 +350,7 @@ class MainExploiter(Player):
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
+        self.name = f"MainExploiter_{main_exp_idx}"
 
     def get_match(self):
         '''wählt  main agenten als gegner, wenn die winrate ohne draws gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
@@ -374,8 +377,9 @@ class MainExploiter(Player):
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
 
         if not self.args.sp:
-            if len(win_rates) and win_rates.min() > 0.7:
-                if np.random.random() < 0.5:
+            min_win_rate = win_rates.min()
+            if len(win_rates) and min_win_rate > 0.6:
+                if np.random.random() < (min_win_rate-0.6) * (1/0.4) + 0.3:       # etwa ab min_win_rate = 0.9 immer main agent
                     return opponent, True
 
         # args.sp gibt jetzt auch andere Historical as Gegner
@@ -406,12 +410,21 @@ class MainExploiter(Player):
         if steps_passed < self.args.selfplay_ready_save_interval:
             return False
 
-        historical = [
+        # TODO: ist es besser mit der Winrate gegen alle historischen gegner oder nur mainplayer?
+        # historical = [
+        #     player for player in self._payoff.players
+        #     if isinstance(player, Historical)
+        # ]
+        # win_rates = self._payoff[self, historical]
+
+        mainplayer = [
             player for player in self._payoff.players
-            if isinstance(player, Historical)
+            if isinstance(player, MainPlayer)
         ]
-        win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
+
+        win_rates = self._payoff[self, mainplayer]
+
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
 
 class LeagueExploiter(Player):
@@ -420,7 +433,8 @@ class LeagueExploiter(Player):
         initial_agent: torch.nn.Module,
         payoff: Payoff,
         args,
-        optimizer=None
+        optimizer=None,
+        league_exp_idx = None
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
@@ -429,7 +443,7 @@ class LeagueExploiter(Player):
         self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
-
+        self.name = f"LeagueExploiter_{league_exp_idx}"
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
 
@@ -462,7 +476,7 @@ class LeagueExploiter(Player):
             self.optimizer = None
 
         self._checkpoint_step = self.agent.get_steps()
-        return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
+        return checkpoint  # TODO: vorher: return self._create_checkpoint(): resettet man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
     
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. wie bei MainPlayer'''
@@ -475,7 +489,7 @@ class LeagueExploiter(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff[self, historical]
-        return win_rates.min() > 0.75 or steps_passed > self.args.selfplay_save_interval // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
+        return win_rates.min() > 0.7 or steps_passed > self.args.selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
     
 
 class Historical(Player):
@@ -484,17 +498,20 @@ class Historical(Player):
         parent: Player,
         payoff: Payoff,
         args,
-        payoff_idx=None
+        name=None,
+        historical_count=None
     ):
         self.agent = Agent(action_plane_nvec=parent.agent.action_plane_nvec, device=parent.agent.device, initial_weights=parent.agent.state_dict()).to(parent.agent.device)
         if args.save_gpu_memory:
             offload_historical_to_cpu(self)
         self._payoff = payoff
         self._parent = parent
+        if name is not None:
+            self.name = name
+        else:
+            self.name = f"Historical_({parent.name})_{historical_count}"
 
-        parent_name = getattr(self._parent, 'name', self._parent.__class__.__name__)
-        hist_name = getattr(self, 'name', self.__class__.__name__) + f"_{payoff_idx}" if payoff_idx is not None else ""
-        save_league_model(save_agent=self, experiment_name=args.exp_name, dir_name=parent_name, file_name=hist_name)
+        save_league_model(save_agent=self, experiment_name=args.exp_name, dir_name=parent.name, file_name=self.name)
 
     @property
     def parent(self):
@@ -565,14 +582,14 @@ class League:
         self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
 
-        for _ in range(args.num_main_exploiters):
-            main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args)
+        for main_exp_idx in range(args.num_main_exploiters):
+            main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args, main_exp_idx=main_exp_idx)
             for _ in range(args.num_envs_per_main_exploiters):
                 self._learning_agents.append(
                     main_exploiter)
             self._payoff.add_player(main_exploiter)
-        for _ in range(args.num_league_exploiters):
-            league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args)
+        for league_exp_idx in range(args.num_league_exploiters):
+            league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args, league_exp_idx=league_exp_idx)
             for _ in range(args.num_envs_per_league_exploiters):
                 self._learning_agents.append(
                     league_exploiter)
@@ -613,11 +630,6 @@ class League:
         # TODO (league training): auch andere Agents loggen? (wäre pro exploiter pro Gegner eine Zeile in der Tabelle)
         if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
 
-            if done_agent.agent is agent:
-                self_name = getattr(done_agent, "name", done_agent.__class__.__name__)
-            else:
-                self_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(indices_per_exploiter[done_agent])
-
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates = []
             opp_names = []
@@ -628,12 +640,8 @@ class League:
             count_league_players = 0
             for i, p1 in enumerate(done_agent.payoff.players):
                 if not isinstance(p1, LeagueExploiter): # league exploiters will be turned to historicals bevore playing against main agents
-                    if isinstance(p1, Historical):
-                        name = getattr(p1, "name", p1.__class__.__name__) + "_" + getattr(p1._parent, "name", p1._parent.__class__.__name__)+ "_" + str(i)
-                    else:
-                        name = getattr(p1, "name", p1.__class__.__name__) + "_" + str(i)
 
-                    opp_names.append(name)
+                    opp_names.append(p1.name)
                     opp_players.append(p1)
                     game_count.append(done_agent._payoff._games[done_agent, p1])
                     win_rates.append(done_agent.payoff._win_rate(done_agent, p1))
@@ -646,15 +654,15 @@ class League:
                     draw_rate = draws / game_count[i-count_league_players] if game_count[i-count_league_players] > 0 else 0
                     loss_rate = losses / game_count[i-count_league_players] if game_count[i-count_league_players] > 0 else 0
 
-                    opponent_table_rows.append((name,
-                                                                    done_agent.payoff._no_decay_games[done_agent, p1],
-                                                                    done_agent.payoff._no_decay_wins[done_agent, p1],
-                                                                    done_agent.payoff._no_decay_draws[done_agent, p1],
-                                                                    done_agent.payoff._no_decay_losses[done_agent, p1],
-                                                                    only_win_rate,
-                                                                    draw_rate,
-                                                                    loss_rate
-                                                                    ))
+                    opponent_table_rows.append((p1.name,
+                                                done_agent.payoff._no_decay_games[done_agent, p1],
+                                                done_agent.payoff._no_decay_wins[done_agent, p1],
+                                                done_agent.payoff._no_decay_draws[done_agent, p1],
+                                                done_agent.payoff._no_decay_losses[done_agent, p1],
+                                                only_win_rate,
+                                                draw_rate,
+                                                loss_rate
+                                                ))
                 else:
                     count_league_players += 1
 
@@ -663,14 +671,14 @@ class League:
                                     opponent_table_rows,
                                     no_reward=True,
                                     step=global_step,
-                                    table_name=f"league/{self_name}_summary",
-                                    with_name=self_name
+                                    table_name=f"league/{done_agent.name}_summary",
+                                    with_name=done_agent.name
                                     )
             
             if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
                 for opp, games, r in zip(opp_names, game_count, win_rates):
                     if games > 0:
-                        writer.add_scalar(f"winrate_per_opponent/{self_name}_vs_{opp}", r, games)
+                        writer.add_scalar(f"winrate_per_opponent/{done_agent.name}_vs_{opp}", r, games)
 
             historicals = [
                 player for player in done_agent.payoff.players
@@ -683,7 +691,7 @@ class League:
             writer.add_scalar("charts/main_exploiter_historicals", main_exploiter_hist, global_step)
             writer.add_scalar("charts/league_exploiter_historicals", league_exploiter_hist, global_step)
             writer.add_scalar("charts/total_historicals", len(historicals), global_step)
-        # print(f"{self_name} Win rates against all opponents: {list(zip(opp_names, rates))}")
+        # print(f"{done_agent.name} Win rates against all opponents: {list(zip(opp_names, rates))}")
         score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
         weighted_score_reward_sum = score_reward_sum * args.rewardscore
         delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
@@ -705,7 +713,7 @@ class League:
         old_opp = active_league_agents[done_idx + 1]
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
-        print(f"Game {int(done_idx/2)} ended: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {getattr(active_league_agents[done_idx + 1], 'name', active_league_agents[done_idx + 1].__class__.__name__)}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
+        print(f"Game {int(done_idx/2)} ended: {done_agent.name} vs {active_league_agents[done_idx + 1].name}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
         last_logged_selfplay_games = self._log_selfplay_results(
             args,
             agent,
@@ -724,10 +732,9 @@ class League:
             self.add_player(done_agent.checkpoint())
 
             if isinstance(done_agent, MainExploiter) or isinstance(done_agent, LeagueExploiter):
-                exploiter_name = getattr(done_agent, "name", done_agent.__class__.__name__) + "_in_env_" + str(indices_per_exploiter[done_agent])
                 done_agent.num_resets_checkpoints += 1
-                print(exploiter_name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")
-                writer.add_scalar(f"{exploiter_name}/num_resets_checkpoints", done_agent.num_resets_checkpoints, global_step)
+                print(done_agent.name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")
+                writer.add_scalar(f"{done_agent.name}/num_resets_checkpoints", done_agent.num_resets_checkpoints, global_step)
 
             _on_checkpoint(hist_reward=hist_reward, args=args)
         # neuen gegner in diesem environment auswählen
@@ -735,12 +742,7 @@ class League:
         if args.save_gpu_memory:
             _move_player_to_device(opp, agent.device)
 
-        if isinstance(opp, Historical):
-            opp_name = getattr(opp, "name", opp.__class__.__name__) + "_" + getattr(opp._parent, "name", opp._parent.__class__.__name__)
-        else:
-            opp_name = getattr(opp, "name", opp.__class__.__name__)
-
-        print(f"New Match in Game {int(done_idx/2)}: {getattr(done_agent, 'name', done_agent.__class__.__name__)} vs {opp_name}\n")
+        print(f"New Match in Game {int(done_idx/2)}: {done_agent.name} vs {opp.name}\n")
 
         return opp, last_logged_selfplay_games, old_opp
 
@@ -825,32 +827,31 @@ def log_bot_game_results(args, writer, global_step, infos, attack_weight, done_i
 
 def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, experiment_name, update, grad_norm=None):
     player = exploiter_agent_batch["player"]
-    name = getattr(player, "name", exploiter_agent_batch["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[player])
 
-    writer.add_scalar(f"{name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], global_step)
-    writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)
-    writer.add_scalar(f"{name}/policy_loss", pg_loss.item(), global_step)
-    writer.add_scalar(f"{name}/kl_loss", kl_loss.item(), global_step)
-    writer.add_scalar(f"{name}/total_loss", loss.item(), global_step)
-    writer.add_scalar(f"{name}/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
-    writer.add_scalar(f"{name}/approx_kl", approx_kl.item(), global_step)
-    writer.add_scalar(f"{name}/grad_norm_before_clipping", grad_norm, global_step)
+    writer.add_scalar(f"{player.name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], global_step)
+    writer.add_scalar(f"{player.name}/value_loss", args.vf_coef * v_loss.item(), global_step)
+    writer.add_scalar(f"{player.name}/policy_loss", pg_loss.item(), global_step)
+    writer.add_scalar(f"{player.name}/kl_loss", kl_loss.item(), global_step)
+    writer.add_scalar(f"{player.name}/total_loss", loss.item(), global_step)
+    writer.add_scalar(f"{player.name}/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
+    writer.add_scalar(f"{player.name}/approx_kl", approx_kl.item(), global_step)
+    writer.add_scalar(f"{player.name}/grad_norm_before_clipping", grad_norm, global_step)
     steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
-    writer.add_scalar(f"{name}/steps_since_checkpoint", steps_since_checkpoint, global_step)
+    writer.add_scalar(f"{player.name}/steps_since_checkpoint", steps_since_checkpoint, global_step)
 
     if args.kle_stop or args.kle_rollback:
-        writer.add_scalar(f"{name}/pg_stop_iter", pg_stop_iter, global_step)
+        writer.add_scalar(f"{player.name}/pg_stop_iter", pg_stop_iter, global_step)
 
     if args.prod_mode and update % args.checkpoint_frequency == 0:
             print("Saving model checkpoint...")
-            save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=f"current_{getattr(exploiter_agent_batch['player'], 'name', exploiter_agent_batch['player'].__class__.__name__)}", file_name=f"{name}")
+            save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"current_{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}")
 
             if update < 500:
                 if update % (args.checkpoint_frequency * 5) == 0:
-                    save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__), file_name=f"{name}_update_{update}")
+                    save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}_update_{update}")
                     
             else:
-                save_league_model(save_agent=exploiter_agent_batch["player"].agent, experiment_name=experiment_name, dir_name=getattr(exploiter_agent_batch["player"], "name", exploiter_agent_batch["player"].__class__.__name__), file_name=f"{name}_update_{update}")
+                save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}_update_{update}")
 
 
 def train_exploiters(
@@ -976,22 +977,18 @@ def train_exploiters(
             # old_w = {k: v.detach().clone() for k, v in self.agent.state_dict().items()}
             # is_changing = {k: not torch.equal(v, old_w[k]) for k, v in self.agent.state_dict().items()}
 
-            
-            name = getattr(entry["player"], "name", entry["player"].__class__.__name__) + "_in_env_" + str(exploiter_indices[i].item())
-
-            writer.add_scalar(f"{name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], global_step)
-            writer.add_scalar(f"{name}/value_loss", args.vf_coef * v_loss.item(), global_step)
-            writer.add_scalar(f"{name}/policy_loss", pg_loss.item(), global_step)
-            writer.add_scalar(f"{name}/total_loss", loss.item(), global_step)
-            writer.add_scalar(f"{name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), global_step)
-
+            writer.add_scalar(f"{entry['player'].name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], global_step)
+            writer.add_scalar(f"{entry['player'].name}/value_loss", args.vf_coef * v_loss.item(), global_step)
+            writer.add_scalar(f"{entry['player'].name}/policy_loss", pg_loss.item(), global_step)
+            writer.add_scalar(f"{entry['player'].name}/total_loss", loss.item(), global_step)
+            writer.add_scalar(f"{entry['player'].name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), global_step)
             if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")
-                    save_league_model(save_agent=entry["player"].agent, experiment_name=experiment_name, dir_name=f"current_{getattr(entry['player'], 'name', entry['player'].__class__.__name__)}", file_name=f"{name}")
+                    save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=f"current_{entry['player'].__class__.__name__}", file_name=f"{entry['player'].name}")
 
                     if update < 500:
                         if update % (args.checkpoint_frequency * 5) == 0:
-                            save_league_model(save_agent=entry["player"].agent, experiment_name=experiment_name, dir_name=getattr(entry["player"], "name", entry["player"].__class__.__name__), file_name=f"{name}_update_{update}")
+                            save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=entry['player'].__class__.__name__, file_name=f"{entry['player'].name}_update_{update}")
                             
                     else:
-                        save_league_model(save_agent=entry["player"].agent, experiment_name=experiment_name, dir_name=getattr(entry["player"], "name", entry["player"].__class__.__name__), file_name=f"{name}_update_{update}")
+                        save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=entry['player'].__class__.__name__, file_name=f"{entry['player'].name}_update_{update}")
