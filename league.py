@@ -42,6 +42,8 @@ def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
         "linear": lambda x: 1 - x,
         "linear_capped": lambda x: np.minimum(0.5, 1 - x),
         "squared": lambda x: (1 - x) ** 2,
+        # "focused": lambda x: 3 * (-0.02 + x) ** 0.8 * (1.2 - x) ** 2.8,
+        "focused": lambda x: 4.5 * x ** 0.6 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4))
     }
     fn = weightings[weighting]
     win_rates = np.asarray(win_rates)
@@ -254,9 +256,8 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical)
         ]
-        win_rates = self._payoff[self, historical]
-        return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        return np.random.choice(historical, p=pfsp(win_rates, weighting="focused", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
     def _selfplay_branch(self, opponent):
         '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
