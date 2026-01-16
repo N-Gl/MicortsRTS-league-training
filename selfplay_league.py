@@ -100,6 +100,22 @@ def adjust_action_selfplay(args, valid_actions: np.ndarray, valid_actions_counts
             #real_action[1:args.num_selfplay_envs:2, :, 7] = torch.abs(real_action[1:args.num_selfplay_envs:2, :, 7] - 48)
 
 
+def _to_java_valid_actions(valid_actions: np.ndarray, valid_counts: np.ndarray, action_width: int):
+    valid_actions = np.asarray(valid_actions, dtype=np.int32)
+    valid_counts = np.asarray(valid_counts, dtype=np.int64)
+    java_env_actions = []
+    idx = 0
+    empty = np.empty((0, action_width), dtype=np.int32)
+    for count in valid_counts:
+        if count:
+            env_actions = JArray(JInt, 2)(valid_actions[idx : idx + count])
+        else:
+            env_actions = JArray(JInt, 2)(empty)
+        java_env_actions.append(env_actions)
+        idx += count
+    return JArray(JArray(JArray(JInt)))(java_env_actions)
+
+
 def render_all_envs(env_transform):
     try:
         if env_transform is None:
@@ -312,6 +328,8 @@ class LeagueTrainer:
         sp_position_indices = (
             torch.arange(mapsize, device=device, dtype=torch.int64).unsqueeze(0).repeat(args.num_selfplay_envs, 1).unsqueeze(2)
         )
+        bot_position_indices_cpu = bot_position_indices.to("cpu")
+        sp_position_indices_cpu = sp_position_indices.to("cpu")
 
         print("League PPO training started")
         
@@ -423,8 +441,23 @@ class LeagueTrainer:
                     )
 
                 # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
-                bot_real_action = torch.cat([bot_position_indices, bot_actions[step]], dim=2).cpu().numpy()
-                sp_real_action = torch.cat([sp_position_indices, sp_actions[step]], dim=2).cpu().numpy()
+                bot_actions_cpu = bot_actions[step].detach().to("cpu", non_blocking=True)
+                sp_actions_cpu = sp_actions[step].detach().to("cpu", non_blocking=True)
+                bot_mask_cpu = (
+                    bot_invalid_action_masks[step][:, :, 0]
+                    .detach()
+                    .to("cpu", non_blocking=True)
+                    .bool()
+                )
+                sp_mask_cpu = (
+                    sp_invalid_action_masks[step][:, :, 0]
+                    .detach()
+                    .to("cpu", non_blocking=True)
+                    .bool()
+                )
+
+                bot_real_action = torch.cat([bot_position_indices_cpu, bot_actions_cpu], dim=2)
+                sp_real_action = torch.cat([sp_position_indices_cpu, sp_actions_cpu], dim=2)
                 # print("real_action shape:", real_action.shape)
                 # print("Grid-Position:", [real_action[0][i][0].item() for i in
                 # range(10)]) # -> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -440,10 +473,15 @@ class LeagueTrainer:
                 #                            np.array([238.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
                 #                            np.array([34.0, 0.0, 2.0, 0.0, 0.0, 2.0, 3.0, 24.0])])
                 # valid_actions_counts = [1, 1, 1]
-                bot_valid_actions = bot_real_action[bot_invalid_action_masks[step][:, :, 0].bool().cpu().numpy()]
-                bot_valid_counts = bot_invalid_action_masks[step][:, :, 0].sum(1).long().cpu().numpy()
-                sp_valid_actions = sp_real_action[sp_invalid_action_masks[step][:, :, 0].bool().cpu().numpy()]
-                sp_valid_counts = sp_invalid_action_masks[step][:, :, 0].sum(1).long().cpu().numpy()
+                bot_valid_actions = bot_real_action[bot_mask_cpu]
+                bot_valid_counts = bot_mask_cpu.sum(1)
+                sp_valid_actions = sp_real_action[sp_mask_cpu]
+                sp_valid_counts = sp_mask_cpu.sum(1)
+
+                bot_valid_actions = bot_valid_actions.to(dtype=torch.int32).numpy()
+                bot_valid_counts = bot_valid_counts.to(dtype=torch.int64).numpy()
+                sp_valid_actions = sp_valid_actions.to(dtype=torch.int32).numpy()
+                sp_valid_counts = sp_valid_counts.to(dtype=torch.int64).numpy()
 
                 # Anpassungen für Spieler 1 nach (Spieler 1 -> Spieler 0)
                 # TODO (optimize): nur die Indizes anpassen, die man anpassen muss (bei type move nicht harvest, return, produce, attack anpassen)
@@ -462,25 +500,13 @@ class LeagueTrainer:
                 relative attack position: 0-255 (16*16) links oben nach rechts unten (obenecke = 0) wo angegriffen wird
                 '''
 
-                bot_java_valid_actions = []
-                bot_valid_index = 0
-                for count in bot_valid_counts:
-                    java_env_action = []
-                    for _ in range(count):
-                        java_env_action.append(JArray(JInt)(bot_valid_actions[bot_valid_index]))
-                        bot_valid_index += 1
-                    bot_java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
-                bot_java_valid_actions = JArray(JArray(JArray(JInt)))(bot_java_valid_actions)
-
-                sp_java_valid_actions = []
-                sp_valid_index = 0
-                for count in sp_valid_counts:
-                    java_env_action = []
-                    for _ in range(count):
-                        java_env_action.append(JArray(JInt)(sp_valid_actions[sp_valid_index]))
-                        sp_valid_index += 1
-                    sp_java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
-                sp_java_valid_actions = JArray(JArray(JArray(JInt)))(sp_java_valid_actions)
+                action_width = bot_real_action.shape[-1]
+                bot_java_valid_actions = _to_java_valid_actions(
+                    bot_valid_actions, bot_valid_counts, action_width
+                )
+                sp_java_valid_actions = _to_java_valid_actions(
+                    sp_valid_actions, sp_valid_counts, action_width
+                )
                 # java_valid_actions.shape: (Envs, num_valid_actions_in_Env, valid_action (8)) (py_arr = np.array(java_valid_actions))
                 # np_valid_actions = np.array(
                 # [[np.array(list(inner), dtype=np.int32) for inner in outer]
@@ -931,6 +957,7 @@ class LeagueTrainer:
                 z_features[:, args.num_selfplay_envs:].zero_()
 
                 bot_position_indices = bot_position_indices[:args.num_bot_envs]
+                bot_position_indices_cpu = bot_position_indices_cpu[:args.num_bot_envs]
 
 
 
@@ -995,6 +1022,9 @@ class LeagueTrainer:
                 z_features[:, args.num_selfplay_envs:].zero_()
 
                 bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
+                bot_position_indices_cpu = torch.cat(
+                    (bot_position_indices_cpu, bot_position_indices_cpu[:1].clone())
+                )
 
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
