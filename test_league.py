@@ -64,12 +64,133 @@ def _assert_exploiter_initial_weights_are_independent(exploiter_cls):
     ), "Exploiter initial weights should be a snapshot, not a reference."
 
 
+def _assert_exploiter_reset_clears_payoff_entries(exploiter_cls):
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    other_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(base_agent, payoff, args=args)
+    other_player = league.MainPlayer(other_agent, payoff, args=args, name="OtherMain")
+    exploiter = exploiter_cls(base_agent, payoff, args=args)
+
+    payoff.add_player(main_player)
+    payoff.add_player(other_player)
+    payoff.add_player(exploiter)
+
+    payoff.update(exploiter, main_player, 1)
+    payoff.update(main_player, other_player, 0)
+
+    stats = (
+        ("no_decay_games", payoff._no_decay_games),
+        ("no_decay_wins", payoff._no_decay_wins),
+        ("no_decay_draws", payoff._no_decay_draws),
+        ("no_decay_losses", payoff._no_decay_losses),
+        ("games", payoff._games),
+        ("wins", payoff._wins),
+        ("draws", payoff._draws),
+        ("losses", payoff._losses),
+    )
+
+    before_with_exploiter = {}
+    before_without_exploiter = {}
+    for name, stat in stats:
+        before_with_exploiter[name] = {key for key in stat.keys() if exploiter in key}
+        before_without_exploiter[name] = {key for key in stat.keys() if exploiter not in key}
+
+    assert (exploiter, main_player) in payoff._games
+    assert (main_player, exploiter) in payoff._games
+    assert (main_player, other_player) in payoff._games
+    assert (other_player, main_player) in payoff._games
+    assert (exploiter, main_player) in payoff._no_decay_games
+    assert (main_player, exploiter) in payoff._no_decay_games
+
+    exploiter.reset()
+
+    for name, stat in stats:
+        for key in before_with_exploiter[name]:
+            assert key not in stat
+        for key in before_without_exploiter[name]:
+            assert key in stat
+
+
 def test_main_exploiter_initial_weights_are_independent():
     _assert_exploiter_initial_weights_are_independent(league.MainExploiter)
 
 
 def test_league_exploiter_initial_weights_are_independent():
     _assert_exploiter_initial_weights_are_independent(league.LeagueExploiter)
+
+
+def test_main_exploiter_reset_clears_payoff_entries():
+    _assert_exploiter_reset_clears_payoff_entries(league.MainExploiter)
+
+
+def test_league_exploiter_reset_clears_payoff_entries():
+    _assert_exploiter_reset_clears_payoff_entries(league.LeagueExploiter)
+
+
+def test_main_exploiter_checkpoint_resets_training_state(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    exploiter = league.MainExploiter(base_agent, payoff, args=args)
+    payoff.add_player(exploiter)
+
+    initial_weights = {k: v.detach().clone() for k, v in exploiter._initial_weights.items()}
+    name, param = _pick_param(exploiter.agent)
+    with torch.no_grad():
+        param.add_(1.0)
+    trained_weights = {k: v.detach().clone() for k, v in exploiter.agent.state_dict().items()}
+    assert not torch.allclose(trained_weights[name], initial_weights[name])
+
+    exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=0.001)
+    exploiter.agent.steps = 123
+
+    checkpoint = exploiter.checkpoint()
+
+    assert isinstance(checkpoint, league.Historical)
+    assert checkpoint.parent is exploiter
+    for key, tensor in trained_weights.items():
+        assert torch.allclose(checkpoint.agent.state_dict()[key], tensor)
+    for key, tensor in initial_weights.items():
+        assert torch.allclose(exploiter.agent.state_dict()[key], tensor)
+    assert exploiter.optimizer is None
+    assert exploiter._checkpoint_step == exploiter.agent.get_steps()
+
+
+def test_league_exploiter_checkpoint_resets_training_state(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    monkeypatch.setattr(league.np.random, "random", lambda: 0.0)
+    args = _make_ready_to_checkpoint_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    base_agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    exploiter = league.LeagueExploiter(base_agent, payoff, args=args)
+    payoff.add_player(exploiter)
+
+    initial_weights = {k: v.detach().clone() for k, v in exploiter._initial_weights.items()}
+    name, param = _pick_param(exploiter.agent)
+    with torch.no_grad():
+        param.add_(1.0)
+    trained_weights = {k: v.detach().clone() for k, v in exploiter.agent.state_dict().items()}
+    assert not torch.allclose(trained_weights[name], initial_weights[name])
+
+    exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=0.001)
+    exploiter.agent.steps = 321
+
+    checkpoint = exploiter.checkpoint()
+
+    assert isinstance(checkpoint, league.Historical)
+    assert checkpoint.parent is exploiter
+    for key, tensor in trained_weights.items():
+        assert torch.allclose(checkpoint.agent.state_dict()[key], tensor)
+    for key, tensor in initial_weights.items():
+        assert torch.allclose(exploiter.agent.state_dict()[key], tensor)
+    assert exploiter.optimizer is None
+    assert exploiter._checkpoint_step == exploiter.agent.get_steps()
 
 
 def test_state_dict_clone_matches_initial_state():

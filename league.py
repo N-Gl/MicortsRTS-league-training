@@ -184,6 +184,35 @@ class Payoff:
     @property
     def players(self):
       return self._players
+    
+    def reset(self, player=None):
+        if player is None:
+            self._no_decay_games = collections.defaultdict(lambda: 0)
+            self._no_decay_wins = collections.defaultdict(lambda: 0)
+            self._no_decay_draws = collections.defaultdict(lambda: 0)
+            self._no_decay_losses = collections.defaultdict(lambda: 0)
+            self._games = collections.defaultdict(lambda: 0)
+            self._wins = collections.defaultdict(lambda: 0)
+            self._draws = collections.defaultdict(lambda: 0)
+            self._losses = collections.defaultdict(lambda: 0)
+            self._games = collections.defaultdict(lambda: 0)
+            return
+
+        stats = (
+            self._no_decay_games,
+            self._no_decay_wins,
+            self._no_decay_draws,
+            self._no_decay_losses,
+            self._games,
+            self._wins,
+            self._draws,
+            self._losses,
+        )
+        for stat in stats:
+            for key in list(stat.keys()):
+                home, away = key
+                if home is player or away is player:
+                    del stat[key]
 
 
 class Player:
@@ -398,10 +427,8 @@ class MainExploiter(Player):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
         checkpoint = self._create_checkpoint()
 
-        self.agent.set_weights(self._initial_weights)
-        self.optimizer = None
+        self.reset()
 
-        self._checkpoint_step = self.agent.get_steps()
         return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
     
     def ready_to_checkpoint(self):
@@ -426,6 +453,12 @@ class MainExploiter(Player):
 
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
+    def reset(self):
+        self._checkpoint_step = self.agent.get_steps()
+        self.agent.set_weights(self._initial_weights)
+        self.optimizer = None
+        self._payoff.reset(self)
+        self.num_resets_checkpoints += 1
 
 class LeagueExploiter(Player):
     def __init__(
@@ -472,10 +505,7 @@ class LeagueExploiter(Player):
         checkpoint = self._create_checkpoint()
 
         if np.random.random() < 0.25:
-            self.agent.set_weights(self._initial_weights)
-            self.optimizer = None
-
-        self._checkpoint_step = self.agent.get_steps()
+            self.reset()
         return checkpoint  # TODO: vorher: return self._create_checkpoint(): resettet man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
     
     def ready_to_checkpoint(self):
@@ -491,6 +521,12 @@ class LeagueExploiter(Player):
         win_rates = self._payoff[self, historical]
         return win_rates.min() > self.args.league_exploiter_winrate_threshold or steps_passed > self.args.league_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
     
+    def reset(self):
+        self._checkpoint_step = self.agent.get_steps()
+        self.agent.set_weights(self._initial_weights)
+        self.optimizer = None
+        self._payoff.reset(self)
+        self.num_resets_checkpoints += 1
 
 class Historical(Player):
     def __init__(
@@ -732,7 +768,6 @@ class League:
             self.add_player(done_agent.checkpoint())
 
             if isinstance(done_agent, MainExploiter) or isinstance(done_agent, LeagueExploiter):
-                done_agent.num_resets_checkpoints += 1
                 print(done_agent.name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")
                 writer.add_scalar(f"{done_agent.name}/num_resets_checkpoints", done_agent.num_resets_checkpoints, global_step)
 
