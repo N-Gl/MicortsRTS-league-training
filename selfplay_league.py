@@ -217,8 +217,6 @@ class LeagueTrainer:
         # TODO: nachher entfernen:
         assert args.selfplay_ready_save_interval > 0, "selfplay_ready_save_interval muss größer 0 sein"
 
-        
-
     def train(self):
         args = self.args
         num_done_botgames = 0
@@ -243,10 +241,7 @@ class LeagueTrainer:
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
 
-        for idx, p in enumerate(self.active_league_agents):
-            if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
-                self.indices_per_exploiter.setdefault(p, []).append(idx)
-                self.b_indices_per_exploiter.setdefault(p, []).append(idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2)
+        
 
 
         # (League training): entferne alle Environments, die keine main agenten sind (Exploiter)
@@ -256,21 +251,8 @@ class LeagueTrainer:
 
         # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
         # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
-        if args.training_on_bot_envs:
-            self.main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
-            self.b_main_indices = self.main_indices - (args.num_selfplay_envs // 2)
-        else:
-           self.main_indices = np.array([], dtype=np.int64)
-           self.b_main_indices = np.array([], dtype=np.int64)
-
-        if args.train_on_old_mains: # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-            selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
-            self.main_indices = np.concatenate((selfplay_mains, self.main_indices), axis=0)
-            self.b_main_indices = np.concatenate((self.b_main_indices, selfplay_mains // 2), axis=0)
-        else:
-            selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-            self.main_indices = np.concatenate((selfplay_mains * 2, self.main_indices))
-            self.b_main_indices = np.concatenate((selfplay_mains, self.b_main_indices))
+        self._refresh_main_indices(args)
+        self._refresh_exploiter_indices(args)
 
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
@@ -950,6 +932,11 @@ class LeagueTrainer:
 
                 bot_position_indices = bot_position_indices[:args.num_bot_envs]
 
+
+
+
+                
+
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
@@ -1018,6 +1005,36 @@ class LeagueTrainer:
             cleanup_break()
 
 
+    def _refresh_main_indices(self, args):
+        if args.training_on_bot_envs:
+            main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
+            b_main_indices = main_indices - (args.num_selfplay_envs // 2)
+        else:
+            main_indices = np.array([], dtype=np.int64)
+            b_main_indices = np.array([], dtype=np.int64)
+
+        if args.train_on_old_mains:  # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
+            selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
+            main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)
+            b_main_indices = np.concatenate((b_main_indices, selfplay_mains // 2), axis=0)
+        else:
+            selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+            main_indices = np.concatenate((selfplay_mains * 2, main_indices))
+            b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
+
+        self.main_indices = main_indices
+        self.b_main_indices = b_main_indices
+
+    def _refresh_exploiter_indices(self, args):
+        self.indices_per_exploiter = {}
+        self.b_indices_per_exploiter = {}
+        for idx, p in enumerate(self.active_league_agents):
+            if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
+                self.indices_per_exploiter.setdefault(p, []).append(idx)
+                self.b_indices_per_exploiter.setdefault(p, []).append(
+                    idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2
+                )
+
     # TODO (optimize): in obs, ... die envs entfernen, die man nicht braucht (spart Rechenzeit)
     def get_new_bot_envs(self, args, num_bots):
 
@@ -1033,8 +1050,8 @@ class LeagueTrainer:
             self.active_league_agents = self.active_league_agents[:args.num_envs]
             self.indices = self.indices[:-1]
 
-
-        
+        self._refresh_main_indices(args)
+        self._refresh_exploiter_indices(args)
 
 
         opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
