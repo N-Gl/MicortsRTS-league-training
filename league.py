@@ -408,8 +408,12 @@ class MainExploiter(Player):
 
         if not self.args.sp:
             min_win_rate = win_rates.min()
-            if len(win_rates) and min_win_rate > 0.6:
-                if np.random.random() < (min_win_rate-0.6) * (1/0.4) + 0.3:       # etwa ab min_win_rate = 0.9 immer main agent
+            if len(win_rates) and min_win_rate > 0.3:
+                rand = np.random.random()
+                if min_win_rate > 0.7:
+                    if rand < 0.6:       # ab min_win_rate = 0.7 -> 60%
+                        return opponent, True
+                elif rand < (min_win_rate-0.3) * (1/0.2) + 0.1:       # ab min_win_rate = 0.3 -> 10%, min_win_rate = 0.7 -> 30%
                     return opponent, True
 
         # args.sp gibt jetzt auch andere Historical as Gegner
