@@ -787,6 +787,7 @@ class LeagueTrainer:
                     if exploiter.optimizer is None:
                         exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
                         print(f"Created optimizer for exploiter {exploiter}")
+                        exploiter.last_reset_update = update
 
                     exploiter_agent_batch = {
                             "player": exploiter,
@@ -819,7 +820,11 @@ class LeagueTrainer:
                         
 
                     if exploiter_lr_fn is not None:
-                        exploiter_frac = 1.0 - (update - 1.0) / num_updates
+                        reset_update = getattr(exploiter, "last_reset_update", None)
+                        if reset_update is None:
+                            reset_update = update
+                            exploiter.last_reset_update = reset_update
+                        exploiter_frac = 1.0 - (update - reset_update) / num_updates
                         if exploiter_frac < 0.0:
                             exploiter_frac = 0.0
                         exploiter_lrnow = exploiter_lr_fn(exploiter_frac)
