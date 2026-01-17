@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any, Dict, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import torch
@@ -124,6 +124,7 @@ class Agent(nn.Module):
         self.steps = 0
         self.checkpoint_step = 0
         self.action_plane_nvec = action_plane_nvec # used in case of copying Agents without envs
+        self._index_tensor_cache: Dict[Tuple[int, ...], torch.Tensor] = {}
         nvec = np.asarray(action_plane_nvec)
         self.action_nvec_list = nvec.tolist()
         self.num_action_params = len(self.action_nvec_list)
@@ -160,6 +161,22 @@ class Agent(nn.Module):
         obs_feat = self.network(x.permute((0, 3, 1, 2)))
         z = z.view(z.size(0), -1)
         return torch.cat([obs_feat, sc_feat, z], dim=-1)
+
+    def _get_index_tensor(
+        self, indices, device: Optional[torch.device] = None
+    ) -> torch.Tensor:
+        if isinstance(indices, torch.Tensor):
+            target_device = device or self.device
+            return indices if indices.device == target_device else indices.to(target_device)
+        if not indices:
+            return torch.empty(0, dtype=torch.long, device=device or self.device)
+        key = tuple(indices)
+        cached = self._index_tensor_cache.get(key)
+        target_device = device or self.device
+        if cached is None or cached.device != target_device:
+            cached = torch.as_tensor(indices, device=target_device, dtype=torch.long)
+            self._index_tensor_cache[key] = cached
+        return cached
 
     def set_weights(self, weights: Union[str, Dict[str, torch.Tensor]]) -> None:
         if isinstance(weights, dict):
@@ -247,8 +264,32 @@ class Agent(nn.Module):
         # np.any([torch.where(z[i] != z[i+1])[0].shape[0] != 0 or torch.where(x[i] != x[i+1])[0].shape[0] != 0 or torch.where(sc[i] != sc[i+1])[0].shape[0] != 0 for i in range(0, num_selfplay_envs//2, 2)])
 
         if action is None:
-            invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in process_envs]).to(self.device)
-            
+            if invalid_action_masks is None or (isinstance(invalid_action_masks, torch.Tensor) and invalid_action_masks.numel() == 0):
+                if envs is None:
+                    raise ValueError("envs must be provided when action masks are not passed in")
+                invalid_action_masks = torch.stack(
+                    [
+                        torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool)
+                        for i in process_envs
+                    ]
+                )
+            else:
+                invalid_action_masks = torch.as_tensor(invalid_action_masks, dtype=torch.bool)
+
+            if invalid_action_masks.dim() == 2:
+                invalid_action_masks = invalid_action_masks.unsqueeze(0)
+            if invalid_action_masks.shape[0] != len(process_envs):
+                invalid_action_masks = invalid_action_masks[list(process_envs)]
+
+            if invalid_action_masks.shape[-1] == self.action_dim:
+                allow_no_op = invalid_action_masks.any(-1)
+                if envs is not None and getattr(envs, "disallow_no_op", False):
+                    allow_no_op = torch.zeros_like(allow_no_op, dtype=torch.bool)
+                invalid_action_masks = torch.cat(
+                    [allow_no_op.unsqueeze(-1), invalid_action_masks], dim=-1
+                )
+
+            invalid_action_masks = invalid_action_masks.to(self.device)
             if selfplay_envs and num_selfplay_envs > 1:
                 invalid_action_masks = invalid_action_masks.clone()
                 upper = min(num_selfplay_envs, invalid_action_masks.shape[0])
@@ -303,7 +344,7 @@ class Agent(nn.Module):
         for cur_agent, indices in unique_agents.items():
             if not indices:
                 continue
-            index_tensor = torch.as_tensor(indices, device=device)
+            index_tensor = self._get_index_tensor(indices, device=device)
             encoded = cur_agent.z_encoder(flat_next_obs[index_tensor].view(len(index_tensor), -1))
             next_z_features[index_tensor] = encoded
             
@@ -342,23 +383,24 @@ class Agent(nn.Module):
 
             if not indices:
                 continue
+            index_tensor = self._get_index_tensor(indices)
 
             if isinstance(agent, Bot_Agent):
-                bot_replacements.append((agent, indices))
+                bot_replacements.append((agent, index_tensor))
                 # placeholder logits; will be overridden by bot actions later
-                self.logits[indices] = 0.0
+                self.logits[index_tensor] = 0.0
                 continue
             
             if agent is not self:
                 with torch.no_grad():
-                    subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices]))
+                    subset_logits = agent.actor(agent.forward(x[index_tensor], sc[index_tensor], z[index_tensor]))
             else:
-                subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices]))
+                subset_logits = agent.actor(agent.forward(x[index_tensor], sc[index_tensor], z[index_tensor]))
 
             if agent is not self:
                 # TODO (league training): sollte man wirklich alle non_main_agenten detatchen? (Wahrscheinlich schon) (oder sogar torch.no_grad()) (auch in selfplay_get_value?)
                 subset_logits = subset_logits.detach()
-            self.sp_logits[indices] = subset_logits# .to(self.device)
+            self.sp_logits[index_tensor] = subset_logits# .to(self.device)
 
 
         action, logprob, entropy, invalid_action_masks = self.get_action(
@@ -425,11 +467,12 @@ class Agent(nn.Module):
                 indices = [i for i in indices if i % 2 == 0 or i >= num_selfplay_envs]
                 if not indices:
                     continue
+            index_tensor = self._get_index_tensor(indices)
             if agent is not self:
                 with torch.no_grad():
-                    self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices]).flatten()# .to(self.device).detach()
+                    self._values[index_tensor] = agent.get_value(x[index_tensor], sc[index_tensor], z[index_tensor]).flatten()# .to(self.device).detach()
             else:
-                self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices]).flatten()# .to(self.device)
+                self._values[index_tensor] = agent.get_value(x[index_tensor], sc[index_tensor], z[index_tensor]).flatten()# .to(self.device)
 
         return self._values#.clone()
     
