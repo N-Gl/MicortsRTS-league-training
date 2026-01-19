@@ -381,6 +381,7 @@ class MainExploiter(Player):
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
         self.last_reset_update = None
+        self.skip_update = False
         self.name = f"MainExploiter_{main_exp_idx}"
 
     def get_match(self):
@@ -464,6 +465,7 @@ class MainExploiter(Player):
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
         self.last_reset_update = None
+        self.skip_update = True
         self._payoff.reset(self)
         self.num_resets_checkpoints += 1
 
@@ -484,6 +486,7 @@ class LeagueExploiter(Player):
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
         self.last_reset_update = None
+        self.skip_update = False
         self.name = f"LeagueExploiter_{league_exp_idx}"
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
@@ -534,6 +537,7 @@ class LeagueExploiter(Player):
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
         self.last_reset_update = None
+        self.skip_update = True
         self._payoff.reset(self)
         self.num_resets_checkpoints += 1
 

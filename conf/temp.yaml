@@ -26,11 +26,11 @@ ExperimentConfig:
   bot_removing_done_training_ratio: 0.75
   bot_removing_winrate_threshold: 0.97
   num_main_envs: 1   # 1 num_main_envs == 1 env # TODO
-  num_main_exploiters: 1
+  num_main_exploiters: 3
   num_league_exploiters: 0
-  num_envs_per_main_exploiters: 10
+  num_envs_per_main_exploiters: 3
   num_envs_per_league_exploiters: 0
-
+  
   BC_aget_as_Historical: false
   training_on_bot_envs: true   # TODO: true
 

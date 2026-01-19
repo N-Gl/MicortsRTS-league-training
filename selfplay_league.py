@@ -778,6 +778,9 @@ class LeagueTrainer:
     
                 # update every exploiter individually
                 for exploiter, exploiter_idx in self.indices_per_exploiter.items():
+                    if exploiter.skip_update:
+                        exploiter.skip_update = False
+                        continue
 
                     # TODO: debugging löschen
                     if args.dbg_seed:
