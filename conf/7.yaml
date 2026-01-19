@@ -10,7 +10,7 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 15_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_more_exploiter_exploration_with_bots__7_4_resetting_lr_fixedd_calc
+  exp_name: 19_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_more_exploiter_exploration_with_bots__7_4_resetting_lr_fixedd_calc
   wandb_project_name: league_training
   wandb_group_name: testing
 
