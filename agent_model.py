@@ -235,12 +235,24 @@ class Agent(nn.Module):
         num_selfplay_envs: int = 0,
         logits: Optional[torch.Tensor] = None,
         process_envs: Optional[Any] = None,
-        dbg_deterministic_actions: bool = False
+        dbg_deterministic_actions: bool = False,
+        logits_temperature: Optional[torch.Tensor] = None
     ):
         if process_envs is None:
             process_envs = range(envs.num_envs)
         if logits is None:
             logits = self.actor(self.forward(x, sc, z))
+        if logits_temperature is not None:
+            if not torch.is_tensor(logits_temperature):
+                logits_temperature = torch.tensor(logits_temperature, device=logits.device, dtype=logits.dtype)
+            else:
+                logits_temperature = logits_temperature.to(device=logits.device, dtype=logits.dtype)
+            if logits_temperature.ndim == 0:
+                logits_temperature = logits_temperature.view(1, 1)
+            elif logits_temperature.ndim == 1:
+                logits_temperature = logits_temperature.view(-1, 1)
+            logits_temperature = torch.clamp(logits_temperature, min=1e-6)
+            logits = logits / logits_temperature
         grid_logits = logits.view(-1, self.action_dim)
         split_logits = torch.split(grid_logits, self.action_nvec_list, dim=1)
         # torch.where(x[29] != x[28])[0].shape[0] != 0 or torch.where(sc[29] != sc[28])[0].shape[0] != 0 or torch.where(z[29] != z[28])[0].shape[0] != 0
@@ -321,7 +333,8 @@ class Agent(nn.Module):
         envs=None,
         active_league_agents = None,
         unique_agents: Optional[Dict] = None,
-        dbg_deterministic_actions: bool = False
+        dbg_deterministic_actions: bool = False,
+        logits_temperature: Optional[torch.Tensor] = None
     ):
         '''
         returns action, logprob, entropy, invalid_action_masks for selfplay and bot envs combined.
@@ -371,7 +384,8 @@ class Agent(nn.Module):
             selfplay_envs=num_selfplay_envs > 0,
             num_selfplay_envs=num_selfplay_envs,
             logits=self.sp_logits[:num_selfplay_envs],
-            dbg_deterministic_actions=dbg_deterministic_actions
+            dbg_deterministic_actions=dbg_deterministic_actions,
+            logits_temperature=logits_temperature
         )
 
         for bot_agent, indices in bot_replacements:

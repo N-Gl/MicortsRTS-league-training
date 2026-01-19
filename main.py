@@ -321,7 +321,7 @@ def main(cfg: ExperimentConfig):
         action_plane_nvec = envsT.action_plane_space.nvec
 
         agent = build_agent(action_plane_nvec, device)
-        agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
+        # agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
 
         if args.BC_model_path and not args.league_training:
             path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
