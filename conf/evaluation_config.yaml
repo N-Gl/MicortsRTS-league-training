@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_Main_exploiter_Historical_4.pt",
+                          "models/15_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_with_bots__6_3_resetting_lr_update_2170.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_Main_exploiter_Historical_4",
+          "15_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_with_bots__6_3_resetting_lr_update_2170",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_Main_exploiter_Historical_4"
+  exp_name: "15_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_with_bots__6_3_resetting_lr_update_2170"
   wandb_project_name: new_Evaluation
   prod_mode: true
 

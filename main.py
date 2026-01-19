@@ -321,8 +321,7 @@ def main(cfg: ExperimentConfig):
         action_plane_nvec = envsT.action_plane_space.nvec
 
         agent = build_agent(action_plane_nvec, device)
-        # TODO (optimize): check if torch.compile is beneficial here (for initial_agent as well)
-        # agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
+        agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
 
         if args.BC_model_path and not args.league_training:
             path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
@@ -495,8 +494,8 @@ def main(cfg: ExperimentConfig):
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_500.pt", None],
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_550.pt", None],
             ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
-            ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None],
-            ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None],
+            # ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None],
+            # ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None],
             # ["old_ppo_args__12_12_25__04_12_25__PPO", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt", None],
         ]
         # 2nd element: uninitialized Agent class 

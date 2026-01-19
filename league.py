@@ -9,6 +9,12 @@ from agent_model import Agent
 from log_aggregate_result_table import Logger
 
 
+def _maybe_compile_agent(agent: torch.nn.Module, device: torch.device) -> torch.nn.Module:
+    if hasattr(torch, "compile") and device.type == "cuda":
+        return torch.compile(agent, mode="reduce-overhead")
+    return agent
+
+
 
 class SelfplayAgentType(IntEnum):
     CUR_MAIN = 0    # used, when the current main agent plays against a bot (not for non-selfplaying envs)
@@ -374,6 +380,7 @@ class MainExploiter(Player):
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
+        self.agent = _maybe_compile_agent(self.agent, self.agent.device)
         self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         # self._initial_weights = initial_agent.state_dict() und copy later -> to reset the exploiter back to the main agent weights after each checkpoint.
         self._payoff = payoff
@@ -480,6 +487,7 @@ class LeagueExploiter(Player):
     ):
         self.args = args
         self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
+        self.agent = _maybe_compile_agent(self.agent, self.agent.device)
         self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         self._payoff = payoff
         self._checkpoint_step = 0
