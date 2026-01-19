@@ -127,7 +127,7 @@ def render_all_envs(env_transform):
     except Exception:
         pass
 
-# TODO: debugging function
+# TODO (debugging): debugging function
 def break_on_stdout(trigger="Issuing a non legal action", include_stderr: bool = True):
     """Pipe stdout (and optionally stderr) through a watcher and drop into pdb when trigger text appears."""
     trigger_bytes = trigger.encode()
@@ -214,8 +214,6 @@ class LeagueTrainer:
         self.indices_per_exploiter = {}
         self.b_indices_per_exploiter = {}
 
-        # TODO: nachher entfernen:
-        assert args.selfplay_ready_save_interval > 0, "selfplay_ready_save_interval muss größer 0 sein"
 
     def train(self):
         args = self.args
@@ -244,13 +242,7 @@ class LeagueTrainer:
         
 
 
-        # (League training): entferne alle Environments, die keine main agenten sind (Exploiter)
-        # TODO (training): oder einfach wie in BC von den Exploitern auch trainieren (vielleicht schlechter, da die Exploiter nicht optimal spielen und ein Bias in die Richtung entsteht (nur mit alten main Agenten, weil es gibt so oder so den ratio, der nach
-        # Ähnlichkeit zu den eigenen logprobs guckt?))
-        # TODO (optimize): ich brauche keine obs, mask, actions, logprobs etc. von den player 1 Environments (kann Speicher sparen)
-
-        # dont update Player 1 (TODO: Player 1 can change in an rollout. (is that a problem?))
-        # TODO: auch auf Player 1 trainieren (Player 1 darf in einem Rollout sich nicht ändern) (man müsste oben auch die Values für Player 1 berechnen (gerade immer 0))
+        # updates indices for main / exploiter agents in self.active_league_agents
         self._refresh_main_indices(args)
         self._refresh_exploiter_indices(args)
 
@@ -317,7 +309,6 @@ class LeagueTrainer:
         
 
         for update in range(1, num_updates + 1):
-            # TODO: debugging löschen
             if args.dbg_seed:
                 self._seed_for_update(update, args.seed)
 
@@ -331,7 +322,7 @@ class LeagueTrainer:
             for step in range(args.num_steps):
                 if args.render:
                     if args.render_all:
-                        # TODO: funktioniert nicht richtig
+                        # only workes for 1 at a time
                         # Rendering.render_all_envs(envs)
                         Rendering.render_all_envs(sp_envs)
                     else:
@@ -398,7 +389,7 @@ class LeagueTrainer:
                     #         arr.append(torch.all(a == b).item())
                     
 
-                    self.check_values(scalar_features, z_features, values, agent, step, obs=torch.cat([sp_obs[step], bot_obs[step]], dim=0), flatten=True)
+                    # self.check_values(scalar_features, z_features, values, agent, step, obs=torch.cat([sp_obs[step], bot_obs[step]], dim=0), flatten=True)
 
                     # gesamplete action (aus Verteilung der Logits) (24, 256, 7),
                     # actor(forward(...)), invalid_action_masks
@@ -445,7 +436,7 @@ class LeagueTrainer:
                 sp_valid_actions = sp_real_action[sp_invalid_action_masks[step][:, :, 0].bool().cpu().numpy()]
                 sp_valid_counts = sp_invalid_action_masks[step][:, :, 0].sum(1).long().cpu().numpy()
 
-                # Anpassungen für Spieler 1 nach (Spieler 1 -> Spieler 0)
+                # adjust actions for selfplay environments (player 1 -> player 0)
                 # TODO (optimize): nur die Indizes anpassen, die man anpassen muss (bei type move nicht harvest, return, produce, attack anpassen)
                 adjust_action_selfplay(args, sp_valid_actions, sp_valid_counts)
 
@@ -586,16 +577,15 @@ class LeagueTrainer:
                         infos[done_idx]["delta_score_sum_weighted"] = delta_score_sum * args.rewardscore
                         done_agent = self.active_league_agents[done_idx]
 
-                        # TODO: ist dyn_winloss auch für exploiters?
                         # dyn_winloss = winloss
                         game_length = infos[done_idx]["episode"]["l"]
-                        dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500 TODO (training): für die ersten 3 millionen steps nur, wenn man gewinnt == 0?
+                        dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
                         if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
                             done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
 
                             if isinstance(done_agent, league.MainPlayer):
                                 # game_length = infos[done_idx]["episode"]["l"]
-                                # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500 TODO (training): für die ersten 3 millionen steps nur, wenn man gewinnt == 0?
+                                # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
                                 league.log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
@@ -667,14 +657,14 @@ class LeagueTrainer:
                     only_player_0=True
                 ).reshape(1, -1)
 
-                self.check_values(
-                    scalar_features, z_features, next_value, 
-                    agent, step, 
-                    next_scalar_features=next_scalar_features, 
-                    next_z_features=next_z_features, 
-                    next_obs=next_obs, 
-                    flatten=False
-                    )
+                # self.check_values(
+                #     scalar_features, z_features, next_value, 
+                #     agent, step, 
+                #     next_scalar_features=next_scalar_features, 
+                #     next_z_features=next_z_features, 
+                #     next_obs=next_obs, 
+                #     flatten=False
+                #     )
                 
                 rewards_winloss = rewards_winloss * winloss
                 delta_rewards_score = delta_rewards_score * args.rewardscore
@@ -782,7 +772,6 @@ class LeagueTrainer:
                         exploiter.skip_update = False
                         continue
 
-                    # TODO: debugging löschen
                     if args.dbg_seed:
                         self._seed_for_update(update, args.seed)
                     b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
@@ -855,7 +844,7 @@ class LeagueTrainer:
                     
                     
 
-                    # TODO: debugging löschen
+                    # TODO (debugging): debugging löschen
                     # if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
                     #     print("Exploiter obs different from main agent obs")
                     # if not torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]):
@@ -870,7 +859,7 @@ class LeagueTrainer:
                     league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, grad_norm=grad_norm)
 
                 
-                # TODO: wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
+                # TODO (optimize): wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
                 # oder league.train_exploiters entfernen
                 # pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = league.train_exploiters(
                 #     args,
@@ -896,7 +885,6 @@ class LeagueTrainer:
             writer.add_scalar("charts/sps", int(global_step / (time.time() - start_time)), global_step)
             print("SPS:", int(global_step / (time.time() - start_time)))
 
-            # TODO: Verbessere, wann neue Bots geladen werden
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
             if  last_bot_env_change >= 20 and args.num_bot_envs > 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
@@ -1021,14 +1009,9 @@ class LeagueTrainer:
             main_indices = np.array([], dtype=np.int64)
             b_main_indices = np.array([], dtype=np.int64)
 
-        if args.train_on_old_mains:  # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-            selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
-            main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)
-            b_main_indices = np.concatenate((b_main_indices, selfplay_mains // 2), axis=0)
-        else:
-            selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-            main_indices = np.concatenate((selfplay_mains * 2, main_indices))
-            b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
+        selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+        main_indices = np.concatenate((selfplay_mains * 2, main_indices))
+        b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
 
         self.main_indices = main_indices
         self.b_main_indices = b_main_indices
@@ -1049,7 +1032,6 @@ class LeagueTrainer:
         args.num_bot_envs = num_bots
         args.num_envs = args.num_selfplay_envs + args.num_bot_envs
 
-        # bring active_league_agents Länge in Einklang mit neuer Env-Anzahl
         if len(self.active_league_agents) < args.num_envs:
             # assert isinstance(self.active_league_agents[0], league.MainPlayer) "self.active_league_agents[0] must be an MainPlayer"
             self.active_league_agents.append(self.active_league_agents[0])
@@ -1096,7 +1078,7 @@ class LeagueTrainer:
 
         return envsT
 
-    # TODO: Debugging (nachher entfernen)
+    # TODO (debugging): Debugging (nachher entfernen)
     def assert_supervised_grads_zero(self, supervised_agent):
         max_abs = 0.0
         names = []
@@ -1109,7 +1091,7 @@ class LeagueTrainer:
                 names = [name]
                 print(f"\n\n[supervised] max|grad|={max_abs} in {names}!!!\n\n")
 
-    # TODO: Debugging (nachher entfernen)
+    # TODO (debugging): Debugging (nachher entfernen)
     def check_values(self, scalar_features, z_features, values, agent, step, next_scalar_features=None, next_z_features=None, obs=None, next_obs=None, flatten = False):
         return
         if flatten:
@@ -1131,7 +1113,6 @@ class LeagueTrainer:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    # TODO: Debugging (nachher entfernen?)
     def dbg_prep(self, main_batch_size):
         import random
         random.seed(1)

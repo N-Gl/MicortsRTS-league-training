@@ -14,7 +14,6 @@ ExperimentConfig:
   selfplay: false
 
   pfsp: false
-  train_on_old_mains: false
   league_training: false
 
   resume: true

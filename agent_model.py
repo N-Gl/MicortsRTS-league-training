@@ -274,7 +274,6 @@ class Agent(nn.Module):
         ]
 
         if action is None:
-            # TODO: debugging (nachher entfernen)
             if dbg_deterministic_actions:
                 action = torch.stack([categorical.logits.argmax(dim=-1) for categorical in multi_categoricals])
             else:
