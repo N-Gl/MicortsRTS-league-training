@@ -82,7 +82,6 @@ def _init_agent_type(args, device):
         assert agent_type is None, "If no selfplay envs are used, agent_type must be None"
     return agent_type
 
-# TODO: rufe die Methode richtig auf
 def _on_checkpoint(hist_reward, args):
     hist_reward += args.new_hist_rewards
      
@@ -286,7 +285,7 @@ class MainPlayer(Player):
         # ])
         exp_historical = [
             player for player in self._payoff.players
-            if isinstance(player, Historical) and isinstance(player.parent, MainExploiter) # TODO: funktioniert das statt if isinstance(player, Historical) and player.parent in exploiters?
+            if isinstance(player, Historical) and isinstance(player.parent, MainExploiter)
         ]
         win_rates = self._payoff[self, exp_historical]
         if len(win_rates) and win_rates.min() < 0.35:
@@ -296,7 +295,7 @@ class MainPlayer(Player):
         # Check forgetting
         historical = [
             player for player in self._payoff.players
-            if isinstance(player, Historical) and isinstance(player.parent, MainPlayer) # TODO: funktioniert das statt if isinstance(player, Historical) and player.parent == opponent?
+            if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
         win_rates = self._payoff[self, historical]
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
@@ -315,8 +314,6 @@ class MainPlayer(Player):
         If there are no forgotten players or strong exploiters, the 15% is used for self-play instead.'''
         if self.args.sp:
             return self._payoff.players[0], True
-        # TODO (league training): es wird zu oft gegen einfache Gegner gespielt (vorallem, wenn es viele Gegner gibt) 
-        # und lange Spiele mit Draws werden so stark bewertet, dass ein klarer win zu einem draw wird.
         coin_toss = np.random.random()
 
         # Make sure you can beat the League
@@ -324,7 +321,7 @@ class MainPlayer(Player):
         if coin_toss < 0.7:
             return self._pfsp_branch()
 
-        # 35% of the time, play self-play TODO (training): implementiere mehr main Agenten oder passe die Wahrscheinlichkeiten an (jetzt: 0,15)
+        # 35% of the time, play self-play
         main_agents = [
             player for player in self._payoff.players
             if isinstance(player, MainPlayer)
@@ -346,7 +343,7 @@ class MainPlayer(Player):
         oder mehr als args.main_selfplay_save_interval steps vergangen sind)'''
         # weil nur eine Instanz von dem agent für Mainagent ex, ist checkpoint_step in agent gespeichert
         steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
-        if steps_passed < (self.args.selfplay_ready_save_interval) * self.args.num_main_envs: # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
+        if steps_passed < (self.args.selfplay_ready_save_interval) * self.args.num_main_envs: # * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
           return False
 
         historical = [
@@ -354,7 +351,7 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
-        return win_rates.min() > self.args.main_winrate_threshold or steps_passed > self.args.main_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # TODO (league training): * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
+        return win_rates.min() > self.args.main_winrate_threshold or steps_passed > self.args.main_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
     def checkpoint(self):
@@ -395,7 +392,6 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        # TODO: ist das besser als self._payoff._win_rate?
         if self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
             return opponent, True
 
@@ -436,7 +432,7 @@ class MainExploiter(Player):
 
         self.reset()
 
-        return checkpoint  # TODO: vorher: return self._create_checkpoint(): resetett man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
+        return checkpoint
     
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. wie bei MainPlayer'''
@@ -444,7 +440,6 @@ class MainExploiter(Player):
         if steps_passed < self.args.selfplay_ready_save_interval:
             return False
 
-        # TODO: ist es besser mit der Winrate gegen alle historischen gegner oder nur mainplayer?
         # historical = [
         #     player for player in self._payoff.players
         #     if isinstance(player, Historical)
@@ -517,7 +512,7 @@ class LeagueExploiter(Player):
 
         if np.random.random() < 0.25:
             self.reset()
-        return checkpoint  # TODO: vorher: return self._create_checkpoint(): resettet man die gewichte vor dem checkpoint, sodass der checkpoint immer die gleichen gewichte hat?
+        return checkpoint
     
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. wie bei MainPlayer'''
@@ -625,9 +620,6 @@ class League:
         for _ in range(args.num_main_envs):
             self._learning_agents.append(main_agent)
 
-        # (TODO (League training): müssen die main_agents ihre Gewichte unterschiedlich updaten können, um besser gegen andere main_agents zu trainieren?
-        # gerade ex nur eine Instanz als main_agent (wenn ein main_agent ein update macht, dann updaten alle main_agents ihre Gewichte gleich) 
-        # (initial_agents statt initial_agent?))
         self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
 
@@ -676,7 +668,6 @@ class League:
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
 
-        # TODO (league training): auch andere Agents loggen? (wäre pro exploiter pro Gegner eine Zeile in der Tabelle)
         if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
 
             last_logged_selfplay_games = num_done_selfplaygames
@@ -757,7 +748,6 @@ class League:
             print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_with_draw:.3f}\n")
         return last_logged_selfplay_games
 
-    # TODO: rufe die Methode richtig auf
     def handle_game_end(self, args, agent, writer, active_league_agents, global_step, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, indices_per_exploiter, last_logged_selfplay_games):
         old_opp = active_league_agents[done_idx + 1]
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
@@ -796,7 +786,6 @@ class League:
 
 
 def initialize_league(args, device, agent, other_initial_agents=[]):
-    # TODO (League training): (don't fill non selfplaying envs) Fokus auf die agenten gibt, gegen nur cur main und alte main: (--FSP)
     league_instance = League(initial_main_agent=agent, other_initial_agents=other_initial_agents, args=args)
 
     # initiale Environments mit den jeweiligen Gegnern gefüllt
@@ -815,7 +804,6 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
                 for _ in range(args.num_bot_envs_per_main_exploiter):
                     active_league_agents.append(m_exp)
 
-    # ( TODO: soll ich das machen? fill remaining environments (bot envs) with the main agent reference (sonst muss man selfplay_get_action, selfplay_get_value anpassen))
     while len(active_league_agents) < args.num_envs:
         active_league_agents.append(league_instance.learning_agents[0])
 
@@ -949,7 +937,7 @@ def train_exploiters(
                     logits_chunks.append(current_agent.actor(current_agent.forward(mb_obs, mb_sc, mb_z)))
                     value_chunks.append(current_agent.get_value(mb_obs, mb_sc, mb_z).view(-1))
 
-                # TODO: wenn ich ppo_update.update benutze, dann soll das immer noch combiniert funktionieren (sonst ist es langsam)
+                # TODO (optimize): wenn ich ppo_update.update benutze, dann soll das immer noch combiniert funktionieren (sonst ist es langsam)
                 combined_obs = torch.cat(batch_obs, dim=0)
                 combined_sc = torch.cat(batch_sc, dim=0)
                 combined_z = torch.cat(batch_z, dim=0)
@@ -1020,7 +1008,7 @@ def train_exploiters(
 
         for i, entry in enumerate(agent_batches):
 
-            # TODO: updaten sich die Gewichte (Veränderung = True)
+            # debugging: are weights changing (change == True)
             # import copy
             # old_w = {k: v.detach().clone() for k, v in self.agent.state_dict().items()}
             # is_changing = {k: not torch.equal(v, old_w[k]) for k, v in self.agent.state_dict().items()}

@@ -65,7 +65,6 @@ def main(cfg: ExperimentConfig):
 
     args.num_envs = args.num_selfplay_envs + args.num_bot_envs
     # args.__dict__.setdefault('num_envs', args.num_selfplay_envs + args.num_bot_envs)
-    # TODO: ist die args.batch_size korrekt?
     args.__dict__.setdefault('batch_size', int((args.num_selfplay_envs//2 + args.num_bot_envs) * args.num_steps))
     args.__dict__.setdefault('minibatch_size', int(args.batch_size // max(args.n_minibatch, 1)))
 
