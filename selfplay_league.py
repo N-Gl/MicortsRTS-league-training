@@ -328,17 +328,6 @@ class LeagueTrainer:
                 lrnow = lr_fn(main_frac)
                 optimizer.param_groups[0]["lr"] = lrnow
 
-            exploiter_logits_temperature = None
-            exploiter_action_temperature = getattr(args, "exploiter_action_temperature", 1.0)
-            if exploiter_action_temperature != 1.0 and self.indices_per_exploiter:
-                temperature_by_env = torch.ones(args.num_selfplay_envs, device=device)
-                for indices in self.indices_per_exploiter.values():
-                    for idx in indices:
-                        if idx < args.num_selfplay_envs:
-                            temperature_by_env[idx] = exploiter_action_temperature
-                if (temperature_by_env != 1.0).any():
-                    exploiter_logits_temperature = temperature_by_env
-
             for step in range(args.num_steps):
                 if args.render:
                     if args.render_all:
@@ -430,8 +419,7 @@ class LeagueTrainer:
                         envs=sp_envs,
                         active_league_agents=self.active_league_agents,
                         unique_agents=sp_only_unique_agents,
-                        dbg_deterministic_actions=args.dbg_deterministic_actions,
-                        logits_temperature=exploiter_logits_temperature
+                        dbg_deterministic_actions=args.dbg_deterministic_actions
                     )
 
                 # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
@@ -832,8 +820,6 @@ class LeagueTrainer:
                             "anneal_lr": args.exploiter_anneal_lr,
                             "clip_vloss": args.exploiter_clip_vloss
                         }
-                    if exploiter_action_temperature != 1.0:
-                        exploiter_agent_batch["logits_temperature"] = exploiter_action_temperature
                         
 
                     if exploiter_lr_fn is not None:

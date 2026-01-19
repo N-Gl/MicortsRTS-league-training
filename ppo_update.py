@@ -86,7 +86,6 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     clip_coef = agent_batch.get("clip_coef", args.clip_coef)
     target_kl = agent_batch.get("target_kl", args.target_kl)
     kl_coeff = agent_batch.get("kl_coeff", args.kl_coeff)
-    logits_temperature = agent_batch.get("logits_temperature", None)
     max_grad_norm = agent_batch.get("max_grad_norm", args.max_grad_norm)
     update_epochs = agent_batch.get("update_epochs", args.update_epochs)
     value_warmup_updates = agent_batch.get("value_warmup_updates", args.value_warmup_updates)
@@ -155,7 +154,6 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                         b_actions.long()[minibatch_ind],
                         b_invalid_action_masks[minibatch_ind],
                         envs,
-                        logits_temperature=logits_temperature,
                     )
                 ratio = (newlogproba - b_logprobs[minibatch_ind]).exp()
 
