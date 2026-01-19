@@ -613,7 +613,8 @@ class League:
 
         for i in range(len(other_initial_agents)):
             main_agent_historical = MainPlayer(other_initial_agents[i], self._payoff, args=args)
-            self._payoff.add_player(main_agent_historical.checkpoint())
+            if not args.no_starting_historical:
+                self._payoff.add_player(main_agent_historical.checkpoint())
 
         # only 1 Mainagent:
         main_agent = MainPlayer(initial_main_agent, self._payoff, args=args)
