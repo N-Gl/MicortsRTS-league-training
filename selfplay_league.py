@@ -309,6 +309,7 @@ class LeagueTrainer:
         
 
         for update in range(1, num_updates + 1):
+            skip_update_count = 0
             if args.dbg_seed:
                 self._seed_for_update(update, args.seed)
 
@@ -770,6 +771,7 @@ class LeagueTrainer:
                 for exploiter, exploiter_idx in self.indices_per_exploiter.items():
                     if exploiter.skip_update:
                         exploiter.skip_update = False
+                        skip_update_count += 1
                         continue
 
                     if args.dbg_seed:
@@ -872,6 +874,9 @@ class LeagueTrainer:
                 #     self.experiment_name,
                 #     exploiter_indices
                 # )
+                writer.add_scalar("debug/exploiter_skip_updates_count", skip_update_count, global_step)
+                if skip_update_count:
+                    print(f"Skipped exploiter updates this rollout: {skip_update_count}")
 
             if not args.dbg_no_main_agent_ppo_update:
                 if args.prod_mode and update % args.checkpoint_frequency == 0:

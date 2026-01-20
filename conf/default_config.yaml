@@ -32,6 +32,7 @@ ExperimentConfig:
   dbg_exploiter_update: false
   dbg_seed: false
   dbg_non_legal_action: false
+  starting_historical: true
 
   total_timesteps: 30000000     # new (BA Parameter) (Training was run for 30 million steps)
 

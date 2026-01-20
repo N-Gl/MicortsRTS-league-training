@@ -32,7 +32,7 @@ ExperimentConfig:
   num_envs_per_league_exploiters: 0
 
   BC_aget_as_Historical: false
-  no_starting_historical: true
+  starting_historical: false
   training_on_bot_envs: true   # TODO: true
 
   selfplay_ready_save_interval: 5e5 # 6e4 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
