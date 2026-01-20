@@ -1014,9 +1014,14 @@ class LeagueTrainer:
             main_indices = np.array([], dtype=np.int64)
             b_main_indices = np.array([], dtype=np.int64)
 
-        selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-        main_indices = np.concatenate((selfplay_mains * 2, main_indices))
-        b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
+        if args.train_on_old_mains:  # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
+            selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
+            main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)
+            b_main_indices = np.concatenate((b_main_indices, selfplay_mains // 2), axis=0)
+        else:
+            selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+            main_indices = np.concatenate((selfplay_mains * 2, main_indices))
+            b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
 
         self.main_indices = main_indices
         self.b_main_indices = b_main_indices
