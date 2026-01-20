@@ -421,7 +421,8 @@ class MainExploiter(Player):
         #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
         #     return opp, True
         
-        print(f"\nchoosing next opponent for MainExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
+        historical_names = [player.name for player in historical]
+        print(f"\nchoosing next opponent for {self.name} out of \n{historical_names} \nwith win rates: \n{win_rates}")
         p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
@@ -501,7 +502,8 @@ class LeagueExploiter(Player):
         #     return opp, True
 
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
-        print(f"\nchoosing next opponent for LeagueExploiter out of \n{historical} \nwith win rates: \n{win_rates}")
+        historical_names = [player.name for player in historical]
+        print(f"\nchoosing next opponent for {self.name} out of \n{historical_names} \nwith win rates: \n{win_rates}")
         p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
@@ -672,7 +674,7 @@ class League:
         if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
 
             last_logged_selfplay_games = num_done_selfplaygames
-            win_rates = []
+            win_rates_no_draw = []
             opp_names = []
             opp_players = []
             game_count = []
@@ -685,7 +687,7 @@ class League:
                     opp_names.append(p1.name)
                     opp_players.append(p1)
                     game_count.append(done_agent._payoff._games[done_agent, p1])
-                    win_rates.append(done_agent.payoff._win_rate(done_agent, p1))
+                    win_rates_no_draw.append(done_agent.payoff._win_rate_no_draw(done_agent, p1))
                     no_decay_game_count.append(done_agent.payoff._no_decay_games[done_agent, p1])
 
                     wins = done_agent.payoff._wins[done_agent, p1]
@@ -717,9 +719,9 @@ class League:
                                     )
             
             if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
-                for opp, games, r in zip(opp_names, game_count, win_rates):
+                for opp, games, r in zip(opp_names, game_count, win_rates_no_draw):
                     if games > 0:
-                        writer.add_scalar(f"winrate_per_opponent/{done_agent.name}_vs_{opp}", r, games)
+                        writer.add_scalar(f"winrate_no_draw_per_opponent/{done_agent.name}_vs_{opp}", r, games)
 
             historicals = [
                 player for player in done_agent.payoff.players
