@@ -110,7 +110,7 @@ class Payoff:
     
     def _win_rate_no_draw(self, _home, _away):
         if self._games[_home, _away] == 0:
-          return 0.5
+          return 0.3
     
         return self._wins[_home, _away] / self._games[_home, _away]
 
@@ -192,7 +192,6 @@ class Payoff:
             self._no_decay_wins = collections.defaultdict(lambda: 0)
             self._no_decay_draws = collections.defaultdict(lambda: 0)
             self._no_decay_losses = collections.defaultdict(lambda: 0)
-            self._games = collections.defaultdict(lambda: 0)
             self._wins = collections.defaultdict(lambda: 0)
             self._draws = collections.defaultdict(lambda: 0)
             self._losses = collections.defaultdict(lambda: 0)
@@ -262,7 +261,7 @@ class MainPlayer(Player):
         '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
         ein checkpoint aus der vergangenheit als gegner gewählt mit pfsp Verteilung'''
         # Play self-play match
-        if self._payoff[self, opponent] > 0.3:
+        if self._payoff.array_win_rate_no_draw(self, opponent) > 0.3:
             return opponent, False
 
         # If opponent is too strong, look for a checkpoint
@@ -271,7 +270,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and player.parent == opponent
         ]
-        win_rates = self._payoff[self, historical]
+        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
@@ -287,8 +286,8 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainExploiter)
         ]
-        win_rates = self._payoff[self, exp_historical]
-        if len(win_rates) and win_rates.min() < 0.35:
+        win_rates = self._payoff.array_win_rate_no_draw(self, exp_historical)
+        if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
                 exp_historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
         
@@ -297,7 +296,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
-        win_rates = self._payoff[self, historical]
+        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
         if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
@@ -308,10 +307,10 @@ class MainPlayer(Player):
     def get_match(self):
         '''Decides which opponent to play against.
         Main agents are trained with a proportion of 35% SP, 50% PFSP
-        against all past players in the league, and an additional 15% of PFSP
+        against all past players in the league, and an additional 20% of PFSP
         matches against forgotten main players the agent can no longer beat
         and past main exploiters.
-        If there are no forgotten players or strong exploiters, the 15% is used for self-play instead.'''
+        If there are no forgotten players or strong exploiters, the 10% is used for self-play instead.'''
         if self.args.sp:
             return self._payoff.players[0], True
         coin_toss = np.random.random()
@@ -329,13 +328,13 @@ class MainPlayer(Player):
         opponent = np.random.choice(main_agents)
 
         # Verify if there are some rare players we omitted
-        # 15% of PFSP matches against forgotten main players the agent can no longer beat and past main exploiters
-        if coin_toss > 1 - 0.15:
+        # 20% of PFSP matches against forgotten main players the agent can no longer beat and past main exploiters
+        if coin_toss > 1 - 0.2:
             request = self._verification_branch(opponent)
             if request is not None:
                 return request
 
-        return self._selfplay_branch(opponent)
+        return opponent, False # self._selfplay_branch(opponent)
 
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. 
@@ -766,6 +765,12 @@ class League:
 
     def handle_game_end(self, args, agent, writer, active_league_agents, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, indices_per_exploiter, last_logged_selfplay_games):
         old_opp = active_league_agents[done_idx + 1]
+        if isinstance(done_agent, (MainExploiter, LeagueExploiter)) and getattr(done_agent, "skip_update", False):
+            # Ignore stale results from games that finished after a reset in the same rollout.
+            opp = done_agent.get_match()[0]
+            if args.save_gpu_memory:
+                _move_player_to_device(opp, agent.device)
+            return opp, last_logged_selfplay_games, old_opp
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
         print(f"Game {int(done_idx/2)} ended: {done_agent.name} vs {active_league_agents[done_idx + 1].name}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
