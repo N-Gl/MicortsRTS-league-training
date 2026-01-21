@@ -40,6 +40,7 @@ ExperimentConfig:
   main_winrate_threshold: 0.7 # also used as threashold for choosing historical opponents in _verification_branch
   main_exploiter_winrate_threshold: 0.7
   league_exploiter_winrate_threshold: 0.7
+  main_exploiter_vs_main_winrate_threshold: 0.4
 
   even_opponent_split: true
 
