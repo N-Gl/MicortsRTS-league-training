@@ -765,12 +765,6 @@ class League:
 
     def handle_game_end(self, args, agent, writer, active_league_agents, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, indices_per_exploiter, last_logged_selfplay_games):
         old_opp = active_league_agents[done_idx + 1]
-        if isinstance(done_agent, (MainExploiter, LeagueExploiter)) and getattr(done_agent, "skip_update", False):
-            # Ignore stale results from games that finished after a reset in the same rollout.
-            opp = done_agent.get_match()[0]
-            if args.save_gpu_memory:
-                _move_player_to_device(opp, agent.device)
-            return opp, last_logged_selfplay_games, old_opp
         self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
         print(f"Game {int(done_idx/2)} ended: {done_agent.name} vs {active_league_agents[done_idx + 1].name}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
