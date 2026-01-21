@@ -504,7 +504,7 @@ def main(cfg: ExperimentConfig):
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
             ("coacAI", microrts_ai.coacAI),
             ("mayari", microrts_ai.mayari),
-            ("passiveAI", microrts_ai.passiveAI),
+            # ("passiveAI", microrts_ai.passiveAI),
             ("workerRushAI", microrts_ai.workerRushAI),
             ("lightRushAI", microrts_ai.lightRushAI),
             ("randomAI", microrts_ai.randomAI),
