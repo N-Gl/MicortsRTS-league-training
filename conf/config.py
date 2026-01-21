@@ -56,6 +56,8 @@ class ExperimentConfig:
     anneal_lr: bool
     clip_vloss: bool
     model_path: str
+    cur_main_path: Optional[str] = None
+    cur_main_exploiter_path: Optional[str] = None
     initial_BC: bool
     BC_finetuning: bool
     ppo: bool

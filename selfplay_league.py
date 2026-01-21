@@ -100,6 +100,16 @@ def adjust_action_selfplay(args, valid_actions: np.ndarray, valid_actions_counts
             #real_action[1:args.num_selfplay_envs:2, :, 7] = torch.abs(real_action[1:args.num_selfplay_envs:2, :, 7] - 48)
 
 
+def _resolve_checkpoint_path(model_path: str) -> str:
+    if model_path.endswith(".pt"):
+        checkpoint_path = model_path
+    else:
+        checkpoint_path = f"models/{model_path}/agent.pt"
+    if not os.path.exists(checkpoint_path):
+        raise FileNotFoundError(f"No checkpoint found at {checkpoint_path}")
+    return checkpoint_path
+
+
 def render_all_envs(env_transform):
     try:
         if env_transform is None:
@@ -238,6 +248,16 @@ class LeagueTrainer:
             raise ValueError("league training requires at least one main agent")
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
+
+        if args.cur_main_exploiter_path:
+            exploiter_ckpt_path = _resolve_checkpoint_path(args.cur_main_exploiter_path)
+            exploiter_state = torch.load(exploiter_ckpt_path, map_location=device, weights_only=True)
+            seen_exploiters = set()
+            for ag in self.active_league_agents:
+                if isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) and id(ag) not in seen_exploiters:
+                    ag.agent.load_state_dict(exploiter_state)
+                    ag._initial_weights = {k: v.detach().clone() for k, v in ag.agent.state_dict().items()}
+                    seen_exploiters.add(id(ag))
 
         
 
