@@ -27,6 +27,7 @@ ExperimentConfig:
   main_exploiter_winrate_threshold: 0.7
   league_exploiter_winrate_threshold: 0.7
   main_exploiter_vs_main_winrate_threshold: 0.4
+  checkpoint_end_buffer_steps: 0
   exploiter_PPO_learning_rate: 2.5e-5
   checkpoint_frequency: 10        # (in Updates) Frequency to save main model checkpoints during training
 

@@ -42,6 +42,7 @@ class ExperimentConfig:
     exploiter_ent_coef: float
     main_exploiter_no_draw_winrate_threshold: float
     main_exploiter_vs_main_winrate_threshold: float
+    checkpoint_end_buffer_steps: int
     pfsp_min_prob_factor: float
     vf_coef: float
     max_grad_norm: float
