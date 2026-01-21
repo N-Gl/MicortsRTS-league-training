@@ -100,6 +100,16 @@ def adjust_action_selfplay(args, valid_actions: np.ndarray, valid_actions_counts
             #real_action[1:args.num_selfplay_envs:2, :, 7] = torch.abs(real_action[1:args.num_selfplay_envs:2, :, 7] - 48)
 
 
+def _resolve_checkpoint_path(model_path: str) -> str:
+    if model_path.endswith(".pt"):
+        checkpoint_path = model_path
+    else:
+        checkpoint_path = f"models/{model_path}/agent.pt"
+    if not os.path.exists(checkpoint_path):
+        raise FileNotFoundError(f"No checkpoint found at {checkpoint_path}")
+    return checkpoint_path
+
+
 def render_all_envs(env_transform):
     try:
         if env_transform is None:
@@ -239,6 +249,16 @@ class LeagueTrainer:
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
 
+        if args.cur_main_exploiter_path:
+            exploiter_ckpt_path = _resolve_checkpoint_path(args.cur_main_exploiter_path)
+            exploiter_state = torch.load(exploiter_ckpt_path, map_location=device, weights_only=True)
+            seen_exploiters = set()
+            for ag in self.active_league_agents:
+                if isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) and id(ag) not in seen_exploiters:
+                    ag.agent.load_state_dict(exploiter_state)
+                    ag._initial_weights = {k: v.detach().clone() for k, v in ag.agent.state_dict().items()}
+                    seen_exploiters.add(id(ag))
+
         
 
 
@@ -278,7 +298,7 @@ class LeagueTrainer:
         sp_logprobs = torch.zeros((args.num_steps, args.num_selfplay_envs)).to(device)
         sp_invalid_action_masks = torch.zeros((args.num_steps, args.num_selfplay_envs) + invalid_action_shape).to(device)
 
-        global_step = 0
+        args.global_step = 0
         start_time = time.time()
 
         next_obs_np, _, bot_res = envs.reset()
@@ -330,7 +350,7 @@ class LeagueTrainer:
                         envs.render("human")
                         sp_envs.render("human")
                         
-                global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
+                args.global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
                 bot_obs[step] = bot_next_obs
                 sp_obs[step] = sp_next_obs
                 next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)
@@ -497,13 +517,13 @@ class LeagueTrainer:
                         if not torch.all(sp_next_obs[0] == sp_next_obs[i]):
                             breakpoint()
 
-                '''winloss = min(0.01, 6.72222222e-9 * global_step)
-                densereward = max(0, 0.8 + (-4.44444444e-9 * global_step))
+                '''winloss = min(0.01, 6.72222222e-9 * args.global_step)
+                densereward = max(0, 0.8 + (-4.44444444e-9 * args.global_step))
 
-                if global_step < 100000000:
-                    scorew = 0.19 + 1.754e-8 * global_step
+                if args.global_step < 100000000:
+                    scorew = 0.19 + 1.754e-8 * args.global_step
                 else:
-                    scorew = 0.5 - 1.33e-8 * global_step'''
+                    scorew = 0.5 - 1.33e-8 * args.global_step'''
 
 
                 # densereward = 0
@@ -587,10 +607,10 @@ class LeagueTrainer:
                             if isinstance(done_agent, league.MainPlayer):
                                 # game_length = infos[done_idx]["episode"]["l"]
                                 # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                                league.log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
+                                league.log_general_main_results(writer, args.global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
-                            league.log_bot_game_results(args, writer, global_step, infos, attack, done_idx, dyn_winloss, num_done_botgames)
+                            league.log_bot_game_results(args, writer, infos, attack, done_idx, dyn_winloss, num_done_botgames)
                             num_done_botgames += 1
                             last_bot_env_change += 1
 
@@ -601,7 +621,6 @@ class LeagueTrainer:
                                 agent,
                                 writer,
                                 self.active_league_agents,
-                                global_step,
                                 infos,
                                 attack,
                                 done_idx,
@@ -755,7 +774,7 @@ class LeagueTrainer:
             if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
                 pg_stop_iter = -2
 
-            ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
+            ppo_update.log(args, writer, optimizer, args.global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
 
             # bot_exploiters = np.where(
             #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
@@ -858,7 +877,7 @@ class LeagueTrainer:
                     if args.dbg_exploiter_update:
                         self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
                     
-                    league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, global_step, self.experiment_name, update, grad_norm=grad_norm)
+                    league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, self.experiment_name, update, grad_norm=grad_norm)
 
                 
                 # TODO (optimize): wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
@@ -868,13 +887,13 @@ class LeagueTrainer:
                 #     envs,
                 #     agent_batches,
                 #     writer,
-                #     global_step,
+                #     args.global_step,
                 #     update,
                 #     agent,
                 #     self.experiment_name,
                 #     exploiter_indices
                 # )
-                writer.add_scalar("debug/exploiter_skip_updates_count", skip_update_count, global_step)
+                writer.add_scalar("debug/exploiter_skip_updates_count", skip_update_count, args.global_step)
                 if skip_update_count:
                     print(f"Skipped exploiter updates this rollout: {skip_update_count}")
 
@@ -887,8 +906,8 @@ class LeagueTrainer:
                     else:
                         league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
 
-            writer.add_scalar("charts/sps", int(global_step / (time.time() - start_time)), global_step)
-            print("SPS:", int(global_step / (time.time() - start_time)))
+            writer.add_scalar("charts/sps", int(args.global_step / (time.time() - start_time)), args.global_step)
+            print("SPS:", int(args.global_step / (time.time() - start_time)))
 
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
             if  last_bot_env_change >= 20 and args.num_bot_envs > 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
@@ -1000,7 +1019,7 @@ class LeagueTrainer:
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
-            writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, global_step)
+            writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, args.global_step)
 
         if args.dbg_non_legal_action and cleanup_break:
             cleanup_break()
