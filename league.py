@@ -306,21 +306,20 @@ class MainPlayer(Player):
 
     def get_match(self):
         '''Decides which opponent to play against.
-        Main agents are trained with a proportion of 35% SP, 50% PFSP
-        against all past players in the league, and an additional 20% of PFSP
-        matches against forgotten main players the agent can no longer beat
-        and past main exploiters.
-        If there are no forgotten players or strong exploiters, the 10% is used for self-play instead.'''
+        Main agents are trained with a proportion of PFSP and SP defined by
+        args.main_PFSP_prob and args.main_SP_prob. The remaining probability is used
+        for verification matches against forgotten main players and past main exploiters.
+        If there are no forgotten players or strong exploiters, that probability is used for self-play instead.'''
         if self.args.sp:
             return self._payoff.players[0], True
         coin_toss = np.random.random()
 
         # Make sure you can beat the League
-        # 50% of the time, play PFSP against all historical players (jetzt: 0,7)
-        if coin_toss < 0.7:
+        # PFSP against all historical players
+        if coin_toss < self.args.main_PFSP_prob:
             return self._pfsp_branch()
 
-        # 35% of the time, play self-play
+        # Self-play
         main_agents = [
             player for player in self._payoff.players
             if isinstance(player, MainPlayer)
@@ -329,7 +328,7 @@ class MainPlayer(Player):
 
         # Verify if there are some rare players we omitted
         # 20% of PFSP matches against forgotten main players the agent can no longer beat and past main exploiters
-        if coin_toss > 1 - 0.2:
+        if coin_toss < 1 - self.args.main_SP_prob:
             request = self._verification_branch(opponent)
             if request is not None:
                 self.not_exploiter(request)
@@ -403,7 +402,7 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
+        if (self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games < 10) and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
@@ -421,10 +420,10 @@ class MainExploiter(Player):
             if len(win_rates) and min_win_rate > threshold:
                 rand = np.random.random()
                 if min_win_rate > self.args.main_winrate_threshold:
-                    if rand < 0.6:       # min_win_rate = 0.7 -> 60%
+                    if rand < 0.6:       # min_win_rate = main_winrate_threshold (0.7) -> 60%
                         return opponent, True
                 else:
-                    if rand < 0.2:       # min_win_rate = threshold -> 20%
+                    if rand < 0.1:       # min_win_rate = threshold -> 10%
                         return opponent, True
 
         # args.sp gibt jetzt auch andere Historical as Gegner

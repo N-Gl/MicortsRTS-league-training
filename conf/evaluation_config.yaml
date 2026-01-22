@@ -5,21 +5,22 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/19_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_with_bots__6_10_jump_start_with_Bots_1_hist/Main_agent_backups/agent_update_1600.pt",
+                          "league_models/debug_MainExploiter_vs_MainPlayer_initial_agent_exploiter_max_grad_norm_0_8_zwischenstand/MainExploiter/MainExploiter_0_update_200.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "19_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_with_bots__6_10_jump_start_with_Bots_1_hist",
+          "debug_MainExploiter_vs_MainPlayer_initial_agent_exploiter_max_grad_norm_0_8_zwischenstand",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "19_01_26__finished_PPO_Basis_thesis_11_main_envs_11_main_exploiter_envs_with_bots__6_10_jump_start_with_Bots_1_hist_update_1600_evaluation"
+  exp_name: "debug_MainExploiter_vs_MainPlayer_initial_agent_exploiter_max_grad_norm_0_8_zwischenstand_MainExploiter_0_update_200"
   wandb_project_name: new_Evaluation
+  wandb_group_name: test_evaluation
   prod_mode: true
 
   seed:
   exact_seed: true
 
-  render: false
+  render: true
   render_all: false
 
   num_eval_episodes: 100
