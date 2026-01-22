@@ -332,9 +332,18 @@ class MainPlayer(Player):
         if coin_toss > 1 - 0.2:
             request = self._verification_branch(opponent)
             if request is not None:
+                self.not_exploiter(request)
                 return request
+            
 
+        self.not_exploiter(opponent)
         return opponent, False # self._selfplay_branch(opponent)
+    
+    # TODO (debugging): remove
+    def not_exploiter(self, opponent):
+        assert not isinstance(opponent, (MainExploiter, LeagueExploiter)), (
+            f"MainPlayer {self.name} got exploiter {opponent.name} as opponent, which should not happen."
+        )
 
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. 
@@ -636,7 +645,7 @@ class League:
         main_agent = MainPlayer(initial_main_agent, self._payoff, args=args)
         for _ in range(args.num_main_envs):
             self._learning_agents.append(main_agent)
-            
+
         if args.starting_historical:
             self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
