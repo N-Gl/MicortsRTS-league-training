@@ -332,9 +332,18 @@ class MainPlayer(Player):
         if coin_toss > 1 - 0.2:
             request = self._verification_branch(opponent)
             if request is not None:
+                self.not_exploiter(request)
                 return request
+            
 
+        self.not_exploiter(opponent)
         return opponent, False # self._selfplay_branch(opponent)
+    
+    # TODO (debugging): remove
+    def not_exploiter(self, opponent):
+        assert not isinstance(opponent, (MainExploiter, LeagueExploiter)), (
+            f"MainPlayer {self.name} got exploiter {opponent.name} as opponent, which should not happen."
+        )
 
     def ready_to_checkpoint(self):
         '''Decides whether the agent is ready to create a new checkpoint. 
@@ -636,7 +645,7 @@ class League:
         main_agent = MainPlayer(initial_main_agent, self._payoff, args=args)
         for _ in range(args.num_main_envs):
             self._learning_agents.append(main_agent)
-            
+
         if args.starting_historical:
             self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
@@ -686,7 +695,7 @@ class League:
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
 
-        if (num_done_selfplaygames < 10 or last_logged_selfplay_games + 25 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
+        if (num_done_selfplaygames < 100 or last_logged_selfplay_games + 10 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
 
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates_no_draw = []
@@ -732,11 +741,52 @@ class League:
                                     table_name=f"league/{done_agent.name}_summary",
                                     with_name=done_agent.name
                                     )
+            pfsp_probs_by_player = {}
+            if isinstance(done_agent, MainPlayer):
+                pfsp_candidates = [
+                    player for player in done_agent.payoff.players
+                    if isinstance(player, Historical)
+                ]
+                pfsp_weighting = "focused"
+            elif isinstance(done_agent, MainExploiter):
+                pfsp_candidates = [
+                    player for player in done_agent.payoff.players
+                    if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
+                ]
+                pfsp_weighting = "variance"
+            elif isinstance(done_agent, LeagueExploiter):
+                pfsp_candidates = [
+                    player for player in done_agent.payoff.players
+                    if isinstance(player, Historical)
+                ]
+                pfsp_weighting = "variance"
+            else:
+                pfsp_candidates = []
+                pfsp_weighting = None
+
+            if pfsp_candidates:
+                pfsp_win_rates = done_agent.payoff.array_win_rate_no_draw(done_agent, pfsp_candidates)
+                pfsp_probs = pfsp(
+                    pfsp_win_rates,
+                    weighting=pfsp_weighting,
+                    enabled=args.pfsp,
+                    min_prob_factor=args.pfsp_min_prob_factor,
+                )
+                pfsp_probs_by_player = {
+                    player: prob for player, prob in zip(pfsp_candidates, pfsp_probs)
+                }
             
             if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
-                for opp, games, r in zip(opp_names, game_count, win_rates_no_draw):
+                for opp, opp_player, games, r in zip(opp_names, opp_players, game_count, win_rates_no_draw):
                     if games > 0:
                         writer.add_scalar(f"winrate_no_draw_per_opponent/{done_agent.name}_vs_{opp}", r, games)
+                    if pfsp_probs_by_player:
+                        approx_prob = pfsp_probs_by_player.get(opp_player, 0.0)
+                        writer.add_scalar(
+                            f"aprox_pfsp_probabilities_per_opponent/{done_agent.name}_vs_{opp}",
+                            approx_prob,
+                            args.global_step,
+                        )
 
             historicals = [
                 player for player in done_agent.payoff.players
@@ -759,6 +809,12 @@ class League:
             + delta_score_sum_weighted
         )
         writer.add_scalar("charts/selfplay_reward_scores_sum", weighted_score_reward_sum, num_done_selfplaygames)
+        if isinstance(done_agent, (MainExploiter, LeagueExploiter)):
+            writer.add_scalar(
+                f"{done_agent.name}/reward_scores_sum",
+                weighted_score_reward_sum,
+                num_done_selfplaygames,
+            )
         print(
             f"global_step={args.global_step}, episode_reward={episode_reward:.3f}, score_reward_sum={weighted_score_reward_sum:.3f}"
         )
