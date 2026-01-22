@@ -91,7 +91,7 @@ ExperimentConfig:
   exploiter_gae_lambda: 0.95
   exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
-  exploiter_max_grad_norm: 0.5
+  exploiter_max_grad_norm: 0.8
   exploiter_clip_coef: 0.2 # 0.2
   exploiter_update_epochs: 4
   exploiter_kle_stop: true
