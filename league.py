@@ -402,7 +402,7 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if (self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games < 10) and not self.args.sp:
+        if (self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10) and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
