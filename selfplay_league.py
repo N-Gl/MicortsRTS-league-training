@@ -194,6 +194,8 @@ def break_on_stdout(trigger="Issuing a non legal action", include_stderr: bool =
 
     return cleanup
 
+
+
 class LeagueTrainer:
     def __init__(
         self,
@@ -230,6 +232,8 @@ class LeagueTrainer:
         self.indices_per_exploiter = {}
         self.b_indices_per_exploiter = {}
 
+        
+
 
     def train(self):
         args = self.args
@@ -241,7 +245,7 @@ class LeagueTrainer:
         sp_envs = self.sp_envs
         writer = self.writer
         device = self.device
-        supervised_agent = self.supervised_agent or Agent(agent.action_plane_nvec, agent.device, initial_weights=agent.state_dict())
+        supervised_agent = self.supervised_agent or Agent(agent.action_plane_nvec, agent.device, initial_weights=agent.state_dict(), unit_exploiters=args.unit_exploiters)
         last_bot_env_change = 0
 
         if args.render:
@@ -264,6 +268,15 @@ class LeagueTrainer:
             for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
                 if isinstance(ag, (league.MainPlayer)):
                     load_agent_from_checkpoint(args.cur_main_path, device, ag)
+
+        if args.unit_exploiters:
+            self.unit_bonus_distr = torch.rand((args.num_envs, 4), device=device)
+            for ag, indices in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
+                if isinstance(ag, (league.MainPlayer)):
+                    self.unit_bonus_distr[indices] = torch.zeros((len(indices), 4), device=device)
+        else:
+            self.unit_bonus_distr = None
+                    
         
 
 
@@ -395,7 +408,8 @@ class LeagueTrainer:
                         num_selfplay_envs=args.num_selfplay_envs,
                         num_envs=args.num_envs,
                         unique_agents=unique_agents,
-                        only_player_0=True
+                        only_player_0=True,
+                        unit_bonus_distr=self.unit_bonus_distr
                     ).flatten()
 
                     # debug:
@@ -424,7 +438,8 @@ class LeagueTrainer:
                         bot_obs[step],
                         scalar_features[step, args.num_selfplay_envs:],
                         z_features[step, args.num_selfplay_envs:],
-                        envs=envs
+                        envs=envs,
+                        unit_bonus_distr=self.unit_bonus_distr[args.num_selfplay_envs:] if self.unit_bonus_distr is not None else None
                     )
 
                     sp_actions[step], sp_logprobs[step], _, sp_invalid_action_masks[step] = agent.selfplay_get_action(
@@ -436,7 +451,8 @@ class LeagueTrainer:
                         envs=sp_envs,
                         active_league_agents=self.active_league_agents,
                         unique_agents=sp_only_unique_agents,
-                        dbg_deterministic_actions=args.dbg_deterministic_actions
+                        dbg_deterministic_actions=args.dbg_deterministic_actions,
+                        unit_bonus_distr=self.unit_bonus_distr[:args.num_selfplay_envs] if self.unit_bonus_distr is not None else None
                     )
 
                 # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
@@ -640,6 +656,10 @@ class LeagueTrainer:
 
                             if args.save_gpu_memory:
                                 league.offload_historical_to_cpu(old_opp, active_agents=self.active_league_agents)
+
+                    # get new unit bonus distribution for next Game
+                    self.get_new_unit_bonus_distr(where_done[0], device)
+
                     delta_score_sums = torch.where(done_mask, torch.zeros_like(delta_score_sums), delta_score_sums)
                         
                 # =============
@@ -679,7 +699,8 @@ class LeagueTrainer:
                     num_selfplay_envs=args.num_selfplay_envs,
                     num_envs=args.num_envs,
                     unique_agents=unique_agents,
-                    only_player_0=True
+                    only_player_0=True,
+                    unit_bonus_distr=self.unit_bonus_distr
                 ).reshape(1, -1)
 
                 # self.check_values(
@@ -754,6 +775,10 @@ class LeagueTrainer:
                 "masks": invalid_action_masks[:, self.main_indices].reshape((-1,) + invalid_action_shape),
                 "skip_policy_update": args.dbg_no_main_agent_ppo_update
             }
+            if self.unit_bonus_distr is not None:
+                main_unit_bonus = self.unit_bonus_distr[self.main_indices]
+                main_unit_bonus = main_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
+                main_agent_batch["unit_bonus_distr"] = main_unit_bonus
             
             if args.dbg_deterministic_actions:
                 print("\nactions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)\n")
@@ -835,6 +860,10 @@ class LeagueTrainer:
                             "anneal_lr": args.exploiter_anneal_lr,
                             "clip_vloss": args.exploiter_clip_vloss
                         }
+                    if self.unit_bonus_distr is not None:
+                        exploiter_unit_bonus = self.unit_bonus_distr[exploiter_idx]
+                        exploiter_unit_bonus = exploiter_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
+                        exploiter_agent_batch["unit_bonus_distr"] = exploiter_unit_bonus
                         
 
                     if exploiter_lr_fn is not None:
@@ -1028,6 +1057,13 @@ class LeagueTrainer:
 
         if args.dbg_non_legal_action and cleanup_break:
             cleanup_break()
+
+
+    def get_new_unit_bonus_distr(self, indices, device: torch.device) -> torch.Tensor:
+        if self.args.unit_exploiters:
+            for i in indices:
+                if not isinstance(self.active_league_agents[i], league.MainPlayer):
+                    self.unit_bonus_distr[i] = torch.rand(4, device=device)
 
 
     def _refresh_main_indices(self, args):

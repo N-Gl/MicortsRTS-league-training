@@ -81,6 +81,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     b_values, b_advantages, b_returns = agent_batch["values"], agent_batch["advantages"], agent_batch["returns"]
     b_Sc, b_z, b_obs = agent_batch["sc"], agent_batch["z"], agent_batch["obs"]
     b_actions, b_logprobs, b_invalid_action_masks = agent_batch["actions"], agent_batch["logprobs"], agent_batch["masks"]
+    b_unit_bonus_distr = agent_batch.get("unit_bonus_distr")
     ent_coef = agent_batch.get("ent_coef", args.ent_coef)
     vf_coef = agent_batch.get("vf_coef", args.vf_coef)
     clip_coef = agent_batch.get("clip_coef", args.clip_coef)
@@ -95,6 +96,11 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     clip_vloss = agent_batch.get("clip_vloss", args.clip_vloss)
     skip_policy_update = agent_batch.get("skip_policy_update", False)# or args.dbg_no_main_agent_ppo_update
     
+    if b_unit_bonus_distr is not None:
+        b_unit_bonus_distr = b_unit_bonus_distr.to(device)
+    elif getattr(agent, "unit_exploiters", False):
+        b_unit_bonus_distr = torch.zeros((new_batch_size, 4), device=device)
+
     # Optimizing policy and value network with minibatch updates
     # --num_minibatches, --update-epochs
     # minibatches_size = int(args.batch_size // args.num_minibatches)
@@ -134,10 +140,19 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 # normalize the advantages
                 mb_advantages = (mb_advantages - mb_advantages.mean()) / (mb_advantages.std() + 1e-8)
 
+            mb_unit_bonus_distr = (
+                b_unit_bonus_distr[minibatch_ind] if b_unit_bonus_distr is not None else None
+            )
+
             # forward pass: get network output for the minibatch
             # We also provide actions here
             # (TODO (league training): muss man hier nicht mehr mit den unique_agents machen? nein, weil nur main agenten im batch sind)
-            new_values = agent.get_value(b_obs[minibatch_ind], b_Sc[minibatch_ind], b_z[minibatch_ind]).view(-1)
+            new_values = agent.get_value(
+                b_obs[minibatch_ind],
+                b_Sc[minibatch_ind],
+                b_z[minibatch_ind],
+                unit_bonus_distr=mb_unit_bonus_distr,
+            ).view(-1)
 
             if value_only_phase:
                 # Warmup: skip policy update, only train value head/backbone
@@ -154,6 +169,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                         b_actions.long()[minibatch_ind],
                         b_invalid_action_masks[minibatch_ind],
                         envs,
+                        unit_bonus_distr=mb_unit_bonus_distr,
                     )
                 ratio = (newlogproba - b_logprobs[minibatch_ind]).exp()
 
@@ -200,7 +216,8 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                             b_z[minibatch_ind],
                             b_actions.long()[minibatch_ind],
                             b_invalid_action_masks[minibatch_ind],
-                            envs
+                            envs,
+                            unit_bonus_distr=mb_unit_bonus_distr,
                         )
                 kl_loss = kl_coeff * torch.nn.functional.kl_div(
                         newlogproba, sl_logprobs, log_target=True, reduction="batchmean"

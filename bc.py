@@ -273,8 +273,11 @@ class BehaviorCloning:
             z_embed = self.agent.z_embedding(zt)
             z_enc = self.agent.z_encoder(obs.view(obs.size(0), -1))
             z = alpha * z_embed.squeeze(1) + (1 - alpha) * z_enc
+            unit_bonus_distr = None
+            if getattr(self.agent, "unit_exploiters", False):
+                unit_bonus_distr = torch.zeros((obs.size(0), 4), device=self.device)
 
-            loss = self.agent.bc_loss_fn(obs, sc, expert_actions, z)
+            loss = self.agent.bc_loss_fn(obs, sc, expert_actions, z, unit_bonus_distr=unit_bonus_distr)
 
             loss.backward()
             nn.utils.clip_grad_norm_(self.agent.parameters(), self.args.max_grad_norm)

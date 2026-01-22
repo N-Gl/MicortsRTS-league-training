@@ -380,7 +380,12 @@ class MainExploiter(Player):
         main_exp_idx = None
     ):
         self.args = args
-        self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
+        self.agent = Agent(
+            action_plane_nvec=initial_agent.action_plane_nvec,
+            device=initial_agent.device,
+            initial_weights=initial_agent.state_dict(),
+            unit_exploiters=getattr(initial_agent, "unit_exploiters", False),
+        ).to(initial_agent.device)
         self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         # self._initial_weights = initial_agent.state_dict() und copy later -> to reset the exploiter back to the main agent weights after each checkpoint.
         self._payoff = payoff
@@ -402,7 +407,7 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if (self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games < 10) and not self.args.sp:
+        if (self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10) and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
@@ -491,7 +496,12 @@ class LeagueExploiter(Player):
         league_exp_idx = None
     ):
         self.args = args
-        self.agent = Agent(action_plane_nvec=initial_agent.action_plane_nvec, device=initial_agent.device, initial_weights=initial_agent.state_dict()).to(initial_agent.device)
+        self.agent = Agent(
+            action_plane_nvec=initial_agent.action_plane_nvec,
+            device=initial_agent.device,
+            initial_weights=initial_agent.state_dict(),
+            unit_exploiters=getattr(initial_agent, "unit_exploiters", False),
+        ).to(initial_agent.device)
         self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         self._payoff = payoff
         self._checkpoint_step = 0
@@ -567,7 +577,12 @@ class Historical(Player):
         name=None,
         historical_count=None
     ):
-        self.agent = Agent(action_plane_nvec=parent.agent.action_plane_nvec, device=parent.agent.device, initial_weights=parent.agent.state_dict()).to(parent.agent.device)
+        self.agent = Agent(
+            action_plane_nvec=parent.agent.action_plane_nvec,
+            device=parent.agent.device,
+            initial_weights=parent.agent.state_dict(),
+            unit_exploiters=getattr(parent.agent, "unit_exploiters", False),
+        ).to(parent.agent.device)
         if args.save_gpu_memory:
             offload_historical_to_cpu(self)
         self._payoff = payoff

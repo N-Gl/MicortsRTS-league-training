@@ -319,14 +319,14 @@ def main(cfg: ExperimentConfig):
     if not args.evaluate:
         action_plane_nvec = envsT.action_plane_space.nvec
 
-        agent = build_agent(action_plane_nvec, device)
+        agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
         # agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
 
         if args.BC_model_path and not args.league_training:
             path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
         else:
             path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
-        initial_agent = build_agent(action_plane_nvec, device)
+        initial_agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
         # initial_agent = torch.compile(initial_agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else initial_agent
 
         start_epoch = 1
@@ -340,7 +340,7 @@ def main(cfg: ExperimentConfig):
             ckpt_path = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
             if not os.path.exists(ckpt_path):
                 raise FileNotFoundError(f"No checkpoint found at {ckpt_path}")
-            agent.load_state_dict(torch.load(ckpt_path, map_location=device,weights_only=True))
+            agent.set_weights(ckpt_path)
             agent.train()
             print(f"resumed at epoch {start_epoch}")
 
@@ -350,11 +350,7 @@ def main(cfg: ExperimentConfig):
             # initial_agent = build_agent(action_plane_nvec, device)
             # end new
 
-            initial_agent.load_state_dict(
-                torch.load(
-                    path_initial_agent,
-                    map_location=device,
-                    weights_only=True))
+            initial_agent.set_weights(path_initial_agent)
             for param in initial_agent.parameters():
                 param.requires_grad = False
             initial_agent.eval()
@@ -430,13 +426,8 @@ def main(cfg: ExperimentConfig):
         from selfplay_league import LeagueTrainer
 
         path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
-        BCagent = build_agent(action_plane_nvec, device)
-        BCagent.load_state_dict(
-                torch.load(
-                    path_BCagent,
-                    map_location=device,
-                    weights_only=True)
-                    )
+        BCagent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
+        BCagent.set_weights(path_BCagent)
         for param in BCagent.parameters():
             param.requires_grad = False
         BCagent.eval()
@@ -449,13 +440,8 @@ def main(cfg: ExperimentConfig):
         if args.other_historicals_paths is not None:
             for historical_path in args.other_historicals_paths:
                 path_historical = _resolve_checkpoint_path(historical_path, args.exp_name, resume=args.resume)
-                historical_agent = build_agent(action_plane_nvec, device)
-                historical_agent.load_state_dict(
-                    torch.load(
-                        path_historical,
-                        map_location=device,
-                        weights_only=True)
-                        )
+                historical_agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
+                historical_agent.set_weights(path_historical)
                 for param in historical_agent.parameters():
                     param.requires_grad = False
                 historical_agent.eval()

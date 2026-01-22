@@ -112,7 +112,7 @@ class Agent(nn.Module):
         initial_weights: Optional[Union[str, Dict[str, torch.Tensor]]] = None,
         logits: Optional[torch.Tensor] = None,
         values: Optional[torch.Tensor] = None,
-
+        unit_exploiters: Optional[bool] = False # TODO übergebe den Wert aus args
     ):
         super().__init__()
         self.device = device
@@ -128,7 +128,7 @@ class Agent(nn.Module):
         self.action_nvec_list = nvec.tolist()
         self.num_action_params = len(self.action_nvec_list)
         self.action_dim = int(nvec.sum())
-
+        self.unit_exploiters = unit_exploiters
         self.network = nn.Sequential(
             layer_init(nn.Conv2d(73, 64, kernel_size=3, stride=2, padding=1)),
             nn.GELU(),
@@ -147,35 +147,63 @@ class Agent(nn.Module):
         self.z_encoder = ZSampler(obs_dim=self.mapsize * 73, z_dim=8)
         self.scalar_encoder = ScalarFeatureEncoder(11)
         # print(envsT.action_plane_space.nvec.sum())
-        self.actor = layer_init(
-            nn.Linear(256 + 32 + 8, self.mapsize * self.action_dim),
-            std=0.01,
-        )
-        self.critic = layer_init(nn.Linear(256 + 32 + 8, 1), std=1)
+
+        if self.unit_exploiters:
+            self.actor = layer_init(
+                nn.Linear(256 + 32 + 8 + 4, self.mapsize * self.action_dim),
+                std=0.01,
+            )
+            self.critic = layer_init(nn.Linear(256 + 32 + 8 + 4, 1), std=1)
+        else:
+            self.actor = layer_init(
+                nn.Linear(256 + 32 + 8, self.mapsize * self.action_dim),
+                std=0.01,
+            )
+            self.critic = layer_init(nn.Linear(256 + 32 + 8, 1), std=1)
         if initial_weights is not None:
             self.set_weights(initial_weights)
 
-    def forward(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, unit_bonus_distr: torch.Tensor = None) -> torch.Tensor:
         sc_feat = self.scalar_encoder(sc)
         obs_feat = self.network(x.permute((0, 3, 1, 2)))
         z = z.view(z.size(0), -1)
+        if self.unit_exploiters:
+            if unit_bonus_distr is None:
+                raise ValueError("unit_bonus_distr must be provided when unit_exploiters is True.") # TODO remove exception later
+                unit_bonus_distr = torch.zeros((x.size(0), 4), device=self.device)
+            
+            unit_bonus_distr = unit_bonus_distr.view(unit_bonus_distr.size(0), -1)
+            return torch.cat([obs_feat, sc_feat, z, unit_bonus_distr], dim=-1)
         return torch.cat([obs_feat, sc_feat, z], dim=-1)
 
     def set_weights(self, weights: Union[str, Dict[str, torch.Tensor]]) -> None:
-        if isinstance(weights, dict):
-            self.load_state_dict(weights)
-        elif isinstance(weights, str):
-            self.load_state_dict(torch.load(weights, map_location=self.device, weights_only=True))
-        else:
+        if isinstance(weights, str):
+            weights = torch.load(weights, map_location=self.device, weights_only=True)
+        if not isinstance(weights, dict):
             raise NotImplementedError("Only loading from dict or filepath is implemented.")
+
+        def _merge_linear_weight(key: str, target: torch.Tensor) -> None:
+            src = weights.get(key)
+            if src is None or src.shape == target.shape:
+                return
+            if src.dim() != 2 or target.dim() != 2 or src.shape[0] != target.shape[0]:
+                return
+            merged = torch.zeros_like(target)
+            cols = min(src.shape[1], target.shape[1])
+            merged[:, :cols] = src[:, :cols]
+            weights[key] = merged
+
+        _merge_linear_weight("actor.weight", self.actor.weight)
+        _merge_linear_weight("critic.weight", self.critic.weight)
+        self.load_state_dict(weights, strict=False)
 
     def get_steps(self) -> int:
         """How many agent steps the agent has been trained for."""
         return self.steps
 
-    def bc_loss_fn(self, obs: torch.Tensor, sc: torch.Tensor, expert_actions: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
+    def bc_loss_fn(self, obs: torch.Tensor, sc: torch.Tensor, expert_actions: torch.Tensor, z: torch.Tensor, unit_bonus_distr: torch.Tensor = None) -> torch.Tensor:
         B, H, W, _ = obs.shape
-        features = self.forward(obs, sc, z)
+        features = self.forward(obs, sc, z, unit_bonus_distr)
         flat = self.actor(features)
         grid_logits = flat.view(-1, self.action_dim)
         split_logits = torch.split(grid_logits, self.action_nvec_list, dim=1)
@@ -235,12 +263,13 @@ class Agent(nn.Module):
         num_selfplay_envs: int = 0,
         logits: Optional[torch.Tensor] = None,
         process_envs: Optional[Any] = None,
-        dbg_deterministic_actions: bool = False
+        dbg_deterministic_actions: bool = False,
+        unit_bonus_distr: Optional[torch.Tensor] = None,
     ):
         if process_envs is None:
             process_envs = range(envs.num_envs)
         if logits is None:
-            logits = self.actor(self.forward(x, sc, z))
+            logits = self.actor(self.forward(x, sc, z, unit_bonus_distr))
         grid_logits = logits.view(-1, self.action_dim)
         split_logits = torch.split(grid_logits, self.action_nvec_list, dim=1)
         # torch.where(x[29] != x[28])[0].shape[0] != 0 or torch.where(sc[29] != sc[28])[0].shape[0] != 0 or torch.where(z[29] != z[28])[0].shape[0] != 0
@@ -320,7 +349,8 @@ class Agent(nn.Module):
         envs=None,
         active_league_agents = None,
         unique_agents: Optional[Dict] = None,
-        dbg_deterministic_actions: bool = False
+        dbg_deterministic_actions: bool = False,
+        unit_bonus_distr: Optional[torch.Tensor] = None,
     ):
         '''
         returns action, logprob, entropy, invalid_action_masks for selfplay and bot envs combined.
@@ -345,14 +375,14 @@ class Agent(nn.Module):
             if isinstance(agent, Bot_Agent):
                 bot_replacements.append((agent, indices))
                 # placeholder logits; will be overridden by bot actions later
-                self.logits[indices] = 0.0
+                self.sp_logits[indices] = 0.0
                 continue
             
             if agent is not self:
                 with torch.no_grad():
-                    subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices]))
+                    subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices], unit_bonus_distr[indices] if unit_bonus_distr is not None else None))
             else:
-                subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices]))
+                subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices], unit_bonus_distr[indices] if unit_bonus_distr is not None else None))
 
             if agent is not self:
                 # TODO (league training): sollte man wirklich alle non_main_agenten detatchen? (Wahrscheinlich schon) (oder sogar torch.no_grad()) (auch in selfplay_get_value?)
@@ -370,7 +400,8 @@ class Agent(nn.Module):
             selfplay_envs=num_selfplay_envs > 0,
             num_selfplay_envs=num_selfplay_envs,
             logits=self.sp_logits[:num_selfplay_envs],
-            dbg_deterministic_actions=dbg_deterministic_actions
+            dbg_deterministic_actions=dbg_deterministic_actions,
+            unit_bonus_distr=unit_bonus_distr
         )
 
         for bot_agent, indices in bot_replacements:
@@ -401,10 +432,10 @@ class Agent(nn.Module):
             if attack_index is not None:
                 split_masks[attack_index][start:end] = torch.flip(split_masks[attack_index][start:end], dims=[1])
 
-    def get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
-        return self.critic(self.forward(x, sc, z))
+    def get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, unit_bonus_distr: Optional[torch.Tensor] = None) -> torch.Tensor:
+        return self.critic(self.forward(x, sc, z, unit_bonus_distr))
     
-    def selfplay_and_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False) -> torch.Tensor:
+    def selfplay_and_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False, unit_bonus_distr: Optional[torch.Tensor] = None) -> torch.Tensor:
         '''
         returns value for selfplay and bot envs combined.
         Also returns value for not main Agents
@@ -426,9 +457,9 @@ class Agent(nn.Module):
                     continue
             if agent is not self:
                 with torch.no_grad():
-                    self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices]).flatten()# .to(self.device).detach()
+                    self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices], unit_bonus_distr[indices] if unit_bonus_distr is not None else None).flatten()# .to(self.device).detach()
             else:
-                self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices]).flatten()# .to(self.device)
+                self._values[indices] = agent.get_value(x[indices], sc[indices], z[indices], unit_bonus_distr[indices] if unit_bonus_distr is not None else None).flatten()# .to(self.device)
 
         return self._values#.clone()
     
@@ -444,9 +475,17 @@ class Agent(nn.Module):
         
 
 
-def build_agent(action_plane_nvec: Sequence[int], device: torch.device) -> Agent:
+def build_agent(
+    action_plane_nvec: Sequence[int],
+    device: torch.device,
+    unit_exploiters: bool = False,
+) -> Agent:
     """Factory-methode"""
-    return Agent(action_plane_nvec=action_plane_nvec, device=device).to(device)
+    return Agent(
+        action_plane_nvec=action_plane_nvec,
+        device=device,
+        unit_exploiters=unit_exploiters,
+    ).to(device)
 
 
 
@@ -466,7 +505,7 @@ class Bot_Agent(nn.Module):
         self.action_dim = int(np.asarray(self.envsT.action_plane_space.nvec).sum())
         self.player_id = player_id
 
-    def forward(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, unit_bonus_distr: Optional[torch.Tensor] = None) -> torch.Tensor:
         return torch.tensor(x.shape[0], device=self.device)
     
     def actor(self, features: torch.Tensor) -> torch.Tensor:
