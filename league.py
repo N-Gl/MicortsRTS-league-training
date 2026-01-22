@@ -809,6 +809,12 @@ class League:
             + delta_score_sum_weighted
         )
         writer.add_scalar("charts/selfplay_reward_scores_sum", weighted_score_reward_sum, num_done_selfplaygames)
+        if isinstance(done_agent, (MainExploiter, LeagueExploiter)):
+            writer.add_scalar(
+                f"{done_agent.name}/reward_scores_sum",
+                weighted_score_reward_sum,
+                num_done_selfplaygames,
+            )
         print(
             f"global_step={args.global_step}, episode_reward={episode_reward:.3f}, score_reward_sum={weighted_score_reward_sum:.3f}"
         )
