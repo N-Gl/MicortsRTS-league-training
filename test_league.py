@@ -34,6 +34,24 @@ def _make_ready_to_checkpoint_args(**overrides):
         league_exploiter_winrate_threshold=0.7,
         save_gpu_memory=False,
         exp_name="test_exp",
+        total_timesteps=30000000,
+        global_step=1000,
+        checkpoint_end_buffer_steps=5000,
+    )
+    base.update(overrides)
+    return _make_args(**base)
+
+
+def _make_match_args(**overrides):
+    base = dict(
+        sp=False,
+        pfsp=True,
+        pfsp_min_prob_factor=0.0,
+        main_winrate_threshold=0.7,
+        main_exploiter_no_draw_winrate_threshold=0.7,
+        main_exploiter_vs_main_winrate_threshold=0.5,
+        save_gpu_memory=False,
+        exp_name="test_exp",
     )
     base.update(overrides)
     return _make_args(**base)
@@ -352,6 +370,259 @@ def test_league_exploiter_ready_to_checkpoint_uses_raw_save_interval(monkeypatch
     payoff.update(exploiter, historical, 0)
     exploiter.agent.steps = 120
     assert exploiter.ready_to_checkpoint()
+
+
+def test_main_player_get_match_avoids_active_exploiters(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    payoff.add_player(main_player)
+
+    main_exploiter = league.MainExploiter(agent, payoff, args=args, main_exp_idx=0)
+    league_exploiter = league.LeagueExploiter(agent, payoff, args=args, league_exp_idx=0)
+    payoff.add_player(main_exploiter)
+    payoff.add_player(league_exploiter)
+
+    historical = league.Historical(main_player, payoff, args=args, historical_count=0)
+    payoff.add_player(historical)
+
+    coin_tosses = iter([0.1, 0.6, 0.4, 0.75, 0.9])
+    monkeypatch.setattr(league.np.random, "random", lambda: next(coin_tosses))
+
+    opponent_one, _ = main_player.get_match()
+    opponent_two, _ = main_player.get_match()
+    opponent_three, _ = main_player.get_match()
+    opponent_four, _ = main_player.get_match()
+    opponent_five, _ = main_player.get_match()
+
+    for opponent in (opponent_one, opponent_two, opponent_three, opponent_four, opponent_five):
+        assert not isinstance(opponent, league.MainExploiter)
+        assert not isinstance(opponent, league.LeagueExploiter)
+
+
+def test_main_player_pfsp_prefers_winrate_point_two(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args(pfsp=True, pfsp_min_prob_factor=0.0)
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    payoff.add_player(main_player)
+
+    historicals = []
+    for idx in range(4):
+        historical = league.Historical(main_player, payoff, args=args, historical_count=idx)
+        historicals.append(historical)
+        payoff.add_player(historical)
+
+    monkeypatch.setattr(
+        payoff,
+        "array_win_rate_no_draw",
+        lambda home, away: np.array([0.2, 0.4, 0.8, 0.05]),
+    )
+
+    captured = {}
+
+    def fake_choice(options, p=None):
+        captured["p"] = p
+        return options[0]
+
+    monkeypatch.setattr(league.np.random, "choice", fake_choice)
+    monkeypatch.setattr(league.np.random, "random", lambda: 0.1)
+
+    opponent, _ = main_player.get_match()
+    assert opponent is historicals[0]
+
+    probs = captured["p"]
+    assert probs[0] > probs[1]
+    assert probs[0] > probs[2]
+    assert probs[0] > probs[3]
+
+
+def test_main_player_pfsp_sampling_prefers_winrate_point_two(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args(pfsp=True, pfsp_min_prob_factor=0.0)
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    payoff.add_player(main_player)
+
+    historicals = []
+    for idx in range(4):
+        historical = league.Historical(main_player, payoff, args=args, historical_count=idx)
+        historicals.append(historical)
+        payoff.add_player(historical)
+
+    win_rates = np.array([0.2, 0.4, 0.8, 0.05])
+    monkeypatch.setattr(payoff, "array_win_rate_no_draw", lambda home, away: win_rates)
+    monkeypatch.setattr(league.np.random, "random", lambda: 0.1)
+
+    rng = np.random.RandomState(0)
+
+    def seeded_choice(options, p=None):
+        return options[rng.choice(len(options), p=p)]
+
+    monkeypatch.setattr(league.np.random, "choice", seeded_choice)
+
+    counts = np.zeros(len(historicals), dtype=int)
+    index_by_hist = {hist: idx for idx, hist in enumerate(historicals)}
+    samples = 5000
+    for _ in range(samples):
+        opponent, _ = main_player.get_match()
+        counts[index_by_hist[opponent]] += 1
+
+    observed = counts / samples
+    expected = league.pfsp(win_rates, weighting="focused", enabled=True, min_prob_factor=0.0)
+    tolerance = 5 * np.sqrt(expected * (1 - expected) / samples)
+
+    assert observed[0] > observed[1]
+    assert observed[0] > observed[2]
+    assert observed[0] > observed[3]
+    for idx, (obs, exp, tol) in enumerate(zip(observed, expected, tolerance)):
+        assert abs(obs - exp) <= tol, f"index {idx} observed {obs} expected {exp} tolerance {tol}"
+
+
+def test_main_player_selfplay_rate_about_ten_percent(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    payoff.add_player(main_player)
+
+    historical = league.Historical(main_player, payoff, args=args, historical_count=0)
+    payoff.add_player(historical)
+
+    monkeypatch.setattr(main_player, "_pfsp_branch", lambda: (historical, True))
+    monkeypatch.setattr(main_player, "_verification_branch", lambda opponent: (historical, True))
+
+    coin_tosses = iter([(i + 0.5) / 100 for i in range(100)])
+    monkeypatch.setattr(league.np.random, "random", lambda: next(coin_tosses))
+
+    matches = [main_player.get_match()[0] for _ in range(100)]
+    selfplay_count = sum(isinstance(opp, league.MainPlayer) for opp in matches)
+
+    assert selfplay_count == 10
+
+
+def test_main_exploiter_get_match_returns_main_or_main_historical(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args(
+        main_exploiter_no_draw_winrate_threshold=0.7,
+        main_exploiter_vs_main_winrate_threshold=0.9,
+    )
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    main_exploiter = league.MainExploiter(agent, payoff, args=args, main_exp_idx=0)
+    league_exploiter = league.LeagueExploiter(agent, payoff, args=args, league_exp_idx=0)
+
+    payoff.add_player(main_player)
+    payoff.add_player(main_exploiter)
+    payoff.add_player(league_exploiter)
+
+    main_hist = league.Historical(main_player, payoff, args=args, historical_count=0)
+    other_hist = league.Historical(league_exploiter, payoff, args=args, historical_count=0)
+    payoff.add_player(main_hist)
+    payoff.add_player(other_hist)
+
+    def win_rates_for_main(home, away):
+        if away is main_player:
+            return 0.8
+        if isinstance(away, list):
+            return np.array([0.4 for _ in away])
+        raise AssertionError("Unexpected opponent for win rate lookup.")
+
+    monkeypatch.setattr(payoff, "array_win_rate_no_draw", win_rates_for_main)
+
+    opponent, _ = main_exploiter.get_match()
+    assert opponent is main_player
+
+    def win_rates_for_hist(home, away):
+        if away is main_player:
+            return 0.0
+        if isinstance(away, list):
+            return np.array([0.4 for _ in away])
+        raise AssertionError("Unexpected opponent for win rate lookup.")
+
+    monkeypatch.setattr(payoff, "array_win_rate_no_draw", win_rates_for_hist)
+    main_exploiter.args.main_exploiter_no_draw_winrate_threshold = 0.7
+    main_exploiter.args.main_exploiter_vs_main_winrate_threshold = 0.9
+
+    opponent, _ = main_exploiter.get_match()
+    assert isinstance(opponent, league.Historical)
+    assert opponent.parent is main_player
+
+
+def test_main_exploiter_vs_main_winrate_threshold(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args(
+        main_exploiter_no_draw_winrate_threshold=0.9,
+        main_exploiter_vs_main_winrate_threshold=0.5,
+    )
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    main_exploiter = league.MainExploiter(agent, payoff, args=args, main_exp_idx=0)
+    payoff.add_player(main_player)
+    payoff.add_player(main_exploiter)
+    main_hist = league.Historical(main_player, payoff, args=args, historical_count=0)
+    payoff.add_player(main_hist)
+
+    def win_rates(home, away):
+        if away is main_player:
+            return 0.0
+        if isinstance(away, list):
+            return np.array([0.6 for _ in away])
+        raise AssertionError("Unexpected opponent for win rate lookup.")
+
+    monkeypatch.setattr(payoff, "array_win_rate_no_draw", win_rates)
+    monkeypatch.setattr(league.np.random, "random", lambda: 0.0)
+
+    opponent, _ = main_exploiter.get_match()
+    assert opponent is main_player
+
+    main_exploiter.args.main_exploiter_vs_main_winrate_threshold = 0.6
+    opponent, _ = main_exploiter.get_match()
+    assert isinstance(opponent, league.Historical)
+    assert opponent.parent is main_player
+
+
+def test_league_exploiter_get_match_uses_historicals(monkeypatch):
+    monkeypatch.setattr(league, "save_league_model", lambda *args, **kwargs: None)
+    args = _make_match_args()
+    payoff = league.Payoff()
+    device = torch.device("cpu")
+    agent = agent_model.Agent(action_plane_nvec=[2, 2], device=device)
+    main_player = league.MainPlayer(agent, payoff, args=args)
+    league_exploiter = league.LeagueExploiter(agent, payoff, args=args, league_exp_idx=0)
+    payoff.add_player(main_player)
+    payoff.add_player(league_exploiter)
+
+    hist_one = league.Historical(main_player, payoff, args=args, historical_count=0)
+    hist_two = league.Historical(league_exploiter, payoff, args=args, historical_count=1)
+    payoff.add_player(hist_one)
+    payoff.add_player(hist_two)
+
+    captured = {}
+
+    def fake_choice(options, p=None):
+        captured["options"] = options
+        captured["p"] = p
+        return options[-1]
+
+    monkeypatch.setattr(league.np.random, "choice", fake_choice)
+
+    opponent, _ = league_exploiter.get_match()
+    assert opponent is hist_two
+    assert all(isinstance(player, league.Historical) for player in captured["options"])
 
 
 def test_remove_monotonic_suffix_handles_none():

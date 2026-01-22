@@ -341,8 +341,7 @@ class MainPlayer(Player):
         (wenn (min winrate gegen alle historischen gegner > 0.7 und steps_passed >= args.selfplay_ready_save_interval) 
         oder mehr als args.main_selfplay_save_interval steps vergangen sind)'''
         # weil nur eine Instanz von dem agent für Mainagent ex, ist checkpoint_step in agent gespeichert
-        global_steps = getattr(self.args, "global_step", self.agent.get_steps())
-        remaining_steps = self.args.total_timesteps - global_steps
+        remaining_steps = self.args.total_timesteps - self.args.global_step
         if remaining_steps < self.args.checkpoint_end_buffer_steps:
             return False
         steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
@@ -412,7 +411,7 @@ class MainExploiter(Player):
             threshold = self.args.main_exploiter_vs_main_winrate_threshold
             if len(win_rates) and min_win_rate > threshold:
                 rand = np.random.random()
-                if min_win_rate > 0.7:
+                if min_win_rate > self.args.main_winrate_threshold:
                     if rand < 0.6:       # ab min_win_rate = 0.7 -> 60%
                         return opponent, True
                 elif rand < (min_win_rate - threshold) * (1/2) + 0.1:       # ab min_win_rate = threshold -> 10%, min_win_rate = 0.7 -> 25%
@@ -460,7 +459,7 @@ class MainExploiter(Player):
             if isinstance(player, MainPlayer)
         ]
 
-        win_rates = self._payoff[self, mainplayer]
+        win_rates = self._payoff.array_win_rate_no_draw(self, mainplayer)
 
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
