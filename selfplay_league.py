@@ -109,6 +109,12 @@ def _resolve_checkpoint_path(model_path: str) -> str:
         raise FileNotFoundError(f"No checkpoint found at {checkpoint_path}")
     return checkpoint_path
 
+def load_agent_from_checkpoint(model_path: str, device: torch.device, agent) -> Agent:
+    exploiter_ckpt_path = _resolve_checkpoint_path(model_path)
+    
+    agent.agent.load_state_dict(torch.load(exploiter_ckpt_path, map_location=device, weights_only=True))
+    agent._initial_weights = {k: v.detach().clone() for k, v in agent.agent.state_dict().items()}
+
 
 def render_all_envs(env_transform):
     try:
@@ -249,16 +255,15 @@ class LeagueTrainer:
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
 
-        if args.cur_main_exploiter_path:
-            exploiter_ckpt_path = _resolve_checkpoint_path(args.cur_main_exploiter_path)
-            exploiter_state = torch.load(exploiter_ckpt_path, map_location=device, weights_only=True)
-            seen_exploiters = set()
-            for ag in self.active_league_agents:
-                if isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) and id(ag) not in seen_exploiters:
-                    ag.agent.load_state_dict(exploiter_state)
-                    ag._initial_weights = {k: v.detach().clone() for k, v in ag.agent.state_dict().items()}
-                    seen_exploiters.add(id(ag))
+        if not args.cur_main_exploiter_path is None:
+            for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
+                if isinstance(ag, (league.MainExploiter, league.LeagueExploiter)):
+                    load_agent_from_checkpoint(args.cur_main_exploiter_path, device, ag)
 
+        if not args.cur_main_path is None:
+            for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
+                if isinstance(ag, (league.MainPlayer)):
+                    load_agent_from_checkpoint(args.cur_main_path, device, ag)
         
 
 

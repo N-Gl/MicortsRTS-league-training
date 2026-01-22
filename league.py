@@ -341,8 +341,7 @@ class MainPlayer(Player):
         (wenn (min winrate gegen alle historischen gegner > 0.7 und steps_passed >= args.selfplay_ready_save_interval) 
         oder mehr als args.main_selfplay_save_interval steps vergangen sind)'''
         # weil nur eine Instanz von dem agent für Mainagent ex, ist checkpoint_step in agent gespeichert
-        global_steps = getattr(self.args, "global_step", self.agent.get_steps())
-        remaining_steps = self.args.total_timesteps - global_steps
+        remaining_steps = self.args.total_timesteps - self.args.global_step
         if remaining_steps < self.args.checkpoint_end_buffer_steps:
             return False
         steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
@@ -412,7 +411,7 @@ class MainExploiter(Player):
             threshold = self.args.main_exploiter_vs_main_winrate_threshold
             if len(win_rates) and min_win_rate > threshold:
                 rand = np.random.random()
-                if min_win_rate > 0.7:
+                if min_win_rate > self.args.main_winrate_threshold:
                     if rand < 0.6:       # min_win_rate = 0.7 -> 60%
                         return opponent, True
                 else:
@@ -461,7 +460,7 @@ class MainExploiter(Player):
             if isinstance(player, MainPlayer)
         ]
 
-        win_rates = self._payoff[self, mainplayer]
+        win_rates = self._payoff.array_win_rate_no_draw(self, mainplayer)
 
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
@@ -611,14 +610,17 @@ def offload_historical_to_cpu(player, active_agents=None):
 class League:
     def __init__(
         self,
-        initial_main_agent: torch.nn.Module,
-        other_initial_agents: List[torch.nn.Module],
         args,
+        initial_main_agent: torch.nn.Module,
+        initial_exploiter_agent: torch.nn.Module = None,
+        other_initial_agents: List[torch.nn.Module] = None
     ):
         # am Anfang legt man fest, wie viele Environments für das Training von jedem Agententyp genutzt werden (denen gibt man mit .match einen Gegner)
         self._payoff = Payoff()
         self.args = args
         
+        if initial_exploiter_agent is None:
+            initial_exploiter_agent = initial_main_agent
 
         # nur aktive Spieler (nicht Historical)
         self._learning_agents =  []
@@ -628,25 +630,25 @@ class League:
 
         for i in range(len(other_initial_agents)):
             main_agent_historical = MainPlayer(other_initial_agents[i], self._payoff, args=args)
-            if args.starting_historical:
-                self._payoff.add_player(main_agent_historical.checkpoint())
+            self._payoff.add_player(main_agent_historical.checkpoint())
 
         # only 1 Mainagent:
         main_agent = MainPlayer(initial_main_agent, self._payoff, args=args)
         for _ in range(args.num_main_envs):
             self._learning_agents.append(main_agent)
-
-        self._payoff.add_player(main_agent.checkpoint())
+            
+        if args.starting_historical:
+            self._payoff.add_player(main_agent.checkpoint())
         self._payoff.add_player(main_agent)
 
         for main_exp_idx in range(args.num_main_exploiters):
-            main_exploiter = MainExploiter(initial_main_agent, self._payoff, args=args, main_exp_idx=main_exp_idx)
+            main_exploiter = MainExploiter(initial_exploiter_agent, self._payoff, args=args, main_exp_idx=main_exp_idx)
             for _ in range(args.num_envs_per_main_exploiters):
                 self._learning_agents.append(
                     main_exploiter)
             self._payoff.add_player(main_exploiter)
         for league_exp_idx in range(args.num_league_exploiters):
-            league_exploiter = LeagueExploiter(initial_main_agent, self._payoff, args=args, league_exp_idx=league_exp_idx)
+            league_exploiter = LeagueExploiter(initial_exploiter_agent, self._payoff, args=args, league_exp_idx=league_exp_idx)
             for _ in range(args.num_envs_per_league_exploiters):
                 self._learning_agents.append(
                     league_exploiter)
@@ -801,7 +803,7 @@ class League:
 
 
 def initialize_league(args, device, agent, other_initial_agents=[]):
-    league_instance = League(initial_main_agent=agent, other_initial_agents=other_initial_agents, args=args)
+    league_instance = League(args=args, initial_main_agent=agent, other_initial_agents=other_initial_agents)
 
     # initiale Environments mit den jeweiligen Gegnern gefüllt
     active_league_agents = []

@@ -322,9 +322,7 @@ def main(cfg: ExperimentConfig):
         agent = build_agent(action_plane_nvec, device)
         # agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
 
-        if args.league_training:
-            path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
-        elif args.BC_model_path:
+        if args.BC_model_path and not args.league_training:
             path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
         else:
             path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
@@ -338,13 +336,7 @@ def main(cfg: ExperimentConfig):
             else:
                 start_epoch =  1
 
-        if args.cur_main_path:
-            ckpt_path = _resolve_checkpoint_path(args.cur_main_path, args.exp_name, resume=True)
-            if not os.path.exists(ckpt_path):
-                raise FileNotFoundError(f"No checkpoint found at {ckpt_path}")
-            agent.load_state_dict(torch.load(ckpt_path, map_location=device,weights_only=True))
-            agent.train()
-        elif args.resume:
+        if args.resume:
             ckpt_path = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
             if not os.path.exists(ckpt_path):
                 raise FileNotFoundError(f"No checkpoint found at {ckpt_path}")
