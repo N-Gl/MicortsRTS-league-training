@@ -37,6 +37,8 @@ def _make_ready_to_checkpoint_args(**overrides):
         total_timesteps=30000000,
         global_step=1000,
         checkpoint_end_buffer_steps=5000,
+        main_PFSP_prob=0.7,
+        main_SP_prob=0.1,
     )
     base.update(overrides)
     return _make_args(**base)
@@ -47,6 +49,8 @@ def _make_match_args(**overrides):
         sp=False,
         pfsp=True,
         pfsp_min_prob_factor=0.0,
+        main_PFSP_prob=0.7,
+        main_SP_prob=0.1,
         main_winrate_threshold=0.7,
         main_exploiter_no_draw_winrate_threshold=0.7,
         main_exploiter_vs_main_winrate_threshold=0.5,
