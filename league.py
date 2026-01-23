@@ -43,7 +43,10 @@ def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
         "linear_capped": lambda x: np.minimum(0.5, 1 - x),
         "squared": lambda x: (1 - x) ** 2,
         # "focused": lambda x: 3 * (-0.02 + x) ** 0.8 * (1.2 - x) ** 2.8,
-        "focused": lambda x: 4.5 * x ** 0.6 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4))
+        "focused_strong": lambda x: 4.8 * x ** 0.6 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)),
+        "focused_medium": lambda x: 8.2 * x * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)),
+        "focused_strong_boosted": lambda x: 3.5 * x ** 0.4 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)) + 0.05 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)), # stable training
+        # + 0.05 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)) further boost winrate below 0.08, winrate reaches 0.05 at x = 0
     }
     fn = weightings[weighting]
     win_rates = np.asarray(win_rates)
@@ -255,7 +258,15 @@ class MainPlayer(Player):
             if isinstance(player, Historical)
         ]
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
-        return np.random.choice(historical, p=pfsp(win_rates, weighting="focused", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+        return np.random.choice(
+            historical,
+            p=pfsp(
+                win_rates,
+                weighting=self.args.main_pfsp_weighting,
+                enabled=self.args.pfsp,
+                min_prob_factor=self.args.pfsp_min_prob_factor,
+            ),
+        ), True
 
     def _selfplay_branch(self, opponent):
         '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
@@ -289,7 +300,14 @@ class MainPlayer(Player):
         win_rates = self._payoff.array_win_rate_no_draw(self, exp_historical)
         if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
-                exp_historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+                exp_historical,
+                p=pfsp(
+                    win_rates,
+                    weighting=self.args.main_pfsp_weighting,
+                    enabled=self.args.pfsp,
+                    min_prob_factor=self.args.pfsp_min_prob_factor,
+                ),
+            ), True
         
         # Check forgetting
         historical = [
@@ -300,7 +318,14 @@ class MainPlayer(Player):
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
         if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
-                historical, p=pfsp(win_rates, weighting="squared", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+                historical,
+                p=pfsp(
+                    win_rates,
+                    weighting=self.args.main_pfsp_weighting,
+                    enabled=self.args.pfsp,
+                    min_prob_factor=self.args.pfsp_min_prob_factor,
+                ),
+            ), True
 
         return None
 
@@ -440,7 +465,12 @@ class MainExploiter(Player):
         
         historical_names = [player.name for player in historical]
         print(f"\nchoosing next opponent for {self.name} out of \n{historical_names} \nwith win rates: \n{win_rates}")
-        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)
+        p = pfsp(
+            win_rates,
+            weighting=self.args.main_exploiter_pfsp_weighting,
+            enabled=self.args.pfsp,
+            min_prob_factor=self.args.pfsp_min_prob_factor,
+        )
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
 
@@ -530,7 +560,12 @@ class LeagueExploiter(Player):
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
         historical_names = [player.name for player in historical]
         print(f"\nchoosing next opponent for {self.name} out of \n{historical_names} \nwith win rates: \n{win_rates}")
-        p = pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)
+        p = pfsp(
+            win_rates,
+            weighting=self.args.league_exploiter_pfsp_weighting,
+            enabled=self.args.pfsp,
+            min_prob_factor=self.args.pfsp_min_prob_factor,
+        )
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
     
@@ -761,19 +796,19 @@ class League:
                     player for player in done_agent.payoff.players
                     if isinstance(player, Historical)
                 ]
-                pfsp_weighting = "focused"
+                pfsp_weighting = args.main_pfsp_weighting
             elif isinstance(done_agent, MainExploiter):
                 pfsp_candidates = [
                     player for player in done_agent.payoff.players
                     if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
                 ]
-                pfsp_weighting = "variance"
+                pfsp_weighting = args.main_exploiter_pfsp_weighting
             elif isinstance(done_agent, LeagueExploiter):
                 pfsp_candidates = [
                     player for player in done_agent.payoff.players
                     if isinstance(player, Historical)
                 ]
-                pfsp_weighting = "variance"
+                pfsp_weighting = args.league_exploiter_pfsp_weighting
             else:
                 pfsp_candidates = []
                 pfsp_weighting = None
