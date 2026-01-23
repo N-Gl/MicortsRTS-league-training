@@ -10,7 +10,7 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_14
+  exp_name: 22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7
   wandb_project_name: league_training
   wandb_group_name: testing
 
@@ -43,7 +43,7 @@ ExperimentConfig:
   main_exploiter_winrate_threshold: 0.7
   league_exploiter_winrate_threshold: 0.7
   main_exploiter_vs_main_winrate_threshold: 0.3
- checkpoint_end_buffer_steps: 4e6
+  checkpoint_end_buffer_steps: 4e6
 
   even_opponent_split: true
 
@@ -92,7 +92,7 @@ ExperimentConfig:
   exploiter_gae_lambda: 0.95
   exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
-  exploiter_max_grad_norm: 0.8
+  exploiter_max_grad_norm: 0.7
   exploiter_clip_coef: 0.2 # 0.2
   exploiter_update_epochs: 4
   exploiter_kle_stop: true
