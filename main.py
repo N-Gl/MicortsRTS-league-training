@@ -481,7 +481,7 @@ def main(cfg: ExperimentConfig):
             # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
             ["22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3", agent_model.Agent, "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3/Main_agent_backups/agent_update_830.pt", None],
             # ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None],
-            # ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None],
+            ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None],
             # ["old_ppo_args__12_12_25__04_12_25__PPO", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_1710.pt", None],
         ]
         # 2nd element: uninitialized Agent class 
@@ -489,14 +489,14 @@ def main(cfg: ExperimentConfig):
 
 
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
-            # ("coacAI", microrts_ai.coacAI),
-            # ("mayari", microrts_ai.mayari),
-            # # ("passiveAI", microrts_ai.passiveAI),
-            # ("workerRushAI", microrts_ai.workerRushAI),
-            # ("lightRushAI", microrts_ai.lightRushAI),
-            # ("randomAI", microrts_ai.randomAI),
-            # ("randomBiasedAI", microrts_ai.randomBiasedAI),
-            # ("rojo", microrts_ai.rojo),
+            ("coacAI", microrts_ai.coacAI),
+            ("mayari", microrts_ai.mayari),
+            # ("passiveAI", microrts_ai.passiveAI),
+            ("workerRushAI", microrts_ai.workerRushAI),
+            ("lightRushAI", microrts_ai.lightRushAI),
+            ("randomAI", microrts_ai.randomAI),
+            ("randomBiasedAI", microrts_ai.randomBiasedAI),
+            ("rojo", microrts_ai.rojo),
             # ("mixedBot", microrts_ai.mixedBot),
             # ("izanagi", microrts_ai.izanagi), 
             # ("tiamat", microrts_ai.tiamat),
