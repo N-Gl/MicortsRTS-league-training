@@ -958,8 +958,9 @@ class LeagueTrainer:
                 bot_logprobs = bot_logprobs.zero_()[:, :args.num_bot_envs]
                 bot_invalid_action_masks = bot_invalid_action_masks.zero_()[:, :args.num_bot_envs]
 
-                # Do not zero out the others botenvs in self.unit_bonus_distr, as they are arnt done and are not reinitialized after this
-                self.unit_bonus_distr = self.unit_bonus_distr[:args.num_envs]
+                if args.unit_exploiters:
+                    # Do not zero out the others botenvs in self.unit_bonus_distr, as they are arnt done and are not reinitialized after this
+                    self.unit_bonus_distr = self.unit_bonus_distr[:args.num_envs]
 
 
 
@@ -1013,9 +1014,10 @@ class LeagueTrainer:
                 bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
                 bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
 
-                # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
-                self.unit_bonus_distr = torch.cat((self.unit_bonus_distr, self.unit_bonus_distr[-1:].clone()))
-                self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
+                if args.unit_exploiters:
+                    # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
+                    self.unit_bonus_distr = torch.cat((self.unit_bonus_distr, self.unit_bonus_distr[-1:].clone()))
+                    self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
 
                 num_added_envs = args.num_envs - rewards_attack.shape[1]
 
