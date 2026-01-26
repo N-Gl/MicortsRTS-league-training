@@ -10,7 +10,7 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7
+  exp_name: 22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_PPO_learning_rate_5e-5
   wandb_project_name: league_training
   wandb_group_name: testing
 
@@ -39,9 +39,9 @@ ExperimentConfig:
   main_selfplay_save_interval: 4e6 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
   main_exploiter_selfplay_save_interval: 6e6
   league_exploiter_selfplay_save_interval: 6e6
-  main_winrate_threshold: 0.7 # also used as threashold for choosing historical opponents in _verification_branch
-  main_exploiter_winrate_threshold: 0.7
-  league_exploiter_winrate_threshold: 0.7
+  main_winrate_threshold: 0.5 # also used as threashold for choosing historical opponents in _verification_branch
+  main_exploiter_winrate_threshold: 0.5
+  league_exploiter_winrate_threshold: 0.5
   main_exploiter_vs_main_winrate_threshold: 0.3
   checkpoint_end_buffer_steps: 2e6
 
@@ -59,7 +59,7 @@ ExperimentConfig:
 
   endgame_maps: false
 
-  PPO_learning_rate: 1e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  PPO_learning_rate: 5e-5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   exploiter_PPO_learning_rate: 5e-5 # changed from 2.5e-5
   PPO_weight_decay: 0.0
 
