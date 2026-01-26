@@ -7,6 +7,7 @@ ExperimentConfig:
   train_on_old_mains: false
   pfsp: true
   unit_exploiters: true
+  Unit_reward_per_exploiter: false
 
   model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_120.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
@@ -112,3 +113,9 @@ ExperimentConfig:
   main_pfsp_weighting: focused_strong  # pfsp in _selfplay_branch not included in Article: "squared"
   main_exploiter_pfsp_weighting: variance  # in Article: "variance"
   league_exploiter_pfsp_weighting: variance  # in Article: "variance"
+
+
+  unit_bonus_max_worker: 1.0
+  unit_bonus_max_light: 1.0
+  unit_bonus_max_heavy: 1.0
+  unit_bonus_max_ranged: 1.0

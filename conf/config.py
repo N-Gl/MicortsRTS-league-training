@@ -67,6 +67,11 @@ class ExperimentConfig:
     selfplay: bool
     pfsp: bool
     league_training: bool
+    Unit_reward_per_exploiter: bool
+    unit_bonus_max_worker: float
+    unit_bonus_max_light: float
+    unit_bonus_max_heavy: float
+    unit_bonus_max_ranged: float
     train_on_old_mains: bool
     selfplay_save_interval: int
     main_selfplay_save_interval: int

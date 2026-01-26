@@ -71,3 +71,8 @@ ExperimentConfig:
   main_pfsp_weighting: focused_strong  # pfsp in _selfplay_branch not included in Article: "squared"
   main_exploiter_pfsp_weighting: variance  # in Article: "variance"
   league_exploiter_pfsp_weighting: variance  # in Article: "variance"
+
+  unit_bonus_max_worker: 1.0
+  unit_bonus_max_light: 1.0
+  unit_bonus_max_heavy: 1.0
+  unit_bonus_max_ranged: 1.0
