@@ -234,6 +234,16 @@ class LeagueTrainer:
 
         
 
+    def _add_unit_bonus_to_score(
+        self,
+        score_tensor: torch.Tensor,
+        own_unit_counts: torch.Tensor,
+        opp_unit_counts: torch.Tensor,
+        unit_bonus_weights: torch.Tensor,
+    ) -> torch.Tensor:
+        unit_bonus = (own_unit_counts - opp_unit_counts) * unit_bonus_weights
+        return score_tensor + unit_bonus.sum(dim=1)
+
 
     def train(self):
         args = self.args
@@ -590,6 +600,24 @@ class LeagueTrainer:
                 rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew])).to(device)
                 sp_score_tensor = torch.as_tensor(sp_scorerew, device=device, dtype=torch.float)
                 bot_score_tensor = torch.as_tensor(bot_scorerew, device=device, dtype=torch.float)
+                if args.unit_exploiters:
+                    sc = scalar_features[step]
+                    sp_sc = sc[:args.num_selfplay_envs]
+                    bot_sc = sc[args.num_selfplay_envs:]
+                    sp_score_tensor = self._add_unit_bonus_to_score(
+                        sp_score_tensor,
+                        sp_sc[:, 3:7],
+                        sp_sc[:, 7:11],
+                        self.unit_bonus_distr[:args.num_selfplay_envs],
+                    )
+                    bot_score_tensor = self._add_unit_bonus_to_score(
+                        bot_score_tensor,
+                        bot_sc[:, 3:7],
+                        bot_sc[:, 7:11],
+                        self.unit_bonus_distr[args.num_selfplay_envs:],
+                    )
+
+
                 sp_score_delta = sp_score_tensor - last_sp_scorerew
                 bot_score_delta = bot_score_tensor - last_bot_scorerew
                 score_delta = torch.cat([sp_score_delta, bot_score_delta])
@@ -621,17 +649,17 @@ class LeagueTrainer:
 
                         # dyn_winloss = winloss
                         game_length = infos[done_idx]["episode"]["l"]
-                        dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
+                        # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
                         if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
                             done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
 
                             if isinstance(done_agent, league.MainPlayer):
                                 # game_length = infos[done_idx]["episode"]["l"]
                                 # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                                league.log_general_main_results(writer, args.global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
+                                league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
-                            league.log_bot_game_results(args, writer, infos, attack, done_idx, dyn_winloss, num_done_botgames)
+                            league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames)
                             num_done_botgames += 1
                             last_bot_env_change += 1
 
@@ -646,7 +674,7 @@ class LeagueTrainer:
                                 attack,
                                 done_idx,
                                 done_agent,
-                                dyn_winloss,
+                                winloss,
                                 self.hist_reward,
                                 num_done_selfplaygames,
                                 self.indices_per_exploiter,
