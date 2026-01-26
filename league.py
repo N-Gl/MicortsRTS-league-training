@@ -112,7 +112,7 @@ class Payoff:
                 0.5 * self._draws[_home, _away]) / self._games[_home, _away]
     
     def _win_rate_no_draw(self, _home, _away):
-        if self._games[_home, _away] == 0:
+        if self._games[_home, _away] < 10:
           return 0.3
     
         return self._wins[_home, _away] / self._games[_home, _away]
