@@ -218,6 +218,24 @@ class Payoff:
                     del stat[key]
 
 
+def _unit_bonus_max(args, device: torch.device) -> torch.Tensor:
+        return torch.tensor(
+            [
+                args.unit_bonus_max_worker,
+                args.unit_bonus_max_light,
+                args.unit_bonus_max_heavy,
+                args.unit_bonus_max_ranged,
+            ],
+            device=device,
+            dtype=torch.float,
+        )
+
+
+def get_new_unit_bonus_distr(args, device: torch.device) -> torch.Tensor:
+        if args.Unit_reward_per_exploiter:
+            return torch.rand(4, device=device) * _unit_bonus_max(args, device)
+
+
 class Player:
 
     def get_match(self):
@@ -249,6 +267,7 @@ class MainPlayer(Player):
         self.agent = agent
         self._payoff = payoff
         self.args = args
+        self.unit_bonus_distr = torch.zeros(4, device=agent.device)
         self.name = name
 
     def _pfsp_branch(self):
@@ -418,7 +437,8 @@ class MainExploiter(Player):
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
         self.last_reset_update = None
-        self.skip_update = False
+        self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
+        self.recent_reset = False
         self.name = f"MainExploiter_{main_exp_idx}"
 
     def get_match(self):
@@ -512,7 +532,8 @@ class MainExploiter(Player):
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
         self.last_reset_update = None
-        self.skip_update = True
+        self.recent_reset = True
+        self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
         self._payoff.reset(self)
         self.num_resets_checkpoints += 1
 
@@ -538,7 +559,8 @@ class LeagueExploiter(Player):
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
         self.last_reset_update = None
-        self.skip_update = False
+        self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
+        self.recent_reset = False
         self.name = f"LeagueExploiter_{league_exp_idx}"
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
@@ -599,7 +621,8 @@ class LeagueExploiter(Player):
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
         self.last_reset_update = None
-        self.skip_update = True
+        self.recent_reset = True
+        self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
         self._payoff.reset(self)
         self.num_resets_checkpoints += 1
 
@@ -610,7 +633,8 @@ class Historical(Player):
         payoff: Payoff,
         args,
         name=None,
-        historical_count=None
+        historical_count=None,
+        unit_bonus_distr=None
     ):
         self.agent = Agent(
             action_plane_nvec=parent.agent.action_plane_nvec,
@@ -620,6 +644,11 @@ class Historical(Player):
         ).to(parent.agent.device)
         if args.save_gpu_memory:
             offload_historical_to_cpu(self)
+
+        if unit_bonus_distr is None:
+            unit_bonus_distr = parent.unit_bonus_distr
+        self.unit_bonus_distr = unit_bonus_distr
+
         self._payoff = payoff
         self._parent = parent
         if name is not None:
@@ -828,7 +857,7 @@ class League:
             if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
                 for opp, opp_player, games, r in zip(opp_names, opp_players, game_count, win_rates_no_draw):
                     if games > 0:
-                        if not (isinstance(done_agent, MainPlayer) and (isnsinstance(opp_player, LeagueExploiter) or isinstance(opp_player, MainExploiter))):
+                        if not (isinstance(done_agent, MainPlayer) and (isinstance(opp_player, LeagueExploiter) or isinstance(opp_player, MainExploiter))):
                             writer.add_scalar(f"winrate_no_draw_per_opp_{done_agent.name}/vs_{opp}", r, games)
                     if pfsp_probs_by_player:
                         approx_prob = pfsp_probs_by_player.get(opp_player, 0.0)

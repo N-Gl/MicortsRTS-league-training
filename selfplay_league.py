@@ -234,6 +234,31 @@ class LeagueTrainer:
 
         
 
+    def _add_unit_bonus_to_score(
+        self,
+        score_tensor: torch.Tensor,
+        own_unit_counts: torch.Tensor,
+        opp_unit_counts: torch.Tensor,
+        unit_bonus_weights: torch.Tensor,
+    ) -> torch.Tensor:
+        unit_bonus = (own_unit_counts - opp_unit_counts) * unit_bonus_weights
+        return score_tensor + unit_bonus.sum(dim=1)
+
+    def _unit_bonus_max(self, device: torch.device) -> torch.Tensor:
+        return torch.tensor(
+            [
+                self.args.unit_bonus_max_worker,
+                self.args.unit_bonus_max_light,
+                self.args.unit_bonus_max_heavy,
+                self.args.unit_bonus_max_ranged,
+            ],
+            device=device,
+            dtype=torch.float,
+        )
+
+    def _sample_unit_bonus_distr(self, shape, device: torch.device) -> torch.Tensor:
+        return torch.rand(shape, device=device) * self._unit_bonus_max(device)
+
 
     def train(self):
         args = self.args
@@ -269,13 +294,26 @@ class LeagueTrainer:
                 if isinstance(ag, (league.MainPlayer)):
                     load_agent_from_checkpoint(args.cur_main_path, device, ag)
 
-        if args.unit_exploiters:
-            self.unit_bonus_distr = torch.rand((args.num_envs, 4), device=device)
+
+        if self.args.Unit_reward_per_exploiter:
+            assert args.unit_exploiters, "Unit_reward_per_exploiter requires unit_exploiters to be true"
+            self.unit_bonus_distr = torch.zeros((args.num_envs, 4), device=device)
             for ag, indices in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
-                if isinstance(ag, (league.MainPlayer)):
+                bonus = ag.unit_bonus_distr
+                if bonus is None:
+                    bonus = torch.zeros(4, device=device)
+                elif bonus.device != device:
+                    bonus = bonus
+                self.unit_bonus_distr[indices] = bonus
+
+        elif args.unit_exploiters: # initialize unit bonus distr even, if Unit_reward_per_exploiter is true
+            self.unit_bonus_distr = self._sample_unit_bonus_distr((args.num_envs, 4), device)
+            for ag, indices in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
+                if isinstance(ag, (league.MainPlayer)) or (isinstance(ag, league.Historical) and isinstance(ag.parent, league.MainPlayer)):
                     self.unit_bonus_distr[indices] = torch.zeros((len(indices), 4), device=device)
         else:
             self.unit_bonus_distr = None
+            
                     
         
 
@@ -590,6 +628,25 @@ class LeagueTrainer:
                 rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew])).to(device)
                 sp_score_tensor = torch.as_tensor(sp_scorerew, device=device, dtype=torch.float)
                 bot_score_tensor = torch.as_tensor(bot_scorerew, device=device, dtype=torch.float)
+                if args.unit_exploiters:
+                    sc = scalar_features[step]
+                    sp_sc = sc[:args.num_selfplay_envs]
+                    bot_sc = sc[args.num_selfplay_envs:]
+                    # rewards for opponent are wrong but not used
+                    sp_score_tensor = self._add_unit_bonus_to_score(
+                        sp_score_tensor,
+                        sp_sc[:, 3:7],
+                        sp_sc[:, 7:11],
+                        self.unit_bonus_distr[:args.num_selfplay_envs],
+                    )
+                    bot_score_tensor = self._add_unit_bonus_to_score(
+                        bot_score_tensor,
+                        bot_sc[:, 3:7],
+                        bot_sc[:, 7:11],
+                        self.unit_bonus_distr[args.num_selfplay_envs:],
+                    )
+
+
                 sp_score_delta = sp_score_tensor - last_sp_scorerew
                 bot_score_delta = bot_score_tensor - last_bot_scorerew
                 score_delta = torch.cat([sp_score_delta, bot_score_delta])
@@ -621,17 +678,17 @@ class LeagueTrainer:
 
                         # dyn_winloss = winloss
                         game_length = infos[done_idx]["episode"]["l"]
-                        dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
+                        # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
                         if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
                             done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
 
                             if isinstance(done_agent, league.MainPlayer):
                                 # game_length = infos[done_idx]["episode"]["l"]
                                 # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                                league.log_general_main_results(writer, args.global_step, infos, dyn_winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
+                                league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
-                            league.log_bot_game_results(args, writer, infos, attack, done_idx, dyn_winloss, num_done_botgames)
+                            league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames)
                             num_done_botgames += 1
                             last_bot_env_change += 1
 
@@ -646,7 +703,7 @@ class LeagueTrainer:
                                 attack,
                                 done_idx,
                                 done_agent,
-                                dyn_winloss,
+                                winloss,
                                 self.hist_reward,
                                 num_done_selfplaygames,
                                 self.indices_per_exploiter,
@@ -818,8 +875,8 @@ class LeagueTrainer:
     
                 # update every exploiter individually
                 for exploiter, exploiter_idx in self.indices_per_exploiter.items():
-                    if exploiter.skip_update:
-                        exploiter.skip_update = False
+                    if exploiter.recent_reset:
+                        exploiter.recent_reset = False
                         skip_update_count += 1
                         continue
 
@@ -1071,10 +1128,20 @@ class LeagueTrainer:
 
 
     def get_new_unit_bonus_distr(self, indices, device: torch.device) -> torch.Tensor:
-        if self.args.unit_exploiters:
+        if self.args.Unit_reward_per_exploiter:
             for i in indices:
-                if not isinstance(self.active_league_agents[i], league.MainPlayer):
-                    self.unit_bonus_distr[i] = torch.rand(4, device=device)
+                bonus = self.active_league_agents[i].unit_bonus_distr
+                if bonus is None:
+                    bonus = torch.zeros(4, device=device)
+                elif bonus.device != device:
+                    bonus = bonus.to(device)
+                self.unit_bonus_distr[i] = bonus
+        elif self.args.unit_exploiters:
+            for i in indices:
+                if not isinstance(self.active_league_agents[i], league.MainPlayer) and not (isinstance(self.active_league_agents[i], league.Historical) and isinstance(self.active_league_agents[i].parent, league.MainPlayer)):
+                    self.unit_bonus_distr[i] = self._sample_unit_bonus_distr((4,), device)
+                else:
+                    self.unit_bonus_distr[i] = torch.zeros(4, device=device)
 
 
     def _refresh_main_indices(self, args):
