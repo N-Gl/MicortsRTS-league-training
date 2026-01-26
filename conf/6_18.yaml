@@ -90,15 +90,15 @@ ExperimentConfig:
 
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
-  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_ent_coef: 0.03 # 0.1     # higher entropy only for exploiters
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.2 # 0.2
   exploiter_update_epochs: 4
   exploiter_kle_stop: true
-  exploiter_kle_rollback: true
+  exploiter_kle_rollback: false
   exploiter_target_kl: 0.01
-  exploiter_kl_coeff: 0.4
+  exploiter_kl_coeff: 0.3
   exploiter_norm_adv: true
   exploiter_anneal_lr: true
   exploiter_clip_vloss: true
