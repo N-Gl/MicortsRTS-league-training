@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3/Main_agent_backups/agent_update_830.pt",
+                          "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7/Main_agent_backups/agent_update_2170.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3",
+          "22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3_update_830"
+  exp_name: "22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_update_2170"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   prod_mode: true

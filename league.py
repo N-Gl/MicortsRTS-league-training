@@ -449,8 +449,8 @@ class MainExploiter(Player):
             threshold = self.args.main_exploiter_vs_main_winrate_threshold
             if len(win_rates) and min_win_rate > threshold:
                 rand = np.random.random()
-                if min_win_rate > self.args.main_winrate_threshold:
-                    if rand < 0.6:       # min_win_rate = main_winrate_threshold (0.7) -> 60%
+                if min_win_rate > self.args.main_exploiter_winrate_threshold:
+                    if rand < 0.6:       # min_win_rate = main_exploiter_winrate_threshold (0.7) -> 60%
                         return opponent, True
                 else:
                     if rand < 0.1:       # min_win_rate = threshold -> 10%
@@ -828,11 +828,12 @@ class League:
             if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
                 for opp, opp_player, games, r in zip(opp_names, opp_players, game_count, win_rates_no_draw):
                     if games > 0:
-                        writer.add_scalar(f"winrate_no_draw_per_opponent/{done_agent.name}_vs_{opp}", r, games)
+                        if not (isinstance(done_agent, MainPlayer) and (isnsinstance(opp_player, LeagueExploiter) or isinstance(opp_player, MainExploiter))):
+                            writer.add_scalar(f"winrate_no_draw_per_opp_{done_agent.name}/vs_{opp}", r, games)
                     if pfsp_probs_by_player:
                         approx_prob = pfsp_probs_by_player.get(opp_player, 0.0)
                         writer.add_scalar(
-                            f"aprox_pfsp_probabilities_per_opponent/{done_agent.name}_vs_{opp}",
+                            f"aprox_pfsp_probabilities_per_opp_{done_agent.name}/vs_{opp}",
                             approx_prob,
                             args.global_step,
                         )
