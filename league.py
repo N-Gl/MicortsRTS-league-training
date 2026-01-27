@@ -777,6 +777,7 @@ class League:
 
             last_logged_selfplay_games = num_done_selfplaygames
             win_rates_no_draw = []
+            win_rates_with_draw = []
             opp_names = []
             opp_players = []
             game_count = []
@@ -790,7 +791,7 @@ class League:
                     opp_players.append(p1)
                     game_count.append(done_agent._payoff._games[done_agent, p1])
                     win_rates_no_draw.append(done_agent.payoff._win_rate_no_draw(done_agent, p1))
-                    win_rates_with_draw = done_agent.payoff._win_rate(done_agent, p1)
+                    win_rates_with_draw.append(done_agent.payoff._win_rate(done_agent, p1))
                     no_decay_game_count.append(done_agent.payoff._no_decay_games[done_agent, p1])
 
                     wins = done_agent.payoff._wins[done_agent, p1]
