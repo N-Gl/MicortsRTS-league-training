@@ -857,11 +857,11 @@ class League:
                 }
             
             if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
-                for opp, opp_player, games, r in zip(opp_names, opp_players, game_count, win_rates_no_draw, win_rates_with_draw):
+                for opp, opp_player, games, r, rw in zip(opp_names, opp_players, game_count, win_rates_no_draw, win_rates_with_draw):
                     if games > 0:
                         if not (isinstance(done_agent, MainPlayer) and (isinstance(opp_player, LeagueExploiter) or isinstance(opp_player, MainExploiter))):
                             writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_no_draw", r, games)
-                            writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_with_draw", r, games)
+                            writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_with_draw", rw, games)
                     if pfsp_probs_by_player:
                         approx_prob = pfsp_probs_by_player.get(opp_player, 0.0)
                         writer.add_scalar(
