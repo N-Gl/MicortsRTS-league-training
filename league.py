@@ -889,10 +889,17 @@ class League:
             + infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
             + delta_score_sum_weighted
         )
+        game_length = infos[done_idx].get("episode", {}).get("l", 0)
+        winloss_reward = infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
+        attack_reward = infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
+        writer.add_scalar(f"{done_agent.name}_charts/WinLossRewardFunction", winloss_reward, num_done_selfplaygames)
+        writer.add_scalar(f"{done_agent.name}_charts/AttackReward", attack_reward, num_done_selfplaygames)
+        writer.add_scalar(f"{done_agent.name}_charts/Episode_reward", episode_reward, num_done_selfplaygames)
+        writer.add_scalar(f"{done_agent.name}_charts/Game_length", game_length, num_done_selfplaygames)
         writer.add_scalar("charts/selfplay_reward_scores_sum", weighted_score_reward_sum, num_done_selfplaygames)
         if isinstance(done_agent, (MainExploiter, LeagueExploiter)):
             writer.add_scalar(
-                f"{done_agent.name}/reward_scores_sum",
+                f"{done_agent.name}_charts/reward_scores_sum",
                 weighted_score_reward_sum,
                 num_done_selfplaygames,
             )
@@ -1018,19 +1025,19 @@ def log_bot_game_results(args, writer, infos, attack_weight, done_idx, dyn_winlo
 def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, experiment_name, update, grad_norm=None):
     player = exploiter_agent_batch["player"]
 
-    writer.add_scalar(f"{player.name}/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], args.global_step)
-    writer.add_scalar(f"{player.name}/value_loss", args.vf_coef * v_loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}/policy_loss", pg_loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}/kl_loss", kl_loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}/total_loss", loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}/entropy_loss", args.ent_coef * entropy_loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}/approx_kl", approx_kl.item(), args.global_step)
-    writer.add_scalar(f"{player.name}/grad_norm_before_clipping", grad_norm, args.global_step)
+    writer.add_scalar(f"{player.name}_charts/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], args.global_step)
+    writer.add_scalar(f"{player.name}_losses/value_loss", args.vf_coef * v_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/policy_loss", pg_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/kl_loss", kl_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/total_loss", loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/entropy_loss", args.ent_coef * entropy_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/approx_kl", approx_kl.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_charts/grad_norm_before_clipping", grad_norm, args.global_step)
     steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
-    writer.add_scalar(f"{player.name}/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
+    writer.add_scalar(f"{player.name}_charts/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
 
     if args.kle_stop or args.kle_rollback:
-        writer.add_scalar(f"{player.name}/pg_stop_iter", pg_stop_iter, args.global_step)
+        writer.add_scalar(f"{player.name}_charts/pg_stop_iter", pg_stop_iter, args.global_step)
 
     if args.prod_mode and update % args.checkpoint_frequency == 0:
             print("Saving model checkpoint...")
@@ -1166,11 +1173,11 @@ def train_exploiters(
             # old_w = {k: v.detach().clone() for k, v in self.agent.state_dict().items()}
             # is_changing = {k: not torch.equal(v, old_w[k]) for k, v in self.agent.state_dict().items()}
 
-            writer.add_scalar(f"{entry['player'].name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], args.global_step)
-            writer.add_scalar(f"{entry['player'].name}/value_loss", args.vf_coef * v_loss.item(), args.global_step)
-            writer.add_scalar(f"{entry['player'].name}/policy_loss", pg_loss.item(), args.global_step)
-            writer.add_scalar(f"{entry['player'].name}/total_loss", loss.item(), args.global_step)
-            writer.add_scalar(f"{entry['player'].name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), args.global_step)
+            # writer.add_scalar(f"{entry['player'].name}/learning_rate", entry["optimizer"].param_groups[0]["lr"], args.global_step)
+            # writer.add_scalar(f"{entry['player'].name}/value_loss", args.vf_coef * v_loss.item(), args.global_step)
+            # writer.add_scalar(f"{entry['player'].name}/policy_loss", pg_loss.item(), args.global_step)
+            # writer.add_scalar(f"{entry['player'].name}/total_loss", loss.item(), args.global_step)
+            # writer.add_scalar(f"{entry['player'].name}/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), args.global_step)
             if args.prod_mode and update % args.checkpoint_frequency == 0:
                     print("Saving model checkpoint...")
                     save_league_model(save_agent=entry['player'].agent, experiment_name=experiment_name, dir_name=f"current_{entry['player'].__class__.__name__}", file_name=f"{entry['player'].name}")
