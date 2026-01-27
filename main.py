@@ -228,6 +228,8 @@ def main(cfg: ExperimentConfig):
         if args.capture_video:
             sp_envs = VecVideoRecorder(sp_envs, f'videos/{experiment_name}',
                                     record_video_trigger=lambda x: x % 1000000 == 0, video_length=2000)
+    else:
+        sp_envsT = None
         
 
 

@@ -194,6 +194,19 @@
     },
 
     {
+      "name": "Python: unit_Exploiter_with_PPO_1",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "unit_Exploiter_with_PPO_1",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: debug_league_config_2_historicals",
       "type": "debugpy",
       "request": "launch",

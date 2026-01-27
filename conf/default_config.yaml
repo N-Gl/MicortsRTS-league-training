@@ -54,6 +54,8 @@ ExperimentConfig:
   max_num_bot_envs: 0
   num_selfplay_envs: 0
 
+  dyn_num_bot_envs: true
+
   num_envs: 0
   num_main_envs: 0
   num_main_exploiters: 0

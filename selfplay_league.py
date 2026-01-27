@@ -277,10 +277,8 @@ class LeagueTrainer:
             if args.render_all:
                 from ppo import Rendering
 
-        if args.num_selfplay_envs == 0:
-            raise ValueError("league training requires num_selfplay_envs > 0")
-        if args.num_main_envs == 0:
-            raise ValueError("league training requires at least one main agent")
+        if args.num_envs == 0:
+            raise ValueError("league training requires at least one environment")
         
         league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
 
@@ -360,9 +358,13 @@ class LeagueTrainer:
         next_obs_np, _, bot_res = envs.reset()
         bot_next_obs = torch.Tensor(next_obs_np).to(device)
 
-        next_obs_np, _, sp_res = sp_envs.reset()
-        sp_next_obs = torch.Tensor(next_obs_np).to(device)
-        adjust_obs_selfplay(args, sp_next_obs, is_new_env=True)
+        if args.num_selfplay_envs > 0:
+            next_obs_np, _, sp_res = sp_envs.reset()
+            sp_next_obs = torch.Tensor(next_obs_np).to(device)
+            adjust_obs_selfplay(args, sp_next_obs, is_new_env=True)
+        else:
+            sp_res = []
+            sp_next_obs = torch.zeros((0,) + envs.single_observation_space.shape, device=device)
 
         next_done = torch.zeros(args.num_envs).to(device)
         scalar_features = torch.zeros((args.num_steps, args.num_envs, 11)).to(device)
@@ -401,10 +403,15 @@ class LeagueTrainer:
                     if args.render_all:
                         # only workes for 1 at a time
                         # Rendering.render_all_envs(envs)
-                        Rendering.render_all_envs(sp_envs)
+                        if sp_envs is not None:
+                            Rendering.render_all_envs(sp_envs)
+                        elif envs is not None:
+                            render_all_envs(envs)
                     else:
-                        envs.render("human")
-                        sp_envs.render("human")
+                        if envs is not None:
+                            envs.render("human")
+                        if sp_envs is not None:
+                            sp_envs.render("human")
                         
                 args.global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
                 bot_obs[step] = bot_next_obs
@@ -480,18 +487,19 @@ class LeagueTrainer:
                         unit_bonus_distr=self.unit_bonus_distr[args.num_selfplay_envs:] if self.unit_bonus_distr is not None else None
                     )
 
-                    sp_actions[step], sp_logprobs[step], _, sp_invalid_action_masks[step] = agent.selfplay_get_action(
-                        sp_obs[step],
-                        scalar_features[step, :args.num_selfplay_envs],
-                        z_features[step, :args.num_selfplay_envs],
-                        num_selfplay_envs=args.num_selfplay_envs,
-                        num_envs=args.num_selfplay_envs,
-                        envs=sp_envs,
-                        active_league_agents=self.active_league_agents,
-                        unique_agents=sp_only_unique_agents,
-                        dbg_deterministic_actions=args.dbg_deterministic_actions,
-                        unit_bonus_distr=self.unit_bonus_distr[:args.num_selfplay_envs] if self.unit_bonus_distr is not None else None
-                    )
+                    if args.num_selfplay_envs > 0:
+                        sp_actions[step], sp_logprobs[step], _, sp_invalid_action_masks[step] = agent.selfplay_get_action(
+                            sp_obs[step],
+                            scalar_features[step, :args.num_selfplay_envs],
+                            z_features[step, :args.num_selfplay_envs],
+                            num_selfplay_envs=args.num_selfplay_envs,
+                            num_envs=args.num_selfplay_envs,
+                            envs=sp_envs,
+                            active_league_agents=self.active_league_agents,
+                            unique_agents=sp_only_unique_agents,
+                            dbg_deterministic_actions=args.dbg_deterministic_actions,
+                            unit_bonus_distr=self.unit_bonus_distr[:args.num_selfplay_envs] if self.unit_bonus_distr is not None else None
+                        )
 
                 # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
                 bot_real_action = torch.cat([bot_position_indices, bot_actions[step]], dim=2).cpu().numpy()
@@ -566,10 +574,18 @@ class LeagueTrainer:
 
                 bot_next_obs, _, bot_attackrew, bot_winlossrew, bot_scorerew, bot_ds, bot_infos, bot_res = envs.step(bot_java_valid_actions)
                 bot_next_obs = torch.Tensor(envs._from_microrts_obs(bot_next_obs)).to(device) # next_obs zu Tensor mit shape (24, 16, 16, 73) (von (24, X))
-                sp_next_obs, _, sp_attackrew, sp_winlossrew, sp_scorerew, sp_ds, sp_infos, sp_res = sp_envs.step(sp_java_valid_actions)
-                sp_next_obs = torch.Tensor(sp_envs._from_microrts_obs(sp_next_obs)).to(device)
-                
-                adjust_obs_selfplay(args, sp_next_obs)
+                if args.num_selfplay_envs > 0:
+                    sp_next_obs, _, sp_attackrew, sp_winlossrew, sp_scorerew, sp_ds, sp_infos, sp_res = sp_envs.step(sp_java_valid_actions)
+                    sp_next_obs = torch.Tensor(sp_envs._from_microrts_obs(sp_next_obs)).to(device)
+                    
+                    adjust_obs_selfplay(args, sp_next_obs)
+                else:
+                    sp_attackrew = np.array([], dtype=np.float32)
+                    sp_winlossrew = np.array([], dtype=np.float32)
+                    sp_scorerew = np.array([], dtype=np.float32)
+                    sp_ds = np.array([], dtype=np.bool_)
+                    sp_infos = []
+                    sp_res = []
 
                 if args.dbg_exploiter_update:
                     for i in range(0, args.num_selfplay_envs, 2):
@@ -871,7 +887,7 @@ class LeagueTrainer:
             # b_exploiter_indices = np.concatenate((selfplay_exploiters, bot_exploiters - (args.num_selfplay_envs // 2)))
 
             if len(self.indices_per_exploiter) > 0:
-                env_shape = sp_envs.single_observation_space.shape
+                env_shape = (sp_envs or envs).single_observation_space.shape
     
                 # update every exploiter individually
                 for exploiter, exploiter_idx in self.indices_per_exploiter.items():
@@ -943,9 +959,10 @@ class LeagueTrainer:
                     if args.dbg_exploiter_update:
                         self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
 
+                    update_envs = sp_envs if sp_envs is not None else envs
                     pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
                         args,
-                        sp_envs,
+                        update_envs,
                         exploiter_agent_batch,
                         device,
                         supervised_agent,
@@ -1001,7 +1018,7 @@ class LeagueTrainer:
             print("SPS:", int(args.global_step / (time.time() - start_time)))
 
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  last_bot_env_change >= 20 and args.num_bot_envs > 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
+            if  args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs > 2 and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
@@ -1057,7 +1074,7 @@ class LeagueTrainer:
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
-            elif last_bot_env_change >= 20 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+            elif args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
                 print("\nAdding an Bot Environment")
 
                 envs.close()

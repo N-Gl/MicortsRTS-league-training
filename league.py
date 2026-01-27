@@ -963,8 +963,12 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
                     active_league_agents.append(m_exp)
 
     while len(active_league_agents) < args.num_envs:
-        active_league_agents.append(league_instance.learning_agents[0])
-
+        if league_instance.learning_agents:
+            assert isinstance(league_instance.learning_agents[0], MainPlayer), "Only MainPlayers can fill remaining environments (first agent in learning_agents is not MainPlayer)."
+            active_league_agents.append(league_instance.learning_agents[0])
+        else:
+            assert isinstance(league_instance.payoff.players[0], MainPlayer), "Only MainPlayers can fill remaining environments (first agent in payoff.players is not MainPlayer)."
+            active_league_agents.append(league_instance.payoff.players[0])
     return league_instance, active_league_agents
 
 def log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack_weight, done_idx, hist_reward, main_agent):
