@@ -35,7 +35,7 @@ ExperimentConfig:
   new_hist_rewards: 0
   attack_reward_weight: 0.05
   dyn_attack_reward: 0.0
-  value_warmup_updates: 0
+  value_warmup_updates: -1
   num_steps: 512
   gamma: 1.0
   gae_lambda: 0.95
