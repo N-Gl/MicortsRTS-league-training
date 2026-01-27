@@ -889,20 +889,16 @@ class League:
             + infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
             + delta_score_sum_weighted
         )
-        game_length = infos[done_idx].get("episode", {}).get("l", 0)
-        winloss_reward = infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
-        attack_reward = infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
-        writer.add_scalar(f"{done_agent.name}_charts/WinLossRewardFunction", winloss_reward, num_done_selfplaygames)
-        writer.add_scalar(f"{done_agent.name}_charts/AttackReward", attack_reward, num_done_selfplaygames)
-        writer.add_scalar(f"{done_agent.name}_charts/Episode_reward", episode_reward, num_done_selfplaygames)
-        writer.add_scalar(f"{done_agent.name}_charts/Game_length", game_length, num_done_selfplaygames)
         writer.add_scalar("charts/selfplay_reward_scores_sum", weighted_score_reward_sum, num_done_selfplaygames)
         if isinstance(done_agent, (MainExploiter, LeagueExploiter)):
-            writer.add_scalar(
-                f"{done_agent.name}_charts/reward_scores_sum",
-                weighted_score_reward_sum,
-                num_done_selfplaygames,
-            )
+            game_length = infos[done_idx].get("episode", {}).get("l", 0)
+            winloss_reward = infos[done_idx]["microrts_stats"]["RAIWinLossRewardFunction"] * dyn_winloss
+            attack_reward = infos[done_idx]["microrts_stats"]["AttackRewardFunction"] * attack_weight
+            writer.add_scalar(f"{done_agent.name}_charts/WinLossRewardFunction", winloss_reward, num_done_selfplaygames)
+            writer.add_scalar(f"{done_agent.name}_charts/AttackReward", attack_reward, num_done_selfplaygames)
+            writer.add_scalar(f"{done_agent.name}_charts/Episode_reward", episode_reward, num_done_selfplaygames)
+            writer.add_scalar(f"{done_agent.name}_charts/Game_length", game_length, num_done_selfplaygames)
+            writer.add_scalar(f"{done_agent.name}_charts/reward_scores_sum", weighted_score_reward_sum, num_done_selfplaygames)
         print(
             f"global_step={args.global_step}, episode_reward={episode_reward:.3f}, score_reward_sum={weighted_score_reward_sum:.3f}"
         )
