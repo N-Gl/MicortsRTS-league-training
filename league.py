@@ -43,7 +43,7 @@ def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
         "linear_capped": lambda x: np.minimum(0.5, 1 - x),
         "squared": lambda x: (1 - x) ** 2,
         # "focused": lambda x: 3 * (-0.02 + x) ** 0.8 * (1.2 - x) ** 2.8,
-        "focused_strong": lambda x: 4.8 * x ** 0.6 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)),
+        "focused_strong": lambda x: 4.8 * x ** 0.6 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4))+ 0.03 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)),
         "focused_medium": lambda x: 8.2 * x * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)),
         "focused_strong_boosted": lambda x: 3.5 * x ** 0.4 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)) + 0.05 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)), # stable training
         # + 0.05 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)) further boost winrate below 0.08, winrate reaches 0.05 at x = 0
