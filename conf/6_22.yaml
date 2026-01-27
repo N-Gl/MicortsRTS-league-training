@@ -9,7 +9,7 @@ ExperimentConfig:
   unit_exploiters: false
   Unit_reward_per_exploiter: false
 
-  model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_120.pt
+  model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_120.pt # TODO: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"] # TODO: entfernen, starting_historical_true models/finished_PPO_Basis_thesis.pt in model_path?
@@ -96,7 +96,7 @@ ExperimentConfig:
   exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters # TODO
   exploiter_vf_coef: 0.5
   exploiter_max_grad_norm: 0.6
-  exploiter_clip_coef: 0.2 # 0.2
+  exploiter_clip_coef: 0.2 # 0.2 # TODO: 0.1
   exploiter_update_epochs: 4
   exploiter_kle_stop: true
   exploiter_kle_rollback: true # TODO
