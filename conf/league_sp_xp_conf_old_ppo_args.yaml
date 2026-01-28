@@ -6,12 +6,13 @@ ExperimentConfig:
   league_training: true
   train_on_old_mains: false
   pfsp: true
-  model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
+  model_path: models/finished_PPO_Basis_thesis.pt
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
-  other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 11_01_26__finished_PPO_Basis_thesis_old_league_new_seed_with_new_selfplay_model_Historicals
+  other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
+  exp_name: 28_01_26__finished_PPO_Basis_thesis__1_main_exploiter_with_20_envs_dbg_no_main_agent_ppo_update_true__new_selfplay_args
   wandb_project_name: league_training
+  wandb_group_name: new_exploiters_only_28_01_26
 
   prod_mode: true
   render: false
@@ -53,7 +54,7 @@ ExperimentConfig:
   dyn_attack_reward: 0.0
   rewardscore: 0.0
   value_warmup_updates: -1
-  # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
+  # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1) 
 
   endgame_maps: false
 
