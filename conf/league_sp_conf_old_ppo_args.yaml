@@ -12,7 +12,7 @@ ExperimentConfig:
   other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
   exp_name: 28_01_26__finished_PPO_Basis_thesis_old_league_new_seed_with_new_selfplay_model_Historicals
   wandb_project_name: new_selfplay
-  wandb_group_name: testing
+  wandb_group_name: new_sp_28_01_26
   
   prod_mode: true
   render: false
