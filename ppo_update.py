@@ -57,6 +57,9 @@ def gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winlos
         b_advantages[t] = lastgaelam = delta + args.gamma * args.gae_lambda * nextnonterminal * lastgaelam
     b_returns = b_advantages + b_values
 
+    if b_advantages.mean().item() < 0:
+        breakpoint()
+
     return b_advantages, b_returns
     
     
@@ -189,6 +192,9 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - clip_coef, 1 + clip_coef)
                 pg_loss = torch.max(pg_loss1, pg_loss2).mean()
                 entropy_loss = entropy.mean()
+
+                if pg_loss.item() > 0:
+                    breakpoint()
 
             # Value loss Clipping
             # --clip_vloss
