@@ -1,0 +1,115 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  # args from https://github.com/Farama-Foundation/MicroRTS-Py/blob/master/experiments/ppo_gridnet.py
+  league_training: true
+  train_on_old_mains: false
+  pfsp: true
+  model_path: models/finished_PPO_Basis_thesis.pt
+  # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
+  BC_model_path: models/BCagent.pt        # BC_model_path == model_path, falls BC_model_path None ist
+  other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
+  exp_name: 28_01_26__finished_PPO_Basis_thesis_lr_5e-6_no_Bots
+  wandb_project_name: new_selfplay
+  wandb_group_name: new_sp_28_01_26
+  
+  prod_mode: true
+  render: false
+  render_all: false
+
+  seed: 
+
+  num_bot_envs: 1 # 3
+  max_num_bot_envs: 1 # 15 # changed from 9 (3)
+  bot_adding_done_training_ratio: 0.5
+  bot_removing_done_training_ratio: 0.75
+  bot_removing_winrate_threshold: 0.97
+  num_main_envs: 20   # 1 num_main_envs == 1 env
+  num_main_exploiters: 0
+  num_league_exploiters: 0
+  num_envs_per_main_exploiters: 1
+  num_envs_per_league_exploiters: 1
+
+  BC_aget_as_Historical: false
+  training_on_bot_envs: false   # true
+
+  selfplay_ready_save_interval: 30000000 # Interval (in steps per Game) between possibly creaing/saving league agent models in league (2e4 -> min 10 games per checkpoint for 1 agent) (6e4 -> max 500 checkpoints (wenn winnrate gegen alle cheskpoints > Schranke))
+  main_selfplay_save_interval: 30000000 # Interval (in steps per Game) between defenetly creaing/saving league agent models in league (1e6 -> approx. min 30 checkpoints in 30000000 steps)
+  main_exploiter_selfplay_save_interval: 30000000
+  league_exploiter_selfplay_save_interval: 30000000
+  main_winrate_threshold: 0.7 # also used as threashold for choosing historical opponents in _verification_branch
+  main_exploiter_winrate_threshold: 0.7
+  league_exploiter_winrate_threshold: 0.7
+  main_exploiter_vs_main_winrate_threshold: 0.4
+  checkpoint_end_buffer_steps: 0
+
+  even_opponent_split: true # TODO
+
+  total_timesteps: 30000000
+
+  early_updates: true  # TODO
+
+  attack_reward_weight: 0.0 # (im basis ppo: 1)
+  dyn_attack_reward: 0.0
+  rewardscore: 0.002
+  value_warmup_updates: -1
+  # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
+
+  endgame_maps: false
+
+  PPO_learning_rate: 5e-6 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  exploiter_PPO_learning_rate: 5e-6
+  PPO_weight_decay: 0.0
+
+  sp: true
+  dbg_no_main_agent_ppo_update: false
+
+  log_exploiter_tables: false
+  log_exploiter_winrates: false
+
+  num_steps: 512 # (im basis ppo: 256)
+  
+  gamma: 1 # (im basis ppo: 0.99)
+  gae_lambda: 0.95
+  ent_coef: 0.005
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  clip_coef: 0.1 # changed 0.15
+  update_epochs: 4
+  kle_stop: true
+  kle_rollback: true
+  target_kl: 0.01 # changed from 0.03
+  kl_coeff: 0.4
+  norm_adv: true
+  anneal_lr: true
+  clip_vloss: true
+
+  exploiter_gamma: 1
+  exploiter_gae_lambda: 0.95
+  exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
+  exploiter_vf_coef: 0.5
+  exploiter_max_grad_norm: 0.5
+  exploiter_clip_coef: 0.1 # 0.2
+  exploiter_update_epochs: 4
+  exploiter_kle_stop: true
+  exploiter_kle_rollback: true
+  exploiter_target_kl: 0.01
+  exploiter_kl_coeff: 0.4
+  exploiter_norm_adv: true
+  exploiter_anneal_lr: true
+  exploiter_clip_vloss: true
+  
+  main_exploiter_no_draw_winrate_threshold: 0.25  # in Article: 0.2
+  pfsp_min_prob_factor: 0.25
+
+  main_PFSP_prob: 0.7  # in Article: 0.5
+  main_SP_prob: 0.1  # in Article: 0.35
+  main_pfsp_weighting: focused_strong  # pfsp in _selfplay_branch not included in Article: "squared"
+  main_exploiter_pfsp_weighting: variance  # in Article: "variance"
+  league_exploiter_pfsp_weighting: variance  # in Article: "variance"
+
+  unit_bonus_max_worker: 1.0
+  unit_bonus_max_light: 1.0
+  unit_bonus_max_heavy: 1.0
+  unit_bonus_max_ranged: 1.0

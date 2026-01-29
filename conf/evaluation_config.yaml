@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_PPO_learning_rate_5e-5_update_1530.pt",
+                          "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_PPO_learning_rate_5e",
+          "29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_PPO_learning_rate_5e_update_1530"
+  exp_name: "29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   prod_mode: true
@@ -20,7 +20,7 @@ ExperimentConfig:
   seed:
   exact_seed: true
 
-  render: true
+  render: false
   render_all: false
 
   num_eval_episodes: 100
