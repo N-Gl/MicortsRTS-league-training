@@ -6,7 +6,7 @@ ExperimentConfig:
   league_training: true
   train_on_old_mains: false
   pfsp: true
-  unit_exploiters: true
+  unit_exploiters: false
   Unit_reward_per_exploiter: false
 
   model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_120.pt
@@ -53,9 +53,9 @@ ExperimentConfig:
 
   early_updates: true
 
-  attack_reward_weight: 0.0 # (im basis ppo: 1)
+  attack_reward_weight: 0.05 # (im basis ppo: 1)
   dyn_attack_reward: 0.0
-  rewardscore: 0.002
+  rewardscore: 0.0 # 0.002
   value_warmup_updates: -1
   # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
 

@@ -10,11 +10,33 @@ import ppo_update
 
 
 def _make_dummy_args():
-    return types.SimpleNamespace()
+    return types.SimpleNamespace(Unit_reward_per_exploiter=False, unit_exploiters=False)
 
 
 def _make_args(**kwargs):
     return types.SimpleNamespace(**kwargs)
+
+
+def old_gae(self, next_obs, next_scalar_features, next_z_features, b_rewards_winloss, b_rewards_attack, b_next_done, b_dones, b_values):
+    dbg_last_value = self.agent.get_value(next_obs.to(self.device), next_scalar_features, next_z_features).reshape(1, -1)[:, self.indices]
+    dbg_advantages = torch.zeros_like(b_rewards_winloss).to(self.device)
+    dbg_lastgaelam = 0
+    for t in reversed(range(self.args.num_steps)):
+        if t == self.args.num_steps - 1:
+            nextnonterminal = 1.0 - b_next_done
+            nextvalues = dbg_last_value
+        else:
+            nextnonterminal = 1.0 - b_dones[t + 1]
+            nextvalues = b_values[t + 1]
+        delta = (
+            b_rewards_winloss[t]
+            + b_rewards_attack[t]
+            + self.args.gamma * nextvalues * nextnonterminal
+            - b_values[t]
+        )
+        dbg_advantages[t] = dbg_lastgaelam = delta + self.args.gamma * self.args.gae_lambda * nextnonterminal * dbg_lastgaelam
+    dbg_returns = dbg_advantages  + b_values
+    return dbg_returns, dbg_advantages
 
 
 def _make_ready_to_checkpoint_args(**overrides):
@@ -39,6 +61,8 @@ def _make_ready_to_checkpoint_args(**overrides):
         checkpoint_end_buffer_steps=5000,
         main_PFSP_prob=0.7,
         main_SP_prob=0.1,
+        Unit_reward_per_exploiter=False,
+        unit_exploiters=False,
     )
     base.update(overrides)
     return _make_args(**base)
@@ -54,8 +78,14 @@ def _make_match_args(**overrides):
         main_winrate_threshold=0.7,
         main_exploiter_no_draw_winrate_threshold=0.7,
         main_exploiter_vs_main_winrate_threshold=0.5,
+        main_exploiter_winrate_threshold=0.7,
+        main_exploiter_pfsp_weighting="variance",
+        league_exploiter_pfsp_weighting="variance",
         save_gpu_memory=False,
         exp_name="test_exp",
+        main_pfsp_weighting="focused_strong",
+        Unit_reward_per_exploiter=False,
+        unit_exploiters=False,
     )
     base.update(overrides)
     return _make_args(**base)
@@ -150,6 +180,68 @@ def test_main_exploiter_reset_clears_payoff_entries():
 
 def test_league_exploiter_reset_clears_payoff_entries():
     _assert_exploiter_reset_clears_payoff_entries(league.LeagueExploiter)
+
+
+def test_old_gae_equals_new_gae():
+    device = torch.device("cpu")
+    torch.manual_seed(0)
+
+    class DummyAgent:
+        def __init__(self, next_value):
+            self._next_value = next_value
+
+        def get_value(self, *_args, **_kwargs):
+            return self._next_value
+
+    for _ in range(50):
+        num_steps = 512
+        num_envs = 20
+        args = _make_args(num_steps=num_steps, gamma=0.99, gae_lambda=0.95)
+
+        b_rewards_winloss = torch.randn(num_steps, num_envs, device=device)
+        b_rewards_attack = torch.randn(num_steps, num_envs, device=device)
+        b_rewards_score = torch.zeros(num_steps, num_envs, device=device)
+        b_values = torch.randn(num_steps, num_envs, device=device)
+        b_dones = torch.randint(0, 2, (num_steps, num_envs), device=device, dtype=torch.float)
+        b_next_done = torch.randint(0, 2, (num_envs,), device=device, dtype=torch.float)
+
+        b_next_value = torch.randn(num_envs, device=device)
+        next_obs = torch.zeros((num_envs, 1), device=device)
+        next_scalar_features = torch.zeros((num_envs, 1), device=device)
+        next_z_features = torch.zeros((num_envs, 1), device=device)
+
+        dummy = _make_dummy_args()
+        dummy.agent = DummyAgent(b_next_value)
+        dummy.device = device
+        dummy.args = args
+        dummy.indices = torch.arange(num_envs, device=device)
+
+        dbg_returns, dbg_advantages = old_gae(
+            dummy,
+            next_obs,
+            next_scalar_features,
+            next_z_features,
+            b_rewards_winloss,
+            b_rewards_attack,
+            b_next_done,
+            b_dones,
+            b_values,
+        )
+
+        b_advantages, b_returns = ppo_update.gae(
+            args,
+            device,
+            b_next_value,
+            b_values,
+            b_rewards_attack,
+            b_rewards_winloss,
+            b_rewards_score,
+            b_dones,
+            b_next_done,
+        )
+
+        assert torch.equal(dbg_advantages, b_advantages), "Advantages do not match between old and new GAE implementations."
+        assert torch.equal(dbg_returns, b_returns), "Returns do not match between old and new GAE implementations."
 
 
 def test_main_exploiter_checkpoint_resets_training_state(monkeypatch):
@@ -261,7 +353,8 @@ def test_main_player_ready_to_checkpoint_creates_historical_when_ready(monkeypat
 
     historical = main_player.checkpoint()
     payoff.add_player(historical)
-    payoff.update(main_player, historical, 1)
+    for _ in range(20):
+        payoff.update(main_player, historical, 1)
 
     agent.steps = args.selfplay_ready_save_interval * args.num_main_envs - 1
     assert not main_player.ready_to_checkpoint()
@@ -303,7 +396,8 @@ def test_main_exploiter_ready_to_checkpoint_creates_historical_when_ready(monkey
     payoff.add_player(main_player)
     payoff.add_player(exploiter)
 
-    payoff.update(exploiter, main_player, 1)
+    for _ in range(20):
+        payoff.update(exploiter, main_player, 1)
     exploiter.agent.steps = args.selfplay_ready_save_interval - 1
     assert not exploiter.ready_to_checkpoint()
     exploiter.agent.steps = args.selfplay_ready_save_interval
@@ -345,7 +439,8 @@ def test_league_exploiter_ready_to_checkpoint_creates_historical_when_ready(monk
 
     exploiter = league.LeagueExploiter(base_agent, payoff, args=args)
     payoff.add_player(exploiter)
-    payoff.update(exploiter, historical, 1)
+    for _ in range(20):
+        payoff.update(exploiter, historical, 1)
     exploiter.agent.steps = args.selfplay_ready_save_interval - 1
     assert not exploiter.ready_to_checkpoint()
     exploiter.agent.steps = args.selfplay_ready_save_interval
@@ -480,7 +575,7 @@ def test_main_player_pfsp_sampling_prefers_winrate_point_two(monkeypatch):
         counts[index_by_hist[opponent]] += 1
 
     observed = counts / samples
-    expected = league.pfsp(win_rates, weighting="focused", enabled=True, min_prob_factor=0.0)
+    expected = league.pfsp(win_rates, weighting="focused_strong", enabled=True, min_prob_factor=0.0)
     tolerance = 5 * np.sqrt(expected * (1 - expected) / samples)
 
     assert observed[0] > observed[1]
@@ -519,6 +614,7 @@ def test_main_exploiter_get_match_returns_main_or_main_historical(monkeypatch):
     args = _make_match_args(
         main_exploiter_no_draw_winrate_threshold=0.7,
         main_exploiter_vs_main_winrate_threshold=0.9,
+        main_exploiter_winrate_threshold=0.7,
     )
     payoff = league.Payoff()
     device = torch.device("cpu")
@@ -536,32 +632,22 @@ def test_main_exploiter_get_match_returns_main_or_main_historical(monkeypatch):
     payoff.add_player(main_hist)
     payoff.add_player(other_hist)
 
-    def win_rates_for_main(home, away):
-        if away is main_player:
-            return 0.8
-        if isinstance(away, list):
-            return np.array([0.4 for _ in away])
-        raise AssertionError("Unexpected opponent for win rate lookup.")
+    payoff._games[main_exploiter, main_player] = 10
 
-    monkeypatch.setattr(payoff, "array_win_rate_no_draw", win_rates_for_main)
-
-    opponent, _ = main_exploiter.get_match()
-    assert opponent is main_player
-
-    def win_rates_for_hist(home, away):
+    def win_rates(home, away):
         if away is main_player:
             return 0.0
         if isinstance(away, list):
-            return np.array([0.4 for _ in away])
+            return np.array([0.95 for _ in away])
         raise AssertionError("Unexpected opponent for win rate lookup.")
 
-    monkeypatch.setattr(payoff, "array_win_rate_no_draw", win_rates_for_hist)
-    main_exploiter.args.main_exploiter_no_draw_winrate_threshold = 0.7
-    main_exploiter.args.main_exploiter_vs_main_winrate_threshold = 0.9
+    monkeypatch.setattr(payoff, "array_win_rate_no_draw", win_rates)
+    np.random.seed(0)
 
-    opponent, _ = main_exploiter.get_match()
-    assert isinstance(opponent, league.Historical)
-    assert opponent.parent is main_player
+    matches = [main_exploiter.get_match()[0] for _ in range(100)]
+    assert any(opp is main_player for opp in matches)
+    for opp in matches:
+        assert opp is main_player or (isinstance(opp, league.Historical) and opp.parent is main_player)
 
 
 def test_main_exploiter_vs_main_winrate_threshold(monkeypatch):
@@ -579,6 +665,7 @@ def test_main_exploiter_vs_main_winrate_threshold(monkeypatch):
     payoff.add_player(main_exploiter)
     main_hist = league.Historical(main_player, payoff, args=args, historical_count=0)
     payoff.add_player(main_hist)
+    payoff._games[main_exploiter, main_player] = 10
 
     def win_rates(home, away):
         if away is main_player:
