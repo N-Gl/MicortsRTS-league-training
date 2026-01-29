@@ -877,7 +877,24 @@ class LeagueTrainer:
             if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
                 pg_stop_iter = -2
 
-            ppo_update.log(args, writer, optimizer, args.global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=False, grad_norm=grad_norm)
+            ppo_update.log(
+                args,
+                writer,
+                optimizer,
+                args.global_step,
+                start_time,
+                update,
+                pg_stop_iter,
+                pg_loss,
+                entropy_loss,
+                kl_loss,
+                approx_kl,
+                v_loss,
+                loss,
+                log_SPS=False,
+                grad_norm=grad_norm,
+                advantages=main_agent_batch["advantages"],
+            )
 
             # bot_exploiters = np.where(
             #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
@@ -985,7 +1002,23 @@ class LeagueTrainer:
                     if args.dbg_exploiter_update:
                         self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
                     
-                    league.log_exploiter_ppo_update(args, writer, exploiter_agent_batch, self.indices_per_exploiter, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, self.experiment_name, update, grad_norm=grad_norm)
+                    league.log_exploiter_ppo_update(
+                        args,
+                        writer,
+                        exploiter_agent_batch,
+                        self.indices_per_exploiter,
+                        pg_stop_iter,
+                        pg_loss,
+                        entropy_loss,
+                        kl_loss,
+                        approx_kl,
+                        v_loss,
+                        loss,
+                        self.experiment_name,
+                        update,
+                        grad_norm=grad_norm,
+                        advantages=exploiter_agent_batch["advantages"],
+                    )
 
                 
                 # TODO (optimize): wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)

@@ -696,7 +696,22 @@ class SelfPlayTrainer:
             
             # pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = ppo_update.update(args, agent, envs, device, supervised_agent, optimizer, update, b_values, b_advantages, b_returns, b_Sc, b_z, b_obs, b_actions, b_logprobs, b_invalid_action_masks, new_batch_size, minibatch_size)
 
-            ppo_update.log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss)
+            ppo_update.log(
+                args,
+                writer,
+                optimizer,
+                global_step,
+                start_time,
+                update,
+                pg_stop_iter,
+                pg_loss,
+                entropy_loss,
+                kl_loss,
+                approx_kl,
+                v_loss,
+                loss,
+                advantages=main_agent_batch["advantages"],
+            )
 
             if args.prod_mode and update % self.checkpoint_frequency == 0:
                 if (update < 500 and not args.early_updates):

@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import time
 
-def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=True, grad_norm=None):
+def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=True, grad_norm=None, advantages=None):
     writer.add_scalar("main_charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
     writer.add_scalar("progress/update", update, global_step)
     if loss is not None:
@@ -13,6 +13,18 @@ def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, 
         writer.add_scalar("losses/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("main_charts/grad_norm_before_clipping", grad_norm, global_step)
+
+    if advantages is not None:
+        if not isinstance(advantages, torch.Tensor):
+            advantages = torch.as_tensor(advantages)
+        if advantages.numel() > 0:
+            with torch.no_grad():
+                adv = advantages.detach().float()
+                writer.add_scalar("main_charts/advantage_mean", adv.mean().item(), global_step)
+                writer.add_scalar("main_charts/advantage_std", adv.std(unbiased=False).item(), global_step)
+                writer.add_scalar("main_charts/advantage_min", adv.min().item(), global_step)
+                writer.add_scalar("main_charts/advantage_max", adv.max().item(), global_step)
+                writer.add_scalar("main_charts/advantage_pos_frac", (adv > 0).float().mean().item(), global_step)
 
     if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None:
         writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)

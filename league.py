@@ -1023,7 +1023,7 @@ def log_bot_game_results(args, writer, infos, attack_weight, done_idx, dyn_winlo
     print(f"bot_winrate_{len(writer.recent_bot_winloss)}={bot_winrate:.3f}, bot_winrate_with_draw_0.5_{len(writer.recent_bot_winloss)}={with_draw:.3f}")
     print(f"match in Botgame {int(done_idx - (args.num_selfplay_envs - 1))}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}\n")
 
-def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, experiment_name, update, grad_norm=None):
+def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indices, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, experiment_name, update, grad_norm=None, advantages=None):
     player = exploiter_agent_batch["player"]
 
     writer.add_scalar(f"{player.name}_charts/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], args.global_step)
@@ -1034,6 +1034,17 @@ def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indi
     writer.add_scalar(f"{player.name}_losses/entropy_loss", args.ent_coef * entropy_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/approx_kl", approx_kl.item(), args.global_step)
     writer.add_scalar(f"{player.name}_charts/grad_norm_before_clipping", grad_norm, args.global_step)
+    if advantages is not None:
+        if not isinstance(advantages, torch.Tensor):
+            advantages = torch.as_tensor(advantages)
+        if advantages.numel() > 0:
+            with torch.no_grad():
+                adv = advantages.detach().float()
+                writer.add_scalar(f"{player.name}/advantage_mean", adv.mean().item(), args.global_step)
+                writer.add_scalar(f"{player.name}/advantage_std", adv.std(unbiased=False).item(), args.global_step)
+                writer.add_scalar(f"{player.name}/advantage_min", adv.min().item(), args.global_step)
+                writer.add_scalar(f"{player.name}/advantage_max", adv.max().item(), args.global_step)
+                writer.add_scalar(f"{player.name}/advantage_pos_frac", (adv > 0).float().mean().item(), args.global_step)
     steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
     writer.add_scalar(f"{player.name}_charts/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
 
