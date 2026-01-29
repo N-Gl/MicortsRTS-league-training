@@ -57,6 +57,7 @@ def gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winlos
         b_advantages[t] = lastgaelam = delta + args.gamma * args.gae_lambda * nextnonterminal * lastgaelam
     b_returns = b_advantages + b_values
 
+    # TODO (debugging): remove later
     if b_advantages.mean().item() < 0:
         breakpoint()
 
@@ -193,6 +194,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 pg_loss = torch.max(pg_loss1, pg_loss2).mean()
                 entropy_loss = entropy.mean()
 
+                # TODO (debugging): remove later
                 if pg_loss.item() > 0:
                     breakpoint()
 
