@@ -70,7 +70,7 @@ def gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winlos
     b_returns = b_advantages + b_values
 
     # TODO (debugging): remove later
-    if b_advantages.mean().item() < 0:
+    if args.dbg_update_gaes and b_advantages.mean().item() < 0:
         breakpoint()
 
     return b_advantages, b_returns
@@ -207,7 +207,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 entropy_loss = entropy.mean()
 
                 # TODO (debugging): remove later
-                if pg_loss.item() > 0:
+                if args.dbg_update_gaes and pg_loss.item() > 0:
                     breakpoint()
 
             # Value loss Clipping
