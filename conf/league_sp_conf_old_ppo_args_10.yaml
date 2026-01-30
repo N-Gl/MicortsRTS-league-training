@@ -1,0 +1,25 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  # args from https://github.com/Farama-Foundation/MicroRTS-Py/blob/master/experiments/ppo_gridnet.py
+  league_training: true
+  train_on_old_mains: false
+  pfsp: true
+  model_path: models/finished_PPO_Basis_thesis.pt
+  # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
+  BC_model_path: models/BCagent.pt        # BC_model_path == model_path, falls BC_model_path None ist
+  other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
+  exp_name: 30_01_26__finished_PPO_Basis_thesis_lr_7e-4_with_Bots
+  wandb_project_name: new_selfplay
+  wandb_group_name: new_sp_28_01_26
+  
+  prod_mode: true
+  render: false
+  render_all: false
+
+  seed: 
+
+  num_bot_envs: 10 # 3
+  max_num_bot_envs: 15 # 15 # changed from 9 (3)
+  training_on_bot_envs: true   # true
