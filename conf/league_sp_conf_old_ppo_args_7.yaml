@@ -24,4 +24,5 @@ ExperimentConfig:
   PPO_learning_rate: 5e-6 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
   exploiter_PPO_learning_rate: 5e-6
 
+  ent_coef: 0.025
   exploiter_ent_coef: 0.025
