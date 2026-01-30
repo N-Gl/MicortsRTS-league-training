@@ -11,12 +11,7 @@ ExperimentConfig:
   BC_model_path: models/BCagent.pt       # BC_model_path == model_pathfalls BC_model_path None ist
   other_historicals_paths: # ["league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_PPO_learning_rate_5e-5/MainPlayer/Historical_(MainPlayer)_1.pt"]
   exp_name: 30_01_2026__finished_PPO_Basis_thesis
-  wandb_project_name: league_training
-  wandb_group_name: league_training
-
-  prod_mode: true
-  render: false
-  render_all: false
+  wandb_project_name: league_training.
 
   seed: 
 
@@ -47,7 +42,7 @@ ExperimentConfig:
 
   even_opponent_split: true
 
-  total_timesteps: 100000000
+  total_timesteps: 200000000
 
   early_updates: false
 
