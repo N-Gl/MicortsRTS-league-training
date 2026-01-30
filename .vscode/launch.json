@@ -207,6 +207,19 @@
     },
 
     {
+      "name": "Python: temp_2",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "temp_2",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: debug_league_config_2_historicals",
       "type": "debugpy",
       "request": "launch",
