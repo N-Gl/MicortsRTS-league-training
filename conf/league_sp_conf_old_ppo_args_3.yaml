@@ -43,6 +43,7 @@ ExperimentConfig:
   league_exploiter_winrate_threshold: 0.7
   main_exploiter_vs_main_winrate_threshold: 0.4
   checkpoint_end_buffer_steps: 0
+  main_exploiter_ready_use_historicals: false  # Historical: Zyklen und "Schere-Stein-Papier"-Dynamiken zu verhindern
 
   even_opponent_split: true # TODO
 

@@ -468,7 +468,7 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if (payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10) and not self.args.sp:
+        if (payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10)  and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
@@ -480,7 +480,7 @@ class MainExploiter(Player):
         ]
         win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
 
-        if not self.args.sp and len(win_rates):
+        if not self.args.sp and len(win_rates) and not self.args.main_exploiter_ready_use_historicals:
 
             min_win_rate = win_rates.min()
             threshold = self.args.main_exploiter_vs_main_winrate_threshold
@@ -540,12 +540,19 @@ class MainExploiter(Player):
         # ]
         # win_rates = self._payoff[self, historical]
 
-        mainplayer = [
-            player for player in self._payoff.players
-            if isinstance(player, MainPlayer)
-        ]
+        if self.args.main_exploiter_ready_use_historicals:
+            historical = [
+                player for player in self._payoff.players
+                if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
+            ]
+            win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
+        else:
+            mainplayer = [
+                player for player in self._payoff.players
+                if isinstance(player, MainPlayer)
+            ]
+            win_rates = payoff_win_rates(self._payoff, self, mainplayer, self.args.use_no_draw_winrates)
 
-        win_rates = payoff_win_rates(self._payoff, self, mainplayer, self.args.use_no_draw_winrates)
 
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 

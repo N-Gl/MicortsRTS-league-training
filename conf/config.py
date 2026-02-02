@@ -43,6 +43,7 @@ class ExperimentConfig:
     main_exploiter_no_draw_winrate_threshold: float
     main_exploiter_vs_main_winrate_threshold: float
     checkpoint_end_buffer_steps: int
+    main_exploiter_ready_use_historicals: bool
     pfsp_min_prob_factor: float
     use_no_draw_winrates: bool
     main_exploiter_max_historical_winrate_threshold: float
