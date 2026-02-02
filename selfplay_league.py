@@ -894,6 +894,8 @@ class LeagueTrainer:
                 log_SPS=False,
                 grad_norm=grad_norm,
                 advantages=main_agent_batch["advantages"],
+                values=main_agent_batch["values"],
+                returns=main_agent_batch["returns"],
             )
 
             # bot_exploiters = np.where(

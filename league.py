@@ -69,6 +69,17 @@ def payoff_win_rates(payoff, home, away, use_no_draw_winrates):
         return payoff.array_win_rate_no_draw(home, away)
     return payoff[home, away]
 
+def r2_score(y_pred, y_true):
+    if y_true.numel() == 0:
+        return None
+    y_true = y_true.detach().float().view(-1)
+    y_pred = y_pred.detach().float().view(-1)
+    ss_res = torch.sum((y_true - y_pred) ** 2)
+    ss_tot = torch.sum((y_true - y_true.mean()) ** 2)
+    if ss_tot.item() == 0:
+        return torch.tensor(0.0, device=y_true.device)
+    return 1.0 - ss_res / ss_tot
+
 def _init_agent_type(args, device):
     agent_type = []
     if args.num_selfplay_envs > 0:
@@ -1050,17 +1061,21 @@ def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indi
     writer.add_scalar(f"{player.name}_losses/entropy_loss", args.ent_coef * entropy_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/approx_kl", approx_kl.item(), args.global_step)
     writer.add_scalar(f"{player.name}_charts/grad_norm_before_clipping", grad_norm, args.global_step)
+    if "values" in exploiter_agent_batch and "returns" in exploiter_agent_batch:
+        r2 = r2_score(exploiter_agent_batch["values"], exploiter_agent_batch["returns"])
+        if r2 is not None:
+            writer.add_scalar(f"{player.name}_charts/r2_score", r2.item(), args.global_step)
     if advantages is not None:
         if not isinstance(advantages, torch.Tensor):
             advantages = torch.as_tensor(advantages)
         if advantages.numel() > 0:
             with torch.no_grad():
                 adv = advantages.detach().float()
-                writer.add_scalar(f"{player.name}/advantage_mean", adv.mean().item(), args.global_step)
-                writer.add_scalar(f"{player.name}/advantage_std", adv.std(unbiased=False).item(), args.global_step)
-                writer.add_scalar(f"{player.name}/advantage_min", adv.min().item(), args.global_step)
-                writer.add_scalar(f"{player.name}/advantage_max", adv.max().item(), args.global_step)
-                writer.add_scalar(f"{player.name}/advantage_pos_frac", (adv > 0).float().mean().item(), args.global_step)
+                writer.add_scalar(f"{player.name}_advantage/advantage_mean", adv.mean().item(), args.global_step)
+                writer.add_scalar(f"{player.name}_advantage/advantage_std", adv.std(unbiased=False).item(), args.global_step)
+                writer.add_scalar(f"{player.name}_advantage/advantage_min", adv.min().item(), args.global_step)
+                writer.add_scalar(f"{player.name}_advantage/advantage_max", adv.max().item(), args.global_step)
+                writer.add_scalar(f"{player.name}_advantage/advantage_pos_frac", (adv > 0).float().mean().item(), args.global_step)
     steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
     writer.add_scalar(f"{player.name}_charts/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
 

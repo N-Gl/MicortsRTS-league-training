@@ -711,6 +711,8 @@ class SelfPlayTrainer:
                 v_loss,
                 loss,
                 advantages=main_agent_batch["advantages"],
+                values=main_agent_batch["values"],
+                returns=main_agent_batch["returns"],
             )
 
             if args.prod_mode and update % self.checkpoint_frequency == 0:
