@@ -1,5 +1,5 @@
 defaults:
-  - default_config
+  - league_sp_conf_old_ppo_args_6
 
 ExperimentConfig:
   # args from https://github.com/Farama-Foundation/MicroRTS-Py/blob/master/experiments/ppo_gridnet.py
