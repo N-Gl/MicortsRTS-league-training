@@ -1061,6 +1061,9 @@ def log_exploiter_ppo_update(args, writer, exploiter_agent_batch, exploiter_indi
     writer.add_scalar(f"{player.name}_losses/entropy_loss", args.ent_coef * entropy_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/approx_kl", approx_kl.item(), args.global_step)
     writer.add_scalar(f"{player.name}_charts/grad_norm_before_clipping", grad_norm, args.global_step)
+    if getattr(args, "log_unweighted_losses", True):
+        writer.add_scalar(f"{player.name}_losses/value_loss_raw", v_loss.item(), args.global_step)
+        writer.add_scalar(f"{player.name}_losses/entropy_loss_raw", entropy_loss.item(), args.global_step)
     if "values" in exploiter_agent_batch and "returns" in exploiter_agent_batch:
         r2 = r2_score(exploiter_agent_batch["values"], exploiter_agent_batch["returns"])
         if r2 is not None:

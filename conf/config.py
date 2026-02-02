@@ -91,6 +91,7 @@ class ExperimentConfig:
     num_parallel_eval_envs: int
     num_parallel_selfplay_eval_games: int
     dbg_no_main_agent_ppo_update: bool
+    log_unweighted_losses: bool
     value_warmup_updates: int
     endgame_maps: bool
     Bot_as_player_1: bool

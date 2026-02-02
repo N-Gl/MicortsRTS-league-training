@@ -25,6 +25,9 @@ def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, 
         writer.add_scalar("losses/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("main_charts/grad_norm_before_clipping", grad_norm, global_step)
+        if getattr(args, "log_unweighted_losses", True):
+            writer.add_scalar("losses/value_loss_raw", v_loss.item(), global_step)
+            writer.add_scalar("losses/entropy_loss_raw", entropy_loss.item(), global_step)
 
     if values is not None and returns is not None:
         r2 = r2_score(values, returns)

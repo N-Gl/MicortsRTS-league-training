@@ -65,6 +65,7 @@ ExperimentConfig:
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
+  log_unweighted_losses: true  # log losses without weights
 
 
 

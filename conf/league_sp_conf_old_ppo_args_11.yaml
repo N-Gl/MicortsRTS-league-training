@@ -3,12 +3,12 @@ defaults:
 
 ExperimentConfig:
   model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
-  exp_name: 30_01_26__league_sp_conf_old_ppo_args_vf_coef_0_1_with_Bots
+  exp_name: 30_01_26__league_sp_conf_old_ppo_args_vf_coef_0_25_with_Bots
   
 
   num_bot_envs: 10 # 3
   max_num_bot_envs: 15 # 15 # changed from 9 (3)
   training_on_bot_envs: true   # true
 
-  vf_coef: 0.1
-  exploiter_vf_coef: 0.1
+  vf_coef: 0.25
+  exploiter_vf_coef: 0.25

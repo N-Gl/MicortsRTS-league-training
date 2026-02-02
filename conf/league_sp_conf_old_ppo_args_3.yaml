@@ -67,6 +67,7 @@ ExperimentConfig:
 
   log_exploiter_tables: false
   log_exploiter_winrates: false
+  log_unweighted_losses: true  # log losses without weights
 
   num_steps: 512 # (im basis ppo: 256)
   
