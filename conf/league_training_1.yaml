@@ -64,7 +64,7 @@ ExperimentConfig:
   PPO_weight_decay: 0.0
 
   sp: false
-  dbg_no_main_agent_ppo_update: true # false
+  dbg_no_main_agent_ppo_update: false # false
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
