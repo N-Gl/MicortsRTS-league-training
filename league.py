@@ -47,6 +47,8 @@ def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
         "focused_medium": lambda x: 8.2 * x * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)),
         "focused_strong_boosted": lambda x: 3.5 * x ** 0.4 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.1 ** 4)) + 0.05 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)), # stable training
         # + 0.05 * 1 / (1 + np.exp( - (0.08 - x) / 0.01)) further boost winrate below 0.08, winrate reaches 0.05 at x = 0
+        "focused_strong_boosted_with_draws": lambda x: 32 * x ** 2.5 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.3 ** 4))+ 0.2 * 1 / (1 + np.exp( - (0.5 - x) / 0.1)),
+        "focused_strong_with_draws": lambda x: 37.5 * x ** 2 * (1 - x) ** 2.5 * ((x ** 4) / (x ** 4 + 0.5 ** 4))+ 0.2 * 1 / (1 + np.exp( - (0.5 - x) / 0.1))
     }
     fn = weightings[weighting]
     win_rates = np.asarray(win_rates)
@@ -458,7 +460,7 @@ class MainExploiter(Player):
         self.name = f"MainExploiter_{main_exp_idx}"
 
     def get_match(self):
-        '''wählt  main agenten als gegner, wenn die winrate ohne draws gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
+        '''wählt  main agenten als gegner, wenn die winrate gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
         Wenn die min winrate gegen historische Mainagenten > 0.8 ist, wird in 50% der Fälle der Mainagent gewählt.
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
         
