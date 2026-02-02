@@ -21,5 +21,6 @@ ExperimentConfig:
   seed: 
 
   num_bot_envs: 10 # 3
+  min_num_bot_envs: 2  # minimum number of bot envs
   max_num_bot_envs: 15 # 15 # changed from 9 (3)
   training_on_bot_envs: true   # true

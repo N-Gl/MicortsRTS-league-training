@@ -555,6 +555,9 @@ class MainExploiter(Player):
             ]
             win_rates = payoff_win_rates(self._payoff, self, mainplayer, self.args.use_no_draw_winrates)
 
+        if len(win_rates) == 0:
+            return steps_passed > self.args.main_exploiter_selfplay_save_interval
+
 
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 

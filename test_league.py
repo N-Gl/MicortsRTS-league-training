@@ -672,8 +672,10 @@ def test_main_exploiter_ready_to_checkpoint_creates_historical_when_ready(monkey
     payoff.add_player(main_player)
     payoff.add_player(exploiter)
 
+    main_hist = main_player.checkpoint()
+    payoff.add_player(main_hist)
     for _ in range(20):
-        payoff.update(exploiter, main_player, 1)
+        payoff.update(exploiter, main_hist, 1)
     exploiter.agent.steps = args.selfplay_ready_save_interval - 1
     assert not exploiter.ready_to_checkpoint()
     exploiter.agent.steps = args.selfplay_ready_save_interval
@@ -891,6 +893,7 @@ def test_main_exploiter_get_match_returns_main_or_main_historical(monkeypatch):
         main_exploiter_no_draw_winrate_threshold=0.7,
         main_exploiter_vs_main_winrate_threshold=0.9,
         main_exploiter_winrate_threshold=0.7,
+        main_exploiter_ready_use_historicals=False,
     )
     payoff = league.Payoff()
     device = torch.device("cpu")
@@ -931,6 +934,7 @@ def test_main_exploiter_vs_main_winrate_threshold(monkeypatch):
     args = _make_match_args(
         main_exploiter_no_draw_winrate_threshold=0.9,
         main_exploiter_vs_main_winrate_threshold=0.5,
+        main_exploiter_ready_use_historicals=False,
     )
     payoff = league.Payoff()
     device = torch.device("cpu")
