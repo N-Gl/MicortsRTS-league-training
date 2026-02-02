@@ -44,6 +44,8 @@ class ExperimentConfig:
     main_exploiter_vs_main_winrate_threshold: float
     checkpoint_end_buffer_steps: int
     pfsp_min_prob_factor: float
+    main_exploiter_max_historical_winrate_threshold: float
+    main_exploiter_main_prob_when_max_historical_winrate: float
     main_PFSP_prob: float
     main_SP_prob: float
     vf_coef: float

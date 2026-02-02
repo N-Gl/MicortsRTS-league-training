@@ -464,10 +464,16 @@ class MainExploiter(Player):
         ]
         win_rates = self._payoff.array_win_rate_no_draw(self, historical)
 
-        if not self.args.sp:
+        if not self.args.sp and len(win_rates):
+
             min_win_rate = win_rates.min()
             threshold = self.args.main_exploiter_vs_main_winrate_threshold
-            if len(win_rates) and min_win_rate > threshold:
+
+            max_win_rate = win_rates.max()
+            if max_win_rate > self.args.main_exploiter_max_historical_winrate_threshold:
+                if np.random.random() < self.args.main_exploiter_main_prob_when_max_historical_winrate:
+                    return opponent, True
+            elif min_win_rate > threshold:
                 rand = np.random.random()
                 if min_win_rate > self.args.main_exploiter_winrate_threshold:
                     if rand < 0.6:       # min_win_rate = main_exploiter_winrate_threshold (0.7) -> 60%
