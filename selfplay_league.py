@@ -1053,7 +1053,7 @@ class LeagueTrainer:
             print("SPS:", int(args.global_step / (time.time() - start_time)))
 
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            if  args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs > and args.min_num_bot_envs and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
+            if args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs > args.min_num_bot_envs and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.bot_removing_winrate_threshold):
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
