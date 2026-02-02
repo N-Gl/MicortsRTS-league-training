@@ -15,6 +15,8 @@ def _make_dummy_args():
 
 
 def _make_args(**kwargs):
+    if "dbg_update_gaes" not in kwargs:
+        kwargs["dbg_update_gaes"] = False
     return types.SimpleNamespace(**kwargs)
 
 
@@ -165,6 +167,7 @@ def _make_ready_to_checkpoint_args(**overrides):
         main_SP_prob=0.1,
         Unit_reward_per_exploiter=False,
         unit_exploiters=False,
+        use_no_draw_winrates=True,
     )
     base.update(overrides)
     return _make_args(**base)
@@ -181,6 +184,8 @@ def _make_match_args(**overrides):
         main_exploiter_no_draw_winrate_threshold=0.7,
         main_exploiter_vs_main_winrate_threshold=0.5,
         main_exploiter_winrate_threshold=0.7,
+        main_exploiter_max_historical_winrate_threshold=2,
+        main_exploiter_main_prob_when_max_historical_winrate=0,
         main_exploiter_pfsp_weighting="variance",
         league_exploiter_pfsp_weighting="variance",
         save_gpu_memory=False,
@@ -188,6 +193,7 @@ def _make_match_args(**overrides):
         main_pfsp_weighting="focused_strong",
         Unit_reward_per_exploiter=False,
         unit_exploiters=False,
+        use_no_draw_winrates=True,
     )
     base.update(overrides)
     return _make_args(**base)

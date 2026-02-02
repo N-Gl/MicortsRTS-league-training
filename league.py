@@ -64,6 +64,11 @@ def pfsp(win_rates, weighting="linear", enabled=True, min_prob_factor=0.0):
         probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
     return probs
 
+def payoff_win_rates(payoff, home, away, use_no_draw_winrates):
+    if use_no_draw_winrates:
+        return payoff.array_win_rate_no_draw(home, away)
+    return payoff[home, away]
+
 def _init_agent_type(args, device):
     agent_type = []
     if args.num_selfplay_envs > 0:
@@ -276,7 +281,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical)
         ]
-        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
         return np.random.choice(
             historical,
             p=pfsp(
@@ -291,7 +296,7 @@ class MainPlayer(Player):
         '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
         ein checkpoint aus der vergangenheit als gegner gewählt mit pfsp Verteilung'''
         # Play self-play match
-        if self._payoff.array_win_rate_no_draw(self, opponent) > 0.3:
+        if payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > 0.3:
             return opponent, False
 
         # If opponent is too strong, look for a checkpoint
@@ -300,7 +305,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and player.parent == opponent
         ]
-        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
         return np.random.choice(
             historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
 
@@ -316,7 +321,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainExploiter)
         ]
-        win_rates = self._payoff.array_win_rate_no_draw(self, exp_historical)
+        win_rates = payoff_win_rates(self._payoff, self, exp_historical, self.args.use_no_draw_winrates)
         if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
                 exp_historical,
@@ -333,7 +338,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
-        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
         win_rates, historical = remove_monotonic_suffix(win_rates, historical)
         if len(win_rates) and win_rates.min() < self.args.main_winrate_threshold:
             return np.random.choice(
@@ -404,7 +409,7 @@ class MainPlayer(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical)
         ]
-        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
         return win_rates.min() > self.args.main_winrate_threshold or steps_passed > self.args.main_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_main_envs # * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
 
 
@@ -452,7 +457,7 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if (self._payoff.array_win_rate_no_draw(self, opponent) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10) and not self.args.sp:
+        if (payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10) and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
@@ -462,7 +467,7 @@ class MainExploiter(Player):
             player for player in self._payoff.players
             if isinstance(player, Historical) and isinstance(player.parent, MainPlayer)
         ]
-        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
 
         if not self.args.sp and len(win_rates):
 
@@ -529,7 +534,7 @@ class MainExploiter(Player):
             if isinstance(player, MainPlayer)
         ]
 
-        win_rates = self._payoff.array_win_rate_no_draw(self, mainplayer)
+        win_rates = payoff_win_rates(self._payoff, self, mainplayer, self.args.use_no_draw_winrates)
 
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
@@ -585,7 +590,7 @@ class LeagueExploiter(Player):
         #         print("Warning: In selfplay mode, the expoiter is playing against a historical of a different agent than main player.")
         #     return opp, True
 
-        win_rates = self._payoff.array_win_rate_no_draw(self, historical)
+        win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
         historical_names = [player.name for player in historical]
         print(f"\nchoosing next opponent for {self.name} out of \n{historical_names} \nwith win rates: \n{win_rates}")
         p = pfsp(
@@ -851,7 +856,12 @@ class League:
                 pfsp_weighting = None
 
             if pfsp_candidates:
-                pfsp_win_rates = done_agent.payoff.array_win_rate_no_draw(done_agent, pfsp_candidates)
+                pfsp_win_rates = payoff_win_rates(
+                    done_agent.payoff,
+                    done_agent,
+                    pfsp_candidates,
+                    args.use_no_draw_winrates,
+                )
                 pfsp_probs = pfsp(
                     pfsp_win_rates,
                     weighting=pfsp_weighting,

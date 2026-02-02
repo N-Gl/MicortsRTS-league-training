@@ -120,6 +120,7 @@ ExperimentConfig:
   even_opponent_split: false
   main_exploiter_no_draw_winrate_threshold: 0.1  # in Article: 0.2
   pfsp_min_prob_factor: 0.25
+  use_no_draw_winrates: true  # false: use normal winrates with draws
   main_exploiter_max_historical_winrate_threshold: 2  # 2: disable max-historical trigger
   main_exploiter_main_prob_when_max_historical_winrate: 0  # prob for playing vs main when max(winrate) > main_exploiter_max_historical_winrate_threshold
 
