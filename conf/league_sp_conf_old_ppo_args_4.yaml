@@ -54,7 +54,7 @@ ExperimentConfig:
 
   attack_reward_weight: 0.0 # (im basis ppo: 1)
   dyn_attack_reward: 0.0
-  rewardscore: 0.002
+  rewardscore: 0.002  # score = tanh(1.5 * rewardscore * Delta-Micro-RTS-score)
   value_warmup_updates: -1
   # reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]) (winloss = 1)
 
@@ -76,7 +76,7 @@ ExperimentConfig:
   gamma: 1 # (im basis ppo: 0.99)
   gae_lambda: 0.95
   ent_coef: 0.005
-  vf_coef: 0.5
+  vf_coef: 0.9  # ammended after run
   max_grad_norm: 0.5
   clip_coef: 0.1 # changed 0.15
   update_epochs: 4
@@ -91,7 +91,7 @@ ExperimentConfig:
   exploiter_gamma: 1
   exploiter_gae_lambda: 0.95
   exploiter_ent_coef: 0.01 # 0.1     # higher entropy only for exploiters
-  exploiter_vf_coef: 0.5
+  exploiter_vf_coef: 0.9  # ammended after run
   exploiter_max_grad_norm: 0.5
   exploiter_clip_coef: 0.1 # 0.2
   exploiter_update_epochs: 4

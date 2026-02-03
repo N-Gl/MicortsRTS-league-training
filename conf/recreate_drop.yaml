@@ -62,4 +62,4 @@ ExperimentConfig:
 
   args.rewardscore: 0.0
   endgame_maps: False
-  rewardscore: 0.0
+  rewardscore: 0.0  # score = tanh(1.5 * rewardscore * Delta-Micro-RTS-score)

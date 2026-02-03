@@ -665,7 +665,7 @@ class LeagueTrainer:
 
                 sp_score_delta = sp_score_tensor - last_sp_scorerew
                 bot_score_delta = bot_score_tensor - last_bot_scorerew
-                score_delta = torch.cat([sp_score_delta, bot_score_delta])
+                score_delta = torch.tanh(1.5 * args.rewardscore * torch.cat([sp_score_delta, bot_score_delta]))
                 sp_done_tensor = torch.as_tensor(sp_ds, device=device, dtype=torch.bool)
                 bot_done_tensor = torch.as_tensor(bot_ds, device=device, dtype=torch.bool)
                 last_sp_scorerew = torch.where(sp_done_tensor, torch.zeros_like(sp_score_tensor), sp_score_tensor) # if done: 0 else: current score
@@ -689,7 +689,7 @@ class LeagueTrainer:
                     for done_idx in where_done[0]:
                         delta_score_sum = delta_score_sums[done_idx].item()
                         infos[done_idx]["delta_score_sum"] = delta_score_sum
-                        infos[done_idx]["delta_score_sum_weighted"] = delta_score_sum * args.rewardscore
+                        infos[done_idx]["delta_score_sum_weighted"] = delta_score_sum
                         done_agent = self.active_league_agents[done_idx]
 
                         # dyn_winloss = winloss
@@ -786,7 +786,6 @@ class LeagueTrainer:
                 #     )
                 
                 rewards_winloss = rewards_winloss * winloss
-                delta_rewards_score = delta_rewards_score * args.rewardscore
 
                 # dont calculate GAE for Player 1 Environments
                 b_next_value = next_value[:, self.indices]
