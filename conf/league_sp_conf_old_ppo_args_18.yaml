@@ -3,18 +3,18 @@ defaults:
 
 ExperimentConfig:
   model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
-  exp_name: 30_01_26__league_sp_conf_old_ppo_args_lr_1e-5_with_Bots
+  exp_name: 30_01_26__league_sp_conf_old_ppo_args_lr_2_5e-5_min_num_bot_envs_7_with_Bots
   
 
   num_bot_envs: 10 # 3
-  min_num_bot_envs: 4  # minimum number of bot envs
+  min_num_bot_envs: 7  # minimum number of bot envs
   max_num_bot_envs: 15 # 15 # changed from 9 (3)
   training_on_bot_envs: true   # true
 
 
 
-  PPO_learning_rate: 1e-5
-  exploiter_PPO_learning_rate: 1e-5
+  PPO_learning_rate: 2.5e-5 # TODO
+  exploiter_PPO_learning_rate: 2.5e-5 # TODO
   
   vf_coef: 0.1 # TODO
   exploiter_vf_coef: 0.1 # TODO

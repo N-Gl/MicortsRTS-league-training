@@ -19,8 +19,8 @@ ExperimentConfig:
   num_bot_envs: 3
   min_num_bot_envs: 2  # minimum number of bot envs
   max_num_bot_envs: 15
-  bot_adding_done_training_ratio: 0.5
-  bot_removing_done_training_ratio: 0.75
+  # bot_adding_done_training_ratio: 0.5  # currently not used
+  # bot_removing_done_training_ratio: 0.75  # currently not used
   num_main_envs: 20   # 1 num_main_envs == 1 env
 
   even_opponent_split: true # TODO

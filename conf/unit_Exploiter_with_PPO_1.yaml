@@ -27,9 +27,10 @@ ExperimentConfig:
   min_num_bot_envs: 2  # minimum number of bot envs
   max_num_bot_envs: 25 # 6 # changed from 9
   dyn_num_bot_envs: false
-  bot_adding_done_training_ratio: 2
-  bot_removing_done_training_ratio: 0
-  bot_removing_winrate_threshold: 2
+  # bot_adding_done_training_ratio: 2  # currently not used
+  # bot_removing_done_training_ratio: 0  # currently not used
+  min_bot_winrate: 2
+  max_bot_winrate: 1
 
 
   num_main_envs: 0   # 1 num_main_envs == 1 env # TODO
