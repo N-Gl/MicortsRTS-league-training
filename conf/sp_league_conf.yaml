@@ -52,7 +52,7 @@ ExperimentConfig:
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
   gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
   ent_coef: 0.005               # new (BA Parameter) (Entropy coefficient η = 0.005)
-  vf_coef: 0.9  # new (BA Parameter) (Value function coefficient β = 0.01); ammended after run
+  vf_coef: 0.09 # new (BA Parameter) (Value function coefficient β = 0.01); ammended after run
   max_grad_norm: 0.5            # new (BA Parameter) (Gradient norm threshold ω = 0.5)
   clip_coef: 0.1                # new (BA Parameter) (Clipping coefficient = 0.1)
   update_epochs: 4              
