@@ -71,6 +71,17 @@ def payoff_win_rates(payoff, home, away, use_no_draw_winrates):
         return payoff.array_win_rate_no_draw(home, away)
     return payoff[home, away]
 
+def get_agent_steps_for_logging(args, player):
+
+    if isinstance(player, MainPlayer):
+        envs_for_agent = args.num_main_envs
+    elif isinstance(player, MainExploiter):
+        envs_for_agent = args.num_envs_per_main_exploiters
+    elif isinstance(player, LeagueExploiter):
+        envs_for_agent = args.num_envs_per_league_exploiters
+
+    return int(args.global_step / (args.num_selfplay_envs // 2 + args.num_bot_envs) * envs_for_agent)
+
 def r2_score(y_pred, y_true):
     if y_true.numel() == 0:
         return None
@@ -795,6 +806,7 @@ class League:
 
 
     def _log_selfplay_results(self, args, agent, writer, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games, indices_per_exploiter):
+        agent_steps = get_agent_steps_for_logging(args, done_agent)
         if isinstance(done_agent, MainPlayer):
             writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
@@ -803,9 +815,9 @@ class League:
 
             winloss_values = np.array(writer.recent_selfplay_winloss)
             writer.add_scalar("progress/num_selfplay_games", num_done_selfplaygames, args.global_step)
-            writer.add_scalar(f"main_winrates/selfplay_Winrate_with_draw", selfplay_with_draw, num_done_selfplaygames)
-            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, num_done_selfplaygames)
-            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), num_done_selfplaygames)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_with_draw", selfplay_with_draw, agent_steps)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, agent_steps)
+            writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), agent_steps)
 
         if (num_done_selfplaygames < 100 or last_logged_selfplay_games + 10 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
 
@@ -851,7 +863,7 @@ class League:
                                     args,
                                     opponent_table_rows,
                                     no_reward=True,
-                                    step=args.global_step,
+                                    step=agent_steps,
                                     table_name=f"league/{done_agent.name}_summary",
                                     with_name=done_agent.name
                                     )
@@ -899,8 +911,8 @@ class League:
                 for opp, opp_player, games, r, rw in zip(opp_names, opp_players, game_count, win_rates_no_draw, win_rates_with_draw):
                     if games > 0:
                         if not (isinstance(done_agent, MainPlayer) and (isinstance(opp_player, LeagueExploiter) or isinstance(opp_player, MainExploiter))):
-                            writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_no_draw", r, games)
-                            writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_with_draw", rw, games)
+                            writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_no_draw", r, agent_steps)
+                            writer.add_scalar(f"winrate_per_opp_{done_agent.name}/{opp}_with_draw", rw, agent_steps)
                     if pfsp_probs_by_player:
                         approx_prob = pfsp_probs_by_player.get(opp_player, 0.0)
                         writer.add_scalar(
@@ -1035,18 +1047,19 @@ def log_general_main_results(writer, global_step, infos, dyn_winloss, game_lengt
     writer.add_scalar("main_charts/steps_since_checkpoint", steps_since_checkpoint, global_step)
         
 
-def log_bot_game_results(args, writer, infos, attack_weight, done_idx, dyn_winloss, num_done_botgames):
+def log_bot_game_results(args, writer, infos, attack_weight, done_idx, dyn_winloss, num_done_botgames, done_agent=None):
     print(f"Game {int(args.num_selfplay_envs/2 + int(done_idx - (args.num_selfplay_envs - 1)))} ended, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
     writer.recent_bot_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
     bot_winrate = np.mean(np.clip(writer.recent_bot_winloss, 0, 1))
     with_draw = np.mean(np.add(writer.recent_bot_winloss, 1) / 2)
+    agent_steps = get_agent_steps_for_logging(args, done_agent)
 
     winloss_values = np.array(np.clip(writer.recent_bot_winloss, 0, 1))
     writer.add_scalar("progress/num_bot_games", num_done_botgames, args.global_step)
-    writer.add_scalar(f"main_winrates/bot_Winrate_with_Draw_0", bot_winrate, num_done_botgames)
-    writer.add_scalar(f"main_winrates/bot_Winrate_std", np.std(winloss_values), num_done_botgames)
-    writer.add_scalar(f"main_winrates/bot_Winrate_with_draw_0.5", with_draw, num_done_botgames)
+    writer.add_scalar(f"main_winrates/bot_Winrate_with_Draw_0", bot_winrate, agent_steps)
+    writer.add_scalar(f"main_winrates/bot_Winrate_std", np.std(winloss_values), agent_steps)
+    writer.add_scalar(f"main_winrates/bot_Winrate_with_draw_0.5", with_draw, agent_steps)
     score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
     weighted_score_reward_sum = score_reward_sum * args.rewardscore
     delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
