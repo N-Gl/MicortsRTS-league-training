@@ -30,7 +30,7 @@ ExperimentConfig:
   # bot_adding_done_training_ratio: 2  # currently not used
   # bot_removing_done_training_ratio: 0  # currently not used
   min_bot_winrate: 2
-  max_bot_winrate: 1
+  max_bot_winrate: 0.99
 
 
   num_main_envs: 0   # 1 num_main_envs == 1 env # TODO

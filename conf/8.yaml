@@ -25,7 +25,7 @@ ExperimentConfig:
   # bot_adding_done_training_ratio: 0.5  # currently not used
   # bot_removing_done_training_ratio: 0.75  # currently not used
   min_bot_winrate: 0.97
-  max_bot_winrate: 1
+  max_bot_winrate: 0.99
   num_main_envs: 11
   num_main_exploiters: 1
   num_league_exploiters: 0

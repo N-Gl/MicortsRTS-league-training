@@ -1062,8 +1062,8 @@ class LeagueTrainer:
                 intended_bot_envs = np.floor(args.max_num_bot_envs - (cur_winrate - args.min_bot_winrate) / ((args.max_bot_winrate - args.min_bot_winrate) / (args.max_num_bot_envs - args.min_num_bot_envs)))
 
             # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            # if args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs > args.min_num_bot_envs and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.min_bot_winrate):
-            if args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs > args.min_num_bot_envs and intended_bot_envs < args.num_bot_envs:
+            # if args.dyn_num_bot_envs and last_bot_env_change >= 15 and args.num_bot_envs > args.min_num_bot_envs and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.min_bot_winrate):
+            if args.dyn_num_bot_envs and last_bot_env_change >= 15 and args.num_bot_envs > args.min_num_bot_envs and intended_bot_envs < args.num_bot_envs:
                 print("\nRemoving a Bot Environment")
 
                 envs.close()
@@ -1119,8 +1119,8 @@ class LeagueTrainer:
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
-            # elif args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
-            elif args.dyn_num_bot_envs and last_bot_env_change >= 20 and args.num_bot_envs < args.max_num_bot_envs and intended_bot_envs > args.num_bot_envs:
+            # elif args.dyn_num_bot_envs and last_bot_env_change >= 15 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+            elif args.dyn_num_bot_envs and last_bot_env_change >= 15 and args.num_bot_envs < args.max_num_bot_envs and intended_bot_envs > args.num_bot_envs:
                 print("\nAdding an Bot Environment")
 
                 envs.close()
