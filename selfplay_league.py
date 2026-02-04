@@ -704,7 +704,7 @@ class LeagueTrainer:
                                 league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
-                            league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames)
+                            league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames, done_agent)
                             num_done_botgames += 1
                             last_bot_env_change += 1
 
