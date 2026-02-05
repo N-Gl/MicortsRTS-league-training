@@ -1,0 +1,41 @@
+name: league_training_sweep
+program: main.py
+method: bayes
+metric:
+  name: eval/win_rate/vf_coef/kl_coeff_sweep
+  goal: maximize
+parameters:
+  PPO_learning_rate:
+    distribution: log_uniform_values
+    min: 1e-5
+    max: 1e-4
+  ent_coef:
+    distribution: log_uniform_values
+    min: 0.001
+    max: 0.02
+  clip_coef:
+    distribution: log_uniform_values
+    min: 0.05
+    max: 0.3
+  vf_coef:
+    distribution: log_uniform_values
+    min: 0.01
+    max: 0.5
+  kl_coeff:
+    distribution: log_uniform_values
+    min: 0.1
+    max: 0.6
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - --config-name
+  - league_sp_conf_old_ppo_args_3
+  - ExperimentConfig.total_timesteps=6000000
+  - ExperimentConfig.PPO_learning_rate=${PPO_learning_rate}
+  - ExperimentConfig.ent_coef=${ent_coef}
+  - ExperimentConfig.clip_coef=${clip_coef}
+  - ExperimentConfig.vf_coef=${vf_coef}
+  - ExperimentConfig.kl_coeff=${kl_coeff}
+  - ExperimentConfig.wandb_group_name=sweep_league_training
+  - ExperimentConfig.exp_name=sweep_lt_${PPO_learning_rate}_${ent_coef}_${clip_coef}_${vf_coef}_${kl_coeff}

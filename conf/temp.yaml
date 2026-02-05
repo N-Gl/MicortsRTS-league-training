@@ -52,7 +52,7 @@ ExperimentConfig:
 
   even_opponent_split: true
 
-  total_timesteps: 30000000
+  total_timesteps: 7000000
 
   early_updates: true
 
