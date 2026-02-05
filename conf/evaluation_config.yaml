@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_30.pt",
+                          "league_models/30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots/Main_agent_backups/agent_update_320.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "29_12_25__finished_PPO_Basis_thesis__league",
+          "30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "29_12_25__finished_PPO_Basis_thesis__league_update_20"
+  exp_name: "30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots_update_320"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   prod_mode: true
