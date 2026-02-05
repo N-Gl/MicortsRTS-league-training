@@ -818,6 +818,14 @@ class League:
             writer.add_scalar(f"main_winrates/selfplay_Winrate_with_draw", selfplay_with_draw, agent_steps)
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw", selfplay_winrate, agent_steps)
             writer.add_scalar(f"main_winrates/selfplay_Winrate_no_draw_std", np.std(winloss_values), agent_steps)
+            if hasattr(writer, "recent_bot_winloss") and len(writer.recent_bot_winloss) > 0:
+                bot_winrate = np.mean(np.clip(writer.recent_bot_winloss, 0, 1))
+                combined_metric = selfplay_winrate + bot_winrate
+                writer.add_scalar(
+                    "main_winrates/combined_selfplay_no_draw_plus_bot_with_draw_0",
+                    combined_metric,
+                    agent_steps,
+                )
 
         if (num_done_selfplaygames < 100 or last_logged_selfplay_games + 10 <= num_done_selfplaygames) and ((args.log_exploiter_tables) or isinstance(done_agent, MainPlayer)):
 
@@ -1060,6 +1068,14 @@ def log_bot_game_results(args, writer, infos, attack_weight, done_idx, dyn_winlo
     writer.add_scalar(f"main_winrates/bot_Winrate_with_Draw_0", bot_winrate, agent_steps)
     writer.add_scalar(f"main_winrates/bot_Winrate_std", np.std(winloss_values), agent_steps)
     writer.add_scalar(f"main_winrates/bot_Winrate_with_draw_0.5", with_draw, agent_steps)
+    if hasattr(writer, "recent_selfplay_winloss") and len(writer.recent_selfplay_winloss) > 0:
+        selfplay_winrate = np.mean(np.clip(writer.recent_selfplay_winloss, 0, 1))
+        combined_metric = selfplay_winrate + bot_winrate
+        writer.add_scalar(
+            "main_winrates/combined_selfplay_no_draw_plus_bot_with_draw_0",
+            combined_metric,
+            agent_steps,
+        )
     score_reward_sum = infos[done_idx].get("microrts_stats", {}).get("ScoreRewardFunction", 0.0)
     weighted_score_reward_sum = score_reward_sum * args.rewardscore
     delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
