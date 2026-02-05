@@ -15,5 +15,5 @@ ExperimentConfig:
 
   update_epochs: 3
   
-  vf_coef: 0.1 # TODO
-  exploiter_vf_coef: 0.1 # TODO
+  vf_coef: 0.15 # TODO
+  exploiter_vf_coef: 0.15 # TODO

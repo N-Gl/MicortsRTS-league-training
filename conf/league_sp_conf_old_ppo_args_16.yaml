@@ -16,5 +16,5 @@ ExperimentConfig:
   PPO_learning_rate: 1e-5
   exploiter_PPO_learning_rate: 1e-5
   
-  vf_coef: 0.1 # TODO
-  exploiter_vf_coef: 0.1 # TODO
+  vf_coef: 0.15 # TODO
+  exploiter_vf_coef: 0.15 # TODO

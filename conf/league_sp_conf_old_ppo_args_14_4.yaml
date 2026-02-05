@@ -3,7 +3,7 @@ defaults:
 
 ExperimentConfig:
   model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
-  exp_name: 30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_2_ent_coef_0_01_with_Bots
+  exp_name: 30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_ent_coef_0_01_with_Bots
   
 
   num_bot_envs: 10 # 3
@@ -12,8 +12,8 @@ ExperimentConfig:
   training_on_bot_envs: true   # true
 
 
-  clip_coef: 0.2
-  exploiter_clip_coef: 0.2
+  clip_coef: 0.15
+  exploiter_clip_coef: 0.15
   # ist approx_kl wieder hoch?
 
   # kl_coeff: 0.3              # TODO: auskommentiert?
