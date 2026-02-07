@@ -14,7 +14,27 @@ def r2_score(y_pred, y_true):
         return torch.tensor(0.0, device=y_true.device)
     return 1.0 - ss_res / ss_tot
 
-def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, log_SPS=True, grad_norm=None, advantages=None, values=None, returns=None):
+def log(
+    args,
+    writer,
+    optimizer,
+    global_step,
+    start_time,
+    update,
+    pg_stop_iter,
+    pg_loss,
+    entropy_loss,
+    kl_loss,
+    approx_kl,
+    v_loss,
+    loss,
+    log_SPS=True,
+    grad_norm=None,
+    advantages=None,
+    values=None,
+    returns=None,
+    delta_rewards_score=None,
+):
     writer.add_scalar("main_charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
     writer.add_scalar("progress/update", update, global_step)
     if loss is not None:
@@ -45,6 +65,12 @@ def log(args, writer, optimizer, global_step, start_time, update, pg_stop_iter, 
                 writer.add_scalar("main_advantage/advantage_min", adv.min().item(), global_step)
                 writer.add_scalar("main_advantage/advantage_max", adv.max().item(), global_step)
                 writer.add_scalar("main_advantage/advantage_pos_frac", (adv > 0).float().mean().item(), global_step)
+
+
+    with torch.no_grad():
+        drs = delta_rewards_score.detach().float() if delta_rewards_score is not None else torch.tensor(0.0)
+        writer.add_scalar(f"main_delta_scores/mean", drs.mean().item(), args.global_step)
+        writer.add_scalar(f"main_delta_scores/abs_mean", drs.abs().mean().item(), args.global_step)
 
     if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None:
         writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
