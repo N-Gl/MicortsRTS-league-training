@@ -3,7 +3,7 @@ defaults:
 
 ExperimentConfig:
   model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
-  exp_name: 30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots
+  exp_name: 30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots_4
   
 
   num_bot_envs: 10 # 3

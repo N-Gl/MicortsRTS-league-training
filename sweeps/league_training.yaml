@@ -2,7 +2,7 @@ name: league_training_sweep
 program: main.py
 method: bayes
 metric:
-  name: main_winrates/combined_selfplay_no_draw_plus_bot_with_draw_0
+  name: main_winrates/selfplay_Winrate_with_draw
   goal: maximize
 parameters:
   ExperimentConfig.total_timesteps:
@@ -31,7 +31,7 @@ parameters:
     max: 0.5
   ExperimentConfig.kl_coeff:
     distribution: log_uniform_values
-    min: 0.1
+    min: 0.2
     max: 0.6
 command:
   - ${env}

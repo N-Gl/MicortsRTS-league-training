@@ -895,6 +895,7 @@ class LeagueTrainer:
                 advantages=main_agent_batch["advantages"],
                 values=main_agent_batch["values"],
                 returns=main_agent_batch["returns"],
+                delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
             )
 
             # bot_exploiters = np.where(
@@ -1019,6 +1020,7 @@ class LeagueTrainer:
                         update,
                         grad_norm=grad_norm,
                         advantages=exploiter_agent_batch["advantages"],
+                        delta_rewards_score=b_delta_rewards_score[:, b_exploiter_idx]
                     )
 
                 
