@@ -2,14 +2,20 @@ defaults:
   - league_sp_conf_old_ppo_args_3
 
 ExperimentConfig:
-  model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
-  exp_name: 30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt # TODO
+  model_path: models/finished_PPO_Basis_thesis.pt
+  exp_name: 30_01_26__league_sp_conf_old_ppo_args_clip_coef_0_15_vf_coef_0.15_with_Bots_5
   
 
   num_bot_envs: 10 # 3
   min_num_bot_envs: 2  # minimum number of bot envs
   max_num_bot_envs: 15 # 15 # changed from 9 (3)
   training_on_bot_envs: true   # true
+
+
+  # attack_reward_weight: 0.05 # TODO
+  # rewardscore: 0.0 # TODO
 
 
   clip_coef: 0.15
