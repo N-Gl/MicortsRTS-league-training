@@ -1146,8 +1146,11 @@ def log_exploiter_ppo_update(
     steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
     writer.add_scalar(f"{player.name}_charts/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
 
-    if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None and pg_stop_iter >= 0:
-        writer.add_scalar(f"{player.name}_charts/pg_stop_iter", pg_stop_iter, args.global_step)
+    if (args.kle_stop or args.kle_rollback):
+        if pg_stop_iter is not None and pg_stop_iter >= 0:
+            writer.add_scalar(f"{player.name}_charts/pg_stop_iter", args.update_epochs, args.global_step)
+        else:
+            writer.add_scalar(f"{player.name}_charts/pg_stop_iter", pg_stop_iter, args.global_step)
 
     if args.prod_mode and update % args.checkpoint_frequency == 0:
             print("Saving model checkpoint...")
