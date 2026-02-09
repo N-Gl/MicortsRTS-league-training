@@ -72,7 +72,7 @@ def log(
         writer.add_scalar(f"main_delta_scores/mean", drs.mean().item(), args.global_step)
         writer.add_scalar(f"main_delta_scores/abs_mean", drs.abs().mean().item(), args.global_step)
 
-    if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None:
+    if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None and pg_stop_iter >= 0:
         writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
 
     if log_SPS:
