@@ -388,6 +388,7 @@ class LeagueTrainer:
 
         for update in range(1, num_updates + 1):
             skip_update_count = 0
+            should_log_every_20_updates = (update % 20 == 0)
             if args.dbg_seed:
                 self._seed_for_update(update, args.seed)
 
@@ -1050,8 +1051,9 @@ class LeagueTrainer:
                     else:
                         league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
 
-            writer.add_scalar("charts/sps", int(args.global_step / (time.time() - start_time)), args.global_step)
-            print("SPS:", int(args.global_step / (time.time() - start_time)))
+            if should_log_every_20_updates:
+                writer.add_scalar("charts/sps", int(args.global_step / (time.time() - start_time)), args.global_step)
+                print("SPS:", int(args.global_step / (time.time() - start_time)))
 
             cur_winrate = np.mean(np.add(writer.recent_bot_winloss, 1) / 2) if hasattr(writer, "recent_bot_winloss") else 0.0
             if cur_winrate < args.min_bot_winrate:
@@ -1186,7 +1188,8 @@ class LeagueTrainer:
                 print("New number of Bot Environments:", args.num_bot_envs)
                 print("")
 
-            writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, args.global_step)
+            if should_log_every_20_updates:
+                writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, args.global_step)
 
         if args.dbg_non_legal_action and cleanup_break:
             cleanup_break()

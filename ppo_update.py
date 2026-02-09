@@ -35,6 +35,8 @@ def log(
     returns=None,
     delta_rewards_score=None,
 ):
+    should_log_every_20_updates = (update % 20 == 0)
+
     writer.add_scalar("main_charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
     writer.add_scalar("progress/update", update, global_step)
     if loss is not None:
@@ -54,7 +56,7 @@ def log(
         if r2 is not None:
             writer.add_scalar("main_charts/r2_score", r2.item(), global_step)
 
-    if advantages is not None:
+    if advantages is not None and should_log_every_20_updates:
         if not isinstance(advantages, torch.Tensor):
             advantages = torch.as_tensor(advantages)
         if advantages.numel() > 0:

@@ -807,6 +807,7 @@ class League:
 
     def _log_selfplay_results(self, args, agent, writer, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games, indices_per_exploiter):
         agent_steps = get_agent_steps_for_logging(args, done_agent)
+        should_log_per_opponent_every_10_games = ((num_done_selfplaygames + 1) % 10 == 0)
         if isinstance(done_agent, MainPlayer):
             writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
@@ -915,7 +916,7 @@ class League:
                     player: prob for player, prob in zip(pfsp_candidates, pfsp_probs)
                 }
             
-            if args.log_exploiter_winrates or isinstance(done_agent, MainPlayer):
+            if (args.log_exploiter_winrates or isinstance(done_agent, MainPlayer)) and should_log_per_opponent_every_10_games:
                 for opp, opp_player, games, r, rw in zip(opp_names, opp_players, game_count, win_rates_no_draw, win_rates_with_draw):
                     if games > 0:
                         if not (isinstance(done_agent, MainPlayer) and (isinstance(opp_player, LeagueExploiter) or isinstance(opp_player, MainExploiter))):
@@ -1110,6 +1111,7 @@ def log_exploiter_ppo_update(
     delta_rewards_score=None,
 ):
     player = exploiter_agent_batch["player"]
+    should_log_every_20_updates = (update % 20 == 0)
 
     writer.add_scalar(f"{player.name}_charts/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], args.global_step)
     writer.add_scalar(f"{player.name}_losses/value_loss", args.vf_coef * v_loss.item(), args.global_step)
@@ -1126,7 +1128,7 @@ def log_exploiter_ppo_update(
         r2 = r2_score(exploiter_agent_batch["values"], exploiter_agent_batch["returns"])
         if r2 is not None:
             writer.add_scalar(f"{player.name}_charts/r2_score", r2.item(), args.global_step)
-    if advantages is not None:
+    if advantages is not None and should_log_every_20_updates:
         if not isinstance(advantages, torch.Tensor):
             advantages = torch.as_tensor(advantages)
         if advantages.numel() > 0:
