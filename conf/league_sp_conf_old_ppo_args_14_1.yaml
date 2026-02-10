@@ -25,6 +25,9 @@ ExperimentConfig:
   exploiter_clip_coef: 0.15
   # ist approx_kl wieder hoch?
 
+  # ent_coef: 0.01
+  # exploiter_ent_coef: 0.01
+
   kl_coeff: 0.3
   exploiter_kl_coeff: 0.3
 
