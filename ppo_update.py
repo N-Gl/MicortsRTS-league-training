@@ -300,7 +300,8 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             optimizer.zero_grad()
             loss.backward()
             # TODO: nur für Debugging (nachher entfernen)
-            assert_supervised_grads_zero(supervised_agent)
+            if args.dbg_exploiter_update:
+                assert_supervised_grads_zero(supervised_agent)
             grad_norm = torch.nn.utils.clip_grad_norm_(agent.parameters(), max_grad_norm)
             grad_norm = grad_norm.item()
             optimizer.step()
