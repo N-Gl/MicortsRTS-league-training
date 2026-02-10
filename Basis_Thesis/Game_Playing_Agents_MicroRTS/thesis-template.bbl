@@ -1,39 +1,9 @@
 \begin{thebibliography}{}
 
-\bibitem[Espeholt et~al., 2018]{espeholt2018impala}
-Espeholt, L., Soyer, H., Munos, R., Simonyan, K., Mnih, V., Ward, T., Doron, Y., Firoiu, V., Harley, T., Dunning, I., Legg, S., and Kavukcuoglu, K. (2018).
-\newblock Impala: scalable distributed deep-rl with importance weighted actor-learner architectures.
-\newblock In {\em Proceedings of the 35th International Conference on Machine Learning (ICML)}, volume~80 of {\em Proceedings of Machine Learning Research}, pages 1406--1415.
-
-\bibitem[Goodfriend, 2024]{goodfriend2024raisocketai}
-Goodfriend, S. (2024).
-\newblock Raisocketai: The first deep reinforcement learning agent to win the ieee microrts competition.
-\newblock In {\em 2024 IEEE Conference on Games (CoG)}, pages 1--8.
-
-\bibitem[He et~al., 2016]{he2016deep}
-He, K., Zhang, X., Ren, S., and Sun, J. (2016).
-\newblock Deep residual learning for image recognition.
-\newblock {\em arXiv preprint arXiv:1512.03385}.
-
 \bibitem[Heinrich et~al., 2015]{heinrich2015fsp}
 Heinrich, J., Lanctot, M., and Silver, D. (2015).
 \newblock Fictitious self-play in extensive-form games.
 \newblock In Bach, F. and Blei, D., editors, {\em Proceedings of the 32nd International Conference on Machine Learning}, volume~37 of {\em Proceedings of Machine Learning Research}, pages 805--813.
-
-\bibitem[Hu et~al., 2018]{hu2018squeeze}
-Hu, J., Shen, L., Albanie, S., Sun, G., and Wu, E. (2018).
-\newblock Squeeze-and-excitation networks.
-\newblock {\em arXiv preprint arXiv:1709.01507}.
-
-\bibitem[Huang and Ontan{\'o}n, 2020a]{huang2020invalid}
-Huang, S. and Ontan{\'o}n, S. (2020a).
-\newblock A closer look at invalid action masking in policy gradient algorithms.
-\newblock {\em CoRR}, abs/2006.14171.
-
-\bibitem[Huang and Ontan{\'o}n, 2020b]{huang2020observation}
-Huang, S. and Ontan{\'o}n, S. (2020b).
-\newblock Comparing observation and action representations.
-\newblock {\em arXiv preprint arXiv:1910.12134}.
 
 \bibitem[Huang et~al., 2021]{huang2021gym}
 Huang, S., Ontan{\'o}n, S., Bamford, C., and Grela, L. (2021).
@@ -44,26 +14,6 @@ Huang, S., Ontan{\'o}n, S., Bamford, C., and Grela, L. (2021).
 Martin, D. and Jhala, A. (2021).
 \newblock Beclone: Behavior cloning with inference for real-time strategy games.
 \newblock In {\em Joint Proceedings of the AIIDE 2021 Workshops}.
-
-\bibitem[Ontan{\'o}n et~al., 2018]{ontanon2018first}
-Ontan{\'o}n, S., Barriga, N.~A., Silva, C.~R., Moraes, R.~O., and Lelis, L. H.~S. (2018).
-\newblock The first microrts artificial intelligence competition.
-\newblock {\em AI Magazine}, 39:75--83.
-
-\bibitem[Ontan{\'o}n et~al., 2013]{ontanon2013survey}
-Ontan{\'o}n, S., Synnaeve, G., Uriarte, A., Richoux, F., Churchill, D., and Preuss, M. (2013).
-\newblock A survey of real-time strategy game ai research and competition in starcraft.
-\newblock {\em IEEE Transactions on Computational Intelligence and AI in Games}, 5(4):293--311.
-
-\bibitem[Richoux, 2020]{richoux2020microphantom}
-Richoux, F. (2020).
-\newblock microphantom: Playing microrts under uncertainty and chaos.
-\newblock {\em arXiv preprint arXiv:2005.11019}.
-
-\bibitem[Schulman et~al., 2015]{schulman2015high}
-Schulman, J., Moritz, P., Levine, S., Jordan, M., and Abbeel, P. (2015).
-\newblock High-dimensional continuous control using generalized advantage estimation.
-\newblock {\em arXiv preprint arXiv:1506.02438}.
 
 \bibitem[Schulman et~al., 2017]{schulman2017ppo}
 Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and Klimov, O. (2017).
