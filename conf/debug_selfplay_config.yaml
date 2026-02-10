@@ -15,6 +15,7 @@ ExperimentConfig:
   seed: 1
 
   num_bot_envs: 2
+  dyn_num_bot_envs: true
   min_num_bot_envs: 2  # minimum number of bot envs
   max_num_bot_envs: 5
   lower_selfplay_winrate_offset: 0.25

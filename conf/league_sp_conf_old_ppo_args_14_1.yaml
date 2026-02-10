@@ -9,6 +9,7 @@ ExperimentConfig:
   wandb_group_name: new_sp_28_01_26_no_Bots
 
   num_bot_envs: 1 # 3
+  dyn_num_bot_envs: true
   min_num_bot_envs: 1  # minimum number of bot envs
   max_num_bot_envs: 1 # 15 # changed from 9 (3)
   training_on_bot_envs: false   # true
