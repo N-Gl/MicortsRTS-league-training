@@ -74,8 +74,13 @@ def log(
         writer.add_scalar(f"main_delta_scores/mean", drs.mean().item(), args.global_step)
         writer.add_scalar(f"main_delta_scores/abs_mean", drs.abs().mean().item(), args.global_step)
 
-    if (args.kle_stop or args.kle_rollback) and pg_stop_iter is not None and pg_stop_iter >= 0:
-        writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
+    if (args.kle_stop or args.kle_rollback):
+        if pg_stop_iter == -1:
+            writer.add_scalar("debug/pg_stop_iter", args.update_epochs, global_step)
+        elif args.kle_rollback:
+            writer.add_scalar("debug/pg_stop_iter", 0, global_step)
+        else:
+            writer.add_scalar("debug/pg_stop_iter", pg_stop_iter, global_step)
 
     if log_SPS:
         writer.add_scalar("charts/sps", int(global_step / (time.time() - start_time)), global_step)
