@@ -24,6 +24,11 @@ Martin, D. and Jhala, A. (2021).
 \newblock Beclone: Behavior cloning with inference for real-time strategy games.
 \newblock In {\em Joint Proceedings of the AIIDE 2021 Workshops}.
 
+\bibitem[Onta{\~n}{\'o}n, 2013]{Ontanon2013CombinatorialBandit}
+Onta{\~n}{\'o}n, S. (2013).
+\newblock The combinatorial multi-armed bandit problem and its application to real-time strategy games.
+\newblock In {\em Proceedings of the Ninth Conference on Artificial Intelligence and Interactive Digital Entertainment (AIIDE)}, volume~9, pages 58--64. AAAI.
+
 \bibitem[Schulman et~al., 2017]{schulman2017ppo}
 Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and Klimov, O. (2017).
 \newblock Proximal policy optimization algorithms.

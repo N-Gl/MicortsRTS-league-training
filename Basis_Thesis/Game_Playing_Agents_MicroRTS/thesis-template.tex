@@ -37,7 +37,7 @@
         {\Large\textsc{Heinrich-Heine-Universität D\"usseldorf}}\\[3cm]
         {\Large\textbf{Bachelor Thesis}}\\[1cm]
 
-        {\Huge\textbf{Implementierung und Evaluation der Reinforcement-Learning-Methoden Self-Play und Liga-Training in der Micro-RTS-Umgebung}}\\[2cm]
+        {\Huge\textbf{Implementierung und Evaluation der Reinforcement-Learning-Methoden Self-Play und Liga-Training in der MicroRTS-Umgebung}}\\[2cm]
 
         {\Large\textbf{{Name!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}}}\\[2cm]
 
@@ -60,7 +60,7 @@
 %%%%%%%%% ABSTRACT
 \begin{abstract}
     % (???) Wir oder ich?
-    Die vorliegende Arbeit verbessert einen bestehenden Agenten für das Echtzeit-Strategiespiel (RTS) MicroRTS. RTS-Spiele gelten als anspruchsvolle Domäne für Deep Reinforcement Learning, da Agenten mit großen kombinatorischen Aktionsräumen, simultanen Entscheidungen sowie verzögerten und oftmals spärlichen Belohnungen umgehen müssen. Als Basismethode verwenden wir Proximal Policy Optimization (PPO). Bei vielen Reinforcement-Learning (RL) -Trainingsarten, wie bei reinem PPO, kommt man an einen Punkt, an dem der Agent nicht effizient ausschließlich mit PPO weiter trainiert werden kann, weil ausreichend starke Gegner, gegen die man trainieren kann fehlen oder, weil die vorhandenen Gegner nicht divers genug sind, um eine robuste Policy zu entwickeln. Eine naheliegende und einfache Gegenmaßnahme ist Self-Play (SP), das jedoch in der Praxis instabil sein kann und zu Überanpassung oder zyklischen Strategien führt, wodurch die Leistung gegen externe Gegner sinken kann.
+    Diese Arbeit verbessert einen bestehenden Agenten für das Echtzeit-Strategiespiel (RTS) MicroRTS. RTS-Spiele gelten als anspruchsvolle Domäne für Deep Reinforcement Learning (DRL), da Agenten mit großen kombinatorischen Aktionsräumen, simultanen Entscheidungen sowie verzögerten und oftmals spärlichen Belohnungen umgehen müssen. Als Basismethode verwenden wir Proximal Policy Optimization (PPO). Bei vielen DRL -Trainingsarten, wie bei reinem PPO, kommt man an einen Punkt, an dem der Agent nicht effizient ausschließlich mit PPO weiter trainiert werden kann, weil ausreichend starke Gegner, gegen die man trainieren kann fehlen oder, weil die vorhandenen Gegner nicht divers genug sind, um eine robuste Policy zu entwickeln. Eine naheliegende und einfache Gegenmaßnahme ist Self-Play (SP), das jedoch in der Praxis instabil sein kann und zu Überanpassung oder zyklischen Strategien führt, wodurch die Leistung gegen externe Gegner sinken kann.
 
     League-Training (LT) stabilisiert SP, indem es eine Population aus Agenten unterschiedlicher Trainingsstände und Rollen aufbaut. Der trainierenden Agent wird gezielt gegen vielfältige Gegner antreten. Unter anderem auch gegen Main-Exploiter, die trainiert wurden, Schwachstellen der aktuellen Policy auszunutzen. Wir evaluieren die resultierenden Agenten in Matches gegen verschiedene Gegnertypen und vergleichen LT mit reinem SP sowie unserem Anfangs-Agenten. Der Anfangs-Agent wurde mit einer Mischung aus Behavior Cloning (BC) und PPO Trainiert. Unsere Ergebnisse zeigen, dass LT Robustheit und Generalisierungsfähigkeit des Agenten gegenüber unterschiedlichen Gegnern erhöht.
 \end{abstract}
@@ -74,12 +74,12 @@
 \label{sec:intro}
 RL etablierte sich in den vergangenen Jahren als leistungsstarker Ansatz für die Entwicklung von Agenten in komplexen Umgebungen. Spielumgebungen wie RTS-Spiele stellen dabei eine besondere Herausforderung dar, mit großen Aktionsräumen, langfristiger Planung und simultanen Entscheidungen. Allerdings bieten sie klar definierte Zustandsräume, Belohnungsstrukturen und wiederholbare Experimente, was sie zu idealen und herausfordernden Testumgebungen für die Erforschung von RL-Methoden macht.
 
-Micro-RTS ist eine vereinfachte Version von RTS-Spielen, die speziell für die Forschung entwickelt wurde \cite{huang2021gym}. Sie ist diskret und reduziert die visuelle und mechanische Komplexität von großen kommerziellen RTS-Spielen, zum Beispiel StarCraft II. Wärenddessen behält sie die Kernschwierigkeiten, wie Ressourcenmanagement, Einheitenproduktion, Kampfmechaniken und taktische Positionierung, bei. Micro-RTS eignet sich deshalb für die systematische Untersuchung von Lernverfahren. Micro-RTS enthält weiterhin zahlreiche Trainingsherausforderungen, wie hohe kombinatorische Aktionsräume, verzögerte Belohnungen, Multi-Agent-Interaktionen und es erfordert auch robuster Strategien gegen unterschiedliche Gegner. Beispielsweise muss sich der Agent früh entscheiden, ob er gegen den aktuellen Gegner aggresiv oder defensiv spielen will, was sich auf die gesamte Spielstrategie auswirkt und eine langfristige Planung erfordert.
+MicroRTS ist eine vereinfachte Version von RTS-Spielen, die speziell für die Forschung entwickelt wurde \cite{huang2021gym}. Sie ist diskret und reduziert die visuelle und mechanische Komplexität von großen kommerziellen RTS-Spielen, zum Beispiel StarCraft II. Wärenddessen behält sie die Kernschwierigkeiten, wie Ressourcenmanagement, Einheitenproduktion, Kampfmechaniken und taktische Positionierung, bei. MicroRTS eignet sich deshalb für die systematische Untersuchung von Lernverfahren. MicroRTS enthält weiterhin zahlreiche Trainingsherausforderungen, wie hohe kombinatorische Aktionsräume, verzögerte Belohnungen, Multi-Agent-Interaktionen und es erfordert auch robuster Strategien gegen unterschiedliche Gegner. Beispielsweise muss sich der Agent früh entscheiden, ob er gegen den aktuellen Gegner aggresiv oder defensiv spielen will, was sich auf die gesamte Spielstrategie auswirkt und eine langfristige Planung erfordert.
 
 Ein zentrales Problem des RL ist die Generalisierung gegenüber unterschiedlichen Gegnern und Strategien: Agenten lernen oft Strategien, die stark auf den Trainingsgegner oder eine spezifische Spielsituation zugeschnitten sind. Das führt zu Überanpassung und eingeschränkter Robustheit. SP, Fictitious Self-Play (FSP) und LT sind Ansätze, die dieses Problem adressieren. In SP trainiert der Agent, in dem er gegen sich selbst spielt, was zu einem kontinuierlichen Lernprozess führt, der keine zusätzlichen diversen oder starken Gegner erfordert. Allerdings ist oft das Training instabil, weil es zyklisch lernt. Ein Beispiel: Spielt der Agentzustand B gut gegen A, C gut gegen B und A gut gegen C, könnte der Agent in einem Zyklus gefangen sein, in dem er immer nur den Agentenzustand wieder erlernt, der gegen sich selbst gut ist, aber nicht gegen andere Gegner.
 Um die Instabilitäten von reinem SP zu adressieren, wird in FSP nicht gegen den aktuellen Agenten sondern gegen ältere Versionen des Agenten gespielt, was ein zyklisches Lernen verhindert und in zwei Spieler Nullsummenspielen gegen das Nash-Gleichgewicht konvergiert. \cite{heinrich2015fsp}. LT erweitert FSP, indem der Agent gegen historische Gegner aus einer Liga trainiert, die aus verschiedenen Agententypen besteht, beispielsweise aus historischen Trainingsständen oder spezialisierten Strategien \cite{vinyals2019alphastar}. Ziel ist es, die Lernumgebung zu stabilisieren, in der Agenten gegen ein breites Spektrum an Strategien antreten und dadurch robuster werden.
 
-Trotz der theoretischen Vorteile ist die praktische Implementierung von LT in komplexen Umgebungen, wie Micro-RTS, mit erheblichen Herausforderungen verbunden. Dazu gehören:
+Trotz der theoretischen Vorteile ist die praktische Implementierung von LT in komplexen Umgebungen, wie MicroRTS, mit erheblichen Herausforderungen verbunden. Dazu gehören:
 
 \begin{itemize}
     \item die effiziente Verwaltung und Auswahl von Gegnern für das Training des Main-Agenten und für die spezialisierten Agenten, wie Main-Exploiter,
@@ -91,8 +91,8 @@ Trotz der theoretischen Vorteile ist die praktische Implementierung von LT in ko
 Darüberhinaus werden wir die für die unterschiedlichen Trainingsparadigmen die Lernkurve, die Strategiediversität und die Robustheit vergleichen und evaluieren.
 
 Der in diesem Projekt eingesetzte Basis-Agent, wird in einem dreistufigen Verfahren trainiert, das BC und BC-Fine-Tuning (BC-FT) mit anschließendem Fine-Tuning durch PPO kombiniert: 
-Die beiden BC-Phasen ermöglichen dem Agenten, durch Imitation von Expertenverhalten schnell eine kompetente Basisstrategie zu erlernen \cite{torabi2018behavioral}. Dieser Ansatz des Trainings reduziert die anfängliche, oft ineffiziente Exploration in RL \cite{torabi2018behavioral}. Das Lernen von Grund auf mit RL-Methoden, wie PPO kann sehr zeitintensiv sein \cite{martin2021beclone}. PPO ist eine bekannte on-policy Policy-Optimierungsmethode, die die Policy-Update-Größe über eine Clipped-Surrogat-Zielfunktion begrenzt \cite{schulman2017ppo}.
-PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassung an die Umgebung, wodurch sich der Agent über die Expertenstrategien hinaus anpassen und generalisieren kann \cite{martin2021beclone}. Dieser zweistufige Ansatz, bei dem eine mit BC vor-trainierte Policy durch einen RL-Algorithmus verfeinert wird, hat sich als effektiv erwiesen, um die Trainingszeit zu verkürzen und die Gesamtleistung im Vergleich zu einem reinen RL-Ansatz zu verbessern \cite{martin2021beclone}.
+Die beiden BC-Phasen ermöglichen dem Agenten, durch Imitation von Expertenverhalten schnell eine kompetente Basisstrategie zu erlernen \cite{torabi2018behavioral}. Dieser Ansatz des Trainings reduziert die anfängliche, oft ineffiziente Exploration in DRL \cite{torabi2018behavioral}. Das Lernen von Grund auf mit DRL-Methoden, wie PPO kann sehr zeitintensiv sein \cite{martin2021beclone}. PPO ist eine bekannte on-policy Policy-Optimierungsmethode, die die Policy-Update-Größe über eine Clipped-Surrogat-Zielfunktion begrenzt \cite{schulman2017ppo}.
+PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassung an die Umgebung, wodurch sich der Agent über die Expertenstrategien hinaus anpassen und generalisieren kann \cite{martin2021beclone}. Dieser zweistufige Ansatz, bei dem eine mit BC vor-trainierte Policy durch einen DRL-Algorithmus verfeinert wird, hat sich als effektiv erwiesen, um die Trainingszeit zu verkürzen und die Gesamtleistung im Vergleich zu einem reinen DRL-Ansatz zu verbessern \cite{martin2021beclone}.
 
 
 
@@ -100,12 +100,13 @@ PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassun
 
 \section{Related Work}
 \label{sec:related-work}
-\noindent\textbf{Game Playing Agents MicroRTS}
-Die dieser Arbeit zugrunde liegende (unveröffentlichte) Bachelorarbeit, implementierte verschiedene Agenten für Micro-RTS und kombinierte und evaluierte BC und PPO in der Micro-RTS Umgebung \cite{huft2023microrts}. Aus dieser Bachelorarbeit stammt der Basis-Agent und der initiale Code, der in dieser Arbeit weiter verbessert.
-Die dabei verwendete hybride Trainingspipeline besteht aus drei aufeinanderfolgenden Trainingsphasen: BC, BC-FT und abschließendem Training mittels PPO. \cite{huft2023microrts}.
+\noindent\textbf{Game Playing Agents in MicroRTS}
+Die dieser Arbeit zugrunde liegende (unveröffentlichte) Bachelorarbeit von Huft entwickelt einen wettbewerbsfähigen Agenten für MicroRTS und evaluiert eine hybride Trainingspipeline aus BC, BC-Fine-Tuning (BC-FT) und anschließend PPO-Training \cite{huft2023microrts}. Aufbauend auf der in der Introduction beschriebenen Grundidee wird die Policy initial aus Demonstrationen von Experten gelernt. In BC-FT wird dies für die Stabilisierung weiter geführt mit selektierten Winning-Replays und erst im dritten Schritt durch PPO weiter verfeinert. Dieses stufenweise Vorgehen reduziert die anfängliche Explorationslast und verbessert die Stabilität gegenüber einem reinen DRL-Start.
+
+In den Ergebnissen ist ein deutlicher Leistungsanstieg über alle drei Trainingsphasen zu sehen (Tabelle~\ref{tab:winrates_all}): BC lernt größtenteils grundlegende Spielmechaniken, während BC-FT Generalisierung gegen mehrere Bots verbessert, und schließlich erreicht PPO hohe Win-Rates gegen viele der Built-in-Bots \cite{huft2023microrts}. Die Arbeit identifiziert allerdings auch Einschränkungen, insbesondere den Fokus auf eine einzelne Karte, die begrenzte Gegnerdiversität und schlägt Erweiterungen mit Self-Play- bzw. Liga-Mechanismen vor. Genau an diesem Vorschlag setzt diese Arbeit an, indem der bestehende Basis-Agent und der initiale Code um SP und LT erweitert werden.
 \begin{table}[ht]
 \centering
-\caption{}
+\caption{Win rates (\%) for BC, BC-FT, and PPO reported in \cite{huft2023microrts}.}
 \label{tab:winrates_all}
 \begin{tabular}{lccc}
 \hline
@@ -128,34 +129,19 @@ naiveMCTS        & 0 & 5& 3 \\
 \hline
 \end{tabular}
 \end{table}
-
-\noindent\textbf{MicroRTS-Py (Gym-MicroRTS)}  
-
-
-
 \vspace{10pt}
-
-
-\noindent\textbf{RAISocketAI}
-
-\vspace{10pt}
-
-\noindent\textbf{BeClone}
-
-\vspace{10pt}
-
-\noindent\textbf{AlphaStar}
-
-
 
 \noindent\textbf{MicroRTS-Py (Gym-$\mu$RTS)}
-Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} eine effiziente OpenAI-Gym-kompatible Schnittstelle für MicroRTS bereit und etablieren damit eine weit verbreitete DRL-Baseline \cite{huang2021gymurts}. In ihrer Arbeit zeigen sie, dass PPO in MicroRTS insbesondere dann konkurrenzfähig trainierbar ist, wenn geeignete Engineering-Maßnahmen eingesetzt werden, darunter \emph{invalid action masking}, geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B. GridNet) sowie architektonische Entscheidungen (u.\,a. IMPALA-CNN) \cite{huang2021gymurts, huang2020invalidmask, huang2019representations}. Diese Arbeiten bilden den methodischen Ausgangspunkt vieler nachfolgender Deep-RL-Ansätze in MicroRTS.
+Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} für unser Environment MicroRTS \cite{Ontanon2013CombinatorialBandit} eine effiziente Gym-kompatible Schnittstelle bereit \cite{huang2021gym}. \emph{MicroRTS-Py} ist eine etablierte und weit verbreitete DRL-Baseline, die die Untersuchung von DRL-Ansätzen in vollständigen Echtzeitstrategiespiel-Szenarien ermöglicht, ohne dass dafür umfangreiche technische Infrastruktur, wie Hochleistungsrechner-Cluster, erforderlich ist \cite{huang2021gym}. Desweiteren wurde die openai/baselines implementation von PPO adaptiert, um sie auf MicroRTS-Py anzupassen. Diese implementation benutzen wir in abgeänderter Form in LT und wurde auch zuvor für den Basis-Agenten verwendet. Unteranderem wurde \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B. GridNet), sowie architektonische Entscheidungen (u.\,a. IMPALA-CNN) angewandt, die auch in dem LT Code noch benutzt werden \cite{huang2021gymurts, huang2020invalidmask, huang2019representations}.
+\vspace{10pt}
 
 \noindent\textbf{RAISocketAI}
-RAISocketAI ist der erste Deep-RL-Agent, der die IEEE MicroRTS Competition gewinnen konnte, und setzt damit einen wichtigen Referenzpunkt für DRL-basierte Ansätze in dieser Domäne \cite{goodfriend2024raisocketai}. Zentral für die Performance sind laut Goodfriend ein iteratives Fine-Tuning der Policy, ein abgestimmtes Trainingsregime sowie Transfer-Learning zwischen Karten-/Problemgrößen \cite{goodfriend2024raisocketai}. Zusätzlich beschreibt die Arbeit Erweiterungen und praktische Verbesserungen an der MicroRTS-Py-Toolchain, die u.\,a. die Datengenerierung über Replays erleichtern und damit auch für Imitation-Learning-Ansätze relevant sind.
+RAISocketAI ist der erste DRL-Agent, der die IEEE MicroRTS Competition gewinnen konnte, und setzt damit einen wichtigen Referenzpunkt für DRL-basierte Ansätze in dieser Domäne \cite{goodfriend2024raisocketai}. Zentral für die Performance sind laut Goodfriend ein iteratives Fine-Tuning der Policy, ein abgestimmtes Trainingsregime sowie Transfer-Learning zwischen Karten-/Problemgrößen \cite{goodfriend2024raisocketai}. Zusätzlich beschreibt die Arbeit Erweiterungen und praktische Verbesserungen an der MicroRTS-Py-Toolchain, die u.\,a. die Datengenerierung über Replays erleichtern und damit auch für Imitation-Learning-Ansätze relevant sind.
+\vspace{10pt}
 
 \noindent\textbf{BeClone}
-BeClone untersucht eine zweiphasige Trainingsstrategie für RTS-Agenten: Zunächst wird eine initiale Policy per BC aus Demonstrationen gelernt, anschließend erfolgt ein RL-Finetuning mittels \emph{Advantage Actor-Critic} (A2C) im Self-Play \cite{martin2021beclone}. Der Fokus der Experimente liegt auf ressourcenorientierten Aufgaben und vergleichsweise kleinen Karten, wodurch BeClone primär als Nachweis dient, dass BC als Warm-Start die anschließende RL-Optimierung in RTS-Settings beschleunigen und stabilisieren kann \cite{martin2021beclone}. Im Gegensatz dazu zielt die vorliegende Arbeit auf die Implementierung und Evaluation von Self-Play und Liga-Training in einem stärker kompetitiven Setup mit PPO als Optimierungsverfahren.
+BeClone untersucht eine zweiphasige Trainingsstrategie für RTS-Agenten: Zunächst wird eine initiale Policy per BC aus Demonstrationen gelernt, anschließend erfolgt ein Reinforcement Learning (RL)-Finetuning mittels \emph{Advantage Actor-Critic} (A2C) im Self-Play \cite{martin2021beclone}. Der Fokus der Experimente liegt auf ressourcenorientierten Aufgaben und vergleichsweise kleinen Karten, wodurch BeClone primär als Nachweis dient, dass BC als Warm-Start die anschließende RL-Optimierung in RTS-Settings beschleunigen und stabilisieren kann \cite{martin2021beclone}. Im Gegensatz dazu zielt diese Arbeit auf die Implementierung und Evaluation von Self-Play und Liga-Training in einem stärker kompetitiven Setup mit PPO als Optimierungsverfahren.
+\vspace{10pt}
 
 \noindent\textbf{AlphaStar}
 AlphaStar demonstriert, dass \emph{Liga-Training} (Population-Based Self-Play) in komplexen RTS-Domänen entscheidend zur Robustheit beitragen kann \cite{vinyals2019alphastar}. Das System wird zunächst durch Imitation Learning aus menschlichen Replays vortrainiert und anschließend in einer Liga aus unterschiedlichen Agententypen (u.\,a. Hauptagenten, Exploiters, historische Snapshots) weitertrainiert, um Überanpassung und Vergessen zu reduzieren und strategische Diversität zu fördern \cite{vinyals2019alphastar}. Obwohl MicroRTS und StarCraft~II stark in Komplexität und Repräsentation differieren, liefert AlphaStar ein etabliertes Referenzdesign dafür, wie Self-Play durch ligaartige Matchmaking-Mechanismen zu stabileren und generalisierbareren Policies skaliert werden kann.
