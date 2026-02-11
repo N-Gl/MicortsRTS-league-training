@@ -1,0 +1,41 @@
+defaults:
+  - league_sp_conf_old_ppo_args_3
+
+ExperimentConfig:
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
+  model_path: models/finished_PPO_Basis_thesis.pt
+  exp_name: 11_02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_kl_coeff_0_3_kle_rollback_false_ent_coef_0_01_ent_coef_0_01_with_Bots_1
+  wandb_group_name: new_sp_28_01_26
+
+  num_bot_envs: 10 # 3
+  dyn_num_bot_envs: true
+  min_num_bot_envs: 5  # minimum number of bot envs # num_bot_envs shold stay on min_num_bot_envs if min_num_bot_envs is chosen well
+  max_num_bot_envs: 15 # 15 # changed from 9 (3)
+  training_on_bot_envs: true   # true
+
+
+  # attack_reward_weight: 0.05
+  # rewardscore: 0.0
+
+  # clip_coef: 0.01 # TODO
+  # exploiter_clip_coef: 0.01 # TODO
+
+  clip_coef: 0.15
+  exploiter_clip_coef: 0.15
+  # ist approx_kl wieder hoch?
+
+  ent_coef: 0.01
+  exploiter_ent_coef: 0.01
+
+  kl_coeff: 0.3
+  exploiter_kl_coeff: 0.3
+
+  # target_kl: 0.01
+  # exploiter_target_kl: 0.01
+  
+  vf_coef: 0.15 # TODO
+  exploiter_vf_coef: 0.15 # TODO
+
+  kle_rollback: false
+  exploiter_kle_rollback: false
