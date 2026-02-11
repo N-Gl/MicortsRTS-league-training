@@ -3,44 +3,50 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: thesis-template.aux
 The style file: apalike.bst
 Database file #1: references.bib
-You've used 6 entries,
+Warning--entry type for "huft2023microrts" isn't style-file defined
+--line 33 of file references.bib
+Warning--I didn't find a database entry for "huang2021gymurts"
+Warning--I didn't find a database entry for "huang2020invalidmask"
+Warning--I didn't find a database entry for "huang2019representations"
+You've used 8 entries,
             1935 wiz_defined-function locations,
-            508 strings with 5548 characters,
-and the built_in function-call counts, 3714 in all, are:
-= -- 313
-> -- 321
-< -- 3
-+ -- 120
-- -- 120
-* -- 367
-:= -- 678
-add.period$ -- 18
-call.type$ -- 6
-change.case$ -- 89
-chr.to.int$ -- 6
-cite$ -- 6
-duplicate$ -- 99
-empty$ -- 164
-format.name$ -- 128
-if$ -- 681
+            524 strings with 5917 characters,
+and the built_in function-call counts, 4355 in all, are:
+= -- 379
+> -- 335
+< -- 6
++ -- 124
+- -- 124
+* -- 407
+:= -- 788
+add.period$ -- 23
+call.type$ -- 8
+change.case$ -- 101
+chr.to.int$ -- 8
+cite$ -- 8
+duplicate$ -- 132
+empty$ -- 215
+format.name$ -- 134
+if$ -- 813
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 6
-newline$ -- 33
-num.names$ -- 20
-pop$ -- 90
+missing$ -- 7
+newline$ -- 42
+num.names$ -- 26
+pop$ -- 103
 preamble$ -- 1
-purify$ -- 89
+purify$ -- 101
 quote$ -- 0
-skip$ -- 74
+skip$ -- 99
 stack$ -- 0
-substring$ -- 129
-swap$ -- 17
-text.length$ -- 2
+substring$ -- 169
+swap$ -- 23
+text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 36
+type$ -- 48
 warning$ -- 0
-while$ -- 18
+while$ -- 25
 width$ -- 0
-write$ -- 79
+write$ -- 102
+(There were 4 warnings)

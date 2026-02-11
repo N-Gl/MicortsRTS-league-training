@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\bibitem[Goodfriend, 2024]{goodfriend2024raisocketai}
+Goodfriend, S. (2024).
+\newblock Raisocketai: The first deep reinforcement learning agent to win the ieee microrts competition.
+\newblock In {\em 2024 IEEE Conference on Games (CoG)}, pages 1--8.
+
 \bibitem[Heinrich et~al., 2015]{heinrich2015fsp}
 Heinrich, J., Lanctot, M., and Silver, D. (2015).
 \newblock Fictitious self-play in extensive-form games.
@@ -9,6 +14,10 @@ Heinrich, J., Lanctot, M., and Silver, D. (2015).
 Huang, S., Ontan{\'o}n, S., Bamford, C., and Grela, L. (2021).
 \newblock Gym-microrts: Toward affordable full game real-time strategy games research with deep reinforcement learning.
 \newblock {\em CoRR}, abs/2105.13807.
+
+\bibitem[Huft, 2025]{huft2023microrts}
+Huft, M. (2025).
+\newblock Game playing agents in microrts.
 
 \bibitem[Martin and Jhala, 2021]{martin2021beclone}
 Martin, D. and Jhala, A. (2021).

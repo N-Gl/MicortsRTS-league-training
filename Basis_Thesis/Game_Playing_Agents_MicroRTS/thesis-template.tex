@@ -90,15 +90,44 @@ Trotz der theoretischen Vorteile ist die praktische Implementierung von LT in ko
 
 Darüberhinaus werden wir die für die unterschiedlichen Trainingsparadigmen die Lernkurve, die Strategiediversität und die Robustheit vergleichen und evaluieren.
 
-Der in diesem Projekt eingesetzte Basis-Agent, wird in einem zweistufigen Verfahren trainiert, das BC mit anschließendem Fine-Tuning durch PPO kombiniert: 
-BC ermöglicht dem Agenten, in der ersten Stufe durch Imitation von Expertenverhalten schnell eine kompetente Basisstrategie zu erlernen \cite{torabi2018behavioral}. Dieser Ansatz des Trainings reduziert die anfängliche, oft ineffiziente Exploration in RL \cite{torabi2018behavioral}. Das Lernen von Grund auf mit RL-Methoden, wie PPO kann sehr zeitintensiv sein \cite{martin2021beclone}. PPO ist eine bekannte on-policy Policy-Optimierungsmethode, die die Policy-Update-Größe über eine Clipped-Surrogat-Zielfunktion begrenzt \cite{schulman2017ppo}.
+Der in diesem Projekt eingesetzte Basis-Agent, wird in einem dreistufigen Verfahren trainiert, das BC und BC-Fine-Tuning (BC-FT) mit anschließendem Fine-Tuning durch PPO kombiniert: 
+Die beiden BC-Phasen ermöglichen dem Agenten, durch Imitation von Expertenverhalten schnell eine kompetente Basisstrategie zu erlernen \cite{torabi2018behavioral}. Dieser Ansatz des Trainings reduziert die anfängliche, oft ineffiziente Exploration in RL \cite{torabi2018behavioral}. Das Lernen von Grund auf mit RL-Methoden, wie PPO kann sehr zeitintensiv sein \cite{martin2021beclone}. PPO ist eine bekannte on-policy Policy-Optimierungsmethode, die die Policy-Update-Größe über eine Clipped-Surrogat-Zielfunktion begrenzt \cite{schulman2017ppo}.
 PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassung an die Umgebung, wodurch sich der Agent über die Expertenstrategien hinaus anpassen und generalisieren kann \cite{martin2021beclone}. Dieser zweistufige Ansatz, bei dem eine mit BC vor-trainierte Policy durch einen RL-Algorithmus verfeinert wird, hat sich als effektiv erwiesen, um die Trainingszeit zu verkürzen und die Gesamtleistung im Vergleich zu einem reinen RL-Ansatz zu verbessern \cite{martin2021beclone}.
+
 
 
 
 
 \section{Related Work}
 \label{sec:related-work}
+\noindent\textbf{Game Playing Agents MicroRTS}
+Die dieser Arbeit zugrunde liegende (unveröffentlichte) Bachelorarbeit, implementierte verschiedene Agenten für Micro-RTS und kombinierte und evaluierte BC und PPO in der Micro-RTS Umgebung \cite{huft2023microrts}. Aus dieser Bachelorarbeit stammt der Basis-Agent und der initiale Code, der in dieser Arbeit weiter verbessert.
+Die dabei verwendete hybride Trainingspipeline besteht aus drei aufeinanderfolgenden Trainingsphasen: BC, BC-FT und abschließendem Training mittels PPO. \cite{huft2023microrts}.
+\begin{table}[ht]
+\centering
+\caption{}
+\label{tab:winrates_all}
+\begin{tabular}{lccc}
+\hline
+\textbf{Bot} & \textbf{BC} & \textbf{BC-FT} & \textbf{PPO} \\
+\hline
+WorkerRushAI     & 3 & 50 & 99 \\
+PassiveAI        & 98& 100& 100 \\
+LightRushAI      & 22 & 93 & 99 \\
+CoacAI           & 0 & 8 & 96 \\
+Mayari           & 0 & 5 & 95 \\
+RandomAI         & 52 & 95 & 99\\
+RandomBiasedAI   & 18 & 68 & 86\\
+rojo             & 0 & 34& 84 \\
+mixedBot         & 4 & 44 & 59 \\
+izanagi          & 0& 62& 61\\
+tiamat           & 11 & 78& 84 \\
+droplet          & 0& 31& 59\\
+guidedRojoA3N    & 4 & 42& 75 \\
+naiveMCTS        & 0 & 5& 3 \\
+\hline
+\end{tabular}
+\end{table}
 
 \noindent\textbf{MicroRTS-Py (Gym-MicroRTS)}  
 
@@ -118,6 +147,18 @@ PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassun
 \noindent\textbf{AlphaStar}
 
 
+
+\noindent\textbf{MicroRTS-Py (Gym-$\mu$RTS)}
+Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} eine effiziente OpenAI-Gym-kompatible Schnittstelle für MicroRTS bereit und etablieren damit eine weit verbreitete DRL-Baseline \cite{huang2021gymurts}. In ihrer Arbeit zeigen sie, dass PPO in MicroRTS insbesondere dann konkurrenzfähig trainierbar ist, wenn geeignete Engineering-Maßnahmen eingesetzt werden, darunter \emph{invalid action masking}, geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B. GridNet) sowie architektonische Entscheidungen (u.\,a. IMPALA-CNN) \cite{huang2021gymurts, huang2020invalidmask, huang2019representations}. Diese Arbeiten bilden den methodischen Ausgangspunkt vieler nachfolgender Deep-RL-Ansätze in MicroRTS.
+
+\noindent\textbf{RAISocketAI}
+RAISocketAI ist der erste Deep-RL-Agent, der die IEEE MicroRTS Competition gewinnen konnte, und setzt damit einen wichtigen Referenzpunkt für DRL-basierte Ansätze in dieser Domäne \cite{goodfriend2024raisocketai}. Zentral für die Performance sind laut Goodfriend ein iteratives Fine-Tuning der Policy, ein abgestimmtes Trainingsregime sowie Transfer-Learning zwischen Karten-/Problemgrößen \cite{goodfriend2024raisocketai}. Zusätzlich beschreibt die Arbeit Erweiterungen und praktische Verbesserungen an der MicroRTS-Py-Toolchain, die u.\,a. die Datengenerierung über Replays erleichtern und damit auch für Imitation-Learning-Ansätze relevant sind.
+
+\noindent\textbf{BeClone}
+BeClone untersucht eine zweiphasige Trainingsstrategie für RTS-Agenten: Zunächst wird eine initiale Policy per BC aus Demonstrationen gelernt, anschließend erfolgt ein RL-Finetuning mittels \emph{Advantage Actor-Critic} (A2C) im Self-Play \cite{martin2021beclone}. Der Fokus der Experimente liegt auf ressourcenorientierten Aufgaben und vergleichsweise kleinen Karten, wodurch BeClone primär als Nachweis dient, dass BC als Warm-Start die anschließende RL-Optimierung in RTS-Settings beschleunigen und stabilisieren kann \cite{martin2021beclone}. Im Gegensatz dazu zielt die vorliegende Arbeit auf die Implementierung und Evaluation von Self-Play und Liga-Training in einem stärker kompetitiven Setup mit PPO als Optimierungsverfahren.
+
+\noindent\textbf{AlphaStar}
+AlphaStar demonstriert, dass \emph{Liga-Training} (Population-Based Self-Play) in komplexen RTS-Domänen entscheidend zur Robustheit beitragen kann \cite{vinyals2019alphastar}. Das System wird zunächst durch Imitation Learning aus menschlichen Replays vortrainiert und anschließend in einer Liga aus unterschiedlichen Agententypen (u.\,a. Hauptagenten, Exploiters, historische Snapshots) weitertrainiert, um Überanpassung und Vergessen zu reduzieren und strategische Diversität zu fördern \cite{vinyals2019alphastar}. Obwohl MicroRTS und StarCraft~II stark in Komplexität und Repräsentation differieren, liefert AlphaStar ein etabliertes Referenzdesign dafür, wie Self-Play durch ligaartige Matchmaking-Mechanismen zu stabileren und generalisierbareren Policies skaliert werden kann.
 
 
 \section{Method}
@@ -206,32 +247,6 @@ GAE parameter $\lambda$ & 0.95 \\
 \end{tabular}
 \label{tab:training_params}
 \end{table} 
-
-\begin{table}[ht]
-\centering
-\caption{}
-\label{tab:winrates_all}
-\begin{tabular}{lccc}
-\hline
-\textbf{Bot} & \textbf{BC} & \textbf{BC-FT} & \textbf{PPO} \\
-\hline
-WorkerRushAI     & 3 & 50 & 99 \\
-PassiveAI        & 98& 100& 100 \\
-LightRushAI      & 22 & 93 & 99 \\
-CoacAI           & 0 & 8 & 96 \\
-Mayari           & 0 & 5 & 95 \\
-RandomAI         & 52 & 95 & 99\\
-RandomBiasedAI   & 18 & 68 & 86\\
-rojo             & 0 & 34& 84 \\
-mixedBot         & 4 & 44 & 59 \\
-izanagi          & 0& 62& 61\\
-tiamat           & 11 & 78& 84 \\
-droplet          & 0& 31& 59\\
-guidedRojoA3N    & 4 & 42& 75 \\
-naiveMCTS      & 0 & 5& 3 \\
-\hline
-\end{tabular}
-\end{table}
 
 \subsection{Results}
 
