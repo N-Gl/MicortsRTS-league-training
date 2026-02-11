@@ -132,7 +132,12 @@ naiveMCTS        & 0 & 5& 3 \\
 \vspace{10pt}
 
 \noindent\textbf{MicroRTS-Py (Gym-$\mu$RTS)}
-Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} für unser Environment MicroRTS \cite{Ontanon2013CombinatorialBandit} eine effiziente Gym-kompatible Schnittstelle bereit \cite{huang2021gym}. \emph{MicroRTS-Py} ist eine etablierte und weit verbreitete DRL-Baseline, die die Untersuchung von DRL-Ansätzen in vollständigen Echtzeitstrategiespiel-Szenarien ermöglicht, ohne dass dafür umfangreiche technische Infrastruktur, wie Hochleistungsrechner-Cluster, erforderlich ist \cite{huang2021gym}. Desweiteren wurde die openai/baselines implementation von PPO adaptiert, um sie auf MicroRTS-Py anzupassen. Diese implementation benutzen wir in abgeänderter Form in LT und wurde auch zuvor für den Basis-Agenten verwendet. Unteranderem wurde \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B. GridNet), sowie architektonische Entscheidungen (u.\,a. IMPALA-CNN) angewandt, die auch in dem LT Code noch benutzt werden \cite{huang2021gymurts, huang2020invalidmask, huang2019representations}.
+Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} für unser Environment MicroRTS \cite{Ontanon2013CombinatorialBandit} eine effiziente Gym-kompatible Schnittstelle bereit \cite{huang2021gym}. 
+\emph{MicroRTS-Py} ist eine etablierte und weit verbreitete DRL-Baseline, die die Untersuchung von DRL-Ansätzen in vollständigen Echtzeitstrategiespiel-Szenarien ermöglicht, ohne dass dafür umfangreiche technische Infrastruktur, wie Hochleistungsrechner-Cluster, erforderlich ist \cite{huang2021gym}. 
+Desweiteren wurde die openai/baselines \cite{baselines} implementation von PPO adaptiert, um sie auf MicroRTS-Py anzupassen. 
+Diese implementation benutzen wir in abgeänderter Form in LT und wurde auch zuvor für den Basis-Agenten verwendet. 
+Unteranderem wurde \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B. GridNet), sowie architektonische Entscheidungen (u.\,a. IMPALA-CNN \cite{espeholt2018impala}) angewandt, die auch in dem LT Code noch benutzt werden \cite{huang2021gym}.
+% hier weiter machen
 \vspace{10pt}
 
 \noindent\textbf{RAISocketAI}

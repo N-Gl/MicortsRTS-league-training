@@ -1,5 +1,15 @@
 \begin{thebibliography}{}
 
+\bibitem[Dhariwal et~al., 2017]{baselines}
+Dhariwal, P., Hesse, C., Klimov, O., Nichol, A., Plappert, M., Radford, A., Schulman, J., Sidor, S., Wu, Y., and Zhokhov, P. (2017).
+\newblock Openai baselines.
+\newblock \url{https://github.com/openai/baselines}.
+
+\bibitem[Espeholt et~al., 2018]{espeholt2018impala}
+Espeholt, L., Soyer, H., Munos, R., Simonyan, K., Mnih, V., Ward, T., Doron, Y., Firoiu, V., Harley, T., Dunning, I., Legg, S., and Kavukcuoglu, K. (2018).
+\newblock Impala: scalable distributed deep-rl with importance weighted actor-learner architectures.
+\newblock In {\em Proceedings of the 35th International Conference on Machine Learning (ICML)}, volume~80 of {\em Proceedings of Machine Learning Research}, pages 1406--1415.
+
 \bibitem[Goodfriend, 2024]{goodfriend2024raisocketai}
 Goodfriend, S. (2024).
 \newblock Raisocketai: The first deep reinforcement learning agent to win the ieee microrts competition.
