@@ -15,6 +15,11 @@ Goodfriend, S. (2024).
 \newblock Raisocketai: The first deep reinforcement learning agent to win the ieee microrts competition.
 \newblock In {\em 2024 IEEE Conference on Games (CoG)}, pages 1--8.
 
+\bibitem[Han et~al., 2019]{pmlr-v97-han19a}
+Han, L., Sun, P., Du, Y., Xiong, J., Wang, Q., Sun, X., Liu, H., and Zhang, T. (2019).
+\newblock Grid-wise control for multi-agent reinforcement learning in video game {AI}.
+\newblock In Chaudhuri, K. and Salakhutdinov, R., editors, {\em Proceedings of the 36th International Conference on Machine Learning}, volume~97 of {\em Proceedings of Machine Learning Research}, pages 2576--2585. PMLR.
+
 \bibitem[Heinrich et~al., 2015]{heinrich2015fsp}
 Heinrich, J., Lanctot, M., and Silver, D. (2015).
 \newblock Fictitious self-play in extensive-form games.
