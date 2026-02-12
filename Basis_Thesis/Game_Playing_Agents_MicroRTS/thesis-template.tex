@@ -103,7 +103,7 @@ PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassun
 \noindent\textbf{Game Playing Agents in MicroRTS}
 Die dieser Arbeit zugrunde liegende (unveröffentlichte) Bachelorarbeit von Huft entwickelt einen wettbewerbsfähigen Agenten für MicroRTS und evaluiert eine hybride Trainingspipeline aus BC, BC-Fine-Tuning (BC-FT) und anschließend PPO-Training \cite{huft2023microrts}. Aufbauend auf der in der Introduction beschriebenen Grundidee wird die Policy initial aus Demonstrationen von Experten gelernt. In BC-FT wird dies für die Stabilisierung weiter geführt mit selektierten Winning-Replays und erst im dritten Schritt durch PPO weiter verfeinert. Dieses stufenweise Vorgehen reduziert die anfängliche Explorationslast und verbessert die Stabilität gegenüber einem reinen DRL-Start.
 
-In den Ergebnissen ist ein deutlicher Leistungsanstieg über alle drei Trainingsphasen zu sehen (Tabelle~\ref{tab:winrates_all}): BC lernt größtenteils grundlegende Spielmechaniken, während BC-FT Generalisierung gegen mehrere Bots verbessert, und schließlich erreicht PPO hohe Win-Rates gegen viele der Built-in-Bots \cite{huft2023microrts}. Die Arbeit identifiziert allerdings auch Einschränkungen, insbesondere den Fokus auf eine einzelne Karte, die begrenzte Gegnerdiversität und schlägt Erweiterungen mit Self-Play- bzw. Liga-Mechanismen vor. Genau an diesem Vorschlag setzt diese Arbeit an, indem der bestehende Basis-Agent und der initiale Code um SP und LT erweitert werden.
+In den Ergebnissen ist ein deutlicher Leistungsanstieg über alle drei Trainingsphasen zu sehen (Tabelle~\ref{tab:winrates_all}): BC lernt größtenteils grundlegende Spielmechaniken, während BC-FT Generalisierung gegen mehrere Bots verbessert, und schließlich erreicht PPO hohe Win-Rates gegen viele der Built-in-Bots \cite{huft2023microrts}. In den Ergebnissen sind noch Agenten, gegen die der Basis-Agent nicht gut abschneidet. Die Arbeit identifiziert auch Einschränkungen, insbesondere den Fokus auf eine einzelne Karte, die begrenzte Gegnerdiversität und schlägt Erweiterungen mit Self-Play- bzw. Liga-Mechanismen vor. Genau an diesem Vorschlag setzt diese Arbeit an, indem der bestehende Basis-Agent und der initiale Code um SP und LT erweitert werden.
 \begin{table}[ht]
 \centering
 \caption{Win rates (\%) for BC, BC-FT, and PPO reported in \cite{huft2023microrts}.}
@@ -135,9 +135,17 @@ naiveMCTS        & 0 & 5& 3 \\
 Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} für unser Environment MicroRTS \cite{Ontanon2013CombinatorialBandit} eine effiziente Gym-kompatible Schnittstelle bereit \cite{huang2021gym}. 
 \emph{MicroRTS-Py} ist eine etablierte und weit verbreitete DRL-Baseline, die die Untersuchung von DRL-Ansätzen in vollständigen Echtzeitstrategiespiel-Szenarien ermöglicht, ohne dass dafür umfangreiche technische Infrastruktur, wie Hochleistungsrechner-Cluster, erforderlich ist \cite{huang2021gym}. 
 Desweiteren wurde die openai/baselines \cite{baselines} implementation von PPO adaptiert, um sie auf MicroRTS-Py anzupassen. 
-Diese implementation benutzen wir in abgeänderter Form in LT und wurde auch zuvor für den Basis-Agenten verwendet. 
-Unteranderem wurde \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B. GridNet), sowie architektonische Entscheidungen (u.\,a. IMPALA-CNN \cite{espeholt2018impala}) angewandt, die auch in dem LT Code noch benutzt werden \cite{huang2021gym}.
-% hier weiter machen
+Ein großer Teil dieser implementation benutzen wir in LT und sie wurde auch zuvor auch in der PPO Trainingsphasen des Basis-Agenten verwendet \cite{huft2023microrts}.
+Zu openai/baselines wurde unteranderem \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B.: GridNet), sowie architektonische Entscheidungen (, wie IMPALA-CNN \cite{espeholt2018impala}) hinzugefügt \cite{huang2021gym}, die auch abgeändert in dem LT Code noch benutzt werden.
+Es wurde in dem Paper auch überlegt, Unit Action Simulation (UAS) statt GridNet zu verwenden. UAS itteriert in jedem Step über alle Einheiten und gibt für jede Einheit die möglichen Aktionen zurück, was den Aktionsraum deutlich reduziert.
+GridNet hingegen sagt für jede Zelle auf der Karte eine Aktion voraus. Das macht GridNet mit einem großen Aktionsraum in einem Schritt, was den Aktionsraum größer, aber simplistischer macht \cite{huang2021gym}.
+Gegen die Built-in-Bots von MicroRTS, die auf heuristischen Regeln basieren, erreicht die PPO-Implementierung mit invalid action masking und IMPALA-CNN im Durchschnitt eine Winrate von 91\% mit UAS und 84\% mit GridNet.
+Letztendlich wurde entschieden sich auf GridNet zu fokusieren, da die Complexität geringer ist und die Kompatibilität SP (bzw. LT) erleichtert \cite{huang2021gym}.
+SP wurde in der Arbeit auch evaluiert. Für jeweils zwei Environments wurde ein immer Siel erstellt und die Beobachtungen von Spieler 1 und 2 für die erste und zweite parallelen environments verwendet.
+SP wurde nur mit der Kombination PPO, invalid action masking und encoder-decoder und GridNet evaluiert. Ohne selfplay lag die durchschnittliche Winrate für diese Kombination bei 89\%, mit selfplay nur noch bei 71\%.
+Es wird allerdings auch darauf hingewiesen, dass die SP-Implementierung nicht optimiert war. Die Agenten mussten von 2 Startpositionen aus trainieren, was das Training erschwerte \cite{huang2021gym}.
+Das versuchen wir in dieser Arbeit zu verbessern, indem wir die Observations, Actions, invalid action masking des Spieler 2 so drehen, dass sie mit denen von Spieler 1 übereinstimmen, wodurch der Agent von beiden Startpositionen aus trainieren kann, ohne dass er sich an die Startposition anpassen muss.
+Desweiteren wurde spekuliert, dass ausgefeiltere SP-Mechanismen, wie z.\,B.: LT erforderlich aind \cite{huang2021gym}. Genau das adressieren wir in dieser Arbeit.
 \vspace{10pt}
 
 \noindent\textbf{RAISocketAI}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  11 FEB 2026 15:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  12 FEB 2026 14:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -451,22 +451,22 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 85
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 ) [2] [3]
-<images/16x16.png, id=143, 550.055pt x 548.0475pt>
+<images/16x16.png, id=145, 550.055pt x 548.0475pt>
 File: images/16x16.png Graphic file (type png)
 <use images/16x16.png>
-Package pdftex.def Info: images/16x16.png  used on input line 182.
+Package pdftex.def Info: images/16x16.png  used on input line 190.
 (pdftex.def)             Requested size: 237.13594pt x 236.2663pt.
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 183.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 191.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-<images/diagram.png, id=144, 508.90125pt x 597.23125pt>
+<images/diagram.png, id=146, 508.90125pt x 597.23125pt>
 File: images/diagram.png Graphic file (type png)
 <use images/diagram.png>
-Package pdftex.def Info: images/diagram.png  used on input line 202.
+Package pdftex.def Info: images/diagram.png  used on input line 210.
 (pdftex.def)             Requested size: 260.8563pt x 284.52618pt.
 
-Overfull \hbox (23.72035pt too wide) in paragraph at lines 202--203
+Overfull \hbox (23.72035pt too wide) in paragraph at lines 210--211
  [][] 
  []
 
@@ -476,27 +476,29 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/Fig3.png, id=145, 2537.48pt x 1332.98pt>
+<images/Fig3.png, id=147, 2537.48pt x 1332.98pt>
 File: images/Fig3.png Graphic file (type png)
 <use images/Fig3.png>
-Package pdftex.def Info: images/Fig3.png  used on input line 248.
+Package pdftex.def Info: images/Fig3.png  used on input line 256.
 (pdftex.def)             Requested size: 237.13594pt x 124.55977pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/Fig4.png, id=146, 2537.48pt x 1332.98pt>
+<images/Fig4.png, id=148, 2537.48pt x 1332.98pt>
 File: images/Fig4.png Graphic file (type png)
 <use images/Fig4.png>
-Package pdftex.def Info: images/Fig4.png  used on input line 255.
+Package pdftex.def Info: images/Fig4.png  used on input line 263.
 (pdftex.def)             Requested size: 237.13594pt x 124.55977pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[4 <./images/16x16.png> <./images/diagram.png>] (./thesis-template.bbl (./thesis-template.brf)
+(./thesis-template.bbl (./thesis-template.brf)
 \tf@brf=\write5
 \openout5 = `thesis-template.brf'.
 
-) [5 <./images/Fig3.png> <./images/Fig4.png>] [6
+ [4 <./images/16x16.png>] [5 <./images/diagram.png> <./images/Fig3.png> <./images/Fig4.png>]) [6
+
+] [7
 
 ] (./thesis-template.aux)
  ***********
@@ -506,21 +508,21 @@ L3 programming layer <2024-01-22>
 Package rerunfilecheck Info: File `thesis-template.out' has not changed.
 (rerunfilecheck)             Checksum: 3438EE61B8B803C688BEA3DD1F5F922C;1659.
 Package rerunfilecheck Info: File `thesis-template.brf' has not changed.
-(rerunfilecheck)             Checksum: 51018541A34079C90811716A96F6BFD2;1264.
+(rerunfilecheck)             Checksum: EA0BD842C79B79A4388C2B8680145E1F;1518.
  ) 
 Here is how much of TeX's memory you used:
- 13915 strings out of 476129
- 231487 string characters out of 5793187
+ 13916 strings out of 476129
+ 231493 string characters out of 5793187
  1944975 words of memory out of 5000000
  35697 multiletter control sequences out of 15000+600000
  589243 words of font info for 91 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 90i,13n,93p,1106b,515s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,93p,1106b,601s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on thesis-template.pdf (7 pages, 1857066 bytes).
+Output written on thesis-template.pdf (8 pages, 1859536 bytes).
 PDF statistics:
- 255 PDF objects out of 1000 (max. 8388607)
- 210 compressed objects within 3 object streams
- 39 named destinations out of 1000 (max. 500000)
+ 265 PDF objects out of 1000 (max. 8388607)
+ 219 compressed objects within 3 object streams
+ 40 named destinations out of 1000 (max. 500000)
  130 words of extra memory for PDF output out of 10000 (max. 10000000)
 

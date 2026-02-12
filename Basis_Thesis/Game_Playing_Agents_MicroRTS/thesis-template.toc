@@ -10,5 +10,5 @@
 \contentsline {subsection}{\numberline {4.1}\hskip -1em.~Setup}{4}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}\hskip -1em.~Results}{4}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}\hskip -1em.~Discussion}{4}{subsection.4.3}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{5}{section.5}%
-\contentsline {section}{Erkl\"arung}{6}{section*.9}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{4}{section.5}%
+\contentsline {section}{Erkl\"arung}{7}{section*.9}%
