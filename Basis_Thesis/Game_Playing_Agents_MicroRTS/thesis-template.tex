@@ -72,7 +72,7 @@
 %%%%%%%%% BODY TEXT´
 \section{Introduction}
 \label{sec:intro}
-RL etablierte sich in den vergangenen Jahren als leistungsstarker Ansatz für die Entwicklung von Agenten in komplexen Umgebungen. Spielumgebungen wie RTS-Spiele stellen dabei eine besondere Herausforderung dar, mit großen Aktionsräumen, langfristiger Planung und simultanen Entscheidungen. Allerdings bieten sie klar definierte Zustandsräume, Belohnungsstrukturen und wiederholbare Experimente, was sie zu idealen und herausfordernden Testumgebungen für die Erforschung von RL-Methoden macht.
+Reinforcement Learning (RL) etablierte sich in den vergangenen Jahren als leistungsstarker Ansatz für die Entwicklung von Agenten in komplexen Umgebungen. Spielumgebungen wie RTS-Spiele stellen dabei eine besondere Herausforderung dar, mit großen Aktionsräumen, langfristiger Planung und simultanen Entscheidungen. Allerdings bieten sie klar definierte Zustandsräume, Belohnungsstrukturen und wiederholbare Experimente, was sie zu idealen und herausfordernden Testumgebungen für die Erforschung von RL-Methoden macht.
 
 MicroRTS ist eine vereinfachte Version von RTS-Spielen, die speziell für die Forschung entwickelt wurde \cite{huang2021gym}. Sie ist diskret und reduziert die visuelle und mechanische Komplexität von großen kommerziellen RTS-Spielen, zum Beispiel StarCraft II. Wärenddessen behält sie die Kernschwierigkeiten, wie Ressourcenmanagement, Einheitenproduktion, Kampfmechaniken und taktische Positionierung, bei. MicroRTS eignet sich deshalb für die systematische Untersuchung von Lernverfahren. MicroRTS enthält weiterhin zahlreiche Trainingsherausforderungen, wie hohe kombinatorische Aktionsräume, verzögerte Belohnungen, Multi-Agent-Interaktionen und es erfordert auch robuster Strategien gegen unterschiedliche Gegner. Beispielsweise muss sich der Agent früh entscheiden, ob er gegen den aktuellen Gegner aggresiv oder defensiv spielen will, was sich auf die gesamte Spielstrategie auswirkt und eine langfristige Planung erfordert.
 
@@ -104,6 +104,7 @@ PPO verbessert weiter die Leistung des BC-Agenten durch Exploration und Anpassun
 Die dieser Arbeit zugrunde liegende (unveröffentlichte) Bachelorarbeit von Huft entwickelt einen wettbewerbsfähigen Agenten für MicroRTS und evaluiert eine hybride Trainingspipeline aus BC, BC-Fine-Tuning (BC-FT) und anschließend PPO-Training \cite{huft2023microrts}. Aufbauend auf der in der Introduction beschriebenen Grundidee wird die Policy initial aus Demonstrationen von Experten gelernt. In BC-FT wird dies für die Stabilisierung weiter geführt mit selektierten Winning-Replays und erst im dritten Schritt durch PPO weiter verfeinert. Dieses stufenweise Vorgehen reduziert die anfängliche Explorationslast und verbessert die Stabilität gegenüber einem reinen DRL-Start.
 
 In den Ergebnissen ist ein deutlicher Leistungsanstieg über alle drei Trainingsphasen zu sehen (Tabelle~\ref{tab:winrates_all}): BC lernt größtenteils grundlegende Spielmechaniken, während BC-FT Generalisierung gegen mehrere Bots verbessert, und schließlich erreicht PPO hohe Win-Rates gegen viele der Built-in-Bots \cite{huft2023microrts}. In den Ergebnissen sind noch Agenten, gegen die der Basis-Agent nicht gut abschneidet. Die Arbeit identifiziert auch Einschränkungen, insbesondere den Fokus auf eine einzelne Karte, die begrenzte Gegnerdiversität und schlägt Erweiterungen mit Self-Play- bzw. Liga-Mechanismen vor. Genau an diesem Vorschlag setzt diese Arbeit an, indem der bestehende Basis-Agent und der initiale Code um SP und LT erweitert werden.
+Die Built-in-Bots von MicroRTS, gegen die unteranderen ausgewertet wird sind RandomBiasedAI, WorkerRushAI, LightRushAI, CoacAI.
 \begin{table}[ht]
 \centering
 \caption{Win rates (\%) for BC, BC-FT, and PPO reported in \cite{huft2023microrts}.}
@@ -136,34 +137,48 @@ Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} für unser 
 \emph{MicroRTS-Py} ist eine etablierte und weit verbreitete DRL-Baseline, die die Untersuchung von DRL-Ansätzen in vollständigen Echtzeitstrategiespiel-Szenarien ermöglicht, ohne dass dafür umfangreiche technische Infrastruktur, wie Hochleistungsrechner-Cluster, erforderlich ist \cite{huang2021gym}. 
 Desweiteren wurde die openai/baselines \cite{baselines} implementation von PPO adaptiert, um sie auf MicroRTS-Py anzupassen. 
 Ein großer Teil dieser implementation benutzen wir in LT und sie wurde auch zuvor auch in der PPO Trainingsphasen des Basis-Agenten verwendet \cite{huft2023microrts}.
-Zu openai/baselines wurde unteranderem \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B.: GridNet), sowie architektonische Entscheidungen (, wie IMPALA-CNN \cite{espeholt2018impala}) hinzugefügt \cite{huang2021gym}, die auch abgeändert in dem LT Code noch benutzt werden.
+Zu openai/baselines wurde unteranderem \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B.: GridNet \cite{pmlr-v97-han19a}), sowie architektonische Entscheidungen (, wie IMPALA-CNN (eine tiefe Convolutional-Neural-Network-Struktur mit residual blocks zur Verarbeitung gitterbasierter Zustandsrepräsentationen in RL) \cite{espeholt2018impala}) hinzugefügt \cite{huang2021gym}, die auch abgeändert in dem LT Code noch benutzt werden.
 Es wurde in dem Paper auch überlegt, Unit Action Simulation (UAS) statt GridNet zu verwenden. UAS itteriert in jedem Step über alle Einheiten und gibt für jede Einheit die möglichen Aktionen zurück, was den Aktionsraum deutlich reduziert.
-GridNet hingegen sagt für jede Zelle auf der Karte eine Aktion voraus. Das macht GridNet mit einem großen Aktionsraum in einem Schritt, was den Aktionsraum größer, aber simplistischer macht \cite{huang2021gym}.
+GridNet hingegen sagt für jede Zelle auf der Karte eine Aktion voraus. Das macht GridNet mit einem großen Aktionsraum in einem Schritt, was den Aktionsraum größer, aber simplistischer macht \cite{huang2021gym, pmlr-v97-han19a}.
 Gegen die Built-in-Bots von MicroRTS, die auf heuristischen Regeln basieren, erreicht die PPO-Implementierung mit invalid action masking und IMPALA-CNN im Durchschnitt eine Winrate von 91\% mit UAS und 84\% mit GridNet.
 Letztendlich wurde entschieden sich auf GridNet zu fokusieren, da die Complexität geringer ist und die Kompatibilität SP (bzw. LT) erleichtert \cite{huang2021gym}.
-SP wurde in der Arbeit auch evaluiert. Für jeweils zwei Environments wurde ein immer Siel erstellt und die Beobachtungen von Spieler 1 und 2 für die erste und zweite parallelen environments verwendet.
-SP wurde nur mit der Kombination PPO, invalid action masking und encoder-decoder und GridNet evaluiert. Ohne selfplay lag die durchschnittliche Winrate für diese Kombination bei 89\%, mit selfplay nur noch bei 71\%.
-Es wird allerdings auch darauf hingewiesen, dass die SP-Implementierung nicht optimiert war. Die Agenten mussten von 2 Startpositionen aus trainieren, was das Training erschwerte \cite{huang2021gym}.
-Das versuchen wir in dieser Arbeit zu verbessern, indem wir die Observations, Actions, invalid action masking des Spieler 2 so drehen, dass sie mit denen von Spieler 1 übereinstimmen, wodurch der Agent von beiden Startpositionen aus trainieren kann, ohne dass er sich an die Startposition anpassen muss.
-Desweiteren wurde spekuliert, dass ausgefeiltere SP-Mechanismen, wie z.\,B.: LT erforderlich aind \cite{huang2021gym}. Genau das adressieren wir in dieser Arbeit.
+SP wurde in der Arbeit auch evaluiert. Allerdings gab es in dem Code ein Bug, der Wahrscheinlich die Ergebnisse für SP stark beeinflusst hat \cite{goodfriend2024raisocketai}.
 \vspace{10pt}
 
 \noindent\textbf{RAISocketAI}
-RAISocketAI ist der erste DRL-Agent, der die IEEE MicroRTS Competition gewinnen konnte, und setzt damit einen wichtigen Referenzpunkt für DRL-basierte Ansätze in dieser Domäne \cite{goodfriend2024raisocketai}. Zentral für die Performance sind laut Goodfriend ein iteratives Fine-Tuning der Policy, ein abgestimmtes Trainingsregime sowie Transfer-Learning zwischen Karten-/Problemgrößen \cite{goodfriend2024raisocketai}. Zusätzlich beschreibt die Arbeit Erweiterungen und praktische Verbesserungen an der MicroRTS-Py-Toolchain, die u.\,a. die Datengenerierung über Replays erleichtern und damit auch für Imitation-Learning-Ansätze relevant sind.
+\cite{goodfriend2024raisocketai} RAISocketAI ist der erste DRL-Agent, der die IEEE MicroRTS Competition gewinnen konnte. 
+RaiSocketAI beinhaltet eine neu implementation von MicroRTS-Py, die in unserem Code verwendet wird. 
+Unteranderem ist die Datengenerierung über Replays ist eine Wichtige Grundlage für BC \cite{huft2023microrts} und es wurde ein Bug in der alten implementation behoben, der nicht besitzte Recourcen als besitzte Recourcen markierte, wenn der Agent Spieler 2 ist. 
+Das führte Wahrscheinlich auch dazu, dass SP in der vorherigen Implementation von MicroRTS-Py keine Verbesserungen brachte \cite{goodfriend2024raisocketai}.
+Die RAISocketAI-Implementierung von FSP hat gegen die gleichen built-in-Bots von MicroRTS wie in MicroRTS-Py eine durchschnittliche Winrate von 91\% erreicht, was deutlich höher ist als die 84\% in der vorherigen Implementation \cite{goodfriend2024raisocketai}. 
+Allerdings erreichte FSP gegen CoacAI nur eine 20\% Winrate, wärend die besten vorherigen Implementationen fast immer CoacAI besiegen konnten \cite{goodfriend2024raisocketai}.
+Mit finetuning CoacAI und Mayari wurde die durchschnittliche Winrate gegen die built-in-Bots auf 98\% erhöht \cite{goodfriend2024raisocketai}.
+LT wurde in der Arbeit noch nicht implementiert oder evaluiert.
 \vspace{10pt}
 
 \noindent\textbf{BeClone}
-BeClone untersucht eine zweiphasige Trainingsstrategie für RTS-Agenten: Zunächst wird eine initiale Policy per BC aus Demonstrationen gelernt, anschließend erfolgt ein Reinforcement Learning (RL)-Finetuning mittels \emph{Advantage Actor-Critic} (A2C) im Self-Play \cite{martin2021beclone}. Der Fokus der Experimente liegt auf ressourcenorientierten Aufgaben und vergleichsweise kleinen Karten, wodurch BeClone primär als Nachweis dient, dass BC als Warm-Start die anschließende RL-Optimierung in RTS-Settings beschleunigen und stabilisieren kann \cite{martin2021beclone}. Im Gegensatz dazu zielt diese Arbeit auf die Implementierung und Evaluation von Self-Play und Liga-Training in einem stärker kompetitiven Setup mit PPO als Optimierungsverfahren.
+\cite{martin2021beclone} BeClone zeigte die effectivität von BC mit DRL-finetuning in MicroRTS-Py mit einer zweiphasigen Trainingsstrategie für RTS-Agenten: Zuerst wird eine initiale Policy per BC von den Experten gelernt, anschließend erfolgt ein RL-Finetuning mittels \emph{Advantage Actor-Critic} (A2C).
 \vspace{10pt}
 
 \noindent\textbf{AlphaStar}
-AlphaStar demonstriert, dass \emph{Liga-Training} (Population-Based Self-Play) in komplexen RTS-Domänen entscheidend zur Robustheit beitragen kann \cite{vinyals2019alphastar}. Das System wird zunächst durch Imitation Learning aus menschlichen Replays vortrainiert und anschließend in einer Liga aus unterschiedlichen Agententypen (u.\,a. Hauptagenten, Exploiters, historische Snapshots) weitertrainiert, um Überanpassung und Vergessen zu reduzieren und strategische Diversität zu fördern \cite{vinyals2019alphastar}. Obwohl MicroRTS und StarCraft~II stark in Komplexität und Repräsentation differieren, liefert AlphaStar ein etabliertes Referenzdesign dafür, wie Self-Play durch ligaartige Matchmaking-Mechanismen zu stabileren und generalisierbareren Policies skaliert werden kann.
+\cite{vinyals2019alphastar} AlphaStar demonstriert, dass LT in komplexen RTS-Domänen entscheidend zur Robustheit beitragen kann. 
+Der Agent wurde mit Imitation Learning aus menschlichen Replays vortrainiert. Das haben wir in dieser Arbeit mit den BC Phasen und der PPO Phase ersetzt. 
+Anschließend wird der Agent, wie auch in dieser Arbeit, in einer Liga aus unterschiedlichen Agententypen (Main-Agent, Main-Exploiters, League-Exploiters und historische Snapshots) weitertrainiert, um Überanpassung und Vergessen zu reduzieren und Diversität zu fördern. 
+Obwohl MicroRTS und StarCraft II in Komplexität und Repräsentation stark differieren, zeigt sich AlphaStar als ein etabliertes Referenzdesign für die Stabilisierung und Generalisierung von SP, durch ligaartige Matchmaking-Mechanismen und die Einbeziehung von spezialisierten Exploitern \cite{vinyals2019alphastar}.
+Wie auch in AlphaStar, werden in dieser Arbeit Main-Exploiters trainiert, indem der Basis-Agent gegen alle historischen Versionen der Main-Agenten in der Liga trainiert wird, um Schwachstellen zu identifizieren und auszunutzen \cite{vinyals2019alphastar}.
+Gleichzeitig trainieren League-Exploiters, gegen alle Historischen Agenten \cite{vinyals2019alphastar}.
+Der Main-Agent trainiert mit prioritized FSP (PFSP) gegen historische Versionen von sich selbst, Main-Exploiters und League-Exploiters \cite{vinyals2019alphastar}.
+Die Priorisierung der historischen Gegneragenten erfolgt durch die Winrate des Main-Agenten gegen die jeweiligen historischen Agenten \cite{vinyals2019alphastar}.
+Erst, wenn ein Exploiter eine große Winrate gegenüber allen Gegnern aufweist oder, wenn eine bestimmte Maximale Step Grenze erreicht wird, wird er in die Liga als Historical (ein historischer Agent) aufgenommen \cite{vinyals2019alphastar}. 
 
+% hier weiter arbeiten
+In AlphaStar wird V-trace Off-Policy Actor-Critic (IMPALA-basierter Ansatz) statt PPO verwenet
+Temporal difference learning (TD($\lambda$))
 
 \section{Method}
 \label{sec:method}
 
-\subsection{Environment Setup}
+% \subsection{Environment Setup}
 \label{sec:env-setup}
 
 
@@ -192,7 +207,7 @@ AlphaStar demonstriert, dass \emph{Liga-Training} (Population-Based Self-Play) i
     \label{Figure 1}
 \end{figure}
 
-\subsection{Neural Network Architecture}
+% \subsection{Neural Network Architecture}
 
 
 \label{sec:nn-architecture}
@@ -215,16 +230,16 @@ AlphaStar demonstriert, dass \emph{Liga-Training} (Population-Based Self-Play) i
 
 
 
-\subsection{Behavior Cloning}
+% \subsection{Behavior Cloning}
 
 
 
-\subsection{Reinforcement Training}
+% \subsection{Reinforcement Training}
 
 \section{Experiments}
 \label{sec:experiments}
 
-\subsection{Setup}
+% \subsection{Setup}
 \begin{table}[h]
 \centering
 \caption{Training parameters for PPO training.}
@@ -247,7 +262,7 @@ GAE parameter $\lambda$ & 0.95 \\
 \label{tab:training_params}
 \end{table} 
 
-\subsection{Results}
+% \subsection{Results}
 
 
 
@@ -266,7 +281,7 @@ GAE parameter $\lambda$ & 0.95 \\
 \end{figure}
 
 
-\subsection{Discussion}
+% \subsection{Discussion}
 
 
 \begin{itemize}
