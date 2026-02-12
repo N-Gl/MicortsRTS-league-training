@@ -796,7 +796,7 @@ class League:
 
 
     def _log_selfplay_results(self, args, agent, writer, infos, done_idx, done_agent, dyn_winloss, attack_weight, num_done_selfplaygames, last_logged_selfplay_games, indices_per_exploiter):
-        agent_steps = done_agent.get_steps()
+        agent_steps = done_agent.agent.get_steps()
         should_log_per_opponent_every_10_games = ((num_done_selfplaygames + 1) % 10 == 0)
         if isinstance(done_agent, MainPlayer):
             writer.recent_selfplay_winloss.append(infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
@@ -1056,7 +1056,7 @@ def log_bot_game_results(args, writer, infos, attack_weight, done_idx, dyn_winlo
 
     bot_winrate = np.mean(np.clip(writer.recent_bot_winloss, 0, 1))
     with_draw = np.mean(np.add(writer.recent_bot_winloss, 1) / 2)
-    agent_steps = done_agent.get_steps()
+    agent_steps = done_agent.agent.get_steps()
 
     winloss_values = np.array(np.clip(writer.recent_bot_winloss, 0, 1))
     writer.add_scalar("progress/num_bot_games", num_done_botgames, args.global_step)
