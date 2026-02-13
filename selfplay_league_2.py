@@ -386,13 +386,13 @@ class LeagueTrainer:
 
         print("League PPO training started")
         
-
-        self.update(args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices)
+        for update in range(1, num_updates + 1):
+            self.update(update, args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices)
 
         if args.dbg_non_legal_action and cleanup_break:
             cleanup_break()
 
-    def update(self, args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices):
+    def update(self, update, args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices):
         skip_update_count = 0
         should_log_every_20_updates = (update % 20 == 0)
         if args.dbg_seed:
