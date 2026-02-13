@@ -343,9 +343,13 @@ class LeagueTrainer:
         bot_inds = slice(args.num_selfplay_envs, args.num_envs)
 
         obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
-        actions = torch.zeros((args.num_steps, args.num_envs) + action_space_shape).to(device)
+        actions = torch.zeros(
+            (args.num_steps, args.num_envs) + action_space_shape,
+            dtype=torch.long,
+            device=device,
+        )
         logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
-        invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape).to(device)
+        invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape, dtype=torch.bool).to(device)
 
         rewards_attack = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_winloss = torch.zeros((args.num_steps, args.num_envs)).to(device)
@@ -892,6 +896,9 @@ class LeagueTrainer:
                 returns=main_agent_batch["returns"],
                 delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
             )
+            if not args.dbg_exploiter_update:
+                # main batch tensors can be large when indexed with non-contiguous env ids
+                del main_agent_batch
 
             # bot_exploiters = np.where(
             #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
@@ -1017,6 +1024,7 @@ class LeagueTrainer:
                         advantages=exploiter_agent_batch["advantages"],
                         delta_rewards_score=b_delta_rewards_score[:, b_exploiter_idx]
                     )
+                    del exploiter_agent_batch
 
                 
                 # TODO (optimize): wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
