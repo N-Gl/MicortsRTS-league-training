@@ -387,821 +387,821 @@ class LeagueTrainer:
         print("League PPO training started")
         
 
-        for update in range(1, num_updates + 1):
-            skip_update_count = 0
-            should_log_every_20_updates = (update % 20 == 0)
-            if args.dbg_seed:
-                self._seed_for_update(update, args.seed)
+        self.update(args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices)
 
-            if lr_fn is not None:
-                main_frac = 1.0 - (update - 1.0) / num_updates
-                if main_frac < 0.0:
-                    main_frac = 0.0
-                lrnow = lr_fn(main_frac)
-                optimizer.param_groups[0]["lr"] = lrnow
+        if args.dbg_non_legal_action and cleanup_break:
+            cleanup_break()
 
-            for step in range(args.num_steps):
-                if args.render:
-                    if args.render_all:
-                        # only workes for 1 at a time
-                        # Rendering.render_all_envs(envs)
-                        if sp_envs is not None:
-                            Rendering.render_all_envs(sp_envs)
-                        elif envs is not None:
-                            render_all_envs(envs)
-                    else:
-                        if envs is not None:
-                            envs.render("human")
-                        if sp_envs is not None:
-                            sp_envs.render("human")
-                        
-                args.global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
-                obs[step, bot_inds] = bot_next_obs
-                obs[step, sp_inds] = sp_next_obs
-                next_obs = obs[step]
-                res = sp_res + bot_res
-                scalar_features[step] = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
-                dones[step] = next_done
+    def update(self, args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices):
+        skip_update_count = 0
+        should_log_every_20_updates = (update % 20 == 0)
+        if args.dbg_seed:
+            self._seed_for_update(update, args.seed)
 
-                with torch.no_grad():
-                    # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-                    unique_agents = agent.get_unique_agents(self.active_league_agents)
-                    sp_only_unique_agents = agent.get_unique_agents(self.active_league_agents[:args.num_selfplay_envs])
+        if lr_fn is not None:
+            main_frac = 1.0 - (update - 1.0) / num_updates
+            if main_frac < 0.0:
+                main_frac = 0.0
+            lrnow = lr_fn(main_frac)
+            optimizer.param_groups[0]["lr"] = lrnow
 
-                    z_features[step] = agent.selfplay_get_z_encoded_features(
-                        args=args,
-                        device=device,
-                        z_features=z_features,
-                        next_obs=next_obs,
-                        step=step,
-                        unique_agents=unique_agents
-                    )
-
-                    # debugging
-                    # for i in range(args.num_envs):
-                    #     with torch.no_grad():
-                    #         # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
-                    #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
-                    # assert(torch.all(old_zFeatures == zFeatures))
-
-                    # critic(forward(...))
-                    # # values[step] = agent.get_value(obs[step, self.indices], scalar_features[step, self.indices], z_features[step, self.indices]).flatten()
-                    # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
-                    values[step] = agent.selfplay_and_Bot_get_value(
-                        obs[step],
-                        scalar_features[step],
-                        z_features[step],
-                        num_selfplay_envs=args.num_selfplay_envs,
-                        num_envs=args.num_envs,
-                        unique_agents=unique_agents,
-                        only_player_0=True,
-                        unit_bonus_distr=self.unit_bonus_distr
-                    ).flatten()
-
-                    # debug:
-                    # a = (Variables)
-                    # import pickle, os
-                    # with open(f"dump_var.pkl", "wb") as f:
-                    #     pickle.dump(a , f)
-
-                    # import pickle, glob
-                    # files = sorted(glob.glob("dump_*.pkl"))
-                    # c = pickle.load(open(files[0], "rb"))
-                    # arr = []
-                    # for a, b in zip(c, (Variables)):
-                    #     if isinstance(a == b, bool):
-                    #         arr.append((a == b))
-                    #     else:
-                    #         arr.append(torch.all(a == b).item())
+        for step in range(args.num_steps):
+            if args.render:
+                if args.render_all:
+                    # only workes for 1 at a time
+                    # Rendering.render_all_envs(envs)
+                    if sp_envs is not None:
+                        Rendering.render_all_envs(sp_envs)
+                    elif envs is not None:
+                        render_all_envs(envs)
+                else:
+                    if envs is not None:
+                        envs.render("human")
+                    if sp_envs is not None:
+                        sp_envs.render("human")
                     
-
-                    # self.check_values(scalar_features, z_features, values, agent, step, obs=obs[step], flatten=True)
-
-                    # gesamplete action (aus Verteilung der Logits) (24, 256, 7),
-                    # actor(forward(...)), invalid_action_masks
-                    # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
-                    actions[step, bot_inds], logprobs[step, bot_inds], _, invalid_action_masks[step, bot_inds] = agent.get_action(
-                        obs[step, bot_inds],
-                        scalar_features[step, args.num_selfplay_envs:],
-                        z_features[step, args.num_selfplay_envs:],
-                        envs=envs,
-                        unit_bonus_distr=self.unit_bonus_distr[args.num_selfplay_envs:] if self.unit_bonus_distr is not None else None
-                    )
-
-                    if args.num_selfplay_envs > 0:
-                        actions[step, sp_inds], logprobs[step, sp_inds], _, invalid_action_masks[step, sp_inds] = agent.selfplay_get_action(
-                            obs[step, sp_inds],
-                            scalar_features[step, :args.num_selfplay_envs],
-                            z_features[step, :args.num_selfplay_envs],
-                            num_selfplay_envs=args.num_selfplay_envs,
-                            num_envs=args.num_selfplay_envs,
-                            envs=sp_envs,
-                            active_league_agents=self.active_league_agents,
-                            unique_agents=sp_only_unique_agents,
-                            dbg_deterministic_actions=args.dbg_deterministic_actions,
-                            unit_bonus_distr=self.unit_bonus_distr[:args.num_selfplay_envs] if self.unit_bonus_distr is not None else None
-                        )
-
-                # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
-                bot_real_action = torch.cat([bot_position_indices, actions[step, bot_inds]], dim=2).cpu().numpy()
-                sp_real_action = torch.cat([sp_position_indices, actions[step, sp_inds]], dim=2).cpu().numpy()
-                # print("real_action shape:", real_action.shape)
-                # print("Grid-Position:", [real_action[0][i][0].item() for i in
-                # range(10)]) # -> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-
-                # =============
-                # invalid_action_masks angewandt
-                # =============
-
-
-                # Debug Beispiel
-                # valid_actions = np.array([np.array([34.0, 0.0, 1.0, 3.0, 1.0, 2.0, 3.0, 21.0]),
-                #                            np.array([238.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-                #                            np.array([34.0, 0.0, 2.0, 0.0, 0.0, 2.0, 3.0, 24.0])])
-                # valid_actions_counts = [1, 1, 1]
-                bot_valid_actions = bot_real_action[invalid_action_masks[step, bot_inds][:, :, 0].bool().cpu().numpy()]
-                bot_valid_counts = invalid_action_masks[step, bot_inds][:, :, 0].sum(1).long().cpu().numpy()
-                sp_valid_actions = sp_real_action[invalid_action_masks[step, sp_inds][:, :, 0].bool().cpu().numpy()]
-                sp_valid_counts = invalid_action_masks[step, sp_inds][:, :, 0].sum(1).long().cpu().numpy()
-
-                # adjust actions for selfplay environments (player 1 -> player 0)
-                # TODO (optimize): nur die Indizes anpassen, die man anpassen muss (bei type move nicht harvest, return, produce, attack anpassen)
-                adjust_action_selfplay(args, sp_valid_actions, sp_valid_counts)
-
-                '''
-                valid_actions:
-                [[Pos, Type, move direction, harvest direction, return (recource) direction, produce direction, produce type, relative attack position],
-                 [Spiel0 (Spieler1)],
-                 [Spiel1 (Spieler0)]]
-
-                Pos: 0-255 (16*16) links oben nach rechts unten (obenecke = 0)
-                Type: 0: NOP, 1: Move, 2: Harvest, 3: Return, 4: Produce (Produce direction + Produce type), 5: Attack (wenn z.B.: move direction = 1, aber Type = 2 --> move direction wird ignoriert)
-                direction: 0: North, 1: East, 2: South, 3: West
-                produce type: 0: (light), 1: (Ranged), 2: (Baracks / Heavy), 3: (Worker) (je nach Unit unterschiedlich)
-                relative attack position: 0-255 (16*16) links oben nach rechts unten (obenecke = 0) wo angegriffen wird
-                '''
-
-                bot_java_valid_actions = []
-                bot_valid_index = 0
-                for count in bot_valid_counts:
-                    java_env_action = []
-                    for _ in range(count):
-                        java_env_action.append(JArray(JInt)(bot_valid_actions[bot_valid_index]))
-                        bot_valid_index += 1
-                    bot_java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
-                bot_java_valid_actions = JArray(JArray(JArray(JInt)))(bot_java_valid_actions)
-
-                sp_java_valid_actions = []
-                sp_valid_index = 0
-                for count in sp_valid_counts:
-                    java_env_action = []
-                    for _ in range(count):
-                        java_env_action.append(JArray(JInt)(sp_valid_actions[sp_valid_index]))
-                        sp_valid_index += 1
-                    sp_java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
-                sp_java_valid_actions = JArray(JArray(JArray(JInt)))(sp_java_valid_actions)
-                # java_valid_actions.shape: (Envs, num_valid_actions_in_Env, valid_action (8)) (py_arr = np.array(java_valid_actions))
-                # np_valid_actions = np.array(
-                # [[np.array(list(inner), dtype=np.int32) for inner in outer]
-                #  for outer in java_valid_actions],
-                # dtype=object
-                # )
-                # =============
-
-                # =============
-                # Schritt in der Umgebung mit der in get_action gesampleten Action
-                # =============
-
-                bot_next_obs, _, bot_attackrew, bot_winlossrew, bot_scorerew, bot_ds, bot_infos, bot_res = envs.step(bot_java_valid_actions)
-                bot_next_obs = torch.Tensor(envs._from_microrts_obs(bot_next_obs)).to(device) # next_obs zu Tensor mit shape (24, 16, 16, 73) (von (24, X))
-                if args.num_selfplay_envs > 0:
-                    sp_next_obs, _, sp_attackrew, sp_winlossrew, sp_scorerew, sp_ds, sp_infos, sp_res = sp_envs.step(sp_java_valid_actions)
-                    sp_next_obs = torch.Tensor(sp_envs._from_microrts_obs(sp_next_obs)).to(device)
-                    
-                    adjust_obs_selfplay(args, sp_next_obs)
-                else:
-                    sp_attackrew = np.array([], dtype=np.float32)
-                    sp_winlossrew = np.array([], dtype=np.float32)
-                    sp_scorerew = np.array([], dtype=np.float32)
-                    sp_ds = np.array([], dtype=np.bool_)
-                    sp_infos = []
-                    sp_res = []
-
-                if args.dbg_exploiter_update:
-                    for i in range(0, args.num_selfplay_envs, 2):
-                        if not torch.all(sp_next_obs[0] == sp_next_obs[i]):
-                            breakpoint()
-
-                '''winloss = min(0.01, 6.72222222e-9 * args.global_step)
-                densereward = max(0, 0.8 + (-4.44444444e-9 * args.global_step))
-
-                if args.global_step < 100000000:
-                    scorew = 0.19 + 1.754e-8 * args.global_step
-                else:
-                    scorew = 0.5 - 1.33e-8 * args.global_step'''
-
-
-                # densereward = 0
-                winloss = 10
-                attack = args.attack_reward_weight
-                # =============
-
-                # update rewards
-                # rewards_dense[step] = torch.Tensor(denserew* densereward).to(device)
-
-                ### Debugging (scorerews always == 0)
-                # Breakpoint if values change
-                # if not np.array_equal(scorerews, _last_scorerews):
-                #     breakpoint()
-                # _last_scorerews = np.copy(scorerews)
-
-
-                attack_tensor = torch.as_tensor(np.concatenate([sp_attackrew, bot_attackrew]), device=device, dtype=torch.float)
-                if args.dyn_attack_reward > 0:
-                    # done_tensor = torch.as_tensor(ds, device=device, dtype=torch.bool)
-                    # draw_mask = (winloss_tensor == 0) & done_tensor
-                    sc = scalar_features[step]
-                    # own_recources = sc[:, 0]
-                    # opp_recources = sc[:, 1]
-                    own_light = sc[:, 4]
-                    own_heavy = sc[:, 5]
-                    own_ranged = sc[:, 6]
-                    opp_light = sc[:, 8]
-                    opp_heavy = sc[:, 9]
-                    opp_ranged = sc[:, 10]
-                    # strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3, min=0.00001)
-                    strength_ratio = (
-                        (own_heavy + 0.5 * (own_light + own_ranged))
-                        / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged), min=0.00001)
-                    ) ** 1.5
-                    # less_draw_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=0.1)
-                    # rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
-                    attack_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=1.5, min=0.5)
-                    rewards_attack[step] = attack_tensor + attack * attack_scaled * (attack_tensor > 0).float()
-                else:
-                    rewards_attack[step] = attack_tensor * attack
-
-                rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew])).to(device)
-                sp_score_tensor = torch.as_tensor(sp_scorerew, device=device, dtype=torch.float)
-                bot_score_tensor = torch.as_tensor(bot_scorerew, device=device, dtype=torch.float)
-                if args.unit_exploiters:
-                    sc = scalar_features[step]
-                    sp_sc = sc[:args.num_selfplay_envs]
-                    bot_sc = sc[args.num_selfplay_envs:]
-                    # rewards for opponent are wrong but not used
-                    sp_score_tensor = self._add_unit_bonus_to_score(
-                        sp_score_tensor,
-                        sp_sc[:, 3:7],
-                        sp_sc[:, 7:11],
-                        self.unit_bonus_distr[:args.num_selfplay_envs],
-                    )
-                    bot_score_tensor = self._add_unit_bonus_to_score(
-                        bot_score_tensor,
-                        bot_sc[:, 3:7],
-                        bot_sc[:, 7:11],
-                        self.unit_bonus_distr[args.num_selfplay_envs:],
-                    )
-
-
-                sp_score_delta = sp_score_tensor - last_sp_scorerew
-                bot_score_delta = bot_score_tensor - last_bot_scorerew
-                score_delta = torch.tanh(1.5 * args.rewardscore * torch.cat([sp_score_delta, bot_score_delta]))
-                sp_done_tensor = torch.as_tensor(sp_ds, device=device, dtype=torch.bool)
-                bot_done_tensor = torch.as_tensor(bot_ds, device=device, dtype=torch.bool)
-                last_sp_scorerew = torch.where(sp_done_tensor, torch.zeros_like(sp_score_tensor), sp_score_tensor) # if done: 0 else: current score
-                last_bot_scorerew = torch.where(bot_done_tensor, torch.zeros_like(bot_score_tensor), bot_score_tensor)
-                delta_rewards_score[step] = score_delta
-                delta_score_sums += score_delta
-                next_done = torch.Tensor(np.concatenate([sp_ds, bot_ds])).to(device)
-
-                # =============
-                # Logging PPO training
-                # =============
-                infos =  sp_infos + bot_infos
-                if np.any(['episode' in info.keys() for info in infos]):
-                    if not hasattr(writer, "recent_bot_winloss"):
-                                writer.recent_bot_winloss = deque([0.0] * 10, maxlen=200)
-                    if not hasattr(writer, "recent_selfplay_winloss"):
-                                writer.recent_selfplay_winloss = deque([0.0] * 10, maxlen=200)
-
-                    where_done = torch.where(next_done)
-                    done_mask = next_done.bool()
-                    for done_idx in where_done[0]:
-                        delta_score_sum = delta_score_sums[done_idx].item()
-                        infos[done_idx]["delta_score_sum"] = delta_score_sum
-                        infos[done_idx]["delta_score_sum_weighted"] = delta_score_sum
-                        done_agent = self.active_league_agents[done_idx]
-
-                        # dyn_winloss = winloss
-                        game_length = infos[done_idx]["episode"]["l"]
-                        # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                        if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
-                            done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
-
-                            if isinstance(done_agent, league.MainPlayer):
-                                # game_length = infos[done_idx]["episode"]["l"]
-                                # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                                league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
-                                
-                        if done_idx > args.num_selfplay_envs - 1:
-                            league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames, done_agent)
-                            num_done_botgames += 1
-                            last_bot_env_change += 1
-
-                        elif done_idx % 2 == 0:
-                            # update League match results
-                            self.active_league_agents[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
-                                args,
-                                agent,
-                                writer,
-                                self.active_league_agents,
-                                infos,
-                                attack,
-                                done_idx,
-                                done_agent,
-                                winloss,
-                                self.hist_reward,
-                                num_done_selfplaygames,
-                                self.indices_per_exploiter,
-                                last_logged_selfplay_games
-                            )
-                            num_done_selfplaygames += 1
-
-                            if args.save_gpu_memory:
-                                league.offload_historical_to_cpu(old_opp, active_agents=self.active_league_agents)
-
-                    # get new unit bonus distribution for next Game
-                    self.get_new_unit_bonus_distr(where_done[0], device)
-
-                    delta_score_sums = torch.where(done_mask, torch.zeros_like(delta_score_sums), delta_score_sums)
-                        
-                # =============
-            # =========================
-
-
-            
-
-            
-
-            
-        # =========================
-        # PPO update
-        # =========================
-            
-            # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-            unique_agents = agent.get_unique_agents(self.active_league_agents)
+            args.global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
+            obs[step, bot_inds] = bot_next_obs
+            obs[step, sp_inds] = sp_next_obs
+            next_obs = obs[step]
+            res = sp_res + bot_res
+            scalar_features[step] = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
+            dones[step] = next_done
 
             with torch.no_grad():
-                next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
-                next_z_features = agent.selfplay_get_z_encoded_features(
-                    args, device, z_features, next_obs, args.num_steps, unique_agents
-                )
-                
+                # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
+                unique_agents = agent.get_unique_agents(self.active_league_agents)
+                sp_only_unique_agents = agent.get_unique_agents(self.active_league_agents[:args.num_selfplay_envs])
 
-                # next_value = agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)
-                next_value = agent.selfplay_and_Bot_get_value(
-                    next_obs,
-                    next_scalar_features,
-                    next_z_features,
+                z_features[step] = agent.selfplay_get_z_encoded_features(
+                    args=args,
+                    device=device,
+                    z_features=z_features,
+                    next_obs=next_obs,
+                    step=step,
+                    unique_agents=unique_agents
+                )
+
+                # debugging
+                # for i in range(args.num_envs):
+                #     with torch.no_grad():
+                #         # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
+                #         old_zFeatures[step][i] = agent.z_encoder(obs[step][i].view(-1))
+                # assert(torch.all(old_zFeatures == zFeatures))
+
+                # critic(forward(...))
+                # # values[step] = agent.get_value(obs[step, self.indices], scalar_features[step, self.indices], z_features[step, self.indices]).flatten()
+                # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
+                values[step] = agent.selfplay_and_Bot_get_value(
+                    obs[step],
+                    scalar_features[step],
+                    z_features[step],
                     num_selfplay_envs=args.num_selfplay_envs,
                     num_envs=args.num_envs,
                     unique_agents=unique_agents,
                     only_player_0=True,
                     unit_bonus_distr=self.unit_bonus_distr
-                ).reshape(1, -1)
+                ).flatten()
 
-                # self.check_values(
-                #     scalar_features, z_features, next_value, 
-                #     agent, step, 
-                #     next_scalar_features=next_scalar_features, 
-                #     next_z_features=next_z_features, 
-                #     next_obs=next_obs, 
-                #     flatten=False
-                #     )
+                # debug:
+                # a = (Variables)
+                # import pickle, os
+                # with open(f"dump_var.pkl", "wb") as f:
+                #     pickle.dump(a , f)
+
+                # import pickle, glob
+                # files = sorted(glob.glob("dump_*.pkl"))
+                # c = pickle.load(open(files[0], "rb"))
+                # arr = []
+                # for a, b in zip(c, (Variables)):
+                #     if isinstance(a == b, bool):
+                #         arr.append((a == b))
+                #     else:
+                #         arr.append(torch.all(a == b).item())
                 
-                rewards_winloss = rewards_winloss * winloss
 
-                # dont calculate GAE for Player 1 Environments
-                b_next_value = next_value[:, self.indices]
-                b_values = values[:, self.indices]
-                b_rewards_attack = rewards_attack[:, self.indices]
-                b_rewards_winloss = rewards_winloss[:, self.indices]
-                b_delta_rewards_score = delta_rewards_score[:, self.indices]
-                b_dones = dones[:, self.indices]
-                b_next_done = next_done[self.indices]
+                # self.check_values(scalar_features, z_features, values, agent, step, obs=obs[step], flatten=True)
 
-                # (returns, advantages werden für exploiters weitergegeben, deshalb muss man sie hier auch berechnen oder unten anpassen)
-                # oder 2 Variablen jeweils speichern. Hier kann man auch nur die obs, ... zusammenstellen, die exploiters brauchen (spart Speicher)
-                # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
-                b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_delta_rewards_score, b_dones, b_next_done)
-
-
-
-            # flatten the batch
-            # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
-            # (ScFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
-            # b_Sc = scalar_features[:, self.indices].reshape(-1, scalar_features.shape[-1])
-            # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 8))
-            # (zFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
-            # b_z = z_features[:, self.indices].reshape(-1, z_features.shape[-1])
-            # dasselbe mit obs                                      (shape (steps*envs, 16, 16, 73)
-            # b_obs = obs[:, self.indices].reshape((-1,) + envs.single_observation_space.shape)
-            # dasselbe mit actions                                  (shape (steps*envs, 256, 7))
-            # b_actions = actions[:, self.indices].reshape((-1,) + action_space_shape)
-            # dasselbe mit logprobs, advantages, returns, values    (shape (steps*envs,))
-            # b_logprobs = logprobs[:, self.indices].reshape(-1)
-            # b_values = values[:, self.indices].reshape(-1)
-            # b_values = b_values.reshape(-1)
-            # b_advantages = advantages[:, self.indices].reshape(-1)
-            # b_advantages = b_advantages.reshape(-1)
-            # b_returns = returns[:, self.indices].reshape(-1)
-            # b_returns = b_returns.reshape(-1)
-            # dasselbe mit invalid_action_masks                     (shape (steps*envs, 256, 79))
-            # b_invalid_action_masks = invalid_action_masks[:, self.indices].reshape((-1,) + invalid_action_shape)
-            
-            
-
-            # inds: indices from the batch
-            main_batch_size = int(self.main_indices_count * args.num_steps)
-            main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
-
-            
-            
-            main_agent_batch = {
-                "agent": agent,
-                "optimizer": optimizer,
-                "obs": obs[:, self.main_indices].reshape((-1,) + envs.single_observation_space.shape),
-                "sc": scalar_features[:, self.main_indices].reshape(-1, scalar_features.shape[-1]),
-                "z": z_features[:, self.main_indices].reshape(-1, z_features.shape[-1]),
-                "actions": actions[:, self.main_indices].reshape((-1,) + action_space_shape),
-                "logprobs": logprobs[:, self.main_indices].reshape(-1),
-                "advantages": b_advantages[:, self.b_main_indices].reshape(-1),
-                "returns": b_returns[:, self.b_main_indices].reshape(-1),
-                "values": values[:, self.main_indices].reshape(-1),
-                "masks": invalid_action_masks[:, self.main_indices].reshape((-1,) + invalid_action_shape),
-                "skip_policy_update": args.dbg_no_main_agent_ppo_update
-            }
-            if self.unit_bonus_distr is not None:
-                main_unit_bonus = self.unit_bonus_distr[self.main_indices]
-                main_unit_bonus = main_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
-                main_agent_batch["unit_bonus_distr"] = main_unit_bonus
-            
-            if args.dbg_deterministic_actions:
-                print("\nactions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)\n")
-
-            if args.dbg_exploiter_update:
-                if not args.dbg_deterministic_actions:
-                    print("\nuse deterministic actions for main agent PPO update for dbg_deterministic_actions\n")
-
-                if not args.sp:
-                    print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
-                self.dbg_prep(main_batch_size)
-
-            pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
-                args,
-                envs,
-                main_agent_batch,
-                device,
-                supervised_agent,
-                update,
-                main_batch_size,
-                main_minibatch_size
+                # gesamplete action (aus Verteilung der Logits) (24, 256, 7),
+                # actor(forward(...)), invalid_action_masks
+                # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
+                actions[step, bot_inds], logprobs[step, bot_inds], _, invalid_action_masks[step, bot_inds] = agent.get_action(
+                    obs[step, bot_inds],
+                    scalar_features[step, args.num_selfplay_envs:],
+                    z_features[step, args.num_selfplay_envs:],
+                    envs=envs,
+                    unit_bonus_distr=self.unit_bonus_distr[args.num_selfplay_envs:] if self.unit_bonus_distr is not None else None
                 )
-            if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
-                pg_stop_iter = -2
 
-            ppo_update.log(
-                args,
-                writer,
-                optimizer,
-                args.global_step,
-                start_time,
-                update,
-                pg_stop_iter,
-                pg_loss,
-                entropy_loss,
-                kl_loss,
-                approx_kl,
-                v_loss,
-                loss,
-                log_SPS=False,
-                grad_norm=grad_norm,
-                advantages=main_agent_batch["advantages"],
-                values=main_agent_batch["values"],
-                returns=main_agent_batch["returns"],
-                delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
-            )
-
-            # bot_exploiters = np.where(
-            #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
-            # )[0] + args.num_selfplay_envs
-            # selfplay_exploiters = np.where([isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-            # exploiter_indices = np.concatenate((selfplay_exploiters * 2, bot_exploiters))
-            # b_exploiter_indices = np.concatenate((selfplay_exploiters, bot_exploiters - (args.num_selfplay_envs // 2)))
-
-            if len(self.indices_per_exploiter) > 0:
-                env_shape = (sp_envs or envs).single_observation_space.shape
-    
-                # update every exploiter individually
-                for exploiter, exploiter_idx in self.indices_per_exploiter.items():
-                    if exploiter.recent_reset:
-                        exploiter.recent_reset = False
-                        skip_update_count += 1
-                        continue
-
-                    if args.dbg_seed:
-                        self._seed_for_update(update, args.seed)
-                    b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
-
-                    if exploiter.optimizer is None:
-                        exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
-                        print(f"Created optimizer for exploiter {exploiter}")
-                        exploiter.last_reset_update = update
-
-                    exploiter_agent_batch = {
-                            "player": exploiter,
-                            "agent": exploiter.agent,
-                            "optimizer": exploiter.optimizer,
-                            "obs": obs[:, exploiter_idx].reshape((-1,) + env_shape),
-                            "sc": scalar_features[:, exploiter_idx].reshape(-1, scalar_features.shape[-1]),
-                            "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),
-                            "actions": actions[:, exploiter_idx].reshape((-1,) + action_space_shape),
-                            "logprobs": logprobs[:, exploiter_idx].reshape(-1),
-                            "advantages": b_advantages[:, b_exploiter_idx].reshape(-1),
-                            "returns": b_returns[:, b_exploiter_idx].reshape(-1),
-                            "values": values[:, exploiter_idx].reshape(-1),
-                            "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
-                            "gamma": args.exploiter_gamma,
-                            "gae_lambda": args.exploiter_gae_lambda,
-                            "ent_coef": args.exploiter_ent_coef,
-                            "vf_coef": args.exploiter_vf_coef,
-                            "max_grad_norm": args.exploiter_max_grad_norm,
-                            "clip_coef": args.exploiter_clip_coef,
-                            "update_epochs": args.exploiter_update_epochs,
-                            "kle_stop": args.exploiter_kle_stop,
-                            "kle_rollback": args.exploiter_kle_rollback,
-                            "target_kl": args.exploiter_target_kl,
-                            "kl_coeff": args.exploiter_kl_coeff,
-                            "norm_adv": args.exploiter_norm_adv,
-                            "anneal_lr": args.exploiter_anneal_lr,
-                            "clip_vloss": args.exploiter_clip_vloss
-                        }
-                    if self.unit_bonus_distr is not None:
-                        exploiter_unit_bonus = self.unit_bonus_distr[exploiter_idx]
-                        exploiter_unit_bonus = exploiter_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
-                        exploiter_agent_batch["unit_bonus_distr"] = exploiter_unit_bonus
-                        
-
-                    if exploiter_lr_fn is not None:
-                        reset_update = getattr(exploiter, "last_reset_update", None)
-                        if reset_update is None:
-                            reset_update = update
-                            exploiter.last_reset_update = reset_update
-                        exploiter_frac = 1.0 - (update - reset_update) / num_updates
-                        if exploiter_frac < 0.0:
-                            exploiter_frac = 0.0
-                        exploiter_lrnow = exploiter_lr_fn(exploiter_frac)
-                    else:
-                        exploiter_lrnow = args.exploiter_PPO_learning_rate
-
-                    exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
-
-                    exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
-                    exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
-
-                    if args.dbg_exploiter_update:
-                        self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
-
-                    update_envs = sp_envs if sp_envs is not None else envs
-                    pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
-                        args,
-                        update_envs,
-                        exploiter_agent_batch,
-                        device,
-                        supervised_agent,
-                        update,
-                        exploiter_batch_size,
-                        exploiter_minibatch_size
-                        )
-                    
-                    
-
-                    # TODO (debugging): debugging löschen
-                    # if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
-                    #     print("Exploiter obs different from main agent obs")
-                    # if not torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]):
-                    #     print("Exploiter sc different from main agent sc")
-                    # if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
-                    #     print("Exploiter z different from main agent z")
-
-
-                    if args.dbg_exploiter_update:
-                        self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
-                    
-                    league.log_exploiter_ppo_update(
-                        args,
-                        writer,
-                        exploiter_agent_batch,
-                        self.indices_per_exploiter,
-                        pg_stop_iter,
-                        pg_loss,
-                        entropy_loss,
-                        kl_loss,
-                        approx_kl,
-                        v_loss,
-                        loss,
-                        self.experiment_name,
-                        update,
-                        grad_norm=grad_norm,
-                        advantages=exploiter_agent_batch["advantages"],
-                        delta_rewards_score=b_delta_rewards_score[:, b_exploiter_idx]
+                if args.num_selfplay_envs > 0:
+                    actions[step, sp_inds], logprobs[step, sp_inds], _, invalid_action_masks[step, sp_inds] = agent.selfplay_get_action(
+                        obs[step, sp_inds],
+                        scalar_features[step, :args.num_selfplay_envs],
+                        z_features[step, :args.num_selfplay_envs],
+                        num_selfplay_envs=args.num_selfplay_envs,
+                        num_envs=args.num_selfplay_envs,
+                        envs=sp_envs,
+                        active_league_agents=self.active_league_agents,
+                        unique_agents=sp_only_unique_agents,
+                        dbg_deterministic_actions=args.dbg_deterministic_actions,
+                        unit_bonus_distr=self.unit_bonus_distr[:args.num_selfplay_envs] if self.unit_bonus_distr is not None else None
                     )
 
+            # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
+            bot_real_action = torch.cat([bot_position_indices, actions[step, bot_inds]], dim=2).cpu().numpy()
+            sp_real_action = torch.cat([sp_position_indices, actions[step, sp_inds]], dim=2).cpu().numpy()
+            # print("real_action shape:", real_action.shape)
+            # print("Grid-Position:", [real_action[0][i][0].item() for i in
+            # range(10)]) # -> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+
+            # =============
+            # invalid_action_masks angewandt
+            # =============
+
+
+            # Debug Beispiel
+            # valid_actions = np.array([np.array([34.0, 0.0, 1.0, 3.0, 1.0, 2.0, 3.0, 21.0]),
+            #                            np.array([238.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+            #                            np.array([34.0, 0.0, 2.0, 0.0, 0.0, 2.0, 3.0, 24.0])])
+            # valid_actions_counts = [1, 1, 1]
+            bot_valid_actions = bot_real_action[invalid_action_masks[step, bot_inds][:, :, 0].bool().cpu().numpy()]
+            bot_valid_counts = invalid_action_masks[step, bot_inds][:, :, 0].sum(1).long().cpu().numpy()
+            sp_valid_actions = sp_real_action[invalid_action_masks[step, sp_inds][:, :, 0].bool().cpu().numpy()]
+            sp_valid_counts = invalid_action_masks[step, sp_inds][:, :, 0].sum(1).long().cpu().numpy()
+
+            # adjust actions for selfplay environments (player 1 -> player 0)
+            # TODO (optimize): nur die Indizes anpassen, die man anpassen muss (bei type move nicht harvest, return, produce, attack anpassen)
+            adjust_action_selfplay(args, sp_valid_actions, sp_valid_counts)
+
+            '''
+            valid_actions:
+            [[Pos, Type, move direction, harvest direction, return (recource) direction, produce direction, produce type, relative attack position],
+             [Spiel0 (Spieler1)],
+             [Spiel1 (Spieler0)]]
+            Pos: 0-255 (16*16) links oben nach rechts unten (obenecke = 0)
+            Type: 0: NOP, 1: Move, 2: Harvest, 3: Return, 4: Produce (Produce direction + Produce type), 5: Attack (wenn z.B.: move direction = 1, aber Type = 2 --> move direction wird ignoriert)
+            direction: 0: North, 1: East, 2: South, 3: West
+            produce type: 0: (light), 1: (Ranged), 2: (Baracks / Heavy), 3: (Worker) (je nach Unit unterschiedlich)
+            relative attack position: 0-255 (16*16) links oben nach rechts unten (obenecke = 0) wo angegriffen wird
+            '''
+
+            bot_java_valid_actions = []
+            bot_valid_index = 0
+            for count in bot_valid_counts:
+                java_env_action = []
+                for _ in range(count):
+                    java_env_action.append(JArray(JInt)(bot_valid_actions[bot_valid_index]))
+                    bot_valid_index += 1
+                bot_java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
+            bot_java_valid_actions = JArray(JArray(JArray(JInt)))(bot_java_valid_actions)
+
+            sp_java_valid_actions = []
+            sp_valid_index = 0
+            for count in sp_valid_counts:
+                java_env_action = []
+                for _ in range(count):
+                    java_env_action.append(JArray(JInt)(sp_valid_actions[sp_valid_index]))
+                    sp_valid_index += 1
+                sp_java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
+            sp_java_valid_actions = JArray(JArray(JArray(JInt)))(sp_java_valid_actions)
+            # java_valid_actions.shape: (Envs, num_valid_actions_in_Env, valid_action (8)) (py_arr = np.array(java_valid_actions))
+            # np_valid_actions = np.array(
+            # [[np.array(list(inner), dtype=np.int32) for inner in outer]
+            #  for outer in java_valid_actions],
+            # dtype=object
+            # )
+            # =============
+
+            # =============
+            # Schritt in der Umgebung mit der in get_action gesampleten Action
+            # =============
+
+            bot_next_obs, _, bot_attackrew, bot_winlossrew, bot_scorerew, bot_ds, bot_infos, bot_res = envs.step(bot_java_valid_actions)
+            bot_next_obs = torch.Tensor(envs._from_microrts_obs(bot_next_obs)).to(device) # next_obs zu Tensor mit shape (24, 16, 16, 73) (von (24, X))
+            if args.num_selfplay_envs > 0:
+                sp_next_obs, _, sp_attackrew, sp_winlossrew, sp_scorerew, sp_ds, sp_infos, sp_res = sp_envs.step(sp_java_valid_actions)
+                sp_next_obs = torch.Tensor(sp_envs._from_microrts_obs(sp_next_obs)).to(device)
                 
-                # TODO (optimize): wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
-                # oder league.train_exploiters entfernen
-                # pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = league.train_exploiters(
-                #     args,
-                #     envs,
-                #     agent_batches,
-                #     writer,
-                #     args.global_step,
-                #     update,
-                #     agent,
-                #     self.experiment_name,
-                #     exploiter_indices
-                # )
-                writer.add_scalar("debug/exploiter_skip_updates_count", skip_update_count, args.global_step)
-                if skip_update_count:
-                    print(f"Skipped exploiter updates this rollout: {skip_update_count}")
-
-            if not args.dbg_no_main_agent_ppo_update:
-                if args.prod_mode and update % args.checkpoint_frequency == 0:
-                    print("Saving model checkpoint...")
-                    if (update < 500 and not args.early_updates):
-                        if (update % (args.checkpoint_frequency * 5) == 0):
-                            league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
-                    else:
-                        league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
-
-            if should_log_every_20_updates:
-                writer.add_scalar("charts/sps", int(args.global_step / (time.time() - start_time)), args.global_step)
-                print("SPS:", int(args.global_step / (time.time() - start_time)))
-
-            cur_winrate = np.mean(np.add(writer.recent_bot_winloss, 1) / 2) if hasattr(writer, "recent_bot_winloss") else 0.0
-            if cur_winrate < args.min_bot_winrate:
-                intended_bot_envs = args.max_num_bot_envs
-            elif cur_winrate > args.max_bot_winrate:
-                intended_bot_envs = args.min_num_bot_envs
-            elif args.max_num_bot_envs - args.min_num_bot_envs == 0:
-                intended_bot_envs = args.num_bot_envs
+                adjust_obs_selfplay(args, sp_next_obs)
             else:
-                intended_bot_envs = np.floor(args.max_num_bot_envs - (cur_winrate - args.min_bot_winrate) / ((args.max_bot_winrate - args.min_bot_winrate) / (args.max_num_bot_envs - args.min_num_bot_envs)))
+                sp_attackrew = np.array([], dtype=np.float32)
+                sp_winlossrew = np.array([], dtype=np.float32)
+                sp_scorerew = np.array([], dtype=np.float32)
+                sp_ds = np.array([], dtype=np.bool_)
+                sp_infos = []
+                sp_res = []
 
-            # remove or add an Bot environment depending on the number of played games in relation to selfplay games
-            # if args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs > args.min_num_bot_envs and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.min_bot_winrate):
-            if args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs > args.min_num_bot_envs and intended_bot_envs < args.num_bot_envs:
-                print("\nRemoving a Bot Environment")
+            if args.dbg_exploiter_update:
+                for i in range(0, args.num_selfplay_envs, 2):
+                    if not torch.all(sp_next_obs[0] == sp_next_obs[i]):
+                        breakpoint()
 
-                envs.close()
-                envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
-                last_bot_env_change = 0
-
-                agent.remove_last_bot_env()
-
-                obs = obs[:, :args.num_envs]
-                actions = actions[:, :args.num_envs]
-                logprobs = logprobs[:, :args.num_envs]
-                invalid_action_masks = invalid_action_masks[:, :args.num_envs]
-
-                sp_inds = slice(0, args.num_selfplay_envs)
-                bot_inds = slice(args.num_selfplay_envs, args.num_envs)
-
-                obs[:, bot_inds].zero_()
-                actions[:, bot_inds].zero_()
-                logprobs[:, bot_inds].zero_()
-                invalid_action_masks[:, bot_inds].zero_()
-
-                if args.unit_exploiters:
-                    # Do not zero out the others botenvs in self.unit_bonus_distr, as they are arnt done and are not reinitialized after this
-                    self.unit_bonus_distr = self.unit_bonus_distr[:args.num_envs]
+            '''winloss = min(0.01, 6.72222222e-9 * args.global_step)
+            densereward = max(0, 0.8 + (-4.44444444e-9 * args.global_step))
+            if args.global_step < 100000000:
+                scorew = 0.19 + 1.754e-8 * args.global_step
+            else:
+                scorew = 0.5 - 1.33e-8 * args.global_step'''
 
 
+            # densereward = 0
+            winloss = 10
+            attack = args.attack_reward_weight
+            # =============
 
-                rewards_attack = rewards_attack[:, :args.num_envs]
-                rewards_attack[:, args.num_selfplay_envs:].zero_()
-                rewards_winloss = rewards_winloss[:, :args.num_envs]
-                rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                delta_rewards_score = delta_rewards_score[:, :args.num_envs]
-                delta_rewards_score[:, args.num_selfplay_envs:].zero_()
-                delta_score_sums = delta_score_sums[:args.num_envs]
-                delta_score_sums[args.num_selfplay_envs:].zero_()
-                # TODO (optimize): muss man die wirklich resetten?
-                dones = dones[:, :args.num_envs]
-                dones[:, args.num_selfplay_envs:].zero_()
-                values = values[:, :args.num_envs]
-                values[:, args.num_selfplay_envs:].zero_()
+            # update rewards
+            # rewards_dense[step] = torch.Tensor(denserew* densereward).to(device)
 
-                next_obs_np, _, bot_res = envs.reset()
-                bot_next_obs = torch.Tensor(next_obs_np).to(device)
-                last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
-
-                next_done = next_done[:args.num_envs]
-                next_done[args.num_selfplay_envs:].zero_()
-
-                scalar_features = scalar_features[:, :args.num_envs]
-                scalar_features[:, args.num_selfplay_envs:].zero_()
-                z_features = z_features[:, :args.num_envs]
-                z_features[:, args.num_selfplay_envs:].zero_()
-
-                bot_position_indices = bot_position_indices[:args.num_bot_envs]
+            ### Debugging (scorerews always == 0)
+            # Breakpoint if values change
+            # if not np.array_equal(scorerews, _last_scorerews):
+            #     breakpoint()
+            # _last_scorerews = np.copy(scorerews)
 
 
+            attack_tensor = torch.as_tensor(np.concatenate([sp_attackrew, bot_attackrew]), device=device, dtype=torch.float)
+            if args.dyn_attack_reward > 0:
+                # done_tensor = torch.as_tensor(ds, device=device, dtype=torch.bool)
+                # draw_mask = (winloss_tensor == 0) & done_tensor
+                sc = scalar_features[step]
+                # own_recources = sc[:, 0]
+                # opp_recources = sc[:, 1]
+                own_light = sc[:, 4]
+                own_heavy = sc[:, 5]
+                own_ranged = sc[:, 6]
+                opp_light = sc[:, 8]
+                opp_heavy = sc[:, 9]
+                opp_ranged = sc[:, 10]
+                # strength_ratio = (own_heavy + 0.5 * (own_light + own_ranged) + own_recources * 0.3) / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged) + opp_recources * 0.3, min=0.00001)
+                strength_ratio = (
+                    (own_heavy + 0.5 * (own_light + own_ranged))
+                    / torch.clip(opp_heavy + 0.5 * (opp_light + opp_ranged), min=0.00001)
+                ) ** 1.5
+                # less_draw_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=0.1)
+                # rewards_winloss[step] = winloss_tensor * winloss - less_draw_scaled * draw_mask.float()
+                attack_scaled = torch.clip(args.dyn_attack_reward * strength_ratio, max=1.5, min=0.5)
+                rewards_attack[step] = attack_tensor + attack * attack_scaled * (attack_tensor > 0).float()
+            else:
+                rewards_attack[step] = attack_tensor * attack
+
+            rewards_winloss[step] = torch.Tensor(np.concatenate([sp_winlossrew, bot_winlossrew])).to(device)
+            sp_score_tensor = torch.as_tensor(sp_scorerew, device=device, dtype=torch.float)
+            bot_score_tensor = torch.as_tensor(bot_scorerew, device=device, dtype=torch.float)
+            if args.unit_exploiters:
+                sc = scalar_features[step]
+                sp_sc = sc[:args.num_selfplay_envs]
+                bot_sc = sc[args.num_selfplay_envs:]
+                # rewards for opponent are wrong but not used
+                sp_score_tensor = self._add_unit_bonus_to_score(
+                    sp_score_tensor,
+                    sp_sc[:, 3:7],
+                    sp_sc[:, 7:11],
+                    self.unit_bonus_distr[:args.num_selfplay_envs],
+                )
+                bot_score_tensor = self._add_unit_bonus_to_score(
+                    bot_score_tensor,
+                    bot_sc[:, 3:7],
+                    bot_sc[:, 7:11],
+                    self.unit_bonus_distr[args.num_selfplay_envs:],
+                )
 
 
+            sp_score_delta = sp_score_tensor - last_sp_scorerew
+            bot_score_delta = bot_score_tensor - last_bot_scorerew
+            score_delta = torch.tanh(1.5 * args.rewardscore * torch.cat([sp_score_delta, bot_score_delta]))
+            sp_done_tensor = torch.as_tensor(sp_ds, device=device, dtype=torch.bool)
+            bot_done_tensor = torch.as_tensor(bot_ds, device=device, dtype=torch.bool)
+            last_sp_scorerew = torch.where(sp_done_tensor, torch.zeros_like(sp_score_tensor), sp_score_tensor) # if done: 0 else: current score
+            last_bot_scorerew = torch.where(bot_done_tensor, torch.zeros_like(bot_score_tensor), bot_score_tensor)
+            delta_rewards_score[step] = score_delta
+            delta_score_sums += score_delta
+            next_done = torch.Tensor(np.concatenate([sp_ds, bot_ds])).to(device)
+
+            # =============
+            # Logging PPO training
+            # =============
+            infos =  sp_infos + bot_infos
+            if np.any(['episode' in info.keys() for info in infos]):
+                if not hasattr(writer, "recent_bot_winloss"):
+                            writer.recent_bot_winloss = deque([0.0] * 10, maxlen=200)
+                if not hasattr(writer, "recent_selfplay_winloss"):
+                            writer.recent_selfplay_winloss = deque([0.0] * 10, maxlen=200)
+
+                where_done = torch.where(next_done)
+                done_mask = next_done.bool()
+                for done_idx in where_done[0]:
+                    delta_score_sum = delta_score_sums[done_idx].item()
+                    infos[done_idx]["delta_score_sum"] = delta_score_sum
+                    infos[done_idx]["delta_score_sum_weighted"] = delta_score_sum
+                    done_agent = self.active_league_agents[done_idx]
+
+                    # dyn_winloss = winloss
+                    game_length = infos[done_idx]["episode"]["l"]
+                    # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
+                    if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
+                        done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
+
+                        if isinstance(done_agent, league.MainPlayer):
+                            # game_length = infos[done_idx]["episode"]["l"]
+                            # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
+                            league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
+                            
+                    if done_idx > args.num_selfplay_envs - 1:
+                        league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames, done_agent)
+                        num_done_botgames += 1
+                        last_bot_env_change += 1
+
+                    elif done_idx % 2 == 0:
+                        # update League match results
+                        self.active_league_agents[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
+                            args,
+                            agent,
+                            writer,
+                            self.active_league_agents,
+                            infos,
+                            attack,
+                            done_idx,
+                            done_agent,
+                            winloss,
+                            self.hist_reward,
+                            num_done_selfplaygames,
+                            self.indices_per_exploiter,
+                            last_logged_selfplay_games
+                        )
+                        num_done_selfplaygames += 1
+
+                        if args.save_gpu_memory:
+                            league.offload_historical_to_cpu(old_opp, active_agents=self.active_league_agents)
+
+                # get new unit bonus distribution for next Game
+                self.get_new_unit_bonus_distr(where_done[0], device)
+
+                delta_score_sums = torch.where(done_mask, torch.zeros_like(delta_score_sums), delta_score_sums)
+                    
+            # =============
+        # =========================
+
+
+        
+
+        
+
+        
+        # =========================
+        # PPO update
+        # =========================
+        
+        # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
+        unique_agents = agent.get_unique_agents(self.active_league_agents)
+
+        with torch.no_grad():
+            next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
+            next_z_features = agent.selfplay_get_z_encoded_features(
+                args, device, z_features, next_obs, args.num_steps, unique_agents
+            )
+            
+
+            # next_value = agent.get_value(next_obs, next_scalar_features, next_z_features).reshape(1, -1)
+            next_value = agent.selfplay_and_Bot_get_value(
+                next_obs,
+                next_scalar_features,
+                next_z_features,
+                num_selfplay_envs=args.num_selfplay_envs,
+                num_envs=args.num_envs,
+                unique_agents=unique_agents,
+                only_player_0=True,
+                unit_bonus_distr=self.unit_bonus_distr
+            ).reshape(1, -1)
+
+            # self.check_values(
+            #     scalar_features, z_features, next_value, 
+            #     agent, step, 
+            #     next_scalar_features=next_scalar_features, 
+            #     next_z_features=next_z_features, 
+            #     next_obs=next_obs, 
+            #     flatten=False
+            #     )
+            
+            rewards_winloss = rewards_winloss * winloss
+
+            # dont calculate GAE for Player 1 Environments
+            b_next_value = next_value[:, self.indices]
+            b_values = values[:, self.indices]
+            b_rewards_attack = rewards_attack[:, self.indices]
+            b_rewards_winloss = rewards_winloss[:, self.indices]
+            b_delta_rewards_score = delta_rewards_score[:, self.indices]
+            b_dones = dones[:, self.indices]
+            b_next_done = next_done[self.indices]
+
+            # (returns, advantages werden für exploiters weitergegeben, deshalb muss man sie hier auch berechnen oder unten anpassen)
+            # oder 2 Variablen jeweils speichern. Hier kann man auch nur die obs, ... zusammenstellen, die exploiters brauchen (spart Speicher)
+            # Debug helper: skip the entire PPO update phase (no GAE, no grads, no loss logging)
+            b_advantages, b_returns = ppo_update.gae(args, device, b_next_value, b_values, b_rewards_attack, b_rewards_winloss, b_delta_rewards_score, b_dones, b_next_done)
+
+
+
+        # flatten the batch
+        # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 11))
+        # (ScFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
+        # b_Sc = scalar_features[:, self.indices].reshape(-1, scalar_features.shape[-1])
+        # args.num_steps, args.num_envs Dimensionen vereinigen  (shape (steps*envs, 8))
+        # (zFeatures für jeden Step, Environment sortiert Step, dann nach Environments)
+        # b_z = z_features[:, self.indices].reshape(-1, z_features.shape[-1])
+        # dasselbe mit obs                                      (shape (steps*envs, 16, 16, 73)
+        # b_obs = obs[:, self.indices].reshape((-1,) + envs.single_observation_space.shape)
+        # dasselbe mit actions                                  (shape (steps*envs, 256, 7))
+        # b_actions = actions[:, self.indices].reshape((-1,) + action_space_shape)
+        # dasselbe mit logprobs, advantages, returns, values    (shape (steps*envs,))
+        # b_logprobs = logprobs[:, self.indices].reshape(-1)
+        # b_values = values[:, self.indices].reshape(-1)
+        # b_values = b_values.reshape(-1)
+        # b_advantages = advantages[:, self.indices].reshape(-1)
+        # b_advantages = b_advantages.reshape(-1)
+        # b_returns = returns[:, self.indices].reshape(-1)
+        # b_returns = b_returns.reshape(-1)
+        # dasselbe mit invalid_action_masks                     (shape (steps*envs, 256, 79))
+        # b_invalid_action_masks = invalid_action_masks[:, self.indices].reshape((-1,) + invalid_action_shape)
+        
+        
+
+        # inds: indices from the batch
+        main_batch_size = int(self.main_indices_count * args.num_steps)
+        main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
+
+        
+        
+        main_agent_batch = {
+            "agent": agent,
+            "optimizer": optimizer,
+            "obs": obs[:, self.main_indices].reshape((-1,) + envs.single_observation_space.shape),
+            "sc": scalar_features[:, self.main_indices].reshape(-1, scalar_features.shape[-1]),
+            "z": z_features[:, self.main_indices].reshape(-1, z_features.shape[-1]),
+            "actions": actions[:, self.main_indices].reshape((-1,) + action_space_shape),
+            "logprobs": logprobs[:, self.main_indices].reshape(-1),
+            "advantages": b_advantages[:, self.b_main_indices].reshape(-1),
+            "returns": b_returns[:, self.b_main_indices].reshape(-1),
+            "values": values[:, self.main_indices].reshape(-1),
+            "masks": invalid_action_masks[:, self.main_indices].reshape((-1,) + invalid_action_shape),
+            "skip_policy_update": args.dbg_no_main_agent_ppo_update
+        }
+        if self.unit_bonus_distr is not None:
+            main_unit_bonus = self.unit_bonus_distr[self.main_indices]
+            main_unit_bonus = main_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
+            main_agent_batch["unit_bonus_distr"] = main_unit_bonus
+        
+        if args.dbg_deterministic_actions:
+            print("\nactions are deterministic (dbg_deterministic_actions) (for debugging purposes only - to get deterministic behaviour between different runs)\n")
+
+        if args.dbg_exploiter_update:
+            if not args.dbg_deterministic_actions:
+                print("\nuse deterministic actions for main agent PPO update for dbg_deterministic_actions\n")
+
+            if not args.sp:
+                print("\nuse args.sp otherwise the observations will diverge because of old Historicals\n")
+            self.dbg_prep(main_batch_size)
+
+        pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
+            args,
+            envs,
+            main_agent_batch,
+            device,
+            supervised_agent,
+            update,
+            main_batch_size,
+            main_minibatch_size
+            )
+        if args.dbg_no_main_agent_ppo_update and pg_stop_iter is None:
+            pg_stop_iter = -2
+
+        ppo_update.log(
+            args,
+            writer,
+            optimizer,
+            args.global_step,
+            start_time,
+            update,
+            pg_stop_iter,
+            pg_loss,
+            entropy_loss,
+            kl_loss,
+            approx_kl,
+            v_loss,
+            loss,
+            log_SPS=False,
+            grad_norm=grad_norm,
+            advantages=main_agent_batch["advantages"],
+            values=main_agent_batch["values"],
+            returns=main_agent_batch["returns"],
+            delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
+        )
+
+        # bot_exploiters = np.where(
+        #     [isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[args.num_selfplay_envs:]]
+        # )[0] + args.num_selfplay_envs
+        # selfplay_exploiters = np.where([isinstance(ag, (league.MainExploiter, league.LeagueExploiter)) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
+        # exploiter_indices = np.concatenate((selfplay_exploiters * 2, bot_exploiters))
+        # b_exploiter_indices = np.concatenate((selfplay_exploiters, bot_exploiters - (args.num_selfplay_envs // 2)))
+
+        if len(self.indices_per_exploiter) > 0:
+            env_shape = (sp_envs or envs).single_observation_space.shape
+    
+            # update every exploiter individually
+            for exploiter, exploiter_idx in self.indices_per_exploiter.items():
+                if exploiter.recent_reset:
+                    exploiter.recent_reset = False
+                    skip_update_count += 1
+                    continue
+
+                if args.dbg_seed:
+                    self._seed_for_update(update, args.seed)
+                b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
+
+                if exploiter.optimizer is None:
+                    exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
+                    print(f"Created optimizer for exploiter {exploiter}")
+                    exploiter.last_reset_update = update
+
+                exploiter_agent_batch = {
+                        "player": exploiter,
+                        "agent": exploiter.agent,
+                        "optimizer": exploiter.optimizer,
+                        "obs": obs[:, exploiter_idx].reshape((-1,) + env_shape),
+                        "sc": scalar_features[:, exploiter_idx].reshape(-1, scalar_features.shape[-1]),
+                        "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),
+                        "actions": actions[:, exploiter_idx].reshape((-1,) + action_space_shape),
+                        "logprobs": logprobs[:, exploiter_idx].reshape(-1),
+                        "advantages": b_advantages[:, b_exploiter_idx].reshape(-1),
+                        "returns": b_returns[:, b_exploiter_idx].reshape(-1),
+                        "values": values[:, exploiter_idx].reshape(-1),
+                        "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
+                        "gamma": args.exploiter_gamma,
+                        "gae_lambda": args.exploiter_gae_lambda,
+                        "ent_coef": args.exploiter_ent_coef,
+                        "vf_coef": args.exploiter_vf_coef,
+                        "max_grad_norm": args.exploiter_max_grad_norm,
+                        "clip_coef": args.exploiter_clip_coef,
+                        "update_epochs": args.exploiter_update_epochs,
+                        "kle_stop": args.exploiter_kle_stop,
+                        "kle_rollback": args.exploiter_kle_rollback,
+                        "target_kl": args.exploiter_target_kl,
+                        "kl_coeff": args.exploiter_kl_coeff,
+                        "norm_adv": args.exploiter_norm_adv,
+                        "anneal_lr": args.exploiter_anneal_lr,
+                        "clip_vloss": args.exploiter_clip_vloss
+                    }
+                if self.unit_bonus_distr is not None:
+                    exploiter_unit_bonus = self.unit_bonus_distr[exploiter_idx]
+                    exploiter_unit_bonus = exploiter_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
+                    exploiter_agent_batch["unit_bonus_distr"] = exploiter_unit_bonus
+                    
+
+                if exploiter_lr_fn is not None:
+                    reset_update = getattr(exploiter, "last_reset_update", None)
+                    if reset_update is None:
+                        reset_update = update
+                        exploiter.last_reset_update = reset_update
+                    exploiter_frac = 1.0 - (update - reset_update) / num_updates
+                    if exploiter_frac < 0.0:
+                        exploiter_frac = 0.0
+                    exploiter_lrnow = exploiter_lr_fn(exploiter_frac)
+                else:
+                    exploiter_lrnow = args.exploiter_PPO_learning_rate
+
+                exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
+
+                exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
+                exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
+
+                if args.dbg_exploiter_update:
+                    self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
+
+                update_envs = sp_envs if sp_envs is not None else envs
+                pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, grad_norm = ppo_update.update(
+                    args,
+                    update_envs,
+                    exploiter_agent_batch,
+                    device,
+                    supervised_agent,
+                    update,
+                    exploiter_batch_size,
+                    exploiter_minibatch_size
+                    )
+                
                 
 
-                print("New number of Bot Environments:", args.num_bot_envs)
-                print("")
-
-            # elif args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
-            elif args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs < args.max_num_bot_envs and intended_bot_envs > args.num_bot_envs:
-                print("\nAdding an Bot Environment")
-
-                envs.close()
-                envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
-                last_bot_env_change = 0
-
-                agent.add_bot_env()
-
-                if args.unit_exploiters:
-                    # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
-                    self.unit_bonus_distr = torch.cat((self.unit_bonus_distr, self.unit_bonus_distr[-1:].clone()))
-                    self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
-
-                num_added_envs = args.num_envs - rewards_attack.shape[1]
-
-                obs = torch.cat((obs,torch.zeros((args.num_steps, num_added_envs) + envs.single_observation_space.shape, device=device, dtype=obs.dtype)), dim=1)
-                actions = torch.cat((actions, torch.zeros((args.num_steps, num_added_envs) + action_space_shape, device=device, dtype=actions.dtype)), dim=1)
-                logprobs = torch.cat((logprobs, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=logprobs.dtype)), dim=1)
-                invalid_action_masks = torch.cat((invalid_action_masks, torch.zeros((args.num_steps, num_added_envs) + invalid_action_shape, device=device, dtype=invalid_action_masks.dtype)), dim=1)
-
-                sp_inds = slice(0, args.num_selfplay_envs)
-                bot_inds = slice(args.num_selfplay_envs, args.num_envs)
-                obs[:, bot_inds].zero_()
-                actions[:, bot_inds].zero_()
-                logprobs[:, bot_inds].zero_()
-                invalid_action_masks[:, bot_inds].zero_()
-
-                rewards_attack = torch.cat(
-                    (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
-                )
-                rewards_winloss = torch.cat(
-                    (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
-                )
-                delta_rewards_score = torch.cat(
-                    (delta_rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=delta_rewards_score.dtype)), dim=1
-                )
-                delta_score_sums = torch.cat(
-                    (delta_score_sums, torch.zeros((num_added_envs), device=device, dtype=delta_score_sums.dtype)), dim=0
-                )
-                dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
-                values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
-                rewards_attack[:, args.num_selfplay_envs:].zero_()
-                rewards_winloss[:, args.num_selfplay_envs:].zero_()
-                delta_rewards_score[:, args.num_selfplay_envs:].zero_()
-                # TODO (optimize): muss man die wirklich resetten?
-                dones[:, args.num_selfplay_envs:].zero_()
-                values[:, args.num_selfplay_envs:].zero_()
-                delta_score_sums[args.num_selfplay_envs:].zero_()
+                # TODO (debugging): debugging löschen
+                # if not torch.all(exploiter_agent_batch["obs"] == main_agent_batch["obs"]):
+                #     print("Exploiter obs different from main agent obs")
+                # if not torch.all(exploiter_agent_batch["sc"] == main_agent_batch["sc"]):
+                #     print("Exploiter sc different from main agent sc")
+                # if not torch.all(exploiter_agent_batch["z"] == main_agent_batch["z"]):
+                #     print("Exploiter z different from main agent z")
 
 
-                next_obs_np, _, bot_res = envs.reset()
-                bot_next_obs = torch.Tensor(next_obs_np).to(device)
-                last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
-
+                if args.dbg_exploiter_update:
+                    self.dbg_post_updates(pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, optimizer)
                 
-                next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))
-                next_done[args.num_selfplay_envs:].zero_()
+                league.log_exploiter_ppo_update(
+                    args,
+                    writer,
+                    exploiter_agent_batch,
+                    self.indices_per_exploiter,
+                    pg_stop_iter,
+                    pg_loss,
+                    entropy_loss,
+                    kl_loss,
+                    approx_kl,
+                    v_loss,
+                    loss,
+                    self.experiment_name,
+                    update,
+                    grad_norm=grad_norm,
+                    advantages=exploiter_agent_batch["advantages"],
+                    delta_rewards_score=b_delta_rewards_score[:, b_exploiter_idx]
+                )
 
-                # scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
-                scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, num_added_envs, 11), device=device, dtype=scalar_features.dtype)), dim=1)
-                scalar_features[:, args.num_selfplay_envs:].zero_()
-                # z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
-                z_features = torch.cat((z_features, torch.zeros((args.num_steps, num_added_envs, 8), device=device, dtype=z_features.dtype)), dim=1)
-                z_features[:, args.num_selfplay_envs:].zero_()
+            
+            # TODO (optimize): wenn ich ppo_update.update benutze, dann soll get_action das immer noch combiniert funktionieren (sonst ist es langsam) (benutze _train_exploiters aus league_training.py?)
+            # oder league.train_exploiters entfernen
+            # pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss = league.train_exploiters(
+            #     args,
+            #     envs,
+            #     agent_batches,
+            #     writer,
+            #     args.global_step,
+            #     update,
+            #     agent,
+            #     self.experiment_name,
+            #     exploiter_indices
+            # )
+            writer.add_scalar("debug/exploiter_skip_updates_count", skip_update_count, args.global_step)
+            if skip_update_count:
+                print(f"Skipped exploiter updates this rollout: {skip_update_count}")
 
-                bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
+        if not args.dbg_no_main_agent_ppo_update:
+            if args.prod_mode and update % args.checkpoint_frequency == 0:
+                print("Saving model checkpoint...")
+                if (update < 500 and not args.early_updates):
+                    if (update % (args.checkpoint_frequency * 5) == 0):
+                        league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
+                else:
+                    league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
 
-                print("New number of Bot Environments:", args.num_bot_envs)
-                print("")
+        if should_log_every_20_updates:
+            writer.add_scalar("charts/sps", int(args.global_step / (time.time() - start_time)), args.global_step)
+            print("SPS:", int(args.global_step / (time.time() - start_time)))
 
-            if should_log_every_20_updates:
-                writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, args.global_step)
+        cur_winrate = np.mean(np.add(writer.recent_bot_winloss, 1) / 2) if hasattr(writer, "recent_bot_winloss") else 0.0
+        if cur_winrate < args.min_bot_winrate:
+            intended_bot_envs = args.max_num_bot_envs
+        elif cur_winrate > args.max_bot_winrate:
+            intended_bot_envs = args.min_num_bot_envs
+        elif args.max_num_bot_envs - args.min_num_bot_envs == 0:
+            intended_bot_envs = args.num_bot_envs
+        else:
+            intended_bot_envs = np.floor(args.max_num_bot_envs - (cur_winrate - args.min_bot_winrate) / ((args.max_bot_winrate - args.min_bot_winrate) / (args.max_num_bot_envs - args.min_num_bot_envs)))
 
-        if args.dbg_non_legal_action and cleanup_break:
-            cleanup_break()
+        # remove or add an Bot environment depending on the number of played games in relation to selfplay games
+        # if args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs > args.min_num_bot_envs and (num_done_selfplaygames * args.bot_removing_done_training_ratio <= num_done_botgames or np.mean(np.add(writer.recent_bot_winloss, 1) / 2) > args.min_bot_winrate):
+        if args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs > args.min_num_bot_envs and intended_bot_envs < args.num_bot_envs:
+            print("\nRemoving a Bot Environment")
+
+            envs.close()
+            envs = self.get_new_bot_envs(args, args.num_bot_envs - 1)
+            last_bot_env_change = 0
+
+            agent.remove_last_bot_env()
+
+            obs = obs[:, :args.num_envs]
+            actions = actions[:, :args.num_envs]
+            logprobs = logprobs[:, :args.num_envs]
+            invalid_action_masks = invalid_action_masks[:, :args.num_envs]
+
+            sp_inds = slice(0, args.num_selfplay_envs)
+            bot_inds = slice(args.num_selfplay_envs, args.num_envs)
+
+            obs[:, bot_inds].zero_()
+            actions[:, bot_inds].zero_()
+            logprobs[:, bot_inds].zero_()
+            invalid_action_masks[:, bot_inds].zero_()
+
+            if args.unit_exploiters:
+                # Do not zero out the others botenvs in self.unit_bonus_distr, as they are arnt done and are not reinitialized after this
+                self.unit_bonus_distr = self.unit_bonus_distr[:args.num_envs]
+
+
+
+            rewards_attack = rewards_attack[:, :args.num_envs]
+            rewards_attack[:, args.num_selfplay_envs:].zero_()
+            rewards_winloss = rewards_winloss[:, :args.num_envs]
+            rewards_winloss[:, args.num_selfplay_envs:].zero_()
+            delta_rewards_score = delta_rewards_score[:, :args.num_envs]
+            delta_rewards_score[:, args.num_selfplay_envs:].zero_()
+            delta_score_sums = delta_score_sums[:args.num_envs]
+            delta_score_sums[args.num_selfplay_envs:].zero_()
+            # TODO (optimize): muss man die wirklich resetten?
+            dones = dones[:, :args.num_envs]
+            dones[:, args.num_selfplay_envs:].zero_()
+            values = values[:, :args.num_envs]
+            values[:, args.num_selfplay_envs:].zero_()
+
+            next_obs_np, _, bot_res = envs.reset()
+            bot_next_obs = torch.Tensor(next_obs_np).to(device)
+            last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
+
+            next_done = next_done[:args.num_envs]
+            next_done[args.num_selfplay_envs:].zero_()
+
+            scalar_features = scalar_features[:, :args.num_envs]
+            scalar_features[:, args.num_selfplay_envs:].zero_()
+            z_features = z_features[:, :args.num_envs]
+            z_features[:, args.num_selfplay_envs:].zero_()
+
+            bot_position_indices = bot_position_indices[:args.num_bot_envs]
+
+
+
+
+            
+
+            print("New number of Bot Environments:", args.num_bot_envs)
+            print("")
+
+        # elif args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs < args.max_num_bot_envs and num_done_selfplaygames * args.bot_adding_done_training_ratio > num_done_botgames:
+        elif args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs < args.max_num_bot_envs and intended_bot_envs > args.num_bot_envs:
+            print("\nAdding an Bot Environment")
+
+            envs.close()
+            envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
+            last_bot_env_change = 0
+
+            agent.add_bot_env()
+
+            if args.unit_exploiters:
+                # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
+                self.unit_bonus_distr = torch.cat((self.unit_bonus_distr, self.unit_bonus_distr[-1:].clone()))
+                self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
+
+            num_added_envs = args.num_envs - rewards_attack.shape[1]
+
+            obs = torch.cat((obs,torch.zeros((args.num_steps, num_added_envs) + envs.single_observation_space.shape, device=device, dtype=obs.dtype)), dim=1)
+            actions = torch.cat((actions, torch.zeros((args.num_steps, num_added_envs) + action_space_shape, device=device, dtype=actions.dtype)), dim=1)
+            logprobs = torch.cat((logprobs, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=logprobs.dtype)), dim=1)
+            invalid_action_masks = torch.cat((invalid_action_masks, torch.zeros((args.num_steps, num_added_envs) + invalid_action_shape, device=device, dtype=invalid_action_masks.dtype)), dim=1)
+
+            sp_inds = slice(0, args.num_selfplay_envs)
+            bot_inds = slice(args.num_selfplay_envs, args.num_envs)
+            obs[:, bot_inds].zero_()
+            actions[:, bot_inds].zero_()
+            logprobs[:, bot_inds].zero_()
+            invalid_action_masks[:, bot_inds].zero_()
+
+            rewards_attack = torch.cat(
+                (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
+            )
+            rewards_winloss = torch.cat(
+                (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
+            )
+            delta_rewards_score = torch.cat(
+                (delta_rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=delta_rewards_score.dtype)), dim=1
+            )
+            delta_score_sums = torch.cat(
+                (delta_score_sums, torch.zeros((num_added_envs), device=device, dtype=delta_score_sums.dtype)), dim=0
+            )
+            dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
+            values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
+            rewards_attack[:, args.num_selfplay_envs:].zero_()
+            rewards_winloss[:, args.num_selfplay_envs:].zero_()
+            delta_rewards_score[:, args.num_selfplay_envs:].zero_()
+            # TODO (optimize): muss man die wirklich resetten?
+            dones[:, args.num_selfplay_envs:].zero_()
+            values[:, args.num_selfplay_envs:].zero_()
+            delta_score_sums[args.num_selfplay_envs:].zero_()
+
+
+            next_obs_np, _, bot_res = envs.reset()
+            bot_next_obs = torch.Tensor(next_obs_np).to(device)
+            last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
+
+            
+            next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))
+            next_done[args.num_selfplay_envs:].zero_()
+
+            # scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
+            scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, num_added_envs, 11), device=device, dtype=scalar_features.dtype)), dim=1)
+            scalar_features[:, args.num_selfplay_envs:].zero_()
+            # z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
+            z_features = torch.cat((z_features, torch.zeros((args.num_steps, num_added_envs, 8), device=device, dtype=z_features.dtype)), dim=1)
+            z_features[:, args.num_selfplay_envs:].zero_()
+
+            bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
+
+            print("New number of Bot Environments:", args.num_bot_envs)
+            print("")
+
+        if should_log_every_20_updates:
+            writer.add_scalar("charts/num_parallel_Bot_Games", args.num_bot_envs, args.global_step)
 
 
     def get_new_unit_bonus_distr(self, indices, device: torch.device) -> torch.Tensor:
