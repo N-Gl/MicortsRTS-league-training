@@ -204,6 +204,9 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             end = start + minibatch_size
             minibatch_ind = inds[start:end]
             mb_advantages = b_advantages[minibatch_ind]
+            mb_actions = b_actions[minibatch_ind]
+            # if mb_actions.dtype != torch.long:
+            #     mb_actions = mb_actions.long()
 
             if norm_adv:
                 # normalize the advantages
@@ -217,7 +220,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             # We also provide actions here
             # (TODO (league training): muss man hier nicht mehr mit den unique_agents machen? nein, weil nur main agenten im batch sind)
             new_values = agent.get_value(
-                b_obs[minibatch_ind],
+                b_obs[minibatch_ind], # TODO: Kopie kostet viel Memoty
                 b_Sc[minibatch_ind],
                 b_z[minibatch_ind],
                 unit_bonus_distr=mb_unit_bonus_distr,
@@ -232,10 +235,10 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             else:
                 # get_action nur für logprobs und entropy, um ratio zu berechnen (um zu vergleichen, wie wahrscheinlich die Action mit dem neuen θ im Vergleich zu dem alten θ_old ist)
                 _, newlogproba, entropy, _ = agent.get_action(
-                        b_obs[minibatch_ind],
+                        b_obs[minibatch_ind], # TODO: Kopie kostet viel Memoty
                         b_Sc[minibatch_ind],
                         b_z[minibatch_ind],
-                        b_actions.long()[minibatch_ind],
+                        mb_actions,
                         b_invalid_action_masks[minibatch_ind],
                         envs,
                         unit_bonus_distr=mb_unit_bonus_distr,
@@ -287,7 +290,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                             b_obs[minibatch_ind],
                             b_Sc[minibatch_ind],
                             b_z[minibatch_ind],
-                            b_actions.long()[minibatch_ind],
+                            mb_actions,
                             b_invalid_action_masks[minibatch_ind],
                             envs,
                             unit_bonus_distr=mb_unit_bonus_distr,
@@ -297,7 +300,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                     )
             loss = pg_loss - ent_coef * entropy_loss + vf_coef * v_loss + kl_loss
 
-            optimizer.zero_grad()
+            optimizer.zero_grad() # optimizer.zero_grad(set_to_none=True)
             loss.backward()
             # TODO: nur für Debugging (nachher entfernen)
             if args.dbg_exploiter_update:
