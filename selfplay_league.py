@@ -231,6 +231,9 @@ class LeagueTrainer:
 
         self.indices_per_exploiter = {}
         self.b_indices_per_exploiter = {}
+        self.main_indices = slice(0, 0, 1)
+        self.b_main_indices = slice(0, 0, 1)
+        self.main_indices_count = 0
 
         
 
@@ -336,21 +339,19 @@ class LeagueTrainer:
         action_space_shape = (mapsize, envs.action_plane_space.shape[0])
         invalid_action_shape = (mapsize, envs.action_plane_space.nvec.sum() + 1)
 
-        bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape).to(device)
-        bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape).to(device)
-        bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs)).to(device)
-        bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape).to(device)
+        sp_inds = slice(0, args.num_selfplay_envs)
+        bot_inds = slice(args.num_selfplay_envs, args.num_envs)
+
+        obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
+        actions = torch.zeros((args.num_steps, args.num_envs) + action_space_shape).to(device)
+        logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
+        invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape).to(device)
 
         rewards_attack = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_winloss = torch.zeros((args.num_steps, args.num_envs)).to(device)
         delta_rewards_score = torch.zeros((args.num_steps, args.num_envs)).to(device)
         dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
         values = torch.zeros((args.num_steps, args.num_envs)).to(device)
-
-        sp_obs = torch.zeros((args.num_steps, args.num_selfplay_envs) + envs.single_observation_space.shape).to(device)
-        sp_actions = torch.zeros((args.num_steps, args.num_selfplay_envs) + action_space_shape).to(device)
-        sp_logprobs = torch.zeros((args.num_steps, args.num_selfplay_envs)).to(device)
-        sp_invalid_action_masks = torch.zeros((args.num_steps, args.num_selfplay_envs) + invalid_action_shape).to(device)
 
         args.global_step = 0
         start_time = time.time()
@@ -415,9 +416,9 @@ class LeagueTrainer:
                             sp_envs.render("human")
                         
                 args.global_step += (args.num_selfplay_envs // 2) + args.num_bot_envs
-                bot_obs[step] = bot_next_obs
-                sp_obs[step] = sp_next_obs
-                next_obs = torch.cat([sp_next_obs, bot_next_obs], dim=0)
+                obs[step, bot_inds] = bot_next_obs
+                obs[step, sp_inds] = sp_next_obs
+                next_obs = obs[step]
                 res = sp_res + bot_res
                 scalar_features[step] = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
                 dones[step] = next_done
@@ -431,8 +432,7 @@ class LeagueTrainer:
                         args=args,
                         device=device,
                         z_features=z_features,
-                        next_obs=bot_next_obs,
-                        sp_next_obs=sp_next_obs,
+                        next_obs=next_obs,
                         step=step,
                         unique_agents=unique_agents
                     )
@@ -448,7 +448,7 @@ class LeagueTrainer:
                     # # values[step] = agent.get_value(obs[step, self.indices], scalar_features[step, self.indices], z_features[step, self.indices]).flatten()
                     # values[step] = agent.get_value(obs[step], scalar_features[step], z_features[step]).flatten()
                     values[step] = agent.selfplay_and_Bot_get_value(
-                        torch.cat([sp_obs[step], bot_obs[step]], dim=0),
+                        obs[step],
                         scalar_features[step],
                         z_features[step],
                         num_selfplay_envs=args.num_selfplay_envs,
@@ -475,13 +475,13 @@ class LeagueTrainer:
                     #         arr.append(torch.all(a == b).item())
                     
 
-                    # self.check_values(scalar_features, z_features, values, agent, step, obs=torch.cat([sp_obs[step], bot_obs[step]], dim=0), flatten=True)
+                    # self.check_values(scalar_features, z_features, values, agent, step, obs=obs[step], flatten=True)
 
                     # gesamplete action (aus Verteilung der Logits) (24, 256, 7),
                     # actor(forward(...)), invalid_action_masks
                     # obs sind zuerst alles 0en, dannach jeweils Spieler 1 zu Spieler 0 geändert
-                    bot_actions[step], bot_logprobs[step], _, bot_invalid_action_masks[step] = agent.get_action(
-                        bot_obs[step],
+                    actions[step, bot_inds], logprobs[step, bot_inds], _, invalid_action_masks[step, bot_inds] = agent.get_action(
+                        obs[step, bot_inds],
                         scalar_features[step, args.num_selfplay_envs:],
                         z_features[step, args.num_selfplay_envs:],
                         envs=envs,
@@ -489,8 +489,8 @@ class LeagueTrainer:
                     )
 
                     if args.num_selfplay_envs > 0:
-                        sp_actions[step], sp_logprobs[step], _, sp_invalid_action_masks[step] = agent.selfplay_get_action(
-                            sp_obs[step],
+                        actions[step, sp_inds], logprobs[step, sp_inds], _, invalid_action_masks[step, sp_inds] = agent.selfplay_get_action(
+                            obs[step, sp_inds],
                             scalar_features[step, :args.num_selfplay_envs],
                             z_features[step, :args.num_selfplay_envs],
                             num_selfplay_envs=args.num_selfplay_envs,
@@ -503,8 +503,8 @@ class LeagueTrainer:
                         )
 
                 # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
-                bot_real_action = torch.cat([bot_position_indices, bot_actions[step]], dim=2).cpu().numpy()
-                sp_real_action = torch.cat([sp_position_indices, sp_actions[step]], dim=2).cpu().numpy()
+                bot_real_action = torch.cat([bot_position_indices, actions[step, bot_inds]], dim=2).cpu().numpy()
+                sp_real_action = torch.cat([sp_position_indices, actions[step, sp_inds]], dim=2).cpu().numpy()
                 # print("real_action shape:", real_action.shape)
                 # print("Grid-Position:", [real_action[0][i][0].item() for i in
                 # range(10)]) # -> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -520,10 +520,10 @@ class LeagueTrainer:
                 #                            np.array([238.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
                 #                            np.array([34.0, 0.0, 2.0, 0.0, 0.0, 2.0, 3.0, 24.0])])
                 # valid_actions_counts = [1, 1, 1]
-                bot_valid_actions = bot_real_action[bot_invalid_action_masks[step][:, :, 0].bool().cpu().numpy()]
-                bot_valid_counts = bot_invalid_action_masks[step][:, :, 0].sum(1).long().cpu().numpy()
-                sp_valid_actions = sp_real_action[sp_invalid_action_masks[step][:, :, 0].bool().cpu().numpy()]
-                sp_valid_counts = sp_invalid_action_masks[step][:, :, 0].sum(1).long().cpu().numpy()
+                bot_valid_actions = bot_real_action[invalid_action_masks[step, bot_inds][:, :, 0].bool().cpu().numpy()]
+                bot_valid_counts = invalid_action_masks[step, bot_inds][:, :, 0].sum(1).long().cpu().numpy()
+                sp_valid_actions = sp_real_action[invalid_action_masks[step, sp_inds][:, :, 0].bool().cpu().numpy()]
+                sp_valid_counts = invalid_action_masks[step, sp_inds][:, :, 0].sum(1).long().cpu().numpy()
 
                 # adjust actions for selfplay environments (player 1 -> player 0)
                 # TODO (optimize): nur die Indizes anpassen, die man anpassen muss (bei type move nicht harvest, return, produce, attack anpassen)
@@ -752,12 +752,6 @@ class LeagueTrainer:
             # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
             unique_agents = agent.get_unique_agents(self.active_league_agents)
 
-            obs = torch.cat([sp_obs, bot_obs], dim=1)
-            actions = torch.cat([sp_actions, bot_actions], dim=1)
-            logprobs = torch.cat([sp_logprobs, bot_logprobs], dim=1)
-            invalid_action_masks = torch.cat([sp_invalid_action_masks, bot_invalid_action_masks], dim=1)
-
-
             with torch.no_grad():
                 next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
                 next_z_features = agent.selfplay_get_z_encoded_features(
@@ -829,7 +823,7 @@ class LeagueTrainer:
             
 
             # inds: indices from the batch
-            main_batch_size = int(len(self.main_indices) * args.num_steps)
+            main_batch_size = int(self.main_indices_count * args.num_steps)
             main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
 
             
@@ -1076,10 +1070,18 @@ class LeagueTrainer:
 
                 agent.remove_last_bot_env()
 
-                bot_obs = bot_obs.zero_()[:, :args.num_bot_envs]
-                bot_actions = bot_actions.zero_()[:, :args.num_bot_envs]
-                bot_logprobs = bot_logprobs.zero_()[:, :args.num_bot_envs]
-                bot_invalid_action_masks = bot_invalid_action_masks.zero_()[:, :args.num_bot_envs]
+                obs = obs[:, :args.num_envs]
+                actions = actions[:, :args.num_envs]
+                logprobs = logprobs[:, :args.num_envs]
+                invalid_action_masks = invalid_action_masks[:, :args.num_envs]
+
+                sp_inds = slice(0, args.num_selfplay_envs)
+                bot_inds = slice(args.num_selfplay_envs, args.num_envs)
+
+                obs[:, bot_inds].zero_()
+                actions[:, bot_inds].zero_()
+                logprobs[:, bot_inds].zero_()
+                invalid_action_masks[:, bot_inds].zero_()
 
                 if args.unit_exploiters:
                     # Do not zero out the others botenvs in self.unit_bonus_distr, as they are arnt done and are not reinitialized after this
@@ -1133,17 +1135,24 @@ class LeagueTrainer:
 
                 agent.add_bot_env()
 
-                bot_obs = torch.zeros((args.num_steps, args.num_bot_envs) + envs.single_observation_space.shape, device=device)
-                bot_actions = torch.zeros((args.num_steps, args.num_bot_envs) + action_space_shape, device=device)
-                bot_logprobs = torch.zeros((args.num_steps, args.num_bot_envs), device=device)
-                bot_invalid_action_masks = torch.zeros((args.num_steps, args.num_bot_envs) + invalid_action_shape, device=device)
-
                 if args.unit_exploiters:
                     # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
                     self.unit_bonus_distr = torch.cat((self.unit_bonus_distr, self.unit_bonus_distr[-1:].clone()))
                     self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
 
                 num_added_envs = args.num_envs - rewards_attack.shape[1]
+
+                obs = torch.cat((obs,torch.zeros((args.num_steps, num_added_envs) + envs.single_observation_space.shape, device=device, dtype=obs.dtype)), dim=1)
+                actions = torch.cat((actions, torch.zeros((args.num_steps, num_added_envs) + action_space_shape, device=device, dtype=actions.dtype)), dim=1)
+                logprobs = torch.cat((logprobs, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=logprobs.dtype)), dim=1)
+                invalid_action_masks = torch.cat((invalid_action_masks, torch.zeros((args.num_steps, num_added_envs) + invalid_action_shape, device=device, dtype=invalid_action_masks.dtype)), dim=1)
+
+                sp_inds = slice(0, args.num_selfplay_envs)
+                bot_inds = slice(args.num_selfplay_envs, args.num_envs)
+                obs[:, bot_inds].zero_()
+                actions[:, bot_inds].zero_()
+                logprobs[:, bot_inds].zero_()
+                invalid_action_masks[:, bot_inds].zero_()
 
                 rewards_attack = torch.cat(
                     (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
@@ -1211,6 +1220,19 @@ class LeagueTrainer:
                 else:
                     self.unit_bonus_distr[i] = torch.zeros(4, device=device)
 
+    @staticmethod
+    def _as_compact_slice(indices: np.ndarray):
+        arr = np.asarray(indices, dtype=np.int64)
+        if arr.size == 0:
+            return slice(0, 0, 1)
+        if arr.size == 1:
+            start = int(arr[0])
+            return slice(start, start + 1, 1)
+        diffs = np.diff(arr)
+        if np.all(diffs == 1):
+            return slice(int(arr[0]), int(arr[-1]) + 1, 1)
+        return arr
+
 
     def _refresh_main_indices(self, args):
         if args.training_on_bot_envs:
@@ -1229,18 +1251,28 @@ class LeagueTrainer:
             main_indices = np.concatenate((selfplay_mains * 2, main_indices))
             b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
 
-        self.main_indices = main_indices
-        self.b_main_indices = b_main_indices
+        self.main_indices_count = int(main_indices.size)
+        self.main_indices = self._as_compact_slice(main_indices)
+        self.b_main_indices = self._as_compact_slice(b_main_indices)
 
     def _refresh_exploiter_indices(self, args):
-        self.indices_per_exploiter = {}
-        self.b_indices_per_exploiter = {}
+        indices_per_exploiter = {}
+        b_indices_per_exploiter = {}
         for idx, p in enumerate(self.active_league_agents):
             if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
-                self.indices_per_exploiter.setdefault(p, []).append(idx)
-                self.b_indices_per_exploiter.setdefault(p, []).append(
+                indices_per_exploiter.setdefault(p, []).append(idx)
+                b_indices_per_exploiter.setdefault(p, []).append(
                     idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2
                 )
+
+        self.indices_per_exploiter = {
+            exploiter: self._as_compact_slice(exploiter_indices)
+            for exploiter, exploiter_indices in indices_per_exploiter.items()
+        }
+        self.b_indices_per_exploiter = {
+            exploiter: self._as_compact_slice(exploiter_indices)
+            for exploiter, exploiter_indices in b_indices_per_exploiter.items()
+        }
 
     # TODO (optimize): in obs, ... die envs entfernen, die man nicht braucht (spart Rechenzeit)
     def get_new_bot_envs(self, args, num_bots):

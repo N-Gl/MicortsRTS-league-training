@@ -35,7 +35,7 @@ ExperimentConfig:
   num_main_envs: 2   # 1 num_main_envs == 1 env # TODO
   num_main_exploiters: 1
   num_league_exploiters: 0
-  num_envs_per_main_exploiters: 2
+  num_envs_per_main_exploiters: 15
   num_envs_per_league_exploiters: 0
   
   BC_aget_as_Historical: false
