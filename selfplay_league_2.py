@@ -1,4 +1,5 @@
 from collections import deque
+import copy
 import os
 import sys
 import time
@@ -385,14 +386,159 @@ class LeagueTrainer:
         )
 
         print("League PPO training started")
+
+        unique_agents = agent.get_unique_agents(self.active_league_agents)
         
         for update in range(1, num_updates + 1):
-            self.update(update, args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices)
+            for agent_type, agent_idx in unique_agents:
+                agent_args = copy.deepcopy(args)
+                agent_args.num_envs = len(agent_idx)
+                if isinstance(agent_type, league.MainPlayer):
+                    agent_args.num_main_envs = len(agent_idx)
+                    agent_args.num_main_exploiters = 0
+                    agent_args.num_league_exploiters = 0
+                    agent_args.num_bot_envs = args.num_bot_envs
+
+                    # TODO: implement change_envs function
+                    agent_type_indices, main_indices_count, main_indices, b_main_indices, indices_per_exploiter, b_indices_per_exploiter = self.change_envs(len(agent_idx), action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, bot_position_indices, sp_position_indices, self.indices)
+
+                elif isinstance(agent_type, league.MainExploiter):
+                    agent_args.num_main_envs = 0
+                    agent_args.num_main_exploiters = len(agent_idx)
+                    agent_args.num_league_exploiters = 0
+                    agent_args.num_bot_envs = args.num_bot_envs_per_main_exploiter
+                    agent_type_indices, main_indices_count, main_indices, b_main_indices, indices_per_exploiter, b_indices_per_exploiter = self.change_envs(len(agent_idx), action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, bot_position_indices, sp_position_indices, self.indices)
+
+
+                elif isinstance(agent_type, league.LeagueExploiter):
+                    agent_args.num_main_envs = 0
+                    agent_args.num_main_exploiters = 0
+                    agent_args.num_league_exploiters = len(agent_idx)
+                    agent_args.num_bot_envs = 0
+                    agent_type_indices, main_indices_count, main_indices, b_main_indices, indices_per_exploiter, b_indices_per_exploiter = self.change_envs(len(agent_idx), action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, bot_position_indices, sp_position_indices, self.indices)
+
+                
+
+
+                active_league_agent_update_args = {
+                    "update": update,
+                    "args": agent_args,
+                    "num_done_botgames": num_done_botgames,
+                    "num_done_selfplaygames": num_done_selfplaygames,
+                    "last_logged_selfplay_games": last_logged_selfplay_games,
+                    "last_bot_env_change": last_bot_env_change,
+                    "delta_score_sums": delta_score_sums,
+                    "agent": agent,
+                    "envs": envs,
+                    "sp_envs": sp_envs,
+                    "writer": writer,
+                    "device": device,
+                    "supervised_agent": supervised_agent,
+                    "league_instance": league_instance,
+                    "optimizer": optimizer,
+                    "lr_fn": lr_fn,
+                    "exploiter_lr_fn": exploiter_lr_fn,
+                    "action_space_shape": action_space_shape,
+                    "invalid_action_shap": invalid_action_shape,
+                    "sp_inds": sp_inds,
+                    "bot_inds": bot_inds,
+                    "obs": obs,
+                    "actions": actions,
+                    "logprobs": logprobs,
+                    "invalid_action_mask": invalid_action_masks,
+                    "rewards_attack": rewards_attack,
+                    "rewards_winloss": rewards_winloss,
+                    "delta_rewards_score": delta_rewards_score,
+                    "dones": dones,
+                    "values": values,
+                    "start_time": start_time,
+                    "bot_res": bot_res,
+                    "bot_next_obs": bot_next_obs,
+                    "sp_res": sp_res,
+                    "sp_next_obs": sp_next_obs,
+                    "next_done": next_done,
+                    "scalar_features": scalar_features,
+                    "z_features": z_features,
+                    "last_sp_scorerew": last_sp_scorerew,
+                    "last_bot_scorerew": last_bot_scorerew,
+                    "num_updates": num_updates,
+                    "bot_position_indice": bot_position_indices,
+                    "sp_position_indices": sp_position_indices,
+                    "active_league_agents": self.active_league_agents[agent_idx],
+                    "unit_bonus_distr": self.unit_bonus_distr[agent_idx],
+                    "hist_reward": self.hist_reward[agent_idx],
+                    "indices": agent_type_indices,
+                    "main_indices_count": main_indices_count,
+                    "main_indices": main_indices,
+                    "b_main_indices": b_main_indices,
+                    "indices_per_exploiter": indices_per_exploiter,
+                    "b_indices_per_exploiter": b_indices_per_exploiter,
+                    "experiment_name": self.experiment_name,
+                }
+
+                self.unit_bonus_distr[agent_idx] = active_league_agent_update_args["unit_bonus_distr"]
+
+                active_league_agent = self.active_league_agents[agent_idx]
+                self.update(Rendering, active_league_agent_update_args)
 
         if args.dbg_non_legal_action and cleanup_break:
             cleanup_break()
 
-    def update(self, update, args, num_done_botgames, num_done_selfplaygames, agent, envs, sp_envs, writer, device, supervised_agent, league_instance, optimizer, lr_fn, exploiter_lr_fn, action_space_shape, invalid_action_shape, sp_inds, bot_inds, obs, actions, logprobs, invalid_action_masks, rewards_attack, rewards_winloss, delta_rewards_score, dones, values, start_time, bot_res, bot_next_obs, sp_res, sp_next_obs, next_done, scalar_features, z_features, last_sp_scorerew, last_bot_scorerew, num_updates, bot_position_indices, sp_position_indices):
+    def update(self, Rendering, active_league_agent_update_args):
+        update = active_league_agent_update_args["update"]
+        args = active_league_agent_update_args["args"]
+        num_done_botgames = active_league_agent_update_args["num_done_botgames"]
+        num_done_selfplaygames = active_league_agent_update_args["num_done_selfplaygames"]
+        agent = active_league_agent_update_args["agent"]
+        envs = active_league_agent_update_args["envs"]
+        sp_envs = active_league_agent_update_args["sp_envs"]
+        writer = active_league_agent_update_args["writer"]
+        device = active_league_agent_update_args["device"]
+        supervised_agent = active_league_agent_update_args["supervised_agent"]
+        league_instance = active_league_agent_update_args["league_instance"]
+        optimizer = active_league_agent_update_args["optimizer"]
+        lr_fn = active_league_agent_update_args["lr_fn"]
+        exploiter_lr_fn = active_league_agent_update_args["exploiter_lr_fn"]
+        action_space_shape = active_league_agent_update_args["action_space_shape"]
+        invalid_action_shape = active_league_agent_update_args["invalid_action_shap"]
+        sp_inds = active_league_agent_update_args["sp_inds"]
+        bot_inds = active_league_agent_update_args["bot_inds"]
+        obs = active_league_agent_update_args["obs"]
+        actions = active_league_agent_update_args["actions"]
+        logprobs = active_league_agent_update_args["logprobs"]
+        invalid_action_masks = active_league_agent_update_args["invalid_action_mask"]
+        rewards_attack = active_league_agent_update_args["rewards_attack"]
+        rewards_winloss = active_league_agent_update_args["rewards_winloss"]
+        delta_rewards_score = active_league_agent_update_args["delta_rewards_score"]
+        dones = active_league_agent_update_args["dones"]
+        values = active_league_agent_update_args["values"]
+        start_time = active_league_agent_update_args["start_time"]
+        bot_res = active_league_agent_update_args["bot_res"]
+        bot_next_obs = active_league_agent_update_args["bot_next_obs"]
+        sp_res = active_league_agent_update_args["sp_res"]
+        sp_next_obs = active_league_agent_update_args["sp_next_obs"]
+        next_done = active_league_agent_update_args["next_done"]
+        scalar_features = active_league_agent_update_args["scalar_features"]
+        z_features = active_league_agent_update_args["z_features"]
+        last_sp_scorerew = active_league_agent_update_args["last_sp_scorerew"]
+        last_bot_scorerew = active_league_agent_update_args["last_bot_scorerew"]
+        num_updates = active_league_agent_update_args["num_updates"]
+        bot_position_indices = active_league_agent_update_args["bot_position_indice"]
+        sp_position_indices = active_league_agent_update_args["sp_position_indices"]
+        last_logged_selfplay_games = active_league_agent_update_args["last_logged_selfplay_games"]
+        last_bot_env_change = active_league_agent_update_args["last_bot_env_change"]
+        delta_score_sums = active_league_agent_update_args["delta_score_sums"]
+        active_league_agents = active_league_agent_update_args["active_league_agents"]
+        unit_bonus_distr = active_league_agent_update_args["unit_bonus_distr"]
+        hist_reward = active_league_agent_update_args["hist_reward"]
+        indices = active_league_agent_update_args["indices"]
+        main_indices_count = active_league_agent_update_args["main_indices_count"]
+        main_indices = active_league_agent_update_args["main_indices"]
+        b_main_indices = active_league_agent_update_args["b_main_indices"]
+        indices_per_exploiter = active_league_agent_update_args["indices_per_exploiter"]
+        b_indices_per_exploiter = active_league_agent_update_args["b_indices_per_exploiter"]
+        experiment_name = active_league_agent_update_args["experiment_name"]
+
         skip_update_count = 0
         should_log_every_20_updates = (update % 20 == 0)
         if args.dbg_seed:
@@ -429,9 +575,9 @@ class LeagueTrainer:
             dones[step] = next_done
 
             with torch.no_grad():
-                # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-                unique_agents = agent.get_unique_agents(self.active_league_agents)
-                sp_only_unique_agents = agent.get_unique_agents(self.active_league_agents[:args.num_selfplay_envs])
+                # unique_agents = agent.get_unique_agents(active_league_agents, selfplay_only=True)
+                unique_agents = agent.get_unique_agents(active_league_agents)
+                sp_only_unique_agents = agent.get_unique_agents(active_league_agents[:args.num_selfplay_envs])
 
                 z_features[step] = agent.selfplay_get_z_encoded_features(
                     args=args,
@@ -460,7 +606,7 @@ class LeagueTrainer:
                     num_envs=args.num_envs,
                     unique_agents=unique_agents,
                     only_player_0=True,
-                    unit_bonus_distr=self.unit_bonus_distr
+                    unit_bonus_distr=unit_bonus_distr
                 ).flatten()
 
                 # debug:
@@ -490,7 +636,7 @@ class LeagueTrainer:
                     scalar_features[step, args.num_selfplay_envs:],
                     z_features[step, args.num_selfplay_envs:],
                     envs=envs,
-                    unit_bonus_distr=self.unit_bonus_distr[args.num_selfplay_envs:] if self.unit_bonus_distr is not None else None
+                    unit_bonus_distr=unit_bonus_distr[args.num_selfplay_envs:] if unit_bonus_distr is not None else None
                 )
 
                 if args.num_selfplay_envs > 0:
@@ -501,10 +647,10 @@ class LeagueTrainer:
                         num_selfplay_envs=args.num_selfplay_envs,
                         num_envs=args.num_selfplay_envs,
                         envs=sp_envs,
-                        active_league_agents=self.active_league_agents,
+                        active_league_agents=active_league_agents,
                         unique_agents=sp_only_unique_agents,
                         dbg_deterministic_actions=args.dbg_deterministic_actions,
-                        unit_bonus_distr=self.unit_bonus_distr[:args.num_selfplay_envs] if self.unit_bonus_distr is not None else None
+                        unit_bonus_distr=unit_bonus_distr[:args.num_selfplay_envs] if unit_bonus_distr is not None else None
                     )
 
             # Die Grid-Position zu jedem Action hinzugefügt (24, 256, 8)
@@ -657,13 +803,13 @@ class LeagueTrainer:
                     sp_score_tensor,
                     sp_sc[:, 3:7],
                     sp_sc[:, 7:11],
-                    self.unit_bonus_distr[:args.num_selfplay_envs],
+                    unit_bonus_distr[:args.num_selfplay_envs],
                 )
                 bot_score_tensor = self._add_unit_bonus_to_score(
                     bot_score_tensor,
                     bot_sc[:, 3:7],
                     bot_sc[:, 7:11],
-                    self.unit_bonus_distr[args.num_selfplay_envs:],
+                    unit_bonus_distr[args.num_selfplay_envs:],
                 )
 
 
@@ -694,7 +840,7 @@ class LeagueTrainer:
                     delta_score_sum = delta_score_sums[done_idx].item()
                     infos[done_idx]["delta_score_sum"] = delta_score_sum
                     infos[done_idx]["delta_score_sum_weighted"] = delta_score_sum
-                    done_agent = self.active_league_agents[done_idx]
+                    done_agent = active_league_agents[done_idx]
 
                     # dyn_winloss = winloss
                     game_length = infos[done_idx]["episode"]["l"]
@@ -705,7 +851,7 @@ class LeagueTrainer:
                         if isinstance(done_agent, league.MainPlayer):
                             # game_length = infos[done_idx]["episode"]["l"]
                             # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                            league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
+                            league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, hist_reward, done_agent)
                             
                     if done_idx > args.num_selfplay_envs - 1:
                         league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames, done_agent)
@@ -714,25 +860,25 @@ class LeagueTrainer:
 
                     elif done_idx % 2 == 0:
                         # update League match results
-                        self.active_league_agents[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
+                        active_league_agents[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
                             args,
                             agent,
                             writer,
-                            self.active_league_agents,
+                            active_league_agents,
                             infos,
                             attack,
                             done_idx,
                             done_agent,
                             winloss,
-                            self.hist_reward,
+                            hist_reward,
                             num_done_selfplaygames,
-                            self.indices_per_exploiter,
+                            indices_per_exploiter,
                             last_logged_selfplay_games
                         )
                         num_done_selfplaygames += 1
 
                         if args.save_gpu_memory:
-                            league.offload_historical_to_cpu(old_opp, active_agents=self.active_league_agents)
+                            league.offload_historical_to_cpu(old_opp, active_agents=active_league_agents)
 
                 # get new unit bonus distribution for next Game
                 self.get_new_unit_bonus_distr(where_done[0], device)
@@ -752,8 +898,8 @@ class LeagueTrainer:
         # PPO update
         # =========================
         
-        # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-        unique_agents = agent.get_unique_agents(self.active_league_agents)
+        # unique_agents = agent.get_unique_agents(active_league_agents, selfplay_only=True)
+        unique_agents = agent.get_unique_agents(active_league_agents)
 
         with torch.no_grad():
             next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)
@@ -771,7 +917,7 @@ class LeagueTrainer:
                 num_envs=args.num_envs,
                 unique_agents=unique_agents,
                 only_player_0=True,
-                unit_bonus_distr=self.unit_bonus_distr
+                unit_bonus_distr=unit_bonus_distr
             ).reshape(1, -1)
 
             # self.check_values(
@@ -786,13 +932,13 @@ class LeagueTrainer:
             rewards_winloss = rewards_winloss * winloss
 
             # dont calculate GAE for Player 1 Environments
-            b_next_value = next_value[:, self.indices]
-            b_values = values[:, self.indices]
-            b_rewards_attack = rewards_attack[:, self.indices]
-            b_rewards_winloss = rewards_winloss[:, self.indices]
-            b_delta_rewards_score = delta_rewards_score[:, self.indices]
-            b_dones = dones[:, self.indices]
-            b_next_done = next_done[self.indices]
+            b_next_value = next_value[:, indices]
+            b_values = values[:, indices]
+            b_rewards_attack = rewards_attack[:, indices]
+            b_rewards_winloss = rewards_winloss[:, indices]
+            b_delta_rewards_score = delta_rewards_score[:, indices]
+            b_dones = dones[:, indices]
+            b_next_done = next_done[indices]
 
             # (returns, advantages werden für exploiters weitergegeben, deshalb muss man sie hier auch berechnen oder unten anpassen)
             # oder 2 Variablen jeweils speichern. Hier kann man auch nur die obs, ... zusammenstellen, die exploiters brauchen (spart Speicher)
@@ -826,7 +972,7 @@ class LeagueTrainer:
         
 
         # inds: indices from the batch
-        main_batch_size = int(self.main_indices_count * args.num_steps)
+        main_batch_size = int(main_indices_count * args.num_steps)
         main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
 
         
@@ -834,19 +980,19 @@ class LeagueTrainer:
         main_agent_batch = {
             "agent": agent,
             "optimizer": optimizer,
-            "obs": obs[:, self.main_indices].reshape((-1,) + envs.single_observation_space.shape),
-            "sc": scalar_features[:, self.main_indices].reshape(-1, scalar_features.shape[-1]),
-            "z": z_features[:, self.main_indices].reshape(-1, z_features.shape[-1]),
-            "actions": actions[:, self.main_indices].reshape((-1,) + action_space_shape),
-            "logprobs": logprobs[:, self.main_indices].reshape(-1),
-            "advantages": b_advantages[:, self.b_main_indices].reshape(-1),
-            "returns": b_returns[:, self.b_main_indices].reshape(-1),
-            "values": values[:, self.main_indices].reshape(-1),
-            "masks": invalid_action_masks[:, self.main_indices].reshape((-1,) + invalid_action_shape),
+            "obs": obs[:, main_indices].reshape((-1,) + envs.single_observation_space.shape),
+            "sc": scalar_features[:, main_indices].reshape(-1, scalar_features.shape[-1]),
+            "z": z_features[:, main_indices].reshape(-1, z_features.shape[-1]),
+            "actions": actions[:, main_indices].reshape((-1,) + action_space_shape),
+            "logprobs": logprobs[:, main_indices].reshape(-1),
+            "advantages": b_advantages[:, b_main_indices].reshape(-1),
+            "returns": b_returns[:, b_main_indices].reshape(-1),
+            "values": values[:, main_indices].reshape(-1),
+            "masks": invalid_action_masks[:, main_indices].reshape((-1,) + invalid_action_shape),
             "skip_policy_update": args.dbg_no_main_agent_ppo_update
         }
-        if self.unit_bonus_distr is not None:
-            main_unit_bonus = self.unit_bonus_distr[self.main_indices]
+        if unit_bonus_distr is not None:
+            main_unit_bonus = unit_bonus_distr[main_indices]
             main_unit_bonus = main_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
             main_agent_batch["unit_bonus_distr"] = main_unit_bonus
         
@@ -893,7 +1039,7 @@ class LeagueTrainer:
             advantages=main_agent_batch["advantages"],
             values=main_agent_batch["values"],
             returns=main_agent_batch["returns"],
-            delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
+            delta_rewards_score=b_delta_rewards_score[:, b_main_indices]
         )
 
         # bot_exploiters = np.where(
@@ -903,11 +1049,11 @@ class LeagueTrainer:
         # exploiter_indices = np.concatenate((selfplay_exploiters * 2, bot_exploiters))
         # b_exploiter_indices = np.concatenate((selfplay_exploiters, bot_exploiters - (args.num_selfplay_envs // 2)))
 
-        if len(self.indices_per_exploiter) > 0:
+        if len(indices_per_exploiter) > 0:
             env_shape = (sp_envs or envs).single_observation_space.shape
     
             # update every exploiter individually
-            for exploiter, exploiter_idx in self.indices_per_exploiter.items():
+            for exploiter, exploiter_idx in indices_per_exploiter.items():
                 if exploiter.recent_reset:
                     exploiter.recent_reset = False
                     skip_update_count += 1
@@ -915,7 +1061,7 @@ class LeagueTrainer:
 
                 if args.dbg_seed:
                     self._seed_for_update(update, args.seed)
-                b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
+                b_exploiter_idx = b_indices_per_exploiter[exploiter]
 
                 if exploiter.optimizer is None:
                     exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
@@ -950,8 +1096,8 @@ class LeagueTrainer:
                         "anneal_lr": args.exploiter_anneal_lr,
                         "clip_vloss": args.exploiter_clip_vloss
                     }
-                if self.unit_bonus_distr is not None:
-                    exploiter_unit_bonus = self.unit_bonus_distr[exploiter_idx]
+                if unit_bonus_distr is not None:
+                    exploiter_unit_bonus = unit_bonus_distr[exploiter_idx]
                     exploiter_unit_bonus = exploiter_unit_bonus.unsqueeze(0).expand(args.num_steps, -1, -1).reshape(-1, 4)
                     exploiter_agent_batch["unit_bonus_distr"] = exploiter_unit_bonus
                     
@@ -1006,7 +1152,7 @@ class LeagueTrainer:
                     args,
                     writer,
                     exploiter_agent_batch,
-                    self.indices_per_exploiter,
+                    indices_per_exploiter,
                     pg_stop_iter,
                     pg_loss,
                     entropy_loss,
@@ -1014,7 +1160,7 @@ class LeagueTrainer:
                     approx_kl,
                     v_loss,
                     loss,
-                    self.experiment_name,
+                    experiment_name,
                     update,
                     grad_norm=grad_norm,
                     advantages=exploiter_agent_batch["advantages"],
@@ -1032,7 +1178,7 @@ class LeagueTrainer:
             #     args.global_step,
             #     update,
             #     agent,
-            #     self.experiment_name,
+            #     experiment_name,
             #     exploiter_indices
             # )
             writer.add_scalar("debug/exploiter_skip_updates_count", skip_update_count, args.global_step)
@@ -1044,9 +1190,9 @@ class LeagueTrainer:
                 print("Saving model checkpoint...")
                 if (update < 500 and not args.early_updates):
                     if (update % (args.checkpoint_frequency * 5) == 0):
-                        league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
+                        league.save_league_model(save_agent=agent, experiment_name=experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
                 else:
-                    league.save_league_model(save_agent=agent, experiment_name=self.experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
+                    league.save_league_model(save_agent=agent, experiment_name=experiment_name, dir_name="Main_agent_backups", file_name=f"agent_update_{update}")
 
         if should_log_every_20_updates:
             writer.add_scalar("charts/sps", int(args.global_step / (time.time() - start_time)), args.global_step)
@@ -1087,8 +1233,8 @@ class LeagueTrainer:
             invalid_action_masks[:, bot_inds].zero_()
 
             if args.unit_exploiters:
-                # Do not zero out the others botenvs in self.unit_bonus_distr, as they are arnt done and are not reinitialized after this
-                self.unit_bonus_distr = self.unit_bonus_distr[:args.num_envs]
+                # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
+                unit_bonus_distr = unit_bonus_distr[:args.num_envs]
 
 
 
@@ -1140,8 +1286,10 @@ class LeagueTrainer:
 
             if args.unit_exploiters:
                 # Do not zero out the others botenvs in unit_bonus_distr, as they are arnt done and are not reinitialized after this
-                self.unit_bonus_distr = torch.cat((self.unit_bonus_distr, self.unit_bonus_distr[-1:].clone()))
+                unit_bonus_distr = torch.cat((unit_bonus_distr, unit_bonus_distr[-1:].clone()))
+                self.unit_bonus_distr = unit_bonus_distr
                 self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
+                unit_bonus_distr = self.unit_bonus_distr
 
             num_added_envs = args.num_envs - rewards_attack.shape[1]
 
