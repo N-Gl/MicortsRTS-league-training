@@ -862,7 +862,7 @@ class League:
                                     args,
                                     opponent_table_rows,
                                     no_reward=True,
-                                    step=agent_steps,
+                                    step=args.global_step,
                                     table_name=f"league/{done_agent.name}_summary",
                                     with_name=done_agent.name
                                     )
