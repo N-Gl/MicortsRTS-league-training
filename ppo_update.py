@@ -203,6 +203,13 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
         for start in range(0, new_batch_size, minibatch_size):
             end = start + minibatch_size
             minibatch_ind = inds[start:end]
+            mb_obs = b_obs[minibatch_ind]
+            mb_sc = b_Sc[minibatch_ind]
+            mb_z = b_z[minibatch_ind]
+            mb_masks = b_invalid_action_masks[minibatch_ind]
+            mb_logprobs_old = b_logprobs[minibatch_ind]
+            mb_returns = b_returns[minibatch_ind]
+            mb_values_old = b_values[minibatch_ind]
             mb_advantages = b_advantages[minibatch_ind]
             mb_actions = b_actions[minibatch_ind]
             # if mb_actions.dtype != torch.long:
@@ -220,9 +227,9 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             # We also provide actions here
             # (TODO (league training): muss man hier nicht mehr mit den unique_agents machen? nein, weil nur main agenten im batch sind)
             new_values = agent.get_value(
-                b_obs[minibatch_ind], # TODO: Kopie kostet viel Memoty
-                b_Sc[minibatch_ind],
-                b_z[minibatch_ind],
+                mb_obs,
+                mb_sc,
+                mb_z,
                 unit_bonus_distr=mb_unit_bonus_distr,
             ).view(-1)
 
@@ -234,19 +241,19 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 approx_kl = torch.zeros((), device=device)
             else:
                 # get_action nur für logprobs und entropy, um ratio zu berechnen (um zu vergleichen, wie wahrscheinlich die Action mit dem neuen θ im Vergleich zu dem alten θ_old ist)
-                _, newlogproba, entropy, _ = agent.get_action(
-                        b_obs[minibatch_ind], # TODO: Kopie kostet viel Memoty
-                        b_Sc[minibatch_ind],
-                        b_z[minibatch_ind],
+                newlogproba, entropy = agent.get_action(
+                        mb_obs,
+                        mb_sc,
+                        mb_z,
                         mb_actions,
-                        b_invalid_action_masks[minibatch_ind],
+                        mb_masks,
                         envs,
                         unit_bonus_distr=mb_unit_bonus_distr,
-                    )
-                ratio = (newlogproba - b_logprobs[minibatch_ind]).exp()
+                    ) [1:3]
+                ratio = (newlogproba - mb_logprobs_old).exp()
 
                 # KL estimate for early stopping / rollback
-                approx_kl = (b_logprobs[minibatch_ind] - newlogproba).mean()
+                approx_kl = (mb_logprobs_old - newlogproba).mean()
 
                 # Policy loss L^CLIP(θ) = E ̂_t ["min" (r_t (θ)*Â_t,"clip" (r_t (θ),1-ϵ,1+ϵ)*Â_t )]
                 # --clip-coef
@@ -270,15 +277,15 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
             # --clip_vloss
             # MSE(approximierte Values, returns) with or without clip()
             if clip_vloss:
-                v_loss_unclipped = (new_values - b_returns[minibatch_ind]) ** 2
-                v_clipped = b_values[minibatch_ind] + torch.clamp(
-                        new_values - b_values[minibatch_ind], -clip_coef, clip_coef
+                v_loss_unclipped = (new_values - mb_returns) ** 2
+                v_clipped = mb_values_old + torch.clamp(
+                        new_values - mb_values_old, -clip_coef, clip_coef
                     )
-                v_loss_clipped = (v_clipped - b_returns[minibatch_ind]) ** 2
+                v_loss_clipped = (v_clipped - mb_returns) ** 2
                 v_loss_max = torch.max(v_loss_unclipped, v_loss_clipped)
                 v_loss = 0.5 * v_loss_max.mean()
             else:
-                v_loss = 0.5 * ((new_values - b_returns[minibatch_ind]) ** 2)
+                v_loss = 0.5 * ((new_values - mb_returns) ** 2)
 
             if value_only_phase:
                 pass
@@ -286,15 +293,15 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 # KL Divergence Loss
                 with torch.no_grad():
                     # get_action nur für logprobs, um KL Divergenz zu berechnen
-                    _, sl_logprobs, _, _ = supervised_agent.get_action(
-                            b_obs[minibatch_ind],
-                            b_Sc[minibatch_ind],
-                            b_z[minibatch_ind],
+                   sl_logprobs = supervised_agent.get_action(
+                            mb_obs,
+                            mb_sc,
+                            mb_z,
                             mb_actions,
-                            b_invalid_action_masks[minibatch_ind],
+                            mb_masks,
                             envs,
                             unit_bonus_distr=mb_unit_bonus_distr,
-                        )
+                        ) [1]
                 kl_loss = kl_coeff * torch.nn.functional.kl_div(
                         newlogproba, sl_logprobs, log_target=True, reduction="batchmean"
                     )
