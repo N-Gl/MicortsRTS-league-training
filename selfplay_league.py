@@ -389,6 +389,11 @@ class LeagueTrainer:
         )
 
         print("League PPO training started")
+
+        if args.dbg_reset:
+            for ag, idx in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
+                if isinstance(ag, league.MainExploiter) or isinstance(ag, league.LeagueExploiter):
+                    ag.reset()
         
 
         for update in range(1, num_updates + 1):
