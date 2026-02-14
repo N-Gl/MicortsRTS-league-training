@@ -416,7 +416,7 @@ class MainPlayer(Player):
         if remaining_steps < self.args.checkpoint_end_buffer_steps:
             return False
         steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
-        if steps_passed < (self.args.selfplay_ready_save_interval) * self.args.num_main_envs: # * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
+        if steps_passed < (self.args.selfplay_ready_save_interval): # * self.args.num_main_envs: # * args.num_main_envs entfernen, wenn mehrere main agents genutzt werden
           return False
 
         historical = [
