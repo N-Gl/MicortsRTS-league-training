@@ -394,6 +394,7 @@ class LeagueTrainer:
             for ag, idx in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
                 if isinstance(ag, league.MainExploiter) or isinstance(ag, league.LeagueExploiter):
                     ag.reset()
+                    ag.recent_reset = False
         
 
         for update in range(1, num_updates + 1):
