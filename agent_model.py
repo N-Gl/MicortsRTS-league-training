@@ -182,20 +182,7 @@ class Agent(nn.Module):
         if not isinstance(weights, dict):
             raise NotImplementedError("Only loading from dict or filepath is implemented.")
 
-        def _merge_linear_weight(key: str, target: torch.Tensor) -> None:
-            src = weights.get(key)
-            if src is None or src.shape == target.shape:
-                return
-            if src.dim() != 2 or target.dim() != 2 or src.shape[0] != target.shape[0]:
-                return
-            merged = torch.zeros_like(target)
-            cols = min(src.shape[1], target.shape[1])
-            merged[:, :cols] = src[:, :cols]
-            weights[key] = merged
-
-        _merge_linear_weight("actor.weight", self.actor.weight)
-        _merge_linear_weight("critic.weight", self.critic.weight)
-        self.load_state_dict(weights, strict=False)
+        self.load_state_dict(weights, strict=True)
 
     def get_steps(self) -> int:
         """How many agent steps the agent has been trained for."""
