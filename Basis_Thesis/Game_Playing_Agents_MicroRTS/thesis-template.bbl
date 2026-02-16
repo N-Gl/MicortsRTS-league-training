@@ -49,6 +49,11 @@ Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and Klimov, O. (2017).
 \newblock Proximal policy optimization algorithms.
 \newblock {\em CoRR}, abs/1707.06347.
 
+\bibitem[Sutton and Barto, 1998]{suttonbarto1998rl}
+Sutton, R.~S. and Barto, A.~G. (1998).
+\newblock {\em Reinforcement Learning: An Introduction}.
+\newblock The MIT Press.
+
 \bibitem[Torabi et~al., 2018]{torabi2018behavioral}
 Torabi, F., Warnell, G., and Stone, P. (2018).
 \newblock Behavioral cloning from observation.

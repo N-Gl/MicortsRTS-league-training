@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  12 FEB 2026 16:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  16 FEB 2026 13:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -451,7 +451,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 112.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [2] [3]
-<images/16x16.png, id=120, 550.055pt x 548.0475pt>
+<images/16x16.png, id=125, 550.055pt x 548.0475pt>
 File: images/16x16.png Graphic file (type png)
 <use images/16x16.png>
 Package pdftex.def Info: images/16x16.png  used on input line 205.
@@ -460,7 +460,7 @@ LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 20
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-<images/diagram.png, id=121, 508.90125pt x 597.23125pt>
+<images/diagram.png, id=126, 508.90125pt x 597.23125pt>
 File: images/diagram.png Graphic file (type png)
 <use images/diagram.png>
 Package pdftex.def Info: images/diagram.png  used on input line 225.
@@ -473,10 +473,7 @@ Overfull \hbox (23.72035pt too wide) in paragraph at lines 225--226
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-<images/Fig3.png, id=122, 2537.48pt x 1332.98pt>
+<images/Fig3.png, id=127, 2537.48pt x 1332.98pt>
 File: images/Fig3.png Graphic file (type png)
 <use images/Fig3.png>
 Package pdftex.def Info: images/Fig3.png  used on input line 271.
@@ -484,7 +481,7 @@ Package pdftex.def Info: images/Fig3.png  used on input line 271.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/Fig4.png, id=123, 2537.48pt x 1332.98pt>
+<images/Fig4.png, id=128, 2537.48pt x 1332.98pt>
 File: images/Fig4.png Graphic file (type png)
 <use images/Fig4.png>
 Package pdftex.def Info: images/Fig4.png  used on input line 278.
@@ -506,21 +503,21 @@ L3 programming layer <2024-01-22>
 Package rerunfilecheck Info: File `thesis-template.out' has not changed.
 (rerunfilecheck)             Checksum: 4D11100687A1D3217B10D5571A14A14D;630.
 Package rerunfilecheck Info: File `thesis-template.brf' has not changed.
-(rerunfilecheck)             Checksum: 0ED6F1EEE36FEB429BE90CB5A523F50C;2029.
+(rerunfilecheck)             Checksum: 69C01389AC6D3BA8205AAD19E5F153E7;2220.
  ) 
 Here is how much of TeX's memory you used:
- 13905 strings out of 476129
- 231365 string characters out of 5793187
+ 13910 strings out of 476129
+ 231469 string characters out of 5793187
  1947975 words of memory out of 5000000
- 35694 multiletter control sequences out of 15000+600000
+ 35698 multiletter control sequences out of 15000+600000
  588136 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 90i,13n,93p,1106b,599s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,93p,1106b,601s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on thesis-template.pdf (7 pages, 1858662 bytes).
+Output written on thesis-template.pdf (7 pages, 1859570 bytes).
 PDF statistics:
- 231 PDF objects out of 1000 (max. 8388607)
- 187 compressed objects within 2 object streams
- 33 named destinations out of 1000 (max. 500000)
+ 240 PDF objects out of 1000 (max. 8388607)
+ 196 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
  74 words of extra memory for PDF output out of 10000 (max. 10000000)
 

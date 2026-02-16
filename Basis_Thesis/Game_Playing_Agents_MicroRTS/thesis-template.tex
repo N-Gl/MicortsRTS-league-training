@@ -170,11 +170,11 @@ Gleichzeitig trainieren League-Exploiters, gegen alle Historischen Agenten \cite
 Der Main-Agent trainiert mit prioritized FSP (PFSP) gegen historische Versionen von sich selbst, Main-Exploiters und League-Exploiters \cite{vinyals2019alphastar}.
 Die Priorisierung der historischen Gegneragenten erfolgt durch die Winrate des Main-Agenten gegen die jeweiligen historischen Agenten \cite{vinyals2019alphastar}.
 Erst, wenn ein Exploiter eine große Winrate gegenüber allen Gegnern aufweist oder, wenn eine bestimmte Maximale Step Grenze erreicht wird, wird er in die Liga als Historical (ein historischer Agent) aufgenommen \cite{vinyals2019alphastar}. 
-
+In AlphaStar kommt ein Actor-Critic-Verfahren mit einer Off-Policy Korrekturmethode namens V-trace für den Policy-update zum Einsatz \cite{espeholt2018impala, vinyals2019alphastar}. 
+Dieser Ansatz ist durch die Robustheit gegenüber Off-policy-Daten und der typischerweise besseren Skalierbarkeit in großen Verteilten Setups besser für LT geeignet als PPO. 
+Jedoch ist die Implementierung von PPO in MicroRTS-Py deutlich einfacher und schneller realisierbar, weshalb PPO eine praktikable Wahl für die Umsetzung von LT darstellt \cite{vinyals2019alphastar}.
+Dazu wird in AlphaStar Temporal difference learning (TD($\lambda$)) \cite{suttonbarto1998rl} für die Value-Schätzungverwendet.
 % hier weiter arbeiten
-In AlphaStar wird V-trace Off-Policy Actor-Critic (IMPALA-basierter Ansatz) statt PPO verwenet
-Temporal difference learning (TD($\lambda$))
-
 \section{Method}
 \label{sec:method}
 
