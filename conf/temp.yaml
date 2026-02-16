@@ -24,18 +24,18 @@ ExperimentConfig:
 
   seed: 
 
-  num_bot_envs: 2 # 3
+  num_bot_envs: 8 # 3
   dyn_num_bot_envs: true
-  min_num_bot_envs: 1  # minimum number of bot envs
-  max_num_bot_envs: 3 # 6 # changed from 9
+  min_num_bot_envs: 8  # minimum number of bot envs
+  max_num_bot_envs: 8 # 6 # changed from 9
   # bot_adding_done_training_ratio: 0.5  # currently not used
   # bot_removing_done_training_ratio: 0.75  # currently not used
   min_bot_winrate: 0.955
   max_bot_winrate: 0.98
-  num_main_envs: 2   # 1 num_main_envs == 1 env # TODO
+  num_main_envs: 20   # 1 num_main_envs == 1 env # TODO
   num_main_exploiters: 1
   num_league_exploiters: 0
-  num_envs_per_main_exploiters: 15
+  num_envs_per_main_exploiters: 20
   num_envs_per_league_exploiters: 0
   
   BC_aget_as_Historical: false
@@ -72,7 +72,7 @@ ExperimentConfig:
 
   sp: false
   dbg_no_main_agent_ppo_update: false # false
-  dbg_reset: true
+  dbg_reset: false
 
   log_exploiter_tables: true
   log_exploiter_winrates: true
