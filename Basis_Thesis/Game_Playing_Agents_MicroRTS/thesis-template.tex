@@ -137,12 +137,12 @@ Huang et al. stellen mit \emph{Gym-$\mu$RTS} bzw. \emph{MicroRTS-Py} für unser 
 \emph{MicroRTS-Py} ist eine etablierte und weit verbreitete DRL-Baseline, die die Untersuchung von DRL-Ansätzen in vollständigen Echtzeitstrategiespiel-Szenarien ermöglicht, ohne dass dafür umfangreiche technische Infrastruktur, wie Hochleistungsrechner-Cluster, erforderlich ist \cite{huang2021gym}. 
 Desweiteren wurde die openai/baselines \cite{baselines} implementation von PPO adaptiert, um sie auf MicroRTS-Py anzupassen. 
 Ein großer Teil dieser implementation benutzen wir in LT und sie wurde auch zuvor auch in der PPO Trainingsphasen des Basis-Agenten verwendet \cite{huft2023microrts}.
-Zu openai/baselines wurde unteranderem \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B.: GridNet \cite{pmlr-v97-han19a}), sowie architektonische Entscheidungen (, wie IMPALA-CNN (eine tiefe Convolutional-Neural-Network-Struktur mit residual blocks zur Verarbeitung gitterbasierter Zustandsrepräsentationen in RL) \cite{espeholt2018impala}) hinzugefügt \cite{huang2021gym}, die auch abgeändert in dem LT Code noch benutzt werden.
+Zu openai/baselines wurde unteranderem \emph{invalid action masking} und geeignete Aktions-/Beobachtungsrepräsentationen (z.\,B.: GridNet \cite{pmlr-v97-han19a}) sowie architektonische Entscheidungen (wie IMPALA-CNN (eine tiefe Convolutional-Neural-Network-Struktur mit residual blocks zur Verarbeitung gitterbasierter Zustandsrepräsentationen in RL) \cite{espeholt2018impala}) hinzugefügt \cite{huang2021gym}, die auch abgeändert in dem LT Code noch benutzt werden.
 Es wurde in dem Paper auch überlegt, Unit Action Simulation (UAS) statt GridNet zu verwenden. UAS itteriert in jedem Step über alle Einheiten und gibt für jede Einheit die möglichen Aktionen zurück, was den Aktionsraum deutlich reduziert.
 GridNet hingegen sagt für jede Zelle auf der Karte eine Aktion voraus. Das macht GridNet mit einem großen Aktionsraum in einem Schritt, was den Aktionsraum größer, aber simplistischer macht \cite{huang2021gym, pmlr-v97-han19a}.
 Gegen die Built-in-Bots von MicroRTS, die auf heuristischen Regeln basieren, erreicht die PPO-Implementierung mit invalid action masking und IMPALA-CNN im Durchschnitt eine Winrate von 91\% mit UAS und 84\% mit GridNet.
-Letztendlich wurde entschieden sich auf GridNet zu fokusieren, da die Complexität geringer ist und die Kompatibilität SP (bzw. LT) erleichtert \cite{huang2021gym}.
-SP wurde in der Arbeit auch evaluiert. Allerdings gab es in dem Code ein Bug, der Wahrscheinlich die Ergebnisse für SP stark beeinflusst hat \cite{goodfriend2024raisocketai}.
+Letztendlich wurde entschieden, sich auf GridNet zu fokusieren, da die Complexität geringer ist und die Kompatibilität SP (bzw. LT) erleichtert \cite{huang2021gym}.
+SP wurde in der Arbeit auch evaluiert. Allerdings gab es in dem Code ein Bug, der wahrscheinlich die Ergebnisse für SP stark beeinflusst hat \cite{goodfriend2024raisocketai}.
 \vspace{10pt}
 
 \noindent\textbf{RAISocketAI}
@@ -175,11 +175,16 @@ Dieser Ansatz ist durch die Robustheit gegenüber Off-policy-Daten und der typis
 Jedoch ist die Implementierung von PPO in MicroRTS-Py deutlich einfacher und schneller realisierbar, weshalb PPO eine praktikable Wahl für die Umsetzung von LT darstellt \cite{vinyals2019alphastar}.
 Dazu wird in AlphaStar Temporal difference learning (TD($\lambda$)) \cite{suttonbarto1998rl} für die Value-Schätzungverwendet.
 % hier weiter arbeiten
-\section{Method}
-\label{sec:method}
+\section{Methoden}
+\label{sec:Methoden}
 
-% \subsection{Environment Setup}
-\label{sec:env-setup}
+% \subsection{Training Pipeline}
+
+
+
+
+\subsection{MicroRTS Environment}
+\label{sec:MicroRTS-env}
 
 
 \begin{itemize}
@@ -294,6 +299,12 @@ GAE parameter $\lambda$ & 0.95 \\
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+
+
+% \section{Reproducibility and Codebase}
+
+
 
 
 %%%%%%%%% REFERENCES
