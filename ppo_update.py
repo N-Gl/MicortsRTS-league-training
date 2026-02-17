@@ -164,6 +164,10 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
     norm_adv = agent_batch.get("norm_adv", args.norm_adv)
     clip_vloss = agent_batch.get("clip_vloss", args.clip_vloss)
     skip_policy_update = agent_batch.get("skip_policy_update", False)# or args.dbg_no_main_agent_ppo_update
+    agent_idx = agent_batch.get("agent_idx", None)
+    # values_shape = agent_batch.get("values_shape", (-1,))
+    # returns_shape = agent_batch.get("returns_shape", (-1,))
+    # advantages_shape = agent_batch.get("advantages_shape", (-1,))
     
     if b_unit_bonus_distr is not None:
         b_unit_bonus_distr = b_unit_bonus_distr.to(device)
@@ -202,16 +206,48 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
         np.random.shuffle(inds)
         for start in range(0, new_batch_size, minibatch_size):
             end = start + minibatch_size
-            minibatch_ind = inds[start:end]
-            mb_obs = b_obs[minibatch_ind]
-            mb_sc = b_Sc[minibatch_ind]
-            mb_z = b_z[minibatch_ind]
-            mb_masks = b_invalid_action_masks[minibatch_ind]
-            mb_logprobs_old = b_logprobs[minibatch_ind]
-            mb_returns = b_returns[minibatch_ind]
-            mb_values_old = b_values[minibatch_ind]
-            mb_advantages = b_advantages[minibatch_ind]
-            mb_actions = b_actions[minibatch_ind]
+            minibatch_ind = torch.as_tensor(inds[start:end], device=device)
+
+            if agent_batch.get("full_tensores", False):
+
+                if isinstance(agent_idx, slice):
+                    agent_idx = torch.arange(b_obs.shape[1], device=device)[agent_idx]
+                else:
+                    agent_idx = torch.as_tensor(agent_idx, device=device, dtype=torch.long)
+
+                k = agent_idx.numel()
+                step_idx = torch.div(minibatch_ind, k, rounding_mode="floor")
+                idx_in_agent_idx = torch.remainder(minibatch_ind, k)
+                env_idx = agent_idx[idx_in_agent_idx]
+                cur_idx = (step_idx, env_idx)
+
+                mb_obs = b_obs[cur_idx]
+                # old_mb_obs = b_obs[:, agent_idx].reshape(agent_batch["obs_shape"])[minibatch_ind]
+                # print(torch.equal(mb_obs, old_mb_obs)) # True
+
+                mb_sc = b_Sc[cur_idx]
+                mb_z = b_z[cur_idx]
+                mb_actions = b_actions[cur_idx]
+                mb_masks = b_invalid_action_masks[cur_idx]
+                # old_mb_masks = b_invalid_action_masks[:, agent_idx].reshape(agent_batch["masks_shape"])[minibatch_ind]
+                # print(torch.equal(old_mb_masks, mb_masks)) # True
+                mb_logprobs_old = b_logprobs[cur_idx]
+                mb_values_old = b_values[cur_idx]
+
+                b_env_idx = torch.where(env_idx < args.num_selfplay_envs, env_idx // 2, env_idx - (args.num_selfplay_envs // 2))
+                mb_returns = b_returns[(step_idx, b_env_idx)]
+                mb_advantages = b_advantages[(step_idx, b_env_idx)]
+                
+            else:
+                mb_obs = b_obs[minibatch_ind]
+                mb_sc = b_Sc[minibatch_ind]
+                mb_z = b_z[minibatch_ind]
+                mb_masks = b_invalid_action_masks[minibatch_ind]
+                mb_logprobs_old = b_logprobs[minibatch_ind]
+                mb_returns = b_returns[minibatch_ind]
+                mb_values_old = b_values[minibatch_ind]
+                mb_advantages = b_advantages[minibatch_ind]
+                mb_actions = b_actions[minibatch_ind]
             # if mb_actions.dtype != torch.long:
             #     mb_actions = mb_actions.long()
 

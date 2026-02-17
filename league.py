@@ -1118,10 +1118,6 @@ def log_exploiter_ppo_update(
     if getattr(args, "log_unweighted_losses", True):
         writer.add_scalar(f"{player.name}_losses/value_loss_raw", v_loss.item(), args.global_step)
         writer.add_scalar(f"{player.name}_losses/entropy_loss_raw", entropy_loss.item(), args.global_step)
-    if "values" in exploiter_agent_batch and "returns" in exploiter_agent_batch:
-        r2 = r2_score(exploiter_agent_batch["values"], exploiter_agent_batch["returns"])
-        if r2 is not None:
-            writer.add_scalar(f"{player.name}_charts/r2_score", r2.item(), args.global_step)
     if advantages is not None and should_log_every_20_updates:
         if not isinstance(advantages, torch.Tensor):
             advantages = torch.as_tensor(advantages)
