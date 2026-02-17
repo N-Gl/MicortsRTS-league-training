@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/11_02_2026__finished_PPO_Basis_thesis__args_working_main_4_3/Main_agent_backups/agent_update_2100.pt",
+                          "saved_models/11_02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_kl_coeff_0_3_kle_rollback_false_ent_coef_0_01_ent_coef_0_01_with_Bots_1_agent_update_690.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "11_02_2026__finished_PPO_Basis_thesis__args_working_main_4_3",
+          "11_02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_kl_coeff_0_3_kle_rollback_false_ent_coef_0_01_ent_coef_0_01_with_Bots_1_agent_update_690",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "11_02_2026__finished_PPO_Basis_thesis__args_working_main_4_3_update_2100_evaluation"
+  exp_name: "11_02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_kl_coeff_0_3_kle_rollback_false_ent_coef_0_01_ent_coef_0_01_with_Bots_1_agent_update_690_update_690_evaluation"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   prod_mode: true
@@ -20,7 +20,7 @@ ExperimentConfig:
   seed:
   exact_seed: true
 
-  render: false
+  render: true
   render_all: false
 
   num_eval_episodes: 100

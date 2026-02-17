@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  16 FEB 2026 13:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  17 FEB 2026 16:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -419,7 +419,7 @@ Package hyperref Info: Link coloring ON on input line 30.
 \@outlinefile=\write3
 \openout3 = `thesis-template.out'.
 
-<hhu_logo.png, id=28, 346.29375pt x 86.57344pt>
+<hhu_logo.png, id=32, 346.29375pt x 86.57344pt>
 File: hhu_logo.png Graphic file (type png)
 <use hhu_logo.png>
 Package pdftex.def Info: hhu_logo.png  used on input line 35.
@@ -427,7 +427,15 @@ Package pdftex.def Info: hhu_logo.png  used on input line 35.
  [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>] (./thesis-template.toc)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>] (./thesis-template.toc
+LaTeX Font Info:    Trying to load font information for U+msa on input line 4.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 4.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+))
 \tf@toc=\write4
 \openout4 = `thesis-template.toc'.
 
@@ -442,49 +450,38 @@ l.81
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 85.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
-LaTeX Font Info:    Trying to load font information for U+msa on input line 112.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 112.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [2] [3]
-<images/16x16.png, id=125, 550.055pt x 548.0475pt>
+<images/16x16.png, id=130, 550.055pt x 548.0475pt>
 File: images/16x16.png Graphic file (type png)
 <use images/16x16.png>
-Package pdftex.def Info: images/16x16.png  used on input line 205.
+Package pdftex.def Info: images/16x16.png  used on input line 210.
 (pdftex.def)             Requested size: 237.13594pt x 236.2663pt.
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 206.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 211.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-<images/diagram.png, id=126, 508.90125pt x 597.23125pt>
+<images/diagram.png, id=131, 508.90125pt x 597.23125pt>
 File: images/diagram.png Graphic file (type png)
 <use images/diagram.png>
-Package pdftex.def Info: images/diagram.png  used on input line 225.
+Package pdftex.def Info: images/diagram.png  used on input line 230.
 (pdftex.def)             Requested size: 260.8563pt x 284.52618pt.
 
-Overfull \hbox (23.72035pt too wide) in paragraph at lines 225--226
+Overfull \hbox (23.72035pt too wide) in paragraph at lines 230--231
  [][] 
  []
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-<images/Fig3.png, id=127, 2537.48pt x 1332.98pt>
+<images/Fig3.png, id=132, 2537.48pt x 1332.98pt>
 File: images/Fig3.png Graphic file (type png)
 <use images/Fig3.png>
-Package pdftex.def Info: images/Fig3.png  used on input line 271.
+Package pdftex.def Info: images/Fig3.png  used on input line 276.
 (pdftex.def)             Requested size: 237.13594pt x 124.55977pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/Fig4.png, id=128, 2537.48pt x 1332.98pt>
+<images/Fig4.png, id=133, 2537.48pt x 1332.98pt>
 File: images/Fig4.png Graphic file (type png)
 <use images/Fig4.png>
-Package pdftex.def Info: images/Fig4.png  used on input line 278.
+Package pdftex.def Info: images/Fig4.png  used on input line 283.
 (pdftex.def)             Requested size: 237.13594pt x 124.55977pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -501,23 +498,23 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `thesis-template.out' has not changed.
-(rerunfilecheck)             Checksum: 4D11100687A1D3217B10D5571A14A14D;630.
+(rerunfilecheck)             Checksum: 3F6FBCF53A07FD74AC035459AD93CD6E;813.
 Package rerunfilecheck Info: File `thesis-template.brf' has not changed.
 (rerunfilecheck)             Checksum: 69C01389AC6D3BA8205AAD19E5F153E7;2220.
  ) 
 Here is how much of TeX's memory you used:
- 13910 strings out of 476129
- 231469 string characters out of 5793187
+ 13913 strings out of 476129
+ 231515 string characters out of 5793187
  1947975 words of memory out of 5000000
- 35698 multiletter control sequences out of 15000+600000
- 588136 words of font info for 90 fonts, out of 8000000 for 9000
+ 35699 multiletter control sequences out of 15000+600000
+ 589243 words of font info for 91 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 90i,13n,93p,1106b,601s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,93p,1106b,511s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on thesis-template.pdf (7 pages, 1859570 bytes).
+Output written on thesis-template.pdf (7 pages, 1859960 bytes).
 PDF statistics:
- 240 PDF objects out of 1000 (max. 8388607)
- 196 compressed objects within 2 object streams
- 34 named destinations out of 1000 (max. 500000)
- 74 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 246 PDF objects out of 1000 (max. 8388607)
+ 201 compressed objects within 3 object streams
+ 35 named destinations out of 1000 (max. 500000)
+ 82 words of extra memory for PDF output out of 10000 (max. 10000000)
 
