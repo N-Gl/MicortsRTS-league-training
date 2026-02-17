@@ -175,6 +175,7 @@ class Agent(nn.Module):
             unit_bonus_distr = unit_bonus_distr.view(unit_bonus_distr.size(0), -1)
             return torch.cat([obs_feat, sc_feat, z, unit_bonus_distr], dim=-1)
         return torch.cat([obs_feat, sc_feat, z], dim=-1)
+    # {f"Current: {torch.cuda.memory_allocated(0)/1024**2:.2f} MB | Max: {torch.cuda.max_memory_allocated(0)/1024**2:.2f} MB"}
 
     def set_weights(self, weights: Union[str, Dict[str, torch.Tensor]]) -> None:
         if isinstance(weights, str):

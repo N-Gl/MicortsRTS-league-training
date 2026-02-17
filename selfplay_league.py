@@ -335,7 +335,7 @@ class LeagueTrainer:
         if args.dbg_non_legal_action:
             cleanup_break = break_on_stdout("Issuing a non legal action")
 
-        mapsize = 16 * 16
+        mapsize = envs.height * envs.width
         action_space_shape = (mapsize, envs.action_plane_space.shape[0])
         invalid_action_shape = (mapsize, envs.action_plane_space.nvec.sum() + 1)
 
@@ -343,11 +343,19 @@ class LeagueTrainer:
         bot_inds = slice(args.num_selfplay_envs, args.num_envs)
 
         obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
-        actions = torch.zeros(
+
+        if mapsize < np.iinfo(np.int16).max:
+            actions = torch.zeros(
             (args.num_steps, args.num_envs) + action_space_shape,
-            dtype=torch.long,
+            dtype=torch.int16,
             device=device,
-        )
+            )
+        else:
+            actions = torch.zeros(
+                (args.num_steps, args.num_envs) + action_space_shape,
+                dtype=torch.long,
+                device=device,
+            )
         logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
         invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape, dtype=torch.bool).to(device)
 
@@ -841,16 +849,28 @@ class LeagueTrainer:
             main_agent_batch = {
                 "agent": agent,
                 "optimizer": optimizer,
-                "obs": obs[:, self.main_indices].reshape((-1,) + envs.single_observation_space.shape),
-                "sc": scalar_features[:, self.main_indices].reshape(-1, scalar_features.shape[-1]),
-                "z": z_features[:, self.main_indices].reshape(-1, z_features.shape[-1]),
-                "actions": actions[:, self.main_indices].reshape((-1,) + action_space_shape),
-                "logprobs": logprobs[:, self.main_indices].reshape(-1),
-                "advantages": b_advantages[:, self.b_main_indices].reshape(-1),
-                "returns": b_returns[:, self.b_main_indices].reshape(-1),
-                "values": values[:, self.main_indices].reshape(-1),
-                "masks": invalid_action_masks[:, self.main_indices].reshape((-1,) + invalid_action_shape),
-                "skip_policy_update": args.dbg_no_main_agent_ppo_update
+                "obs": obs,
+                "sc": scalar_features,
+                "z": z_features,
+                "actions": actions,
+                "logprobs": logprobs,
+                "advantages": b_advantages,
+                "returns": b_returns,
+                "values": values,
+                "masks": invalid_action_masks,
+                "skip_policy_update": args.dbg_no_main_agent_ppo_update,
+                "agent_idx": self.main_indices,
+                "full_tensores": True,
+                # TODO: shapes are for debugging only, can be removed later
+                "obs_shape": (-1,) + envs.single_observation_space.shape,
+                "sc_shape": (-1, scalar_features.shape[-1]),
+                "z_shape": (-1, z_features.shape[-1]),
+                "actions_shape": (-1,) + action_space_shape,
+                "logprobs_shape": (-1,),
+                "advantages_shape": (-1,),
+                "returns_shape": (-1,),
+                "values_shape": (-1,),
+                "masks_shape": (-1,) + invalid_action_shape
             }
             if self.unit_bonus_distr is not None:
                 main_unit_bonus = self.unit_bonus_distr[self.main_indices]
@@ -897,9 +917,9 @@ class LeagueTrainer:
                 loss,
                 log_SPS=False,
                 grad_norm=grad_norm,
-                advantages=main_agent_batch["advantages"],
-                values=main_agent_batch["values"],
-                returns=main_agent_batch["returns"],
+                advantages=main_agent_batch["advantages"][:, self.b_main_indices].reshape(-1),
+                values=main_agent_batch["values"][:, self.main_indices].reshape(-1),
+                returns=main_agent_batch["returns"][:, self.b_main_indices].reshape(-1),
                 delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
             )
             if not args.dbg_exploiter_update:
@@ -936,15 +956,15 @@ class LeagueTrainer:
                             "player": exploiter,
                             "agent": exploiter.agent,
                             "optimizer": exploiter.optimizer,
-                            "obs": obs[:, exploiter_idx].reshape((-1,) + env_shape),
-                            "sc": scalar_features[:, exploiter_idx].reshape(-1, scalar_features.shape[-1]),
-                            "z": z_features[:, exploiter_idx].reshape(-1, z_features.shape[-1]),
-                            "actions": actions[:, exploiter_idx].reshape((-1,) + action_space_shape),
-                            "logprobs": logprobs[:, exploiter_idx].reshape(-1),
-                            "advantages": b_advantages[:, b_exploiter_idx].reshape(-1),
-                            "returns": b_returns[:, b_exploiter_idx].reshape(-1),
-                            "values": values[:, exploiter_idx].reshape(-1),
-                            "masks": invalid_action_masks[:, exploiter_idx].reshape((-1,) + invalid_action_shape),
+                            "obs": obs,
+                            "sc": scalar_features,
+                            "z": z_features,
+                            "actions": actions,
+                            "logprobs": logprobs,
+                            "advantages": b_advantages,
+                            "returns": b_returns,
+                            "values": values,
+                            "masks": invalid_action_masks,
                             "gamma": args.exploiter_gamma,
                             "gae_lambda": args.exploiter_gae_lambda,
                             "ent_coef": args.exploiter_ent_coef,
@@ -958,7 +978,19 @@ class LeagueTrainer:
                             "kl_coeff": args.exploiter_kl_coeff,
                             "norm_adv": args.exploiter_norm_adv,
                             "anneal_lr": args.exploiter_anneal_lr,
-                            "clip_vloss": args.exploiter_clip_vloss
+                            "clip_vloss": args.exploiter_clip_vloss,
+                            "agent_idx": exploiter_idx,
+                            "full_tensores": True,
+                            # TODO: shapes are for debugging only, can be removed later
+                            "obs_shape": (-1,) + env_shape,
+                            "sc_shape": (-1, scalar_features.shape[-1]),
+                            "z_shape": (-1, z_features.shape[-1]),
+                            "actions_shape": (-1,) + action_space_shape,
+                            "logprobs_shape": (-1,),
+                            "advantages_shape": (-1,),
+                            "returns_shape": (-1,),
+                            "values_shape": (-1,),
+                            "masks_shape": (-1,) + invalid_action_shape
                         }
                     if self.unit_bonus_distr is not None:
                         exploiter_unit_bonus = self.unit_bonus_distr[exploiter_idx]
@@ -979,11 +1011,15 @@ class LeagueTrainer:
                         exploiter_lrnow = args.exploiter_PPO_learning_rate
 
                     exploiter_agent_batch["optimizer"].param_groups[0]["lr"] = exploiter_lrnow
-
-                    exploiter_batch_size = exploiter_agent_batch["obs"].shape[0]
+                    
+                    if isinstance(exploiter_idx, slice):
+                        exploiter_batch_size = len(range(*exploiter_idx.indices(args.num_envs))) * args.num_steps
+                    else:
+                        exploiter_batch_size = len(exploiter_idx) * args.num_steps
                     exploiter_minibatch_size = max(exploiter_batch_size // max(args.n_minibatch, 1), 1)
 
                     if args.dbg_exploiter_update:
+                        # potentially not working becouse of restructuring in exploiter_agent_batch and main_agent_batch
                         self.dbg_post_first_update(exploiter_agent_batch, main_agent_batch, pg_stop_iter, pg_loss, entropy_loss, kl_loss, approx_kl, v_loss, loss, exploiter_batch_size)
 
                     update_envs = sp_envs if sp_envs is not None else envs
@@ -1027,7 +1063,7 @@ class LeagueTrainer:
                         self.experiment_name,
                         update,
                         grad_norm=grad_norm,
-                        advantages=exploiter_agent_batch["advantages"],
+                        advantages=exploiter_agent_batch["advantages"][:, b_exploiter_idx].reshape(-1),
                         delta_rewards_score=b_delta_rewards_score[:, b_exploiter_idx]
                     )
                     del exploiter_agent_batch
