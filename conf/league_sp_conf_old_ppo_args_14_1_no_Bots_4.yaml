@@ -5,7 +5,7 @@ ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
   model_path: models/finished_PPO_Basis_thesis.pt
-  exp_name: 16.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_vf_coef_0_15_ent_coef_0_015_no_Bots_3
+  exp_name: 16.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_vf_coef_0_1_ent_coef_0_01_no_Bots_1
   wandb_group_name: new_sp_28_01_26_no_Bots
 
   num_bot_envs: 1 # 3
@@ -21,8 +21,8 @@ ExperimentConfig:
   # clip_coef: 0.01 # TODO
   # exploiter_clip_coef: 0.01 # TODO
 
-  clip_coef: 0.15
-  exploiter_clip_coef: 0.15
+  clip_coef: 0.1
+  exploiter_clip_coef: 0.1
   # ist approx_kl wieder hoch?
 
   ent_coef: 0.015
@@ -34,8 +34,8 @@ ExperimentConfig:
   # target_kl: 0.01
   # exploiter_target_kl: 0.01
   
-  vf_coef: 0.15
-  exploiter_vf_coef: 0.15
+  vf_coef: 0.1
+  exploiter_vf_coef: 0.1
 
   kle_rollback: false
   exploiter_kle_rollback: false
