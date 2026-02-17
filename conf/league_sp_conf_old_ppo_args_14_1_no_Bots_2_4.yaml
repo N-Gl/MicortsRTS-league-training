@@ -1,0 +1,58 @@
+defaults:
+  - league_sp_conf_old_ppo_args_3
+
+ExperimentConfig:
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
+  model_path: models/finished_PPO_Basis_thesis.pt
+  exp_name: 16.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_vf_coef_0_12_ent_coef_0_015__clip_coef_0_175_no_Bots_1
+  wandb_group_name: new_sp_28_01_26_no_Bots
+
+  num_bot_envs: 1 # 3
+  dyn_num_bot_envs: true
+  min_num_bot_envs: 1  # minimum number of bot envs
+  max_num_bot_envs: 1 # 15 # changed from 9 (3)
+  training_on_bot_envs: false   # true
+
+
+  # attack_reward_weight: 0.05
+  # rewardscore: 0.0
+
+  # clip_coef: 0.01 # TODO
+  # exploiter_clip_coef: 0.01 # TODO
+
+  clip_coef: 0.175
+  exploiter_clip_coef: 0.175
+  # ist approx_kl wieder hoch?
+
+  ent_coef: 0.015
+  exploiter_ent_coef: 0.015
+
+  kl_coeff: 0.3
+  exploiter_kl_coeff: 0.3
+
+  # target_kl: 0.01
+  # exploiter_target_kl: 0.01
+  
+  vf_coef: 0.12
+  exploiter_vf_coef: 0.12
+
+  kle_rollback: false
+  exploiter_kle_rollback: false
+
+  # Parameter aus dem Sweep ohne Bots
+
+  # PPO_learning_rate: 9.5e-5 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  # exploiter_PPO_learning_rate: 9.5e-5
+# 
+  # ent_coef: 0.0025
+  # exploiter_ent_coef: 0.0025
+# 
+  # clip_coef: 0.175
+  # exploiter_clip_coef: 0.175
+# 
+  # vf_coef: 0.25
+  # exploiter_vf_coef: 0.25
+# 
+  # kl_coeff: 0.38
+  # exploiter_kl_coeff: 0.38
