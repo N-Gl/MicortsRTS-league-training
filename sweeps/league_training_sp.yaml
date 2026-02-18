@@ -1,0 +1,34 @@
+name: league_training_sweep
+program: main.py
+method: bayes
+metric:
+  name: main_winrates/selfplay_Winrate_with_draw
+  goal: maximize
+parameters:
+  ExperimentConfig.total_timesteps:
+    value: 9000000
+  ExperimentConfig.wandb_group_name:
+    value: sweep_league_sp_training_no__Bots
+  ExperimentConfig.wandb_project_name:
+    value: league-training-sweep
+  ExperimentConfig.exp_name:
+    value: sweep_lr_$ent_${ExperimentConfig.ent_coef}_clip_${ExperimentConfig.clip_coef}_vf_${ExperimentConfig.vf_coef}
+  ExperimentConfig.ent_coef:
+    distribution: log_uniform_values
+    min: 0.001
+    max: 0.02
+  ExperimentConfig.clip_coef:
+    distribution: log_uniform_values
+    min: 0.05
+    max: 0.3
+  ExperimentConfig.vf_coef:
+    distribution: log_uniform_values
+    min: 0.01
+    max: 0.5
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - --config-name
+  - league_sp_conf_old_ppo_args_14_1_no_Bots_2
+  - ${args_no_hyphens}
