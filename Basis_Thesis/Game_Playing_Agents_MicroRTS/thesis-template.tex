@@ -186,34 +186,62 @@ Dazu wird in AlphaStar \emph{Temporal Difference Learning} (TD($\lambda$)) \cite
 
 
 
-\subsection{MicroRTS Environment}
-\label{sec:MicroRTS-env}
-
-
+\subsection{MicroRTS-Umgebung}
+\label{sec:MicroRTS-Umgebung}
+MicroRTS ist ein zwei Spieler zero-sum-game, das auf einem 2D-Gitter (der Karte) gespielt wird.
+Unterschiedliche Units können auf jeder Zelle dieser Karte seien, und die Spieler können Aktionen ausführen, um Units zu bewegen/auszubilden/anzugreifen und Ressourcen zu sammeln.
+Die Unterschiedlichen Units sind:
 \begin{itemize}
-    \item \(T\) 
-    \item \(N\) 
-    \item \(H\) 
-    \item \(W\) 
-    \item \(C\) 
+    \item \textbf{Base:} Die Base kann Recourcen sammeln und Workers ausbilden. Sie ist dehr wichtig, da sie die einzige Möglichkeit ist, Ressourcen zu sammeln. (Kosten: 10, hit-points (hp): 10) (Graphische Darstellung: Quadrat, hellgrau, mit der Anzahl der Ressourcen, die die Base besitzt)
+    \item \textbf{Ressourcen:} Es gibt nur eine Art an Ressourcen. Sie können von Workers in der Basegesammelt werden. (Anzahl Recourcen in einer Zelle: Je nach Karte unterschiedlich, hier 25) (Graphische Darstellung: Quadrat, Grün, mit der Anzahl der Ressourcen in der Zelle)
+    \item \textbf{Worker:} Worker können Ressourcen sammeln, und Barracks bauen. (Kosten: 1, hp: 1, Angriffsstärke (at): 1) (Graphische Darstellung: Rund, hellgrau, mit der Anzahl der Ressourcen, die der Worker trägt)
+    \item \textbf{Barracks:} Barracks können Light, Heavy und Ranged Units ausbilden. (Kosten: 5, hp: 4) (Graphische Darstellung: Quadrat, Dunkelgrau)
+    \item \textbf{Light:} Light Units können sich schnell bewegen, werden schnell ausgebildet und kosten wenig. (Kosten: 2, hp: 4, at: 2) (Graphische Darstellung: Rund, rot)
+    \item \textbf{Heavy:} Heavy Units können sich langsam bewegen und kosten viel haben aber viel at. (Kosten: 3, hp: 8, at: 4) (Graphische Darstellung: Rund, gelb)
+    \item \textbf{Ranged:} Ranged Units haben aber eine Angriffs-Reichweite von 3 Zellen. (Kosten: 2, hp: 1, at: 1) (Graphische Darstellung: Rund, blau)
 \end{itemize}
-
-
-\begin{itemize}
-    \item 
-    \item 
-    \item 
-    \item 
-    \item 
-\end{itemize}
-
+Worker, Light, Heavy und Ranged Units können sich auf der Karte in vier Richtungen um eine Zelle bewegen.
+Units von Spieler 1 werden mit einer blauen Umrandung dargestellt, während Units von Spieler 2 mit einer rot umrandet sind.
+Die Meisten Spiele entscheiden sich vor 2000 Schritten, deswegen wird die maximale Schrittzahl auf 2000 gesetzt.
+Das Bewegen wird dargestellt mit einem grauen, das Angreifen mit einem roten und das Sammeln mit einem grünen Strich.
+Die Experimente dieser Arbeit wurden mit der Reimplementierung RAISocketAI von MicroRTS und der Karte \texttt{basesWorkers16x16A}, die in Abbildung~\ref{Figure 1} zu sehen ist durchgeführt.
+Diese symmetrische Karte startet für beide Spieler jeweils mit einer Base mit 5 Ressourcen, zwei Workern und 50 Ressourcen in der Nähe der Base.
+\cite{goodfriend2024raisocketai}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{images/16x16.png}
-    \caption{Screenshot \texttt{basesWorkers16x16A} map. }
+    \caption{Screenshot \texttt{basesWorkers16x16A} map \cite{huft2023microrts}.}
     \label{Figure 1}
 \end{figure}
+
+Der in dieser Arbeit verwendete Action-Space wird durch die Kombination aus GridNet und invalid action masking realisiert \cite{huang2021gym}.
+GridNet erzeugt für jede Zelle der Karte eine Unit-Action unabhängig davon, ob eine Unit auf der Zelle steht und die Aktion gültig ist \cite{pmlr-v97-han19a}.
+Darauf aufbauend wird invalid action masking eingesetzt, um ungültige Aktionen zu maskieren, wodurch auch Aktioninen für Zellen ohne Units maskiert werden \cite{huang2021gym}.
+Der \emph{Unit-Action-Space} ist als 8-dimensionaler Vektor pro Zelle definiert:
+\[
+a = (\text{pos}, \text{type}, d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}, \text{produceType}, \text{relAttackPos})
+\]
+
+Die Komponenten des Unit-Action-Vektors sind wie folgt definiert:
+\begin{itemize}
+    \item \textbf{pos:} Linearisierte Position der Zelle im Grid. (den Grid in einem Eindimensionalem Raum dargestellt z.B.: bei einem $16\times 16$ Grid: Range: [0, 255]).
+    \item \textbf{type:} Aktionstyp (Range: [0, 5], Nop, Move, Harvest, Return, Produce, Attack).
+    \item \textbf{$d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}$:} Richtungen (Range: [0, 3], North, East, South, West) für die jeweiligen Aktionen.
+    \item \textbf{produceType:} Typ der zu produzierenden Unit je nach produzierenden Unit. (Range: [0, 6], ).
+    \item \textbf{relAttackPos:} Relative Angriffesposition. (Range: [0, 48], (0: Resource), 1: Base, 2: Barracks, 3: Worker, 4: Light, 5: Heavy, 6: Ranged)
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/relative_attack_position.png}
+    \caption{Relative Angriffesposition.}
+    \label{Figure 2}
+\end{figure}
+In unserem Agenten wird der Unit-Action-Space (ohne die Positionsdimension) linearisiert und mittels One-Hot-Kodierung dargestellt. 
+Die Position ist implizit durch die lineare Gitterindizierung der GridNet-Ausgabe kodiert \cite{huang2021gym}.
+Gegeben eine Karte der Größe $h\times w$, dann besteht der Aktionsraum aus $h \times w \times 78$. 
+In unserer $16 \times 16$ Karte würde der Aktionsraum für ein Environment in der Darstellung von GridNet also $16 \times 16 \times 78 = 19968$ Aktionen umfassen, von denen jedoch viele ungültig sein können und durch invalid action masking maskiert werden \cite{huang2021gym}.
+Je nach Aktionstyp sind nur Teile des Aktionsvektors relevant (z.B.: wenn der Aktionstyp \texttt{Move} ist, dann sind nur die Komponenten \texttt{pos}, \texttt{type} und \texttt{$d_{\text{move}}$} relevant, die anderen Komponenten werden ignoriert).
 
 % \subsection{Neural Network Architecture}
 
@@ -232,7 +260,7 @@ Dazu wird in AlphaStar \emph{Temporal Difference Learning} (TD($\lambda$)) \cite
     \centering
     \includegraphics[width=1.1\linewidth, height=10cm]{images/diagram.png}
     \caption{The Network Architecture}
-    \label{Figure 2}
+    \label{Figure 3}
 \end{figure}
 
 
@@ -278,14 +306,14 @@ GAE parameter $\lambda$ & 0.95 \\
     \centering
     \includegraphics[width=1\linewidth]{images/Fig3.png}
     \caption{Episode rewards (y-axis) as a function of training timesteps (x-axis) on the BC-FT agent.}
-    \label{Figure 3}
+    \label{Figure 4}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{images/Fig4.png}
     \caption{Episode rewards (y-axis) as a function of training timesteps (x-axis) on the final agent.}
-    \label{Figure 4}
+    \label{Figure 5}
 \end{figure}
 
 

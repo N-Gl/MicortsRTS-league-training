@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex thesis-template"] 1771415708.4695 "thesis-template.aux" "thesis-template.bbl" "thesis-template" 1771415709.09931 0
+["bibtex thesis-template"] 1771432472.66458 "thesis-template.aux" "thesis-template.bbl" "thesis-template" 1771432478.89388 0
   "./references.bib" 1771246909.28092 12499 17e186422dd982186e36785599f0cfc4 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "thesis-template.aux" 1771415709.05324 8736 cc0e5064787676f95b73eb7683c8673b "pdflatex"
+  "thesis-template.aux" 1771432478.84146 9786 822639ba43db2bae285b67baffeb1013 "pdflatex"
   (generated)
   "thesis-template.bbl"
   "thesis-template.blg"
   (rewritten before read)
-["pdflatex"] 1771415708.48121 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/thesis-template.tex" "thesis-template.pdf" "thesis-template" 1771415709.09941 0
+["pdflatex"] 1771432478.17846 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/thesis-template.tex" "thesis-template.pdf" "thesis-template" 1771432478.89399 0
   "/etc/texmf/web2c/texmf.cnf" 1770636971.26796 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/thesis-template.tex" 1771415707.68182 21053 d2b6fb46bfb0bd417e9e3174d635bc74 ""
+  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/thesis-template.tex" 1771432477.98806 26086 8e7e22940a4c7aec73cecfbcee373887 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -133,13 +133,14 @@
   "images/Fig3.png" 1770636797.65423 593641 0375193e0cf8eb18a90cd310180e7178 ""
   "images/Fig4.png" 1770636797.65423 641040 2af16d45bac89b5d1919b780d12e5ac4 ""
   "images/diagram.png" 1770636797.62292 51067 01fd5dffd6837cf668841fde74b6ded8 ""
+  "images/relative_attack_position.png" 1771428221.72846 38475 d741754d6b10a229b40d2bd5c6b2d955 ""
   "sarmata.sty" 1770636797.59548 22690 28a43753b8bb8493d62e7a16d2556ab7 ""
-  "thesis-template.aux" 1771415709.05324 8736 cc0e5064787676f95b73eb7683c8673b "pdflatex"
-  "thesis-template.bbl" 1771415708.47739 4109 57e35e9092b7b44f4fd58847fd00fb3f "bibtex thesis-template"
-  "thesis-template.brf" 1771415709.05324 2031 b2c1624ffd22ada148f576111f921c7b "pdflatex"
-  "thesis-template.out" 1771415709.05324 813 d52ddce2bb8cd46e817c6241963696c6 "pdflatex"
-  "thesis-template.tex" 1771415707.68182 21053 d2b6fb46bfb0bd417e9e3174d635bc74 ""
-  "thesis-template.toc" 1771415709.05324 607 658e0453ae554ab28318c72832419d03 "pdflatex"
+  "thesis-template.aux" 1771432478.84146 9786 822639ba43db2bae285b67baffeb1013 "pdflatex"
+  "thesis-template.bbl" 1771432472.66992 4109 57e35e9092b7b44f4fd58847fd00fb3f "bibtex thesis-template"
+  "thesis-template.brf" 1771432478.84552 2418 832378d6e0dcbdd06f7d696ed966eafa "pdflatex"
+  "thesis-template.out" 1771432478.84552 796 8110deda44f338c34e7005fe0f224202 "pdflatex"
+  "thesis-template.tex" 1771432477.98806 26086 8e7e22940a4c7aec73cecfbcee373887 ""
+  "thesis-template.toc" 1771432478.84552 605 e7c052064ebbba1da143f6172e767f53 "pdflatex"
   (generated)
   "thesis-template.aux"
   "thesis-template.brf"

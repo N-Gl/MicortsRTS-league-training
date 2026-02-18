@@ -1,8 +1,8 @@
 \contentsline {section}{\numberline {1}\hskip -1em.~Introduction}{1}{section.1}%
 \contentsline {section}{\numberline {2}\hskip -1em.~Related Work}{2}{section.2}%
 \contentsline {section}{\numberline {3}\hskip -1em.~Methoden}{4}{section.3}%
-\contentsline {subsection}{\numberline {3.1}\hskip -1em.~MicroRTS Environment}{4}{subsection.3.1}%
-\contentsline {paragraph}{ScalarEncoder}{4}{section*.4}%
-\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{4}{section.4}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{5}{section.5}%
-\contentsline {section}{Erkl\"arung}{6}{section*.9}%
+\contentsline {subsection}{\numberline {3.1}\hskip -1em.~MicroRTS-Umgebung}{4}{subsection.3.1}%
+\contentsline {paragraph}{ScalarEncoder}{5}{section*.5}%
+\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{5}{section.4}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{6}{section.5}%
+\contentsline {section}{Erkl\"arung}{7}{section*.10}%
