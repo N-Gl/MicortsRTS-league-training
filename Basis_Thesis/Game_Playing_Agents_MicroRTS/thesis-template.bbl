@@ -49,6 +49,11 @@ Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and Klimov, O. (2017).
 \newblock Proximal policy optimization algorithms.
 \newblock {\em CoRR}, abs/1707.06347.
 
+\bibitem[Silver et~al., 2018]{doi:10.1126/science.aar6404}
+Silver, D., Hubert, T., Schrittwieser, J., Antonoglou, I., Lai, M., Guez, A., Lanctot, M., Sifre, L., Kumaran, D., Graepel, T., Lillicrap, T., Simonyan, K., and Hassabis, D. (2018).
+\newblock A general reinforcement learning algorithm that masters chess, shogi, and go through self-play.
+\newblock {\em Science}, 362:1140--1144.
+
 \bibitem[Sutton and Barto, 1998]{suttonbarto1998rl}
 Sutton, R.~S. and Barto, A.~G. (1998).
 \newblock {\em Reinforcement Learning: An Introduction}.
