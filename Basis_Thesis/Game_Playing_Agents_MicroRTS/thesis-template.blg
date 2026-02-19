@@ -6,45 +6,45 @@ Database file #1: references.bib
 Warning--entry type for "huft2023microrts" isn't style-file defined
 --line 33 of file references.bib
 Warning--can't use both volume and number fields in Ontanon2013CombinatorialBandit
-You've used 13 entries,
+You've used 14 entries,
             1935 wiz_defined-function locations,
-            555 strings with 7281 characters,
-and the built_in function-call counts, 7364 in all, are:
-= -- 662
-> -- 522
+            561 strings with 7665 characters,
+and the built_in function-call counts, 8110 in all, are:
+= -- 724
+> -- 590
 < -- 14
-+ -- 194
-- -- 192
-* -- 675
-:= -- 1283
-add.period$ -- 40
-call.type$ -- 13
-change.case$ -- 158
-chr.to.int$ -- 13
-cite$ -- 14
-duplicate$ -- 241
-empty$ -- 385
-format.name$ -- 209
-if$ -- 1416
++ -- 222
+- -- 218
+* -- 754
+:= -- 1418
+add.period$ -- 43
+call.type$ -- 14
+change.case$ -- 176
+chr.to.int$ -- 14
+cite$ -- 15
+duplicate$ -- 255
+empty$ -- 416
+format.name$ -- 236
+if$ -- 1551
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 12
-newline$ -- 67
-num.names$ -- 43
-pop$ -- 166
+missing$ -- 13
+newline$ -- 72
+num.names$ -- 46
+pop$ -- 182
 preamble$ -- 1
-purify$ -- 159
+purify$ -- 177
 quote$ -- 0
-skip$ -- 186
+skip$ -- 196
 stack$ -- 0
-substring$ -- 335
-swap$ -- 62
+substring$ -- 376
+swap$ -- 63
 text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 76
+type$ -- 82
 warning$ -- 1
-while$ -- 45
+while$ -- 48
 width$ -- 0
-write$ -- 170
+write$ -- 183
 (There were 2 warnings)

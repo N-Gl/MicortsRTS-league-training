@@ -1,6 +1,6 @@
 \backcite {huang2021gym}{{1}{1}{section.1}}
 \backcite {heinrich2015fsp}{{1}{1}{section.1}}
-\backcite {vinyals2019alphastar}{{2}{1}{section.1}}
+\backcite {vinyals2019alphastar}{{1}{1}{section.1}}
 \backcite {torabi2018behavioral}{{2}{1}{section.1}}
 \backcite {torabi2018behavioral}{{2}{1}{section.1}}
 \backcite {martin2021beclone}{{2}{1}{section.1}}
@@ -12,8 +12,8 @@
 \backcite {huft2023microrts}{{2}{1}{table.caption.2}}
 \backcite {Ontanon2013CombinatorialBandit}{{2}{2}{table.caption.2}}
 \backcite {huang2021gym}{{2}{2}{table.caption.2}}
-\backcite {huang2021gym}{{3}{2}{table.caption.2}}
-\backcite {baselines}{{3}{2}{table.caption.2}}
+\backcite {huang2021gym}{{2}{2}{table.caption.2}}
+\backcite {baselines}{{2}{2}{table.caption.2}}
 \backcite {huft2023microrts}{{3}{2}{table.caption.2}}
 \backcite {pmlr-v97-han19a}{{3}{2}{table.caption.2}}
 \backcite {espeholt2018impala}{{3}{2}{table.caption.2}}
@@ -42,3 +42,19 @@
 \backcite {huang2021gym}{{4}{3.1}{figure.caption.3}}
 \backcite {huang2021gym}{{5}{3.1}{figure.caption.4}}
 \backcite {huang2021gym}{{5}{3.1}{figure.caption.4}}
+\backcite {huft2023microrts}{{5}{3.2}{subsection.3.2}}
+\backcite {huft2023microrts}{{5}{3.2}{subsection.3.2}}
+\backcite {huft2023microrts}{{5}{3.2}{subsection.3.2}}
+\backcite {torabi2018behavioral, martin2021beclone}{{5}{3.2}{subsection.3.2}}
+\backcite {martin2021beclone}{{5}{3.2}{subsection.3.2}}
+\backcite {schulman2017ppo}{{5}{3.2}{subsection.3.2}}
+\backcite {martin2021beclone}{{5}{3.2}{subsection.3.2}}
+\backcite {schulman2017ppo}{{5}{3.2}{subsection.3.2}}
+\backcite {schulman2017ppo}{{5}{3.2}{subsection.3.2}}
+\backcite {schulman2017ppo}{{5}{3.2}{subsection.3.2}}
+\backcite {doi:10.1126/science.aar6404}{{6}{3.2}{subsection.3.2}}
+\backcite {heinrich2015fsp}{{6}{3.2}{subsection.3.2}}
+\backcite {vinyals2019alphastar}{{6}{3.2}{subsection.3.2}}
+\backcite {vinyals2019alphastar}{{6}{3.2}{subsection.3.2}}
+\backcite {vinyals2019alphastar}{{6}{3.2}{subsection.3.2}}
+\backcite {vinyals2019alphastar}{{6}{3.2}{subsection.3.2}}

@@ -250,6 +250,10 @@ INPUT ./images/relative_attack_position.png
 INPUT ./images/relative_attack_position.png
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmb7t.vf
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/courier/pcrr7t.vf
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm
 INPUT ./images/diagram.png
 INPUT ./images/diagram.png
 INPUT ./images/diagram.png
@@ -265,6 +269,8 @@ INPUT ./images/Fig4.png
 INPUT ./images/Fig4.png
 INPUT ./images/Fig4.png
 INPUT ./images/Fig4.png
+INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
 INPUT ./thesis-template.bbl
 INPUT ./thesis-template.bbl
 INPUT thesis-template.bbl
@@ -274,12 +280,6 @@ INPUT thesis-template.brf
 INPUT ./thesis-template.brf
 INPUT ./thesis-template.brf
 OUTPUT thesis-template.brf
-INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmb7t.vf
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/courier/pcrr7t.vf
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
