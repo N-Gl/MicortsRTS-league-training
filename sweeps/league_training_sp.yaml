@@ -14,17 +14,48 @@ parameters:
   ExperimentConfig.exp_name:
     value: sweep_lr_$ent_${ExperimentConfig.ent_coef}_clip_${ExperimentConfig.clip_coef}_vf_${ExperimentConfig.vf_coef}
   ExperimentConfig.ent_coef:
-    distribution: log_uniform_values
-    min: 0.001
-    max: 0.02
+    values:
+      - 0.001
+      - 0.002
+      - 0.004
+      - 0.008
+      - 0.01
+      - 0.012
+      - 0.013
+      - 0.015
+      - 0.016
+      - 0.017
+      - 0.018
+      - 0.02
+      - 0.025
+      - 0.03
   ExperimentConfig.clip_coef:
-    distribution: log_uniform_values
-    min: 0.05
-    max: 0.3
+    values:
+      - 0.05
+      - 0.075
+      - 0.1
+      - 0.125
+      - 0.15
+      - 0.175
+      - 0.2
+      - 0.225
+      - 0.25
+      - 0.3
   ExperimentConfig.vf_coef:
-    distribution: log_uniform_values
-    min: 0.01
-    max: 0.5
+    values:
+      - 0.01
+      - 0.03
+      - 0.05
+      - 0.1
+      - 0.125
+      - 0.15
+      - 0.175
+      - 0.2
+      - 0.225
+      - 0.25
+      - 0.275
+      - 0.3
+      - 0.5
 command:
   - ${env}
   - ${interpreter}
