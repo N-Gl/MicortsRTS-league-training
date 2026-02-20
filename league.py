@@ -1108,11 +1108,11 @@ def log_exploiter_ppo_update(
     should_log_every_20_updates = (update % 20 == 0)
 
     writer.add_scalar(f"{player.name}_charts/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], args.global_step)
-    writer.add_scalar(f"{player.name}_losses/value_loss", args.vf_coef * v_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/value_loss", args.exploiter_vf_coef * v_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/policy_loss", pg_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/kl_loss", kl_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/total_loss", loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}_losses/entropy_loss", args.ent_coef * entropy_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_losses/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/approx_kl", approx_kl.item(), args.global_step)
     writer.add_scalar(f"{player.name}_charts/grad_norm_before_clipping", grad_norm, args.global_step)
     if getattr(args, "log_unweighted_losses", True):
