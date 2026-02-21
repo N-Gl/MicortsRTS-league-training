@@ -1191,17 +1191,23 @@ class LeagueTrainer:
 
                 num_added_envs = args.num_envs - rewards_attack.shape[1]
 
-                obs.resize_((args.num_steps, args.num_envs) + envs.single_observation_space.shape)
-                actions.resize_((args.num_steps, args.num_envs) + action_space_shape)
-                logprobs.resize_(args.num_steps, args.num_envs)
-                invalid_action_masks.resize_((args.num_steps, args.num_envs) + invalid_action_shape)
+                # obs = torch.cat((obs,torch.zeros((args.num_steps, num_added_envs) + envs.single_observation_space.shape, device=device, dtype=obs.dtype)), dim=1)
+                # actions = torch.cat((actions, torch.zeros((args.num_steps, num_added_envs) + action_space_shape, device=device, dtype=actions.dtype)), dim=1)
+                # logprobs = torch.cat((logprobs, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=logprobs.dtype)), dim=1)
+                # invalid_action_masks = torch.cat((invalid_action_masks, torch.zeros((args.num_steps, num_added_envs) + invalid_action_shape, device=device, dtype=invalid_action_masks.dtype)), dim=1)
 
                 sp_inds = slice(0, args.num_selfplay_envs)
                 bot_inds = slice(args.num_selfplay_envs, args.num_envs)
-                obs[:, bot_inds].zero_()
-                actions[:, bot_inds].zero_()
-                logprobs[:, bot_inds].zero_()
-                invalid_action_masks[:, bot_inds].zero_()
+                # obs[:, bot_inds].zero_()
+                # actions[:, bot_inds].zero_()
+                # logprobs[:, bot_inds].zero_()
+                # invalid_action_masks[:, bot_inds].zero_()
+
+                del obs, actions, logprobs, invalid_action_masks
+                obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape, device=device)
+                actions = torch.zeros((args.num_steps, args.num_envs) + action_space_shape, dtype=torch.int16, device=device)
+                logprobs = torch.zeros((args.num_steps, args.num_envs), device=device)
+                invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape, device=device)
 
                 rewards_attack = torch.cat(
                     (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
