@@ -1291,12 +1291,54 @@ class LeagueTrainer:
                 self.get_new_unit_bonus_distr(torch.tensor([args.num_envs - 1]), device)
                 unit_bonus_distr = self.unit_bonus_distr
 
-            num_added_envs = args.num_envs - rewards_attack.shape[1]
+            # Rebuild rollout buffers to avoid temporary peak allocations from torch.cat on large CUDA tensors.
+            sp_next_done = next_done[:args.num_selfplay_envs].clone()
+            sp_delta_score_sums = delta_score_sums[:args.num_selfplay_envs].clone()
 
-            obs = torch.cat((obs,torch.zeros((args.num_steps, num_added_envs) + envs.single_observation_space.shape, device=device, dtype=obs.dtype)), dim=1)
-            actions = torch.cat((actions, torch.zeros((args.num_steps, num_added_envs) + action_space_shape, device=device, dtype=actions.dtype)), dim=1)
-            logprobs = torch.cat((logprobs, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=logprobs.dtype)), dim=1)
-            invalid_action_masks = torch.cat((invalid_action_masks, torch.zeros((args.num_steps, num_added_envs) + invalid_action_shape, device=device, dtype=invalid_action_masks.dtype)), dim=1)
+            obs_dtype = obs.dtype
+            actions_dtype = actions.dtype
+            logprobs_dtype = logprobs.dtype
+            invalid_action_masks_dtype = invalid_action_masks.dtype
+            rewards_attack_dtype = rewards_attack.dtype
+            rewards_winloss_dtype = rewards_winloss.dtype
+            delta_rewards_score_dtype = delta_rewards_score.dtype
+            dones_dtype = dones.dtype
+            values_dtype = values.dtype
+            scalar_features_dtype = scalar_features.dtype
+            z_features_dtype = z_features.dtype
+
+            del obs, actions, logprobs, invalid_action_masks
+            del rewards_attack, rewards_winloss, delta_rewards_score, dones, values
+            del scalar_features, z_features
+            if device.type == "cuda":
+                torch.cuda.empty_cache()
+
+            obs = torch.zeros(
+                (args.num_steps, args.num_envs) + envs.single_observation_space.shape,
+                device=device,
+                dtype=obs_dtype,
+            )
+            actions = torch.zeros(
+                (args.num_steps, args.num_envs) + action_space_shape,
+                device=device,
+                dtype=actions_dtype,
+            )
+            logprobs = torch.zeros((args.num_steps, args.num_envs), device=device, dtype=logprobs_dtype)
+            invalid_action_masks = torch.zeros(
+                (args.num_steps, args.num_envs) + invalid_action_shape,
+                device=device,
+                dtype=invalid_action_masks_dtype,
+            )
+
+            rewards_attack = torch.zeros((args.num_steps, args.num_envs), device=device, dtype=rewards_attack_dtype)
+            rewards_winloss = torch.zeros((args.num_steps, args.num_envs), device=device, dtype=rewards_winloss_dtype)
+            delta_rewards_score = torch.zeros((args.num_steps, args.num_envs), device=device, dtype=delta_rewards_score_dtype)
+            dones = torch.zeros((args.num_steps, args.num_envs), device=device, dtype=dones_dtype)
+            values = torch.zeros((args.num_steps, args.num_envs), device=device, dtype=values_dtype)
+            scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device, dtype=scalar_features_dtype)
+            z_features = torch.zeros((args.num_steps, args.num_envs, 8), device=device, dtype=z_features_dtype)
+            delta_score_sums = torch.zeros((args.num_envs), device=device, dtype=sp_delta_score_sums.dtype)
+            delta_score_sums[:args.num_selfplay_envs] = sp_delta_score_sums
 
             sp_inds = slice(0, args.num_selfplay_envs)
             bot_inds = slice(args.num_selfplay_envs, args.num_envs)
@@ -1305,43 +1347,13 @@ class LeagueTrainer:
             logprobs[:, bot_inds].zero_()
             invalid_action_masks[:, bot_inds].zero_()
 
-            rewards_attack = torch.cat(
-                (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
-            )
-            rewards_winloss = torch.cat(
-                (rewards_winloss, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_winloss.dtype)), dim=1
-            )
-            delta_rewards_score = torch.cat(
-                (delta_rewards_score, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=delta_rewards_score.dtype)), dim=1
-            )
-            delta_score_sums = torch.cat(
-                (delta_score_sums, torch.zeros((num_added_envs), device=device, dtype=delta_score_sums.dtype)), dim=0
-            )
-            dones = torch.cat((dones, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=dones.dtype)), dim=1)
-            values = torch.cat((values, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=values.dtype)), dim=1)
-            rewards_attack[:, args.num_selfplay_envs:].zero_()
-            rewards_winloss[:, args.num_selfplay_envs:].zero_()
-            delta_rewards_score[:, args.num_selfplay_envs:].zero_()
-            # TODO (optimize): muss man die wirklich resetten?
-            dones[:, args.num_selfplay_envs:].zero_()
-            values[:, args.num_selfplay_envs:].zero_()
-            delta_score_sums[args.num_selfplay_envs:].zero_()
-
 
             next_obs_np, _, bot_res = envs.reset()
             bot_next_obs = torch.Tensor(next_obs_np).to(device)
             last_bot_scorerew = torch.zeros(args.num_bot_envs, device=device)
 
-            
-            next_done = torch.cat((next_done, torch.zeros((num_added_envs), device=device, dtype=next_done.dtype)))
-            next_done[args.num_selfplay_envs:].zero_()
-
-            # scalar_features = torch.zeros((args.num_steps, args.num_envs, 11), device=device)
-            scalar_features = torch.cat((scalar_features, torch.zeros((args.num_steps, num_added_envs, 11), device=device, dtype=scalar_features.dtype)), dim=1)
-            scalar_features[:, args.num_selfplay_envs:].zero_()
-            # z_features = torch.zeros((args.num_steps, args.num_envs, 8), dtype=torch.long, device=device)
-            z_features = torch.cat((z_features, torch.zeros((args.num_steps, num_added_envs, 8), device=device, dtype=z_features.dtype)), dim=1)
-            z_features[:, args.num_selfplay_envs:].zero_()
+            next_done = torch.zeros((args.num_envs), device=device, dtype=sp_next_done.dtype)
+            next_done[:args.num_selfplay_envs] = sp_next_done
 
             bot_position_indices = torch.cat((bot_position_indices, bot_position_indices[:1].clone()))
 
