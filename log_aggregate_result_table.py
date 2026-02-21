@@ -117,8 +117,10 @@ class Logger:
             opponent_table.add_data(*row_with_reward)
         # if with_name:
         #     table_name = f"{table_name}_{with_name}"
-        wandb.log({table_name: opponent_table}, step=step)
-
+        try:
+            wandb.log({table_name: opponent_table}, step=step)
+        except Exception as exc:
+            print(f"[wandb] Skipping table upload '{table_name}' at step {step} due to WANDB connectivity issue: {exc}")
         # try:
         #     wandb.log({table_name: opponent_table}, step=step)
         # except Exception as exc:
