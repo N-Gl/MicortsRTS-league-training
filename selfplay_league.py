@@ -342,22 +342,17 @@ class LeagueTrainer:
         sp_inds = slice(0, args.num_selfplay_envs)
         bot_inds = slice(args.num_selfplay_envs, args.num_envs)
 
-        obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
+        max_envs = args.num_selfplay_envs + args.max_num_bot_envs
+        obs_buf = torch.zeros((args.num_steps, max_envs) + envs.single_observation_space.shape, device=device)
+        action_dtype = torch.int16 if mapsize < np.iinfo(np.int16).max else torch.long
+        actions_buf = torch.zeros((args.num_steps, max_envs) + action_space_shape, dtype=action_dtype, device=device)
+        logprobs_buf = torch.zeros((args.num_steps, max_envs), device=device)
+        invalid_action_masks_buf = torch.zeros((args.num_steps, max_envs) + invalid_action_shape, dtype=torch.bool, device=device)
 
-        if mapsize < np.iinfo(np.int16).max:
-            actions = torch.zeros(
-            (args.num_steps, args.num_envs) + action_space_shape,
-            dtype=torch.int16,
-            device=device,
-            )
-        else:
-            actions = torch.zeros(
-                (args.num_steps, args.num_envs) + action_space_shape,
-                dtype=torch.long,
-                device=device,
-            )
-        logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
-        invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape, dtype=torch.bool).to(device)
+        obs = obs_buf[:, :args.num_envs]
+        actions = actions_buf[:, :args.num_envs]
+        logprobs = logprobs_buf[:, :args.num_envs]
+        invalid_action_masks = invalid_action_masks_buf[:, :args.num_envs]
 
         rewards_attack = torch.zeros((args.num_steps, args.num_envs)).to(device)
         rewards_winloss = torch.zeros((args.num_steps, args.num_envs)).to(device)
@@ -1119,10 +1114,10 @@ class LeagueTrainer:
 
                 agent.remove_last_bot_env()
 
-                obs = obs[:, :args.num_envs]
-                actions = actions[:, :args.num_envs]
-                logprobs = logprobs[:, :args.num_envs]
-                invalid_action_masks = invalid_action_masks[:, :args.num_envs]
+                obs = obs_buf[:, :args.num_envs]
+                actions = actions_buf[:, :args.num_envs]
+                logprobs = logprobs_buf[:, :args.num_envs]
+                invalid_action_masks = invalid_action_masks_buf[:, :args.num_envs]
 
                 sp_inds = slice(0, args.num_selfplay_envs)
                 bot_inds = slice(args.num_selfplay_envs, args.num_envs)
@@ -1178,6 +1173,8 @@ class LeagueTrainer:
             elif args.dyn_num_bot_envs and last_bot_env_change >= 12 and args.num_bot_envs < args.max_num_bot_envs and intended_bot_envs > args.num_bot_envs:
                 print("\nAdding an Bot Environment")
 
+                # del obs, actions, logprobs, invalid_action_masks
+
                 envs.close()
                 envs = self.get_new_bot_envs(args, args.num_bot_envs + 1)
                 last_bot_env_change = 0
@@ -1196,18 +1193,17 @@ class LeagueTrainer:
                 # logprobs = torch.cat((logprobs, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=logprobs.dtype)), dim=1)
                 # invalid_action_masks = torch.cat((invalid_action_masks, torch.zeros((args.num_steps, num_added_envs) + invalid_action_shape, device=device, dtype=invalid_action_masks.dtype)), dim=1)
 
+                obs = obs_buf[:, :args.num_envs]
+                actions = actions_buf[:, :args.num_envs]
+                logprobs = logprobs_buf[:, :args.num_envs]
+                invalid_action_masks = invalid_action_masks_buf[:, :args.num_envs]
+
                 sp_inds = slice(0, args.num_selfplay_envs)
                 bot_inds = slice(args.num_selfplay_envs, args.num_envs)
-                # obs[:, bot_inds].zero_()
-                # actions[:, bot_inds].zero_()
-                # logprobs[:, bot_inds].zero_()
-                # invalid_action_masks[:, bot_inds].zero_()
-
-                del obs, actions, logprobs, invalid_action_masks
-                obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape, device=device)
-                actions = torch.zeros((args.num_steps, args.num_envs) + action_space_shape, dtype=torch.int16, device=device)
-                logprobs = torch.zeros((args.num_steps, args.num_envs), device=device)
-                invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape, device=device)
+                obs[:, bot_inds].zero_()
+                actions[:, bot_inds].zero_()
+                logprobs[:, bot_inds].zero_()
+                invalid_action_masks[:, bot_inds].zero_()
 
                 rewards_attack = torch.cat(
                     (rewards_attack, torch.zeros((args.num_steps, num_added_envs), device=device, dtype=rewards_attack.dtype)), dim=1
