@@ -1156,6 +1156,7 @@ def log_exploiter_ppo_update(
                 save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}_update_{update}")
 
 
+# not used
 def train_exploiters(
         args,
         envs,
