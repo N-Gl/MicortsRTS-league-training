@@ -37,8 +37,8 @@ ExperimentConfig:
   # target_kl: 0.01
   # exploiter_target_kl: 0.01
   
-  vf_coef: 0.1
-  exploiter_vf_coef: 0.1
+  vf_coef: 0.1  # TODO: 0.15
+  exploiter_vf_coef: 0.1  # TODO: 0.15
 
   kle_rollback: false
   exploiter_kle_rollback: false
