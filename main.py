@@ -480,6 +480,7 @@ def main(cfg: ExperimentConfig):
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_450.pt", None],
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_500.pt", None],
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_550.pt", None],
+            ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_450", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_450.pt", None],
             ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None],
             # ["22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3", agent_model.Agent, "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3/Main_agent_backups/agent_update_830.pt", None],
             # ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None],
@@ -539,6 +540,7 @@ def main(cfg: ExperimentConfig):
             elif len(default_opponent_paths) > 0:
                 from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
+                args.num_selfplay_envs = args.num_parallel_selfplay_eval_games
                 aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
                     args=args,
                     default_opponent_paths=default_opponent_paths,

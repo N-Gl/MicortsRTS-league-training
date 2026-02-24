@@ -5,7 +5,7 @@ ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
   model_path: models/finished_PPO_Basis_thesis.pt
-  exp_name: 17.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_clip_coef_0_2_no_Bots_25envs
+  exp_name: 17.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_lr_1e-4_no_Bots_25envs_1
   wandb_group_name: new_sp_28_01_26_no_Bots
 
   num_bot_envs: 1 # 3
@@ -22,11 +22,11 @@ ExperimentConfig:
   # clip_coef: 0.01 # TODO
   # exploiter_clip_coef: 0.01 # TODO
 
-  clip_coef: 0.2
-  exploiter_clip_coef: 0.2
+  clip_coef: 0.15
+  exploiter_clip_coef: 0.15
 
-  # TODO: PPO_learning_rate: 1e-4
-  # TODO: exploiter_PPO_learning_rate: 1e-4
+  PPO_learning_rate: 1e-4
+  exploiter_PPO_learning_rate: 1e-4
 
   ent_coef: 0.015
   exploiter_ent_coef: 0.015

@@ -77,6 +77,19 @@
     },
 
     {
+      "name": "Python: evaluation_config",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "evaluation_config",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: selfplay",
       "type": "debugpy",
       "request": "launch",

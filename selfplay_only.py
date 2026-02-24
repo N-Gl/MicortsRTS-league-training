@@ -26,6 +26,57 @@ class Selfplay_agent:
         self.agent = agent
 
 
+# def adjust_obs_selfplay(args, next_obs, is_new_env: bool = False):
+#     if is_new_env:
+#         # flippe jede zweite selfplay Umgebung (Spieler 1 -> Spieler 0)
+#         # da keine Unit eine Richtung bekommen hat müssen die Richtungen nicht angepasst werden
+#         if args.num_selfplay_envs > 1:
+#             if 2 < args.num_selfplay_envs:
+#                 tmp = next_obs[1:args.num_selfplay_envs:2].flip(1, 2).contiguous().clone()
+#                 next_obs[1:args.num_selfplay_envs:2] = tmp
+#             else:
+#                 tmp = next_obs[1].flip(0, 1).contiguous().clone()
+#                 next_obs[1] = tmp
+#             return
+# 
+#     if args.num_selfplay_envs > 1:
+#         # jede zweite selfplay Umgebung:
+#         if 2 < args.num_selfplay_envs:
+#             tmp = next_obs[1:args.num_selfplay_envs:2].flip(1, 2).contiguous().clone()
+#             # flip Observations (Spieler 1 -> Spieler 0)
+#             next_obs[1:args.num_selfplay_envs:2] = tmp
+# 
+#             # switch players in the observation (player 1 -> player 0) 
+#             # next_obs[1:args.num_selfplay_envs:2, :, :, 4:6:-1] = next_obs[1:args.num_selfplay_envs:2, :, :, 6:4] muss man nicht machen (sind schon gedreht), wenn doch --> auch wenn is_new_env=True, im else-Teil
+#             # next_obs[1:args.num_selfplay_envs:2, :, :, 59:66] = tmp[:, :, :, 66:73]
+#             # next_obs[1:args.num_selfplay_envs:2, :, :, 66:73] = tmp[:, :, :, 59:66]
+# 
+#             # rottate directions 180°
+#             for i in range(0, 4):
+#                 next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
+#                     next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
+#                 )
+#             next_obs[1:args.num_selfplay_envs:2, :, :, 50:54] = next_obs[1:args.num_selfplay_envs:2, :, :, 50:54].roll(
+#                 shifts=2, dims=3
+#             )
+#         else:
+#             tmp = next_obs[1].flip(0, 1).contiguous().clone()
+#             next_obs[1] = tmp
+# 
+#             # switch players in the observation (player 1 -> player 0)
+#             # next_obs[1, :, :, 4] = tmp[:, :, 5]
+#             # next_obs[1, :, :, 5] = tmp[:, :, 4]
+#             # next_obs[1, :, :, 59:66] = tmp[:, :, 66:73]
+#             # next_obs[1, :, :, 66:73] = tmp[:, :, 59:66]
+# 
+#             # rottate directions 180° auch alle Richtungen, die nicht benutzt werden, werden geändert (benutze torch.roll(next_obs[...], shifts=2, dims=...))
+#             permutation = [21, 24, 25, 22, 23, 26, 29, 30, 27, 28, 31, 34, 35, 32, 33, 36, 39, 40, 37, 38]
+#             for i, p in enumerate(permutation):
+#                 next_obs[1, :, :, i + 21] = tmp[:, :, p]
+#             permutation = [49, 52, 53, 50, 51]
+#             for i, p in enumerate(permutation):
+#                 next_obs[1, :, :, i + 49] = tmp[:, :, p]
+
 def adjust_obs_selfplay(args, next_obs, is_new_env: bool = False):
     if is_new_env:
         # flippe jede zweite selfplay Umgebung (Spieler 1 -> Spieler 0)
@@ -52,13 +103,15 @@ def adjust_obs_selfplay(args, next_obs, is_new_env: bool = False):
             # next_obs[1:args.num_selfplay_envs:2, :, :, 66:73] = tmp[:, :, :, 59:66]
 
             # rottate directions 180°
-            for i in range(0, 4):
-                next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
-                    next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
-                )
-            next_obs[1:args.num_selfplay_envs:2, :, :, 50:54] = next_obs[1:args.num_selfplay_envs:2, :, :, 50:54].roll(
-                shifts=2, dims=3
-            )
+            next_obs[1:args.num_selfplay_envs:2, :, :, 22:26] = next_obs[1:args.num_selfplay_envs:2, :, :, 22:26].roll(shifts=2, dims=3)
+            next_obs[1:args.num_selfplay_envs:2, :, :, 27:31] = next_obs[1:args.num_selfplay_envs:2, :, :, 27:31].roll(shifts=2, dims=3)
+            next_obs[1:args.num_selfplay_envs:2, :, :, 32:36] = next_obs[1:args.num_selfplay_envs:2, :, :, 32:36].roll(shifts=2, dims=3)
+            next_obs[1:args.num_selfplay_envs:2, :, :, 37:41] = next_obs[1:args.num_selfplay_envs:2, :, :, 37:41].roll(shifts=2, dims=3)
+            # for i in range(0, 4):
+            #     next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i] = (
+            #         next_obs[1:args.num_selfplay_envs:2, :, :, 22 + 5 * i : 26 + 5 * i].roll(shifts=2, dims=3)
+            #     )
+            next_obs[1:args.num_selfplay_envs:2, :, :, 50:54] = next_obs[1:args.num_selfplay_envs:2, :, :, 50:54].roll(shifts=2, dims=3)
         else:
             tmp = next_obs[1].flip(0, 1).contiguous().clone()
             next_obs[1] = tmp
