@@ -86,8 +86,6 @@ def evaluate_agent(
         try:
             obs_np, _, res = eval_env.reset()
             obs = torch.as_tensor(obs_np, device=device)
-            # TODO: dbg nachher entgernen
-            dbg_obs = obs.clone()
             selfplay_league.adjust_obs_selfplay(args, obs, True)
             z_features = torch.zeros((args.num_parallel_selfplay_eval_games, 8), dtype=torch.long, device=device)
             attack_weight = 0.05
@@ -112,7 +110,7 @@ def evaluate_agent(
                     actions, logprob, entropy, invalid_masks = agent.selfplay_get_action(
                         obs, scalar_features, z_features, 
                         num_selfplay_envs=args.num_parallel_selfplay_eval_games, num_envs=args.num_parallel_selfplay_eval_games, 
-                        envs=eval_env, active_league_agents=active_league_agents
+                        envs=eval_env, active_league_agents=active_league_agents, dbg_deterministic_actions=args.dbg_deterministic_actions
                         )
 
                     real_action = torch.cat([position_indices, actions], dim=2).cpu().numpy()
@@ -127,8 +125,6 @@ def evaluate_agent(
                     next_obs_np, _, _, _, _, ds, infos, res = eval_env.step(java_valid_actions)
                     next_obs_np = eval_env._from_microrts_obs(next_obs_np)
                     obs = torch.as_tensor(next_obs_np, device=device)
-                    # TODO: dbg nachher entgernen
-                    dbg_obs = obs.clone()
                     selfplay_league.adjust_obs_selfplay(args, obs, False)
 
                     global_step += args.num_parallel_selfplay_eval_games

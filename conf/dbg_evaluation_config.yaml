@@ -5,24 +5,26 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_770.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_880.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_770",
+          "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_880",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_770"
+  exp_name: "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_880"
   wandb_project_name: new_Evaluation
-  wandb_group_name: test_evaluation
-  # wandb_group_name: temp
+  # wandb_group_name: test_evaluation
+  wandb_group_name: temp
   prod_mode: true
 
-  seed:
+  seed: 561
   exact_seed: true
+  
+  dbg_deterministic_actions: true
 
   render: true
-  render_all: false
+  render_all: true
 
   num_eval_episodes: 100
   num_parallel_eval_envs: 100
