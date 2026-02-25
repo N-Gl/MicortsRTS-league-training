@@ -31,6 +31,9 @@ ExperimentConfig:
   ent_coef: 0.015
   exploiter_ent_coef: 0.015
 
+  # TODO: ent_coef: 0.0175
+  # TODO: exploiter_ent_coef: 0.0175
+
   kl_coeff: 0.3
   exploiter_kl_coeff: 0.3
 

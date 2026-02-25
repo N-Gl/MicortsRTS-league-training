@@ -118,6 +118,9 @@ def evaluate_agent(
                     valid_actions = real_action[valid_mask]
                     valid_counts = invalid_masks[:, :, 0].sum(1).long().cpu().numpy()
 
+                    # TODO: debug nachher löschen:
+                    dbg_valid_actions = valid_actions.copy()
+
                     selfplay_league.adjust_action_selfplay(args, valid_actions, valid_counts)
 
                     java_valid_actions = _build_java_actions(valid_actions, valid_counts)
