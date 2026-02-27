@@ -223,10 +223,7 @@ class LeagueTrainer:
         self.active_league_agents = []
         self.league_agent = Selfplay_agent(agent)
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
-        self.indices = torch.tensor(range(args.num_selfplay_envs, args.num_envs), dtype=torch.long, device=device)
-        self.indices = torch.cat(
-            (torch.tensor(range(0, args.num_selfplay_envs, 2), dtype=torch.long, device=device), self.indices)
-        )
+        self.learning_indices = None
         self.hist_reward: int = 0
 
         self.indices_per_exploiter = {}
@@ -283,7 +280,7 @@ class LeagueTrainer:
         if args.num_envs == 0:
             raise ValueError("league training requires at least one environment")
         
-        league_instance, self.active_league_agents = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
+        league_instance, self.active_league_agents, self.learning_indices = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
 
         if not args.cur_main_exploiter_path is None:
             for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
@@ -320,8 +317,7 @@ class LeagueTrainer:
 
 
         # updates indices for main / exploiter agents in self.active_league_agents
-        self._refresh_main_indices(args)
-        self._refresh_exploiter_indices(args)
+        self._refresh_indices(args)
 
 
         optimizer = torch.optim.Adam(agent.parameters(), lr=args.PPO_learning_rate, eps=1e-5)
@@ -466,7 +462,7 @@ class LeagueTrainer:
                         num_selfplay_envs=args.num_selfplay_envs,
                         num_envs=args.num_envs,
                         unique_agents=unique_agents,
-                        only_player_0=True,
+                        learning_indices=self.learning_indices,
                         unit_bonus_distr=self.unit_bonus_distr
                     ).flatten()
 
@@ -708,7 +704,7 @@ class LeagueTrainer:
                         # dyn_winloss = winloss
                         game_length = infos[done_idx]["episode"]["l"]
                         # dyn_winloss = winloss * (-0.00013 * game_length + 1.16)  # ca. 0.9 bei 2000 und 1.1 bei 500
-                        if done_idx > args.num_selfplay_envs - 1 or done_idx % 2 == 0:
+                        if done_idx in self.learning_indices:
                             done_agent.agent.steps = done_agent.agent.get_steps() + infos[done_idx]["episode"]["l"]
 
                             if isinstance(done_agent, league.MainPlayer):
@@ -721,9 +717,14 @@ class LeagueTrainer:
                             num_done_botgames += 1
                             last_bot_env_change += 1
 
-                        elif done_idx % 2 == 0:
+                        elif done_idx in self.learning_indices:
+                            if done_idx % 2 == 0:
+                                non_learning_done_idx = done_idx + 1
+                            else:
+                                non_learning_done_idx = done_idx - 1 
+
                             # update League match results
-                            self.active_league_agents[done_idx + 1], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
+                            self.active_league_agents[non_learning_done_idx], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
                                 args,
                                 agent,
                                 writer,
@@ -731,11 +732,13 @@ class LeagueTrainer:
                                 infos,
                                 attack,
                                 done_idx,
+                                non_learning_done_idx,
                                 done_agent,
                                 winloss,
                                 self.hist_reward,
                                 num_done_selfplaygames,
                                 self.indices_per_exploiter,
+                                self.learning_indices,
                                 last_logged_selfplay_games
                             )
                             num_done_selfplaygames += 1
@@ -779,7 +782,7 @@ class LeagueTrainer:
                     num_selfplay_envs=args.num_selfplay_envs,
                     num_envs=args.num_envs,
                     unique_agents=unique_agents,
-                    only_player_0=True,
+                    learning_indices=self.learning_indices,
                     unit_bonus_distr=self.unit_bonus_distr
                 ).reshape(1, -1)
 
@@ -795,13 +798,13 @@ class LeagueTrainer:
                 rewards_winloss = rewards_winloss * winloss
 
                 # dont calculate GAE for Player 1 Environments
-                b_next_value = next_value[:, self.indices]
-                b_values = values[:, self.indices]
-                b_rewards_attack = rewards_attack[:, self.indices]
-                b_rewards_winloss = rewards_winloss[:, self.indices]
-                b_delta_rewards_score = delta_rewards_score[:, self.indices]
-                b_dones = dones[:, self.indices]
-                b_next_done = next_done[self.indices]
+                b_next_value = next_value[:, self.learning_indices]
+                b_values = values[:, self.learning_indices]
+                b_rewards_attack = rewards_attack[:, self.learning_indices]
+                b_rewards_winloss = rewards_winloss[:, self.learning_indices]
+                b_delta_rewards_score = delta_rewards_score[:, self.learning_indices]
+                b_dones = dones[:, self.learning_indices]
+                b_next_done = next_done[self.learning_indices]
 
                 # (returns, advantages werden für exploiters weitergegeben, deshalb muss man sie hier auch berechnen oder unten anpassen)
                 # oder 2 Variablen jeweils speichern. Hier kann man auch nur die obs, ... zusammenstellen, die exploiters brauchen (spart Speicher)
@@ -1272,6 +1275,19 @@ class LeagueTrainer:
                     self.unit_bonus_distr[i] = torch.zeros(4, device=device)
 
     @staticmethod
+    def _torch_as_compact_slice(indices: torch.tensor):
+        arr = torch.asarray(indices, dtype=torch.int64)
+        if arr.size()[0] == 0:
+            return slice(0, 0, 1)
+        if arr.size()[0] == 1:
+            start = int(arr[0])
+            return slice(start, start + 1, 1)
+        diffs = torch.diff(arr)
+        if torch.all(diffs == 1):
+            return slice(int(arr[0]), int(arr[-1]) + 1, 1)
+        return arr
+    
+    @staticmethod
     def _as_compact_slice(indices: np.ndarray):
         arr = np.asarray(indices, dtype=np.int64)
         if arr.size == 0:
@@ -1286,31 +1302,27 @@ class LeagueTrainer:
 
 
     def _refresh_main_indices(self, args):
-        if args.training_on_bot_envs:
-            main_indices = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[args.num_selfplay_envs:]])[0] + args.num_selfplay_envs
-            b_main_indices = main_indices - (args.num_selfplay_envs // 2)
-        else:
-            main_indices = np.array([], dtype=np.int64)
-            b_main_indices = np.array([], dtype=np.int64)
+        main_indices = torch.where(torch.tensor([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents], dtype=torch.bool, device=self.device))[0]
+        if not args.training_on_bot_envs:
+            main_indices = main_indices[main_indices < args.num_selfplay_envs]
 
-        if args.train_on_old_mains:  # TODO: Dosnt work, because Player 1 can change in an rollout. (is that a problem?)
-            selfplay_mains = np.where((isinstance(self.active_league_agents, league.MainPlayer)))[0]
-            main_indices = np.concatenate((selfplay_mains, main_indices), axis=0)
-            b_main_indices = np.concatenate((b_main_indices, selfplay_mains // 2), axis=0)
+        if not args.train_on_old_mains:
+            main_indices = main_indices[torch.isin(main_indices, self.learning_indices)]
+            b_main_indices = torch.where(main_indices < args.num_selfplay_envs, main_indices // 2, main_indices - (args.num_selfplay_envs // 2))
         else:
-            selfplay_mains = np.where([isinstance(ag, league.MainPlayer) for ag in self.active_league_agents[0:args.num_selfplay_envs:2]])[0]
-            main_indices = np.concatenate((selfplay_mains * 2, main_indices))
-            b_main_indices = np.concatenate((selfplay_mains, b_main_indices))
+            b_main_indices = main_indices[torch.isin(main_indices, self.learning_indices)]
+            b_main_indices = torch.where(b_main_indices < args.num_selfplay_envs, b_main_indices // 2, b_main_indices - (args.num_selfplay_envs // 2))
 
-        self.main_indices_count = int(main_indices.size)
-        self.main_indices = self._as_compact_slice(main_indices)
-        self.b_main_indices = self._as_compact_slice(b_main_indices)
+        self.main_indices_count = main_indices.size()[0]
+        self.main_indices = self._torch_as_compact_slice(main_indices)
+        self.b_main_indices = self._torch_as_compact_slice(b_main_indices)
 
     def _refresh_exploiter_indices(self, args):
         indices_per_exploiter = {}
         b_indices_per_exploiter = {}
         for idx, p in enumerate(self.active_league_agents):
             if isinstance(p, (league.MainExploiter, league.LeagueExploiter)):
+                # assumes that current Exploiters never get picked as opponents (if not True anymore -> use self.learning_indices to filter them out)
                 indices_per_exploiter.setdefault(p, []).append(idx)
                 b_indices_per_exploiter.setdefault(p, []).append(
                     idx - (args.num_selfplay_envs // 2) if idx >= args.num_selfplay_envs else idx // 2
@@ -1325,6 +1337,10 @@ class LeagueTrainer:
             for exploiter, exploiter_indices in b_indices_per_exploiter.items()
         }
 
+    def _refresh_indices(self, args):
+        self._refresh_main_indices(args)
+        self._refresh_exploiter_indices(args)
+
     # TODO (optimize): in obs, ... die envs entfernen, die man nicht braucht (spart Rechenzeit)
     def get_new_bot_envs(self, args, num_bots):
 
@@ -1334,10 +1350,10 @@ class LeagueTrainer:
         if len(self.active_league_agents) < args.num_envs:
             # assert isinstance(self.active_league_agents[0], league.MainPlayer) "self.active_league_agents[0] must be an MainPlayer"
             self.active_league_agents.append(self.active_league_agents[0])
-            self.indices = torch.cat((self.indices, torch.tensor([args.num_envs - 1], device=self.device)))
+            self.learning_indices = torch.cat((self.learning_indices, torch.tensor([args.num_envs - 1], device=self.device)))
         else:
             self.active_league_agents = self.active_league_agents[:args.num_envs]
-            self.indices = self.indices[:-1]
+            self.learning_indices = self.learning_indices[:-1]
 
         self._refresh_main_indices(args)
         self._refresh_exploiter_indices(args)
