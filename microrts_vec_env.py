@@ -153,7 +153,7 @@ class MicroRTSGridModeVecEnv(MicroRTSInterface):
         # start microrts client
         from rts.units import UnitTypeTable
 
-        self.real_utt = UnitTypeTable(UTT_VERSION_ORIGINAL_FINETUNED, 2)
+        self.real_utt = UnitTypeTable(UTT_VERSION_ORIGINAL_FINETUNED)
         from ai.reward import (
             AttackRewardFunction,
             ProduceBuildingRewardFunction,

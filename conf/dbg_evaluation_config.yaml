@@ -18,13 +18,13 @@ ExperimentConfig:
   wandb_group_name: temp
   prod_mode: true
 
-  seed: 561
+  seed:
   exact_seed: true
   
-  dbg_deterministic_actions: true
+  dbg_deterministic_actions: false
 
   render: true
-  render_all: true
+  render_all: false
 
   num_eval_episodes: 100
   num_parallel_eval_envs: 100
