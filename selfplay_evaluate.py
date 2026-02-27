@@ -11,6 +11,7 @@ from league import MainPlayer, Payoff
 from microrts_space_transform import MicroRTSSpaceTransform
 import agent_model
 import selfplay_league
+import selfplay_only
 from log_aggregate_result_table import Logger
 
 

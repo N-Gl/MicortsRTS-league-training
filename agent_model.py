@@ -423,11 +423,11 @@ class Agent(nn.Module):
     def get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, unit_bonus_distr: Optional[torch.Tensor] = None) -> torch.Tensor:
         return self.critic(self.forward(x, sc, z, unit_bonus_distr))
     
-    def selfplay_and_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, only_player_0=False, unit_bonus_distr: Optional[torch.Tensor] = None) -> torch.Tensor:
+    def selfplay_and_Bot_get_value(self, x: torch.Tensor, sc: torch.Tensor, z: torch.Tensor, active_league_agents=None, num_selfplay_envs=0, num_envs=0, unique_agents=None, learning_indices=None, unit_bonus_distr: Optional[torch.Tensor] = None) -> torch.Tensor:
         '''
         returns value for selfplay and bot envs combined.
         Also returns value for not main Agents
-        only_player_0: only calculate for player 0 in selfplay envs not changing value for player 1 (initially 0) (to save computation time)
+        only_player_0: only calculate for player 0 in selfplay envs not changing value for player 1 (initially 0) (to save computation time) Depricated: replaced with learning_indices
         '''
         if self._values is None:
             self._values = torch.zeros(num_envs, device=self.device)
@@ -439,8 +439,8 @@ class Agent(nn.Module):
         for agent, indices in unique_agents.items():
             if not indices:
                 continue
-            if only_player_0:
-                indices = [i for i in indices if i % 2 == 0 or i >= num_selfplay_envs]
+            if learning_indices is not None:
+                indices = [idx for idx in indices if idx in learning_indices]
                 if not indices:
                     continue
             if agent is not self:

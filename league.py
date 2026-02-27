@@ -961,17 +961,17 @@ class League:
             print(f"selfplay_winrate_no_draw_{len(writer.recent_selfplay_winloss)}={selfplay_winrate:.3f}, selfplay_winrate_with_draw_0.5_{len(writer.recent_selfplay_winloss)}={selfplay_with_draw:.3f}\n")
         return last_logged_selfplay_games
 
-    def handle_game_end(self, args, agent, writer, active_league_agents, infos, attack_weight, done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, indices_per_exploiter, last_logged_selfplay_games):
-        old_opp = active_league_agents[done_idx + 1]
-        self.update(active_league_agents[done_idx], active_league_agents[done_idx + 1], infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
+    def handle_game_end(self, args, agent, writer, active_league_agents, infos, attack_weight, learning_done_idx, non_learning_done_idx, done_agent, dyn_winloss, hist_reward, num_done_selfplaygames, indices_per_exploiter, learning_indices, last_logged_selfplay_games):
+        old_opp = active_league_agents[non_learning_done_idx]
+        self.update(active_league_agents[learning_done_idx], active_league_agents[non_learning_done_idx], infos[learning_done_idx]['microrts_stats']['RAIWinLossRewardFunction'])
 
-        print(f"Game {int(done_idx/2)} ended: {done_agent.name} vs {active_league_agents[done_idx + 1].name}, result: {infos[done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
+        print(f"Game {int(learning_done_idx/2)} ended: {done_agent.name} vs {active_league_agents[non_learning_done_idx].name}, result: {infos[learning_done_idx]['microrts_stats']['RAIWinLossRewardFunction']}")
         last_logged_selfplay_games = self._log_selfplay_results(
             args,
             agent,
             writer,
             infos,
-            done_idx,
+            learning_done_idx,
             done_agent,
             dyn_winloss,
             attack_weight,
@@ -992,7 +992,7 @@ class League:
         if args.save_gpu_memory:
             _move_player_to_device(opp, agent.device)
 
-        print(f"New Match in Game {int(done_idx/2)}: {done_agent.name} vs {opp.name}\n")
+        print(f"New Match in Game {int(learning_done_idx/2)}: {done_agent.name} vs {opp.name}\n")
 
         return opp, last_logged_selfplay_games, old_opp
 
@@ -1002,11 +1002,24 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
 
     # initiale Environments mit den jeweiligen Gegnern gefüllt
     active_league_agents = []
+    learning_indices = []
+
+
     assert len(league_instance.learning_agents) == args.num_selfplay_envs // 2, "Number of learning agents must be half of the number of selfplay envs"
+    
+    learning_player_0 = True
     for player0 in league_instance.learning_agents:
         opp = player0.get_match()[0]
-        active_league_agents.append(player0)
-        active_league_agents.append(opp)
+        if learning_player_0:
+            active_league_agents.append(player0)
+            active_league_agents.append(opp)
+            learning_indices.append(len(active_league_agents)-2)
+            learning_player_0 = False
+        else:
+            active_league_agents.append(opp)
+            active_league_agents.append(player0)
+            learning_indices.append(len(active_league_agents)-1)
+            learning_player_0 = True
 
         # wenn active_league_agents[0], active_league_agents[2] Main Agents sind: active_league_agents[0].agent is active_league_agents[2].agent == True
 
@@ -1023,7 +1036,8 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
         else:
             assert isinstance(league_instance.payoff.players[0], MainPlayer), "Only MainPlayers can fill remaining environments (first agent in payoff.players is not MainPlayer)."
             active_league_agents.append(league_instance.payoff.players[0])
-    return league_instance, active_league_agents
+        learning_indices.append(len(active_league_agents)-1)
+    return league_instance, active_league_agents, torch.tensor(learning_indices, device=device)
 
 def log_general_main_results(writer, global_step, infos, dyn_winloss, game_length, attack_weight, done_idx, hist_reward, main_agent):
     delta_score_sum_weighted = infos[done_idx].get("delta_score_sum_weighted", 0.0)
