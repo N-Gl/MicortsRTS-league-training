@@ -1015,7 +1015,7 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
             active_league_agents.append(opp)
             learning_indices.append(len(active_league_agents)-2)
 
-        if args.dbg_all_player_1:
+        elif args.dbg_all_player_1:
             active_league_agents.append(opp)
             active_league_agents.append(player0)
             learning_indices.append(len(active_league_agents)-1)
