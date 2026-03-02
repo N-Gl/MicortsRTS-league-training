@@ -108,6 +108,7 @@ ExperimentConfig:
   save_gpu_memory: false
   dbg_no_main_agent_ppo_update: false
   Bot_as_player_1: true
+  dbg_all_player_1: false
 
   num_eval_episodes: 100
   num_parallel_eval_games: 0
