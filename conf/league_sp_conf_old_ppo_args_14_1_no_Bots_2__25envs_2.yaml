@@ -5,7 +5,7 @@ ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
   model_path: models/finished_PPO_Basis_thesis.pt
-  exp_name: 25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_lr_7_5e-5_no_Bots_25envs_2
+  exp_name: 25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_lr_7_5e-5_no_Bots_25envs_4
   wandb_group_name: new_sp_28_01_26_no_Bots
 
   num_bot_envs: 1 # 3
