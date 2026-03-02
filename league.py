@@ -1010,7 +1010,12 @@ def initialize_league(args, device, agent, other_initial_agents=[]):
     learning_player_0 = True
     for player0 in league_instance.learning_agents:
         opp = player0.get_match()[0]
-        if learning_player_0:
+        if args.dbg_all_player_1:
+            active_league_agents.append(opp)
+            active_league_agents.append(player0)
+            learning_indices.append(len(active_league_agents)-1)
+
+        elif learning_player_0:
             active_league_agents.append(player0)
             active_league_agents.append(opp)
             learning_indices.append(len(active_league_agents)-2)

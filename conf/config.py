@@ -98,6 +98,7 @@ class ExperimentConfig:
     value_warmup_updates: int
     endgame_maps: bool
     Bot_as_player_1: bool
+    dbg_all_player_1: bool
     lower_selfplay_winrate_offset: float
     upper_selfplay_winrate_offset: float
 
