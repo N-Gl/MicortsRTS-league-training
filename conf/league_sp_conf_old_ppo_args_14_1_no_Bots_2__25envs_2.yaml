@@ -8,6 +8,7 @@ ExperimentConfig:
   exp_name: 25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_lr_7_5e-5_no_Bots_25envs_1_same_seed_1772199362
   wandb_group_name: new_sp_28_01_26_no_Bots
 
+  dbg_all_player_0: true
   seed: 1772199362
 
   num_bot_envs: 1 # 3
