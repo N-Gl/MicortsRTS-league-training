@@ -26,6 +26,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 100
-  num_parallel_eval_envs: 100
+  num_eval_episodes: 1
+  num_parallel_eval_envs: 1
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
