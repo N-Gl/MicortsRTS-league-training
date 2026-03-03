@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_1040.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1449.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_1040",
+          "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1449",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_1040"
+  exp_name: "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1449"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
