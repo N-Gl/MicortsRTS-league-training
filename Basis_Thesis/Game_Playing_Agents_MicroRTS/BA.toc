@@ -14,5 +14,5 @@
 \contentsline {paragraph}{Why exploiters are needed.}{8}{section*.9}%
 \contentsline {paragraph}{Practical considerations in MicroRTS.}{8}{section*.10}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{8}{section.4}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{9}{section.5}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{8}{section.5}%
 \contentsline {section}{Erkl\"arung}{10}{section*.15}%

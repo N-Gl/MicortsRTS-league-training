@@ -303,15 +303,19 @@ To address the instabilities of pure SP, in FSP the agent is trained not exclusi
 Under standard assumptions, FSP can converge towards an approximate Nash equilibrium in two-player zero-sum games (with respect to the average strategies).
 Heinrich et al. also demonstrate this empirically in poker experiments \cite{heinrich2015fsp}.
 The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of historical agents (snapshots of the Main Agent at different training stages).
-% TODO: auf englisch übersetzen
-Wenn wir das so implementieren kommt ein Problem auf: Aktionen von Spieler 1 werden in einem Konflikt (z.B.: zwei Spieler wollen auf die selbe Zelle) immer bevorzugt.
-Damit hat Spieler 2 einen Nachteil, allerdings fällt dieser Nachteil nur minimal in die Ergebnisse rein.
-Das eigentliche Problem ist, dass der Agent diese Bevorzugung in FSP ausnutzen kann, wenn der Agent lernt, dass für die minimierund des Losses nur Spieler 1 verbessert werden muss.
-Nach genügend Training wird der Agent eine Strategie erlernen, die darauf basiert, dass Spieler 1 bevorzugt wird.
-Beispielsweise könnte der Agent eine Strategie erlernen, die im den Gegner vor der Basis blockiert, indem eine Unit in der selben Zeit auf dieselbe Zelle geschickt wird.
-In SP würde dann Spieler 2 blockiert werden und Spieler 1 nicht, was dann dazu führt, dass der Agent gegen sich selbst eine Winrate nahe 100\% erreichen kann.
-Das Training stagniert dann, da die Strategie nicht weiter verbessert wird.
-In LT ist das nicht ganz so problematisch, weil es auch Exploiter gibt an denen weiter trainiert werden kann, allerdings ist ein großer Teil des Trainings dann ineffektiv und gibt schlechte Signale.
+If we implement it in this way, a problem arises: player 1 has priority in conflict resolution (e.g. when both players want to move to the same cell).
+This gives player 2 a disadvantage, although it has only a minor effect on the results. 
+The actual problem is that the agent can exploit this prioritization in FSP if it learns that optimizing the training objective can be achieved primarily by improving player 1, while deliberately performing poorly as player 2.
+After sufficient training, the agent will learn a strategy that is based on player 1 being prioritized.
+For example, the agent could learn to block an opponent in front of the Base by issuing a simultaneous move to the same target cell.
+In FSP, player 2 would then be blocked, while player 1 would not, allowing the agent to achieve a win rate close to 100\% against itself.
+Training then stagnates, since the agent already has a hight winrate against itself without develping a robust strategy against other opponents.
+In LT, this is not quite as problematic because there are also exploiters that can be trained against, which remain adversarial to the Main Agent.
+However, a large portion of the training becomes ineffective and provides poor learning signals if the agent exploits the player 1 priority.
+The Problem is particularly relevant for LT, which combines SP and FSP, because in only historical Agents are available for training in FSP, making the feedback for player 2 very sparse, while in LT the Main Agent can directly train against the current Main Agent.
+This yieldes more immediate feedback on  the Main Agents performance as an opponent (player 2).
+As a result the agent no longer has to plan as far ahead in order to exploit this priority and minimize its own win rate as player 2.
+
 
 \begin{figure}[h]
     \centering
@@ -320,12 +324,12 @@ In LT ist das nicht ganz so problematisch, weil es auch Exploiter gibt an denen 
     \label{Figure 3}
 \end{figure}
 
-% TODO: auf englisch übersetzen
-In der reimplementation von MicroRTS-Py gibt es schon ein Modus, der die Konflikte randomisiert auflöst.
-Allerdings hilft dies in diesem Fall auch nicht, weil schon bevor der Konflikt entsteht das invalid action masking die Aktion von Spieler 2 entfernt, weil sie ungültig ist.
-Um dieses Problem zu lösen werden die lernenden Agenten in den parallelen Spielen abwechselnd als Spieler 1 und Spieler 2 eingesetzt.
-Das verhindert nicht die Bevorzugung von Spieler 1, allerdings kann man empirisch zeigen, dass die Bevorzugung von Spieler 1 keine großen Auswirkungen auf die Ergebnisse hat.
-Was verhindert wird, ist die Ausnutzung der Bevorzugung von dem lernenden Agenten, da er jetzt auch Spieler 2 seien kann und deshalb eine Strategie, die nur für Spieler 1 gut ist nicht mehr effektiv ist.
+In the re-implementation of MicroRTS-Py, there is a mode that resolves conflicts in a randomized manner.
+However, this does not help in this case, because even before the conflict arises, invalid action masking masks out the action of player 2 since it is invalid.
+To solve this problem, the learning agents in the parallel games are alternated between playing as player 1 and player 2.
+This does not prevent the prioritization of player 1. 
+However, it can be shown empirically that the prioritization of player 1 has no major impact on the results.
+This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
 \subsection{prioritized fictitious self-play (PFSP)}
@@ -357,7 +361,7 @@ What is not shown in the figure is that all agents have a non-zero probability o
 
 \subsection{league training (LT)}
 \label{sec:LT}
-LT also extends FSP by not only training on historical agents, but instead by training on an entire league of agents, including Historical agents, main exploiters (that are only trained against historical main agents) and league exploiters (that are only trained against all historical agents) \cite{vinyals2019alphastar}.
+LT also extends FSP by not only training on historical agents, but instead by training on an entire league of agents, including Historical agents, main exploiters (that are only trained against historical Main Agents) and league exploiters (that are only trained against all historical agents) \cite{vinyals2019alphastar}.
 
 LT utilizes FSP with PFSP, to find the best historical opponent to train against.
 
