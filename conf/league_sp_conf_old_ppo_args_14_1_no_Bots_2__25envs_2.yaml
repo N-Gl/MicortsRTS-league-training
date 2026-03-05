@@ -43,8 +43,8 @@ ExperimentConfig:
   # vf_coef: 0.15
   # exploiter_vf_coef: 0.15
 
-  vf_coef: 0.15
-  exploiter_vf_coef: 0.15
+  vf_coef: 0.1
+  exploiter_vf_coef: 0.1
 
   kle_rollback: false
   exploiter_kle_rollback: false
