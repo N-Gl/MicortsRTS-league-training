@@ -433,8 +433,8 @@ class LeagueTrainer:
 
                 with torch.no_grad():
                     # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-                    unique_agents = agent.get_unique_agents(self.active_league_agents)
-                    sp_only_unique_agents = agent.get_unique_agents(self.active_league_agents[:args.num_selfplay_envs])
+                    unique_agents = agent.get_unique_agents(self.active_league_agents, output_league_agents=True)
+                    sp_only_unique_agents = agent.get_unique_agents(self.active_league_agents[:args.num_selfplay_envs], output_league_agents=True)
 
                     z_features[step] = agent.selfplay_get_z_encoded_features(
                         args=args,
@@ -765,7 +765,7 @@ class LeagueTrainer:
         # =========================
             
             # unique_agents = agent.get_unique_agents(self.active_league_agents, selfplay_only=True)
-            unique_agents = agent.get_unique_agents(self.active_league_agents)
+            unique_agents = agent.get_unique_agents(self.active_league_agents, output_league_agents=True)
 
             with torch.no_grad():
                 next_scalar_features = self.get_scalar_features(next_obs, res, args.num_envs).to(device)

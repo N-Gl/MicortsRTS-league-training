@@ -136,7 +136,7 @@ ExperimentConfig:
 
   unit_exploiters: false
   Unit_reward_per_exploiter: false    # if true, each exploiter gets its own unit type bonus reward till it resets
-
+  zero_unit_bonus_for_main: true
 
   unit_bonus_max_worker: 1.0
   unit_bonus_max_light: 1.0
