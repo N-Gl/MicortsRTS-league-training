@@ -135,6 +135,7 @@ ExperimentConfig:
   league_exploiter_pfsp_weighting: variance  # in Article: "variance"
 
   unit_exploiters: false
+  unit_bonus: false
   Unit_reward_per_exploiter: false    # if true, each exploiter gets its own unit type bonus reward till it resets
   zero_unit_bonus_for_main: true
 
