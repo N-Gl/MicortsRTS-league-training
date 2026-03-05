@@ -473,7 +473,7 @@ def main(cfg: ExperimentConfig):
         default_opponent_paths = [
             # ["PPO_rerun", agent_model.Agent, "models/09_12_25__04_12_25__agent_09_12_25__04_12_25__PPO_update_380__kle_stop_true/agent_update_470.pt", None, False],
             # # ["22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08", agent_model.Agent, "league_models/22_12_25__12_12_25__04_12_25__BCagent__league__ent_coef_0_003_exploiter_ent_coef_0_08/Main_agent_backups/agent_update_890.pt", None, False],
-            ["BCagent", agent_model.Agent, "models/BCagent.pt", None, False],
+            # ["BCagent", agent_model.Agent, "models/BCagent.pt", None, False],
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_300.pt", None, False],
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_350.pt", None, False],
             # ["12_12_25__04_12_25__BCagent_update_850", agent_model.Agent, "league_models/12_12_25__04_12_25__BCagent/Main_agent_backups/agent_update_400.pt", None, False],
@@ -484,7 +484,7 @@ def main(cfg: ExperimentConfig):
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1986", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1986.pt", None, False],
-            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
+            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
             # ["22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3", agent_model.Agent, "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3/Main_agent_backups/agent_update_830.pt", None, False],
             # ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None, False],
             # ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None, False],
@@ -502,13 +502,13 @@ def main(cfg: ExperimentConfig):
             ("lightRushAI", microrts_ai.lightRushAI),
             ("randomAI", microrts_ai.randomAI),
             ("randomBiasedAI", microrts_ai.randomBiasedAI),
-            # ("rojo", microrts_ai.rojo),
-            # ("mixedBot", microrts_ai.mixedBot),
-            # ("izanagi", microrts_ai.izanagi), 
-            # ("tiamat", microrts_ai.tiamat),
-            # ("droplet", microrts_ai.droplet),
-            # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("rojo", microrts_ai.rojo),
+            ("mixedBot", microrts_ai.mixedBot),
+            ("izanagi", microrts_ai.izanagi), 
+            ("tiamat", microrts_ai.tiamat),
+            ("droplet", microrts_ai.droplet),
+            ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
+            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:

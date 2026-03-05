@@ -10,14 +10,14 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "models/BCagent.pt",
+                          "league_models/05_03_2026__PPO_Unit_Bonus/Main_agent_backups/agent_update_540.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "BCagent",
+          "05_03_2026__PPO_Unit_Bonus",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "BCagent"
+  exp_name: "05_03_2026__PPO_Unit_Bonus"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
