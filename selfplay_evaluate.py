@@ -15,7 +15,6 @@ import selfplay_only
 from log_aggregate_result_table import Logger
 
 
-
 # TODO: mache ein neues Parameter in args für die anzahl an environments, args.num_selfplay_envs, args.num_bot_envs sollte unten in der Methode berechnet werden und dann auch benutzt
 
 def evaluate_agent(
@@ -49,7 +48,7 @@ def evaluate_agent(
     if args.render_all:
         from ppo import Rendering
 
-    for idx, (opponent_name, opponent_ai, opponent_path,  league_agent) in enumerate(opponents):
+    for idx, (opponent_name, opponent_ai, opponent_path,  league_agent, opp_unit_exploiter) in enumerate(opponents):
         eval_env = _make_selfplay_eval_env(args, reward_weight, vecstats_monitor_cls)
         active_league_agents = []
 
@@ -62,18 +61,27 @@ def evaluate_agent(
                         player_id=args.Bot_as_player_1
                     ).to(device)
         else:
-            opponent_ai = opponent_ai(eval_env.action_plane_space.nvec, device).to(device)
-            opponent_ai.load_state_dict(torch.load(opponent_path, map_location=device, weights_only=True))
+            opponent_ai = agent_model.build_agent(
+                eval_env.action_plane_space.nvec,
+                device,
+                unit_exploiters=opp_unit_exploiter,
+            )
+            opponent_ai.set_weights(opponent_path)
             opponent_ai.eval()
 
         if league_agent is None:
             league_agent = MainPlayer(opponent_ai, Payoff(), args)
 
-        agent = agent_model.Agent(eval_env.action_plane_space.nvec, device).to(device)
-        agent.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=True))
+        agent = agent_model.build_agent(
+            eval_env.action_plane_space.nvec,
+            device,
+            unit_exploiters=getattr(args, "unit_exploiters", False),
+        )
+        agent.set_weights(checkpoint_path)
         agent.eval()
 
         main_league_agent = MainPlayer(agent, Payoff(), args)
+        main_league_agent.unit_bonus_distr = torch.zeros(4, device=agent.device)
 
         if args.Bot_as_player_1:
             for _ in range(args.num_parallel_selfplay_eval_games//2):
@@ -108,10 +116,17 @@ def evaluate_agent(
                         z_features[env_index] = agent.z_encoder(obs[env_index].view(-1)) # TODO: selfplay_get_z_encoded_features
 
                     scalar_features = get_scalar_features(obs, res, args.num_parallel_selfplay_eval_games).to(device)
+                    unit_bonus_distr = None
+                    if args.unit_exploiters:
+                        unit_bonus_distr = torch.zeros(
+                            (args.num_parallel_selfplay_eval_games, 4),
+                            dtype=torch.float,
+                            device=device,
+                        )
                     actions, logprob, entropy, invalid_masks = agent.selfplay_get_action(
                         obs, scalar_features, z_features, 
                         num_selfplay_envs=args.num_parallel_selfplay_eval_games, num_envs=args.num_parallel_selfplay_eval_games, 
-                        envs=eval_env, active_league_agents=active_league_agents, dbg_deterministic_actions=args.dbg_deterministic_actions
+                        envs=eval_env, active_league_agents=active_league_agents, dbg_deterministic_actions=args.dbg_deterministic_actions, unit_bonus_distr=unit_bonus_distr
                         )
 
                     real_action = torch.cat([position_indices, actions], dim=2).cpu().numpy()
@@ -262,4 +277,3 @@ def _build_java_actions(valid_actions: np.ndarray, valid_counts: np.ndarray):
             valid_index += 1
         java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
     return JArray(JArray(JArray(JInt)))(java_valid_actions)
-

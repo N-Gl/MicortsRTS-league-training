@@ -182,8 +182,44 @@ class Agent(nn.Module):
             weights = torch.load(weights, map_location=self.device, weights_only=True)
         if not isinstance(weights, dict):
             raise NotImplementedError("Only loading from dict or filepath is implemented.")
+        model_state = self.state_dict()
+        patched_weights = dict(weights)
 
-        self.load_state_dict(weights, strict=True)
+        # Backward/forward compatibility for checkpoints trained with/without unit_exploiters.
+        for key in ("actor.weight", "critic.weight"):
+            if key not in patched_weights or key not in model_state:
+                continue
+            src = patched_weights[key]
+            dst = model_state[key]
+            if src.shape == dst.shape:
+                continue
+            if src.ndim != 2 or dst.ndim != 2 or src.shape[0] != dst.shape[0]:
+                continue
+            src_width = src.shape[1]
+            dst_width = dst.shape[1]
+
+            # Old checkpoint (without unit_bonus features) -> new model (with unit_bonus features):
+            # append 4 columns initialized to 0 so the new features do not affect outputs initially.
+            if self.unit_exploiters and src_width + 4 == dst_width:
+                adapted = torch.zeros_like(dst)
+                adapted[:, :src_width] = src.to(device=dst.device, dtype=dst.dtype)
+                patched_weights[key] = adapted
+                print(
+                    f"Adjusted checkpoint tensor '{key}' from {tuple(src.shape)} to {tuple(dst.shape)} "
+                    "by appending 4 zero-initialized feature columns."
+                )
+                continue
+
+            # New checkpoint (with unit_bonus features) -> old model (without unit_bonus features).
+            if src_width == dst_width + 4:
+                adapted = src[:, :dst_width].to(device=dst.device, dtype=dst.dtype)
+                patched_weights[key] = adapted
+                print(
+                    f"Adjusted checkpoint tensor '{key}' from {tuple(src.shape)} to {tuple(dst.shape)} "
+                    "by dropping the last 4 feature columns."
+                )
+
+        self.load_state_dict(patched_weights, strict=True)
 
     def get_steps(self) -> int:
         """How many agent steps the agent has been trained for."""
@@ -317,6 +353,7 @@ class Agent(nn.Module):
         flat_next_obs = next_obs.view(args.num_envs, -1)
         next_z_features = torch.empty((args.num_envs, z_features.shape[2]), device=device)
         for cur_agent, indices in unique_agents.items():
+            cur_agent = getattr(cur_agent, "agent", cur_agent)
             if not indices:
                 continue
             index_tensor = torch.as_tensor(indices, device=device)
@@ -351,11 +388,18 @@ class Agent(nn.Module):
             self.sp_logits = torch.zeros((num_selfplay_envs, self.mapsize * self.action_dim), device=self.device)
 
         if unique_agents is None:
-            unique_agents = self.get_unique_agents(active_league_agents)
+            unique_agents = self.get_unique_agents(active_league_agents, output_league_agents = True)
 
         bot_replacements = []
         # TODO (optimize): indices als Tensor statt Python-Liste
         for agent, indices in unique_agents.items():
+
+            if agent.unit_bonus_distr is not None and unit_bonus_distr is not None:
+                cur_unit_bonus_distr = unit_bonus_distr[indices]
+            else:
+                cur_unit_bonus_distr = None
+            
+            agent = getattr(agent, "agent", agent)
 
             if not indices:
                 continue
@@ -368,9 +412,10 @@ class Agent(nn.Module):
             
             if agent is not self:
                 with torch.no_grad():
-                    subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices], unit_bonus_distr[indices] if unit_bonus_distr is not None else None))
+                    subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices], cur_unit_bonus_distr))
             else:
-                subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices], unit_bonus_distr[indices] if unit_bonus_distr is not None else None))
+                subset_logits = agent.actor(agent.forward(x[indices], sc[indices], z[indices], cur_unit_bonus_distr))
+
 
             if agent is not self:
                 # TODO (league training): sollte man wirklich alle non_main_agenten detatchen? (Wahrscheinlich schon) (oder sogar torch.no_grad()) (auch in selfplay_get_value?)
@@ -434,9 +479,10 @@ class Agent(nn.Module):
             # debugging: torch.fill_(self._values, -1000000.0)
 
         if unique_agents is None:
-            unique_agents = self.get_unique_agents(active_league_agents)
+            unique_agents = self.get_unique_agents(active_league_agents, output_league_agents = True)
 
         for agent, indices in unique_agents.items():
+            agent = getattr(agent, "agent", agent)
             if not indices:
                 continue
             if learning_indices is not None:

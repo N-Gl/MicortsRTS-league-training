@@ -4,15 +4,15 @@
 \contentsline {subsection}{\numberline {3.1}\hskip -1em.~MicroRTS-environment}{3}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}\hskip -1em.~Training Pipeline}{4}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}\hskip -1em.~self-play (SP)}{5}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}\hskip -1em.~fictitious self-play (FSP)}{5}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}\hskip -1em.~prioritized fictitious self-play (PFSP)}{6}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}\hskip -1em.~league training (LT)}{7}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}\hskip -1em.~League Training (LT)}{7}{subsection.3.7}%
-\contentsline {paragraph}{League composition and roles.}{7}{section*.6}%
-\contentsline {paragraph}{Matchmaking with PFSP.}{7}{section*.7}%
-\contentsline {paragraph}{Training loop and snapshot management.}{7}{section*.8}%
-\contentsline {paragraph}{Why exploiters are needed.}{8}{section*.9}%
-\contentsline {paragraph}{Practical considerations in MicroRTS.}{8}{section*.10}%
-\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{8}{section.4}%
+\contentsline {subsection}{\numberline {3.4}\hskip -1em.~fictitious self-play (FSP)}{7}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}\hskip -1em.~prioritized fictitious self-play (PFSP)}{7}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}\hskip -1em.~league training (LT)}{8}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}\hskip -1em.~League Training (LT)}{8}{subsection.3.7}%
+\contentsline {paragraph}{League composition and roles.}{8}{section*.5}%
+\contentsline {paragraph}{Matchmaking with PFSP.}{8}{section*.6}%
+\contentsline {paragraph}{Training loop and snapshot management.}{8}{section*.7}%
+\contentsline {paragraph}{Why exploiters are needed.}{9}{section*.8}%
+\contentsline {paragraph}{Practical considerations in MicroRTS.}{9}{section*.9}%
+\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{9}{section.4}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{9}{section.5}%
-\contentsline {section}{Erkl\"arung}{10}{section*.15}%
+\contentsline {section}{Erkl\"arung}{11}{section*.14}%

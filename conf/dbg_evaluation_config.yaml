@@ -3,16 +3,21 @@ defaults:
 
 ExperimentConfig:
   evaluate: true
+
+  unit_exploiters: true
+  Unit_reward_per_exploiter: true
+  zero_unit_bonus_for_main: false
+
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_880.pt",
+                          "league_models/25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots/Main_agent_backups/agent_update_180.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_880",
+          "25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_880"
+  exp_name: "25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
@@ -26,6 +31,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 1
-  num_parallel_eval_envs: 1
+  num_eval_episodes: 100
+  num_parallel_eval_envs: 100
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs

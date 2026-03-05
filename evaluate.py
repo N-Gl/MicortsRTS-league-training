@@ -42,9 +42,15 @@ def bot_evaluate_agent(
             .unsqueeze(2)
         )
 
-        agent = agent_model.Agent(eval_env.action_plane_space.nvec, device).to(device)
-        agent.load_state_dict(torch.load(checkpoint_path, map_location=device, weights_only=True))
+        agent = agent_model.build_agent(
+            eval_env.action_plane_space.nvec,
+            device,
+            unit_exploiters=getattr(args, "unit_exploiters", False),
+        )
+        agent.set_weights(checkpoint_path)
         agent.eval()
+
+        unit_bonus_distr = torch.zeros(4, device=agent.device)
 
         try:
             obs_np, _, res = eval_env.reset()
@@ -75,7 +81,7 @@ def bot_evaluate_agent(
                         z_features[env_index] = agent.z_encoder(obs[env_index].view(-1))
 
                     scalar_features = get_scalar_features(obs.cpu(), res, args.num_envs).to(device)
-                    actions, _, _, invalid_masks = agent.get_action(obs, scalar_features, z_features, envs=eval_env)
+                    actions, _, _, invalid_masks = agent.get_action(obs, scalar_features, z_features, envs=eval_env, unit_bonus_distr=unit_bonus_distr)
 
                     real_action = torch.cat([position_indices, actions], dim=2).cpu().numpy()
                     valid_mask = invalid_masks[:, :, 0].bool().cpu().numpy()

@@ -286,7 +286,7 @@ class MainPlayer(Player):
         self.agent = agent
         self._payoff = payoff
         self.args = args
-        self.unit_bonus_distr = torch.zeros(4, device=agent.device)
+        self.unit_bonus_distr = torch.zeros(4, device=agent.device) if args.zero_unit_bonus_for_main and args.unit_exploiters else None
         self.name = name
 
     def _pfsp_branch(self):
