@@ -79,37 +79,50 @@
 \section{Introduction}
 \label{sec:Introduction}
 
-The initial agent was trained using a mixture of Behavior Cloning (BC) and PPO.
+Reinforcement Learning (RL) has established itself in recent years as a powerful approach for developing agents in complex environments. 
+Game environments such as RTS games pose a particular challenge in this regard, with large action spaces, long-term planning, and simultaneous decisions. However, they also provide clearly defined state spaces, reward structures, and repeatable experiments, which makes them an ideal and challenging test environment for researching RL methods.
 
-Reinforcement Learning (RL) has established itself in recent years as a powerful approach for developing agents in complex environments. Game environments such as RTS games pose a particular challenge in this regard, with large action spaces, long-term planning, and simultaneous decisions. However, they also provide clearly defined state spaces, reward structures, and repeatable experiments, which makes them an ideal and challenging test environment for researching RL methods.
+\paragraph{MicroRTS}
+MicroRTS is a simplified version of RTS games that was developed specifically for research \cite{huang2021gym}. 
+It is discrete and reduces the visual and mechanical complexity of large commercial RTS games, such as StarCraft II. 
+At the same time, it retains the core difficulties, for example resource management, unit production, combat mechanics, and tactical positioning. 
+MicroRTS is therefore suitable for the systematic investigation of learning methods. MicroRTS also contains numerous training challenges, such as large combinatorial action spaces, delayed rewards, multi-agent interactions, and it also requires robust strategies against different opponents. 
+For example, the agent must decide early on whether it wants to play aggressively or defensively against the current opponent, which affects the overall game strategy and requires long-term planning.
 
-MicroRTS is a simplified version of RTS games that was developed specifically for research \cite{huang2021gym}. It is discrete and reduces the visual and mechanical complexity of large commercial RTS games, such as StarCraft II. At the same time, it retains the core difficulties, for example resource management, unit production, combat mechanics, and tactical positioning. MicroRTS is therefore suitable for the systematic investigation of learning methods. MicroRTS also contains numerous training challenges, such as large combinatorial action spaces, delayed rewards, multi-agent interactions, and it also requires robust strategies against different opponents. For example, the agent must decide early on whether it wants to play aggressively or defensively against the current opponent, which affects the overall game strategy and requires long-term planning.
-
-A central problem in RL is generalization across different opponents and strategies: agents often learn strategies that are strongly tailored to the training opponent or a specific game situation. This leads to overfitting and limited robustness. SP, Fictitious Self-Play (FSP), and LT are approaches that address this problem. In SP, the agent trains by playing against itself, which leads to a continuous learning process that does not require additional diverse or strong opponents. However, training is often unstable because of cyclical learning.
+\paragraph{Self-Play-Based Approaches.}
+A central problem in RL is generalization across different opponents and strategies: agents often learn strategies that are strongly tailored to the training opponent or a specific game situation. 
+This leads to overfitting and limited robustness. 
+SP, Fictitious Self-Play (FSP), and LT are approaches that address this problem. 
+In SP, the agent trains by playing against itself, which leads to a continuous learning process that does not require additional diverse or strong opponents. 
+However, training is often unstable because of cyclical learning.
 % Ein Beispiel: Spielt der Agentzustand B gut gegen A, C gut gegen B und A gut gegen C, könnte der Agent in einem Zyklus gefangen sein, in dem er immer nur den Agentenzustand wieder erlernt, der gegen sich selbst gut ist, aber nicht gegen andere Gegner.
 
-
+\paragraph{league training (LT).}
 To reduce the instabilities of pure SP, the agent in FSP is not trained against the current agent but against previous versions of itself, which prevents cyclical learning \cite{heinrich2015fsp}. % and converges to the Nash equilibrium in two-player zero-sum games 
 LT extends FSP by training the agent against historical opponents from a league that consists of different agent types, for example policy snapshots from earlier training stages as well as specialized agents \cite{vinyals2019alphastar}.
 The goal is to stabilize the learning environment, in which agents compete against a broad spectrum of strategies and thereby become more robust.
 
-Despite the theoretical advantages, the practical implementation of LT in complex environments such as MicroRTS is associated with significant challenges. These include:
-
+\paragraph{Thesis Outline:}
+Despite the theoretical advantages, the practical implementation of LT in complex environments such as MicroRTS is associated with significant challenges, that need to be addressed. 
+These include:
 \begin{itemize}
-\item the efficient management and selection of opponents for training the Main Agent and for the specialized agents,
-\item stabilizing the training process under non-constant opponent distributions,
-\item dealing with large action spaces and sparse or delayed rewards, and
+    %TODO: füge weitere hinzu
+    \item the efficient management and selection of opponents for training the Main Agent and for the specialized agents,
+    \item stabilizing the training process under non-constant opponent distributions,
+    \item dealing with large action spaces and sparse or delayed rewards, and
 %\item assessing the actual generalization capability of the trained agents.
 \end{itemize}
+In addition, we will compare and evaluate the Results emperically. 
+In particular, we will analyze the learning curve, strategic diversity, and robustness for the different training approaches.
 
-In addition, we will compare and evaluate, the learning curve, strategic diversity, and robustness for the different training approaches.
-
-
-
+\paragraph{Training the Base Agent:}
 The base agent used in this project is trained in a three-stage procedure that combines BC and BC fine-tuning (BC-FT), followed by fine-tuning with PPO:
-The two BC phases enable the agent to quickly learn a competent base strategy by imitating expert behavior \cite{torabi2018behavioral}. This training approach reduces the initial, often inefficient exploration in DRL \cite{torabi2018behavioral}. Learning from scratch with DRL methods such as PPO can be very time-consuming \cite{martin2021beclone}. PPO is a well-known on-policy policy optimization method that clips the policy update size to stabilize policy updates \cite{schulman2017ppo}.
-
-PPO further improves the performance of the BC agent through exploration and adaptation to the environment, allowing the agent to adapt and generalize beyond the expert strategies \cite{martin2021beclone}. This two-stage approach, in which a policy pre-trained with BC is refined by a DRL algorithm, has proven effective in reducing training time and improving overall performance compared to a pure DRL approach \cite{martin2021beclone}.
+The two BC phases enable the agent to quickly learn a competent base strategy by imitating expert behavior \cite{torabi2018behavioral}. 
+This training approach reduces the initial, often inefficient exploration in DRL \cite{torabi2018behavioral}. 
+Learning from scratch with DRL methods such as PPO can be very time-consuming \cite{martin2021beclone}. 
+PPO is a well-known on-policy policy optimization method that clips the policy update size to stabilize policy updates \cite{schulman2017ppo}.
+PPO further improves the performance of the BC agent through exploration and adaptation to the environment, allowing the agent to adapt and generalize beyond the expert strategies \cite{martin2021beclone}. 
+This two-stage approach, in which a policy pre-trained with BC is refined by a DRL algorithm, has proven effective in reducing training time and improving overall performance compared to a pure DRL approach \cite{martin2021beclone}.
 
 
 
@@ -344,6 +357,7 @@ To solve this problem, the learning agents in the parallel games are alternated 
 This does not prevent the prioritization of player 1. 
 However, it can be shown empirically that the prioritization of player 1 has no major impact on the results.
 % TODO: füge ein Ergebnis ein, in dem die Ergebnisse von 2 gegeneinander spielenden Agenten 1 mal als Spieler 1, 1 mal als Spieler 2 dargestellt werden.
+% Evaluation vs 22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1986 over 200 games | win: 76 (38.00%), draw: 56 (28.00%), loss: 68 (34.00%), avg reward: 1.403
 This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
@@ -431,7 +445,7 @@ Among other things, references to the observation, action, and invalid action ma
 
 \paragraph{Select opponent.}
 PFSP samples the next opponent from the given agents, with probabilities based on the current learning Agent’s win rates against the potential opponents.
-% TODO: füge matchmaking Graph hier ein
+% TODO: füge matchmaking Graph hier ein (MA gegen MA muss der Pfeil auch nach unten gehen oder nicht obs Aufbau machen)
 
 
 \paragraph{Why exploiters are needed.}

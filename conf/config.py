@@ -42,6 +42,11 @@ class ExperimentConfig:
     gae_lambda: float
     ent_coef: float
     exploiter_ent_coef: float
+    exploiter_ent_coef_min: float
+    exploiter_ent_coef_max: float
+    exploiter_anneal_ent: bool
+    exploiter_unit_exploration_bonus_enabled: bool
+    exploiter_unit_exploration_bonus: float
     main_exploiter_no_draw_winrate_threshold: float
     main_exploiter_vs_main_winrate_threshold: float
     checkpoint_end_buffer_steps: int

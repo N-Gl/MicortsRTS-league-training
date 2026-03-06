@@ -129,3 +129,6 @@ ExperimentConfig:
   unit_bonus_max_light: 0.0
   unit_bonus_max_heavy: 0.0
   unit_bonus_max_ranged: 5.0
+
+  exploiter_unit_exploration_bonus_enabled: false
+  exploiter_unit_exploration_bonus: 0.07 # bis etwa 0.15

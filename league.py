@@ -452,7 +452,6 @@ class MainExploiter(Player):
         self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         # self._initial_weights = initial_agent.state_dict() und copy later -> to reset the exploiter back to the main agent weights after each checkpoint.
         self._payoff = payoff
-        self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
         self.last_reset_update = None
@@ -521,6 +520,7 @@ class MainExploiter(Player):
 
     def checkpoint(self):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
+        self.agent.checkpoint_step = self.agent.get_steps()
         checkpoint = self._create_checkpoint()
 
         self.reset()
@@ -533,7 +533,7 @@ class MainExploiter(Player):
         remaining_steps = self.args.total_timesteps - global_steps
         if remaining_steps < self.args.checkpoint_end_buffer_steps:
             return False
-        steps_passed = self.agent.get_steps() - self._checkpoint_step
+        steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
         if steps_passed < self.args.selfplay_ready_save_interval:
             return False
 
@@ -563,7 +563,7 @@ class MainExploiter(Player):
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
     def reset(self):
-        self._checkpoint_step = self.agent.get_steps()
+        self.agent.checkpoint_step = self.agent.get_steps()
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
         self.last_reset_update = None
@@ -590,7 +590,6 @@ class LeagueExploiter(Player):
         ).to(initial_agent.device)
         self._initial_weights = {k: v.detach().clone() for k, v in initial_agent.state_dict().items()}
         self._payoff = payoff
-        self._checkpoint_step = 0
         self.num_resets_checkpoints = 0
         self.optimizer = optimizer
         self.last_reset_update = None
@@ -628,6 +627,7 @@ class LeagueExploiter(Player):
     
     def checkpoint(self):
         '''Resets agent zu den initialen gewichten mit 25% chance und erstellt einen neuen checkpoint.'''
+        self.agent.checkpoint_step = self.agent.get_steps()
         checkpoint = self._create_checkpoint()
 
         if np.random.random() < 0.25:
@@ -640,7 +640,7 @@ class LeagueExploiter(Player):
         remaining_steps = self.args.total_timesteps - global_steps
         if remaining_steps < self.args.checkpoint_end_buffer_steps:
             return False
-        steps_passed = self.agent.get_steps() - self._checkpoint_step
+        steps_passed = self.agent.get_steps() - self.agent.checkpoint_step
         if steps_passed < self.args.selfplay_ready_save_interval:
             return False
         
@@ -652,7 +652,7 @@ class LeagueExploiter(Player):
         return win_rates.min() > self.args.league_exploiter_winrate_threshold or steps_passed > self.args.league_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs) * self.args.num_envs_per_league_exploiters
     
     def reset(self):
-        self._checkpoint_step = self.agent.get_steps()
+        self.agent.checkpoint_step = self.agent.get_steps()
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
         self.last_reset_update = None
@@ -1129,6 +1129,7 @@ def log_exploiter_ppo_update(
     delta_rewards_score=None,
 ):
     player = exploiter_agent_batch["player"]
+    ent_coef = exploiter_agent_batch.get("ent_coef", args.exploiter_ent_coef)
     should_log_every_20_updates = (update % 20 == 0)
 
     writer.add_scalar(f"{player.name}_charts/learning_rate", exploiter_agent_batch["optimizer"].param_groups[0]["lr"], args.global_step)
@@ -1136,7 +1137,8 @@ def log_exploiter_ppo_update(
     writer.add_scalar(f"{player.name}_losses/policy_loss", pg_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/kl_loss", kl_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/total_loss", loss.item(), args.global_step)
-    writer.add_scalar(f"{player.name}_losses/entropy_loss", args.exploiter_ent_coef * entropy_loss.item(), args.global_step)
+    writer.add_scalar(f"{player.name}_charts/ent_coef", ent_coef, args.global_step)
+    writer.add_scalar(f"{player.name}_losses/entropy_loss", ent_coef * entropy_loss.item(), args.global_step)
     writer.add_scalar(f"{player.name}_losses/approx_kl", approx_kl.item(), args.global_step)
     writer.add_scalar(f"{player.name}_charts/grad_norm_before_clipping", grad_norm, args.global_step)
     if getattr(args, "log_unweighted_losses", True):
@@ -1157,7 +1159,7 @@ def log_exploiter_ppo_update(
         drs = delta_rewards_score.detach().float() if delta_rewards_score is not None else torch.tensor(0.0)
         writer.add_scalar(f"{player.name}_delta_scores/mean", drs.mean().item(), args.global_step)
         writer.add_scalar(f"{player.name}_delta_scores/abs_mean", drs.abs().mean().item(), args.global_step)
-    steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
+    steps_since_checkpoint = player.agent.get_steps() - player.agent.checkpoint_step
     writer.add_scalar(f"{player.name}_charts/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
 
     if (args.exploiter_kle_stop or args.exploiter_kle_rollback):

@@ -277,7 +277,7 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 approx_kl = torch.zeros((), device=device)
             else:
                 # get_action nur für logprobs und entropy, um ratio zu berechnen (um zu vergleichen, wie wahrscheinlich die Action mit dem neuen θ im Vergleich zu dem alten θ_old ist)
-                newlogproba, entropy = agent.get_action(
+                returns = agent.get_action(
                         mb_obs,
                         mb_sc,
                         mb_z,
@@ -285,7 +285,13 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                         mb_masks,
                         envs,
                         unit_bonus_distr=mb_unit_bonus_distr,
-                    ) [1:3]
+                        return_entropy_per_param=args.exploiter_unit_exploration_bonus_enabled,
+                    )
+                
+                newlogproba, entropy = returns[1], returns[2]
+                if args.exploiter_unit_exploration_bonus_enabled:
+                    entropy_per_param = returns[4]
+
                 ratio = (newlogproba - mb_logprobs_old).exp()
 
                 # KL estimate for early stopping / rollback
@@ -304,7 +310,21 @@ def update(args, envs, agent_batch, device, supervised_agent, update, new_batch_
                 pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - clip_coef, 1 + clip_coef)
                 pg_loss = torch.max(pg_loss1, pg_loss2).mean()
                 entropy_loss = entropy.mean()
-
+                if args.exploiter_unit_exploration_bonus_enabled:
+                    exploiter_unit_exploration_bonus = getattr(args, "exploiter_unit_exploration_bonus", 0.0)
+                    if (
+                        exploiter_unit_exploration_bonus > 0.0
+                        and "player" in agent_batch
+                    ):
+                        # base=8, barracks=9
+                        building_mask = (((mb_obs[..., 8] == 1) | (mb_obs[..., 9] == 1)) & (mb_obs[..., 4] == 1)).bool()
+                        produce_type_entropy = entropy_per_param[..., 5]
+                        selected_count = building_mask.sum()
+                        if selected_count.item() > 0:
+                            building_mask = building_mask.reshape(building_mask.shape[0], -1)
+                            building_entropy = (produce_type_entropy * building_mask).sum() / selected_count
+                            entropy_loss = entropy_loss + exploiter_unit_exploration_bonus * building_entropy
+    
                 # TODO (debugging): remove later
                 if args.dbg_update_gaes and pg_loss.item() > 0:
                     breakpoint()
