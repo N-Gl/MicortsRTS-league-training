@@ -289,6 +289,7 @@ class Agent(nn.Module):
         process_envs: Optional[Any] = None,
         dbg_deterministic_actions: bool = False,
         unit_bonus_distr: Optional[torch.Tensor] = None,
+        return_entropy_per_param: bool = False,
     ):
         if process_envs is None:
             process_envs = range(envs.num_envs)
@@ -343,7 +344,11 @@ class Agent(nn.Module):
         action = action.T.reshape(-1, self.mapsize, num_predicted_parameters)
         invalid_action_masks = invalid_action_masks.view(-1, self.mapsize, self.action_dim + 1)
 
-        return action, logprob.sum(1).sum(1), entropy.sum(1).sum(1), invalid_action_masks
+        logprob_sum = logprob.sum(1).sum(1)
+        entropy_sum = entropy.sum(1).sum(1)
+        if return_entropy_per_param:
+            return action, logprob_sum, entropy_sum, invalid_action_masks, entropy
+        return action, logprob_sum, entropy_sum, invalid_action_masks
     
     
     def selfplay_get_z_encoded_features(self, args, device, z_features, next_obs, step, unique_agents, sp_next_obs=None):

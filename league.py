@@ -1159,7 +1159,7 @@ def log_exploiter_ppo_update(
         drs = delta_rewards_score.detach().float() if delta_rewards_score is not None else torch.tensor(0.0)
         writer.add_scalar(f"{player.name}_delta_scores/mean", drs.mean().item(), args.global_step)
         writer.add_scalar(f"{player.name}_delta_scores/abs_mean", drs.abs().mean().item(), args.global_step)
-    steps_since_checkpoint = player.agent.get_steps() - player._checkpoint_step
+    steps_since_checkpoint = player.agent.get_steps() - player.agent.checkpoint_step
     writer.add_scalar(f"{player.name}_charts/steps_since_checkpoint", steps_since_checkpoint, args.global_step)
 
     if (args.exploiter_kle_stop or args.exploiter_kle_rollback):
