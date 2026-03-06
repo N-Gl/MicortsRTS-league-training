@@ -259,6 +259,40 @@ class LeagueTrainer:
     def _sample_unit_bonus_distr(self, shape, device: torch.device) -> torch.Tensor:
         return torch.rand(shape, device=device) * self._unit_bonus_max(device)
 
+    def _get_exploiter_ent_bounds(self) -> tuple[float, float]:
+        if self.args.exploiter_anneal_ent:
+            ent_min = self.args.exploiter_ent_coef_min
+            ent_max = self.args.exploiter_ent_coef_max
+
+            if ent_min > ent_max:
+                ent_min, ent_max = ent_max, ent_min
+            return ent_min, ent_max
+        else:
+            return self.args.exploiter_ent_coef, self.args.exploiter_ent_coef
+
+    def _set_exploiter_ent_anneal_start(self, exploiter, start_update: int, start_frac: float) -> None:
+        exploiter.ent_anneal_start_update = start_update
+        exploiter.ent_anneal_start_frac = float(np.clip(start_frac, 0.0, 1.0))
+
+    def _get_exploiter_ent_coef(self, exploiter, update: int, num_updates: int) -> float:
+        if not self.args.exploiter_anneal_ent:
+            return float(self.args.exploiter_ent_coef)
+
+        ent_min, ent_max = self._get_exploiter_ent_bounds()
+        if not hasattr(exploiter, "ent_anneal_start_update"):
+            self._set_exploiter_ent_anneal_start(exploiter, update, 1.0)
+        if not hasattr(exploiter, "last_seen_checkpoint_step"):
+            exploiter.last_seen_checkpoint_step = getattr(exploiter.agent, "checkpoint_step", 0)
+
+        start_update = exploiter.ent_anneal_start_update
+        start_frac = exploiter.ent_anneal_start_frac
+        if num_updates <= 0:
+            frac = 0.0
+        else:
+            progress = (update - start_update) / num_updates
+            frac = max(start_frac * (1.0 - progress), 0.0)
+        return ent_min + (ent_max - ent_min) * frac
+
 
     def train(self):
         args = self.args
@@ -953,6 +987,10 @@ class LeagueTrainer:
                 # update every exploiter individually
                 for exploiter, exploiter_idx in self.indices_per_exploiter.items():
                     if exploiter.recent_reset:
+                        if args.exploiter_anneal_ent:
+                            # exploiters skip one PPO update right after reset --> start the anneal at the next update
+                            self._set_exploiter_ent_anneal_start(exploiter, update + 1, 1.0)
+                            exploiter.last_seen_checkpoint_step = exploiter.agent.checkpoint_step
                         exploiter.recent_reset = False
                         skip_update_count += 1
                         continue
@@ -960,6 +998,17 @@ class LeagueTrainer:
                     if args.dbg_seed:
                         self._seed_for_update(update, args.seed)
                     b_exploiter_idx = self.b_indices_per_exploiter[exploiter]
+
+                    if args.exploiter_anneal_ent:
+                        current_checkpoint_step = exploiter.agent.checkpoint_step
+                        last_seen_checkpoint_step = getattr(exploiter, "last_seen_checkpoint_step", current_checkpoint_step)
+                        if current_checkpoint_step != last_seen_checkpoint_step:
+                            # league exploiters checkpoint without reset in some cases --> restart entropy anneal from midpoint
+                            restart_frac = 0.5 if isinstance(exploiter, league.LeagueExploiter) else 1.0
+                            self._set_exploiter_ent_anneal_start(exploiter, update, restart_frac)
+                            exploiter.last_seen_checkpoint_step = current_checkpoint_step
+
+                    exploiter_ent_coef = self._get_exploiter_ent_coef(exploiter, update, num_updates)
 
                     if exploiter.optimizer is None:
                         exploiter.optimizer = torch.optim.Adam(exploiter.agent.parameters(), lr=args.exploiter_PPO_learning_rate, eps=1e-5)
@@ -981,7 +1030,7 @@ class LeagueTrainer:
                             "masks": invalid_action_masks,
                             "gamma": args.exploiter_gamma,
                             "gae_lambda": args.exploiter_gae_lambda,
-                            "ent_coef": args.exploiter_ent_coef,
+                            "ent_coef": exploiter_ent_coef,
                             "vf_coef": args.exploiter_vf_coef,
                             "max_grad_norm": args.exploiter_max_grad_norm,
                             "clip_coef": args.exploiter_clip_coef,

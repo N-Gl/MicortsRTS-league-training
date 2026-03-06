@@ -10,8 +10,13 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "league_models/05_03_2026__PPO_Unit_Bonus/Main_agent_backups/agent_update_540.pt",
-                          # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_1.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_4.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_6.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_7.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_9.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_12.pt",
+                          "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_or_3_MainExploiter_0/Historical_(MainExploiter_0)_15.pt"
                           ]
   names: [
           "05_03_2026__PPO_Unit_Bonus",
@@ -31,6 +36,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 100
-  num_parallel_eval_envs: 100
+  num_eval_episodes: 50
+  num_parallel_eval_envs: 50
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
