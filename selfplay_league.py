@@ -689,7 +689,9 @@ class LeagueTrainer:
 
                 sp_score_delta = sp_score_tensor - last_sp_scorerew
                 bot_score_delta = bot_score_tensor - last_bot_scorerew
-                score_delta = torch.tanh(1.5 * args.rewardscore * torch.cat([sp_score_delta, bot_score_delta]))
+                combined_score_delta = torch.cat([sp_score_delta, bot_score_delta])
+                score_delta = torch.tanh(1.5 * args.rewardscore * combined_score_delta)
+                del combined_score_delta
                 sp_done_tensor = torch.as_tensor(sp_ds, device=device, dtype=torch.bool)
                 bot_done_tensor = torch.as_tensor(bot_ds, device=device, dtype=torch.bool)
                 last_sp_scorerew = torch.where(sp_done_tensor, torch.zeros_like(sp_score_tensor), sp_score_tensor) # if done: 0 else: current score

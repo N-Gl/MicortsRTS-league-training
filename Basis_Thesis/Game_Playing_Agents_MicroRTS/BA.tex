@@ -344,6 +344,7 @@ To solve this problem, the learning agents in the parallel games are alternated 
 This does not prevent the prioritization of player 1. 
 However, it can be shown empirically that the prioritization of player 1 has no major impact on the results.
 % TODO: füge ein Ergebnis ein, in dem die Ergebnisse von 2 gegeneinander spielenden Agenten 1 mal als Spieler 1, 1 mal als Spieler 2 dargestellt werden.
+% Evaluation vs 22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1986 over 200 games | win: 76 (38.00%), draw: 56 (28.00%), loss: 68 (34.00%), avg reward: 1.403
 This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
@@ -431,7 +432,7 @@ Among other things, references to the observation, action, and invalid action ma
 
 \paragraph{Select opponent.}
 PFSP samples the next opponent from the given agents, with probabilities based on the current learning Agent’s win rates against the potential opponents.
-% TODO: füge matchmaking Graph hier ein
+% TODO: füge matchmaking Graph hier ein (MA gegen MA muss der Pfeil auch nach unten gehen oder nicht obs Aufbau machen)
 
 
 \paragraph{Why exploiters are needed.}
