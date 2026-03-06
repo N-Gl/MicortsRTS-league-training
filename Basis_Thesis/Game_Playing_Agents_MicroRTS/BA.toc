@@ -5,30 +5,40 @@
 \contentsline {paragraph}{Thesis Outline:}{2}{section*.5}%
 \contentsline {paragraph}{Training the Base Agent:}{2}{section*.6}%
 \contentsline {section}{\numberline {2}\hskip -1em.~Related Work}{2}{section.2}%
+\contentsline {paragraph}{Results and Limitations.}{2}{section*.7}%
+\contentsline {paragraph}{Proximal Policy Optimization (PPO) training.}{2}{section*.9}%
+\contentsline {paragraph}{GridNet.}{3}{section*.10}%
+\contentsline {paragraph}{Pre-League Training.}{3}{section*.11}%
+\contentsline {paragraph}{League Composition and Training.}{3}{section*.12}%
+\contentsline {paragraph}{Differences from AlphaStar.}{3}{section*.13}%
 \contentsline {section}{\numberline {3}\hskip -1em.~Methods}{3}{section.3}%
 \contentsline {subsection}{\numberline {3.1}\hskip -1em.~MicroRTS-environment}{3}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}\hskip -1em.~Training Pipeline}{4}{subsection.3.2}%
+\contentsline {paragraph}{Unit Types.}{3}{section*.14}%
+\contentsline {paragraph}{Game Setup.}{4}{section*.15}%
+\contentsline {paragraph}{Action Space.}{4}{section*.17}%
+\contentsline {paragraph}{Observation Space.}{5}{section*.18}%
+\contentsline {subsection}{\numberline {3.2}\hskip -1em.~Training Pipeline}{5}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}\hskip -1em.~self-play (SP)}{5}{subsection.3.3}%
-\contentsline {paragraph}{Implementation.}{5}{section*.9}%
-\contentsline {paragraph}{Problems:}{5}{section*.10}%
-\contentsline {paragraph}{Solutions.}{5}{section*.11}%
-\contentsline {subsection}{\numberline {3.4}\hskip -1em.~fictitious self-play (FSP)}{6}{subsection.3.4}%
-\contentsline {paragraph}{Implementation.}{6}{section*.12}%
-\contentsline {paragraph}{Problem with the implementation.}{6}{section*.13}%
-\contentsline {paragraph}{Example.}{6}{section*.14}%
-\contentsline {paragraph}{Relevance for LT.}{6}{section*.15}%
-\contentsline {paragraph}{Solutions.}{7}{section*.17}%
-\contentsline {subsection}{\numberline {3.5}\hskip -1em.~prioritized fictitious self-play (PFSP)}{7}{subsection.3.5}%
-\contentsline {paragraph}{Prioritization Function.}{7}{section*.18}%
-\contentsline {paragraph}{Implemented Prioritization Function.}{7}{section*.19}%
+\contentsline {paragraph}{Implementation.}{5}{section*.19}%
+\contentsline {paragraph}{Problems:}{5}{section*.20}%
+\contentsline {paragraph}{Solutions.}{6}{section*.21}%
+\contentsline {subsection}{\numberline {3.4}\hskip -1em.~fictitious self-play (FSP)}{7}{subsection.3.4}%
+\contentsline {paragraph}{Implementation.}{7}{section*.22}%
+\contentsline {paragraph}{Problem with the implementation.}{7}{section*.23}%
+\contentsline {paragraph}{Example.}{7}{section*.24}%
+\contentsline {paragraph}{Relevance for LT.}{7}{section*.25}%
+\contentsline {paragraph}{Solutions.}{7}{section*.27}%
+\contentsline {subsection}{\numberline {3.5}\hskip -1em.~prioritized fictitious self-play (PFSP)}{8}{subsection.3.5}%
+\contentsline {paragraph}{Prioritization Function.}{8}{section*.28}%
+\contentsline {paragraph}{Implemented Prioritization Function.}{8}{section*.29}%
 \contentsline {subsection}{\numberline {3.6}\hskip -1em.~league training (LT)}{8}{subsection.3.6}%
-\contentsline {paragraph}{League composition and roles.}{8}{section*.20}%
-\contentsline {paragraph}{Training loop and snapshot management.}{8}{section*.21}%
-\contentsline {paragraph}{Bot environments.}{8}{section*.22}%
-\contentsline {paragraph}{number of parallel bot environment instances.}{8}{section*.23}%
-\contentsline {paragraph}{Select opponent.}{8}{section*.24}%
-\contentsline {paragraph}{Why exploiters are needed.}{8}{section*.25}%
-\contentsline {paragraph}{Practical considerations in MicroRTS.}{9}{section*.26}%
+\contentsline {paragraph}{League composition and roles.}{8}{section*.30}%
+\contentsline {paragraph}{Training loop and snapshot management.}{8}{section*.31}%
+\contentsline {paragraph}{Bot environments.}{9}{section*.32}%
+\contentsline {paragraph}{number of parallel bot environment instances.}{9}{section*.33}%
+\contentsline {paragraph}{Select opponent.}{9}{section*.34}%
+\contentsline {paragraph}{Why exploiters are needed.}{9}{section*.35}%
+\contentsline {paragraph}{Practical considerations in MicroRTS.}{9}{section*.36}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{9}{section.4}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{9}{section.5}%
-\contentsline {section}{Erkl\"arung}{11}{section*.31}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{10}{section.5}%
+\contentsline {section}{Erkl\"arung}{12}{section*.41}%
