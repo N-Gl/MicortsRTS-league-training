@@ -8,6 +8,11 @@ ExperimentConfig:
   exp_name: 06_03_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots_2
   wandb_group_name: new_sp_28_01_26_no_Bots
 
+  unit_exploiters: true
+  Unit_reward_per_exploiter: true
+
+  render: true
+
   num_bot_envs: 1 # 3
   dyn_num_bot_envs: true
   min_num_bot_envs: 1  # minimum number of bot envs
