@@ -4,20 +4,20 @@ defaults:
 ExperimentConfig:
   evaluate: true
 
-  unit_exploiters: true
-  Unit_reward_per_exploiter: true
+  unit_exploiters: false
+  Unit_reward_per_exploiter: false
   zero_unit_bonus_for_main: false
 
   model_path: 
   evaluation_model_paths: [
-                          "league_models/25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots/Main_agent_backups/agent_update_180.pt",
+                          "league_models/05_03_2026__PPO_Unit_Bonus/Main_agent_backups/agent_update_540.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots",
+          "05_03_2026__PPO_Unit_Bonus",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "25.02_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_unit_bonus_max_ranged_5_0_no_Bots"
+  exp_name: "05_03_2026__PPO_Unit_Bonus"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp

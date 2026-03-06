@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import math
+import shutil
+import subprocess
 from pathlib import Path
 
 
@@ -107,6 +109,64 @@ def build_combined_plot(curves: dict[str, tuple[str, list[float]]], x: list[floa
 def write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+
+
+def build_standalone_document(input_tex_name: str) -> str:
+    return "\n".join(
+        [
+            r"\documentclass[tikz,border=3pt]{standalone}",
+            r"\usepackage{pgfplots}",
+            r"\pgfplotsset{compat=1.18}",
+            r"\begin{document}",
+            rf"\input{{{input_tex_name}}}",
+            r"\end{document}",
+            "",
+        ]
+    )
+
+
+def compile_tex_to_pdf(tex_path: Path) -> Path:
+    pdflatex = shutil.which("pdflatex")
+    if pdflatex is None:
+        raise RuntimeError("pdflatex was not found. Install TeX Live or run with --no-pdf.")
+
+    wrapper_path = tex_path.with_name(f".__{tex_path.stem}_standalone.tex")
+    write_text(wrapper_path, build_standalone_document(tex_path.name))
+
+    try:
+        cmd = [
+            pdflatex,
+            "-interaction=nonstopmode",
+            "-halt-on-error",
+            "-file-line-error",
+            f"-jobname={tex_path.stem}",
+            wrapper_path.name,
+        ]
+        result = subprocess.run(
+            cmd,
+            cwd=tex_path.parent,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            stdout_tail = "\n".join(result.stdout.splitlines()[-30:])
+            stderr_tail = "\n".join(result.stderr.splitlines()[-30:])
+            raise RuntimeError(
+                f"pdflatex failed for {tex_path.name}.\n"
+                f"stdout (tail):\n{stdout_tail}\n"
+                f"stderr (tail):\n{stderr_tail}"
+            )
+    finally:
+        wrapper_path.unlink(missing_ok=True)
+
+    for suffix in (".aux", ".log"):
+        tex_path.with_suffix(suffix).unlink(missing_ok=True)
+
+    pdf_path = tex_path.with_suffix(".pdf")
+    if not pdf_path.exists():
+        raise RuntimeError(f"Expected PDF was not created: {pdf_path}")
+    return pdf_path
 
 
 def svg_escape(text: str) -> str:
@@ -270,6 +330,19 @@ def parse_args() -> argparse.Namespace:
         default=401,
         help="Number of sampled x values in [0, 1].",
     )
+    parser.add_argument(
+        "--pdf",
+        dest="generate_pdf",
+        action="store_true",
+        default=True,
+        help="Compile standalone PDFs (one per individual graph) via pdflatex.",
+    )
+    parser.add_argument(
+        "--no-pdf",
+        dest="generate_pdf",
+        action="store_false",
+        help="Skip PDF generation.",
+    )
     return parser.parse_args()
 
 
@@ -280,32 +353,45 @@ def main() -> None:
 
     x = linspace(0.0, 1.0, args.num_points)
     curve_data: dict[str, tuple[str, str, list[float]]] = {}
+    written_files = 0
+    single_plot_tex_paths: list[Path] = []
 
     for name, (fn, (tikz_color, svg_color)) in FORMULAS.items():
         y = [fn(x_i) for x_i in x]
         curve_data[name] = (tikz_color, svg_color, y)
+        single_tex_path = args.output_dir / f"{name}.tex"
         single_plot_tex = build_single_plot(name=name, color=tikz_color, x=x, y=y)
-        write_text(args.output_dir / f"{name}.tex", single_plot_tex)
+        write_text(single_tex_path, single_plot_tex)
+        single_plot_tex_paths.append(single_tex_path)
+        written_files += 1
         single_plot_svg = build_svg_plot(
             title=name,
             curves=[(name, svg_color, x, y)],
             with_legend=False,
         )
         write_text(args.output_dir / f"{name}.svg", single_plot_svg)
+        written_files += 1
 
     combined_plot_tex = build_combined_plot(
         curves={name: (tikz_color, y) for name, (tikz_color, _, y) in curve_data.items()},
         x=x,
     )
     write_text(args.output_dir / "pfsp_draw_weightings_combined.tex", combined_plot_tex)
+    written_files += 1
     combined_plot_svg = build_svg_plot(
         title="PFSP Weighting Curves",
         curves=[(name, svg_color, x, y) for name, (_, svg_color, y) in curve_data.items()],
         with_legend=True,
     )
     write_text(args.output_dir / "pfsp_draw_weightings_combined.svg", combined_plot_svg)
+    written_files += 1
 
-    print(f"Wrote {2 * (len(FORMULAS) + 1)} files to {args.output_dir}")
+    if args.generate_pdf:
+        for single_tex_path in single_plot_tex_paths:
+            compile_tex_to_pdf(single_tex_path)
+            written_files += 1
+
+    print(f"Wrote {written_files} files to {args.output_dir}")
 
 
 if __name__ == "__main__":

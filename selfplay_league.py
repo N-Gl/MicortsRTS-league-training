@@ -671,6 +671,21 @@ class LeagueTrainer:
                         self.unit_bonus_distr[args.num_selfplay_envs:],
                     )
 
+                    if args.unit_bonus:
+                        sp_score_tensor = self._add_unit_bonus_to_score(
+                            sp_score_tensor,
+                            sp_sc[:, 3:7],
+                            sp_sc[:, 7:11],
+                            self._unit_bonus_max(device)
+                        )
+                        bot_score_tensor = self._add_unit_bonus_to_score(
+                            bot_score_tensor,
+                            bot_sc[:, 3:7],
+                            bot_sc[:, 7:11],
+                            self._unit_bonus_max(device),
+                        )
+
+
 
                 sp_score_delta = sp_score_tensor - last_sp_scorerew
                 bot_score_delta = bot_score_tensor - last_bot_scorerew

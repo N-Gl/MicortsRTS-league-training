@@ -269,12 +269,13 @@ SP/FSP/LT address both problems by providing numerous opponents that continue to
 
 \subsection{self-play (SP)}
 In SP, the agent trains against its own current version, which leads to a continuous learning process with a co-evolving opponent \cite{doi:10.1126/science.aar6404}.
-\break \break
-\textbf{Implementation.} To implement SP in the MicroRTS-Py reimplementation Huang et al. implemented the environment to output the observations (obs) and rewards for both players, which allows the agent to train against itself by simply using the same policy for both players \cite{huang2021gym}.
+
+\paragraph{Implementation.} 
+To implement SP in the MicroRTS-Py reimplementation Huang et al. implemented the environment to output the observations (obs) and rewards for both players, which allows the agent to train against itself by simply using the same policy for both players \cite{huang2021gym}.
 In RAISocketAI, that approach was improved and fixed \cite{goodfriend2024raisocketai}.
 In this Thesis, the same approach with some adustments is used to implement SP, which is also used as a basis for FSP and LT.
-\break \break
-\textbf{Problems:}
+
+\paragraph{Problems:}
 \begin{itemize}
     \item The training is often unstable because of cyclical learning.
     For \textbf{example},  if policy B performs well against A, C performs well against B, and A performs well against C, the agent may be trapped in a cycle in which it repeatedly relearns only the policy that performs well against itself, but not against other opponents \cite{vinyals2019alphastar}.
@@ -283,23 +284,23 @@ In this Thesis, the same approach with some adustments is used to implement SP, 
     This means that the agent has to learn to start play in two different areas of the map, which can be difficult and time-consuming.
     The problem is further exacerbated by the fact the training of this thesis does not start from scratch, but from a base agent that was only trained as player 1, which means that the agent would have to unlearn the bias towards starting at the top left of the map and learn to start at the bottom right as well.
 \end{itemize}
-% TODO: überarrbeite subsection ab hier:
-\break \break
-\textbf{Solutions.} FSP/PFSP are used to stabilize the training and reduce cyclical learning.
-To address the second problem, the observations for player 2 are adjusted by mirroring them along the diagonal of the map, meaning that in the observations for the agent, player 2 starts at the top left of the map as well. 
-This makes the observations for player 1 and player 2 more similar and thefore making SP with an pre-trained base agent possible, even though the base agent was only trained as player 1.
 
+\paragraph{Solutions.} 
+FSP/PFSP are used to stabilize training and reduce cyclical learning.
+To address the second problem, the observations for player 2 are transformed by rotating them along by 180 degrees.
+From the agent’s perspective, player 2 also starts at the top-left of the map. 
+This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained base agent possible, even though the base agent was exclusively trained as player 1.
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/adjust_obs.pdf}
-    \captionof{figure}{Observation adjustment for player 2 in self-play.
-    To mirror the observations the GridNet representation was flipped for every player-two environment.
-    Then the unit actions in the observations where flipped individually.}
+    \captionof{figure}{Observation adjustment for player 2 in SP.
+    To rotate the observations, the GridNet representation was flipped for each player-2 environment.
+    The unit actions in the observation were then flipped individually.}
     \label{fig:adjust_obs}
 \end{center}
-
-Actions are adjusted accordingly, so that the environment still executes the actions for player 2.
-Masks have to be adjusted as well, since they are based on the environments observations.
-The same mirroring as for the observations is applied for the invalid action masks and the observations, while actions, including the position component of the action space was adjusted after the masking.
+Actions are transformed accordingly, so that the environment still executes the intended actions for player 2.
+Masks must be transformed as well, since they are based on the environment’s observations.
+The same rotation used for the observations is also applied to the invalid action masks. 
+After masking, the selected actions (including a position component, that is added before masking, since masking removes the implicit positional structure of the GridNet action space) are transformed back to fit the MicroRTS-Py environment.
 
 
 \subsection{fictitious self-play (FSP)}
@@ -307,19 +308,23 @@ To address the instabilities of pure SP, in FSP the agent is trained not exclusi
 This results in the learning agent learning a good response to the averaged opponent strategy, which reduces cyclical learning.
 Under standard assumptions, FSP can converge towards an approximate Nash equilibrium in two-player zero-sum games (with respect to the average strategies).
 Heinrich et al. also demonstrate this empirically in poker experiments \cite{heinrich2015fsp}.
-\break \break
-\textbf{Implementation.} The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of historical agents (snapshots of the Main Agent at different training stages).
-\break \break
-\textbf{Problem with the implementation.} If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e.g. when both players want to move to the same cell).
+
+\paragraph{Implementation.} 
+The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of historical agents (snapshots of the Main Agent at different training stages).
+
+\paragraph{Problem with the implementation.} 
+If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e.g. when both players want to move to the same cell).
 This gives player 2 a disadvantage, although it has only a minor effect on the results. 
 The actual problem is that the agent can exploit this prioritization in FSP if it learns that optimizing the training objective can be achieved primarily by improving player 1, while deliberately performing poorly as player 2.
 After sufficient training, the agent will learn a strategy that is based on player 1 being prioritized.
 Training then stagnates, since the agent already has a hight winrate against itself without develping a robust strategy against other opponents.
-\break \break
-\textbf{Example.} The agent could learn to block an opponent in front of the Base by issuing a simultaneous move to the same target cell.
+
+\paragraph{Example.} 
+The agent could learn to block an opponent in front of the Base by issuing a simultaneous move to the same target cell.
 In FSP, player 2 would then be blocked, while player 1 would not, allowing the agent to achieve a win rate close to 100\% against itself.
-\break \break
-\textbf{Relevance for LT.} In LT, the Result of the problem is not quite as problematic because there are exploiters that can be trained against, which remain adversarial to the Main Agent.
+
+\paragraph{Relevance for LT.} 
+In LT, the Result of the problem is not quite as problematic because there are exploiters that can be trained against, which remain adversarial to the Main Agent.
 However, a large portion of the training becomes ineffective and provides poor learning signals if the agent exploits the player 1 priority.
 On top of that the Problem is particularly relevant for LT, which combines SP and FSP, because only historical Agents are available for training in FSP, making the feedback for player 2 very sparse, while in LT the Main Agent can directly train against the current Main Agent.
 This yieldes more immediate feedback on  the Main Agents performance as an opponent (player 2).
@@ -331,13 +336,14 @@ As a result the agent no longer has to plan as far ahead in order to exploit thi
     Both Heavy units of both players wanted to move to the same cell, as the opponent’s Heavy units.}
     \label{Figure 3}
 \end{figure}
-\break \break
-\textbf{Solutions.} In the re-implementation of MicroRTS-Py, there is a mode that resolves conflicts in a randomized manner.
+
+\paragraph{Solutions.}
+In the re-implementation of MicroRTS-Py, there is a mode that resolves conflicts in a randomized manner.
 However, this does not help in this case, because even before the conflict arises, invalid action masking masks out the action of player 2 since it is invalid.
 To solve this problem, the learning agents in the parallel games are alternated between playing as player 1 and player 2.
 This does not prevent the prioritization of player 1. 
 However, it can be shown empirically that the prioritization of player 1 has no major impact on the results.
-% TODO: füge ein Bild ein, in dem die Ergebnisse von 2 gegeneinander spielenden Agenten 1 mal als Spieler 1, 1 mal als Spieler 2 dargestellt werden.
+% TODO: füge ein Ergebnis ein, in dem die Ergebnisse von 2 gegeneinander spielenden Agenten 1 mal als Spieler 1, 1 mal als Spieler 2 dargestellt werden.
 This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
@@ -345,21 +351,25 @@ This prevents the exploitation of the prioritization by the learning agent, sinc
 LT uses an extended variant of FSP called PFSP \cite{vinyals2019alphastar}.
 PFSP extends FSP by selecting opponents against which the agent can train efficiently, rather than selecting opponents uniformly.
 The selection probability is based on the win rate of the learning agent against the potential opponent \cite{vinyals2019alphastar}. 
-\break \break
-\textbf{Prioritization Function.} The exact prioritization function can differ for different agent types.
+
+\paragraph{Prioritization Function.} 
+The exact prioritization function can differ for different agent types.
 In AlphaStar, for the Main Agent, opponents of medium difficulty (win rate close to 50\%) are prioritized. While exploiters prioritize the strongest opponent (against which the win rate is closest to 0\%).
 Adapted prioritization functions tailored to our training setup are used in this thesis,  which deviate from those used in AlphaStar.
 An important difference is that training against an opponent against which the base agent has a win rate close to 0\% yields little informative gradient or learning signal.
 % und dass eine win rate von 0.5 meist heißt, dass keiner von beiden gewinnt/verliert. 
 % Stattdessen hieß das meistens, dass beide Spieler sich gegenseitig ignorieren, die Basis des Gegners angreifen und dann für den Rest des Spieles sich nicht mehr bewegen.
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
-\break \break
-\textbf{Implemented Prioritization Function.} To avoid opponents resulting in little learning signals, the following prioritization function was used for the Main Exploiters:
-% TODO: insert figure (~\ref{Figure 1})
 
-
+\paragraph{Implemented Prioritization Function.} 
+To avoid opponents resulting in little learning signals, the following prioritization functions was used for the Exploiters:
+\begin{center}
+    \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
+    \captionof{figure}{Prioritization function for the Exploiters in PFSP.}
+    \label{fig:focused_strong_boosted_with_draws}
+\end{center}
 As can be seen in the figure, we prioritize opponents with a low win rate not close to 0\%. Furthermore, opponents with a win rate of 0\% are prioritized over those with a win rate of 100\%, since there is substantial learning potential for an opponent with a win rate of 0\%, whereas a win rate of 100\% usually means that the agent already defeats the opponent reliably.
-What is not shown in the figure is that all agents have a non-zero probability of being selected. This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% win rate for the learning agent), since it is likely that those initial results were outliers.
+In this thesis PFSP was modified so that all agents have a non-zero probability of being selected. This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% win rate for the learning agent), since these initial results may have been outliers.
 
 
 % Das wurde so umgesetzt: probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
@@ -371,46 +381,58 @@ What is not shown in the figure is that all agents have a non-zero probability o
 
 
 \subsection{league training (LT)}
+% TODO: ab hier überarbeiten
 \label{sec:LT}
-LT also extends FSP by not only training on historical agents, but instead by training on an entire league of agents, including Historical agents, main exploiters (that are only trained against historical Main Agents) and league exploiters (that are only trained against all historical agents) \cite{vinyals2019alphastar}.
-
-LT utilizes FSP with PFSP, to find the best historical opponent to train against.
-
-
-
-\subsection{League Training (LT)}
-
-
-League Training (LT) is a population-based extension of self-play designed to reduce the non-stationarity and cyclical behavior of pure SP by training against a diverse set of opponents that represent different stages and styles of play \cite{vinyals2019alphastar}.
-Instead of facing only the current policy (SP) or a uniformly sampled set of past policies (FSP), the learning agent is matched against opponents drawn from a \emph{league} using \emph{Prioritized Fictitious Self-Play} (PFSP) (Section~\ref{sec:PFSP}).
-This yields a training curriculum in which the Main Agent repeatedly encounters (i) historical versions of itself, and (ii) specialized opponents that actively search for and exploit weaknesses of the current policy.
-
-\paragraph{League composition and roles.}
-Following the general design of AlphaStar \cite{vinyals2019alphastar}, the league in this thesis consists of:
+LT combines and extends SP and PFSP to further stabilize training and promote robustness by training against opponents drawn from a \emph{league}, including Historical agents, main exploiters and league exploiters (that are only trained against all historical agents) \cite{vinyals2019alphastar}.
+\paragraph{League composition and roles.} 
+Simmilar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis consists of the following agent types:
 \begin{itemize}
     \item \textbf{Main Agent (MA):} the primary policy that is optimized and evaluated.
-    \item \textbf{Historical Agents (HA):} frozen snapshots of earlier Main Agent parameters. They stabilize training by providing a stationary distribution of past strategies and mitigate catastrophic forgetting.
-    \item \textbf{Main Exploiters (ME):} agents trained to beat the Main Agent by emphasizing opponents (historical snapshots of MA) for which the exploiter currently performs poorly. Conceptually, MEs encourage the discovery of blind spots in the current MA policy.
-    \item \textbf{League Exploiters (LE):} agents trained against the full league distribution (historical agents and exploiters). This promotes strategic diversity and prevents the league from collapsing to a narrow set of responses.
+    \item \textbf{Historical Agents:} frozen MA or exploiter snapshots of earlier agent parameters. 
+    They stabilize training by providing a stationary distribution of past strategies and mitigate catastrophic forgetting.
+    \item \textbf{Main Exploiters (ME):} agents only trained against historical Main Agents, wich encourages them to find weaknesses in the Main Agent
+    \item \textbf{League Exploiters (LE):} trained against all historical agents, which further promotes diversity and by finding systemic weaknesses of the entire league.
 \end{itemize}
-All agents share the same observation/action representation (GridNet with invalid action masking) and are trained with PPO; the difference between roles is solely the opponent sampling distribution.
+\cite{vinyals2019alphastar}
+The only differences between roles is the opponent sampling distribution and hyperparameters.
+All agents share the same observation/action representation (GridNet with invalid action masking) and train with different hyperparameters (e.g., learning rate, prioritization function for PFSP), but the same underlying PPO algorithm.
 
-\paragraph{Matchmaking with PFSP.}
-For each PPO rollout batch, an opponent policy is sampled from a candidate set (historical agents and exploiters) according to a PFSP distribution (Section~\ref{sec:PFSP}).
-The sampling probabilities are computed from estimated win rates between the learning agent and each candidate opponent (updated periodically from evaluation matches).
-In contrast to uniform FSP, PFSP allows us to focus training on opponents that provide informative gradients while still maintaining coverage of the entire league via a small non-zero minimum selection probability.
-This avoids permanently ignoring opponents that happened to lose early matches due to variance, and it prevents training from stalling on opponents that yield little learning signal.
 
 \paragraph{Training loop and snapshot management.}
-LT proceeds iteratively in cycles consisting of (i) matchmaking, (ii) PPO updates, (iii) win-rate estimation, and (iv) league updates:
+LT itterates through the cycles consisting of:
 \begin{enumerate}
-    \item \textbf{Select opponent:} Sample an opponent from the league using a role-specific PFSP distribution.
-    \item \textbf{Collect rollouts:} Run self-contained matches between the learning agent and the sampled opponent for a fixed number of environment steps. During rollouts, the opponent policy is frozen (inference only).
-    \item \textbf{Update policy:} Perform PPO updates using trajectories collected against the sampled opponent.
+    \item \textbf{Select opponent:} Sample an opponent from the league.
+    \item \textbf{Collect rollouts:} Run matches between the learning agent and the sampled opponent for a fixed number of steps. No agent ist updated during this phase.
+    \item \textbf{Update policy:} Perform PPO updates using the collected trajectories against the sampled opponent.
     \item \textbf{Update statistics:} Periodically evaluate against a subset of league members to update win-rate estimates used by PFSP.
     \item \textbf{Add snapshots:} At predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new historical agent.
 \end{enumerate}
-In practice, snapshotting implements a memory mechanism: even if the Main Agent changes rapidly due to PPO updates, the historical pool preserves earlier strategies and thereby stabilizes the opponent distribution over time.
+A phase in the training loop is only finished, after every agent type (MA, ME, LE) has finished the phase.
+For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have finished the current phase.
+
+\paragraph{Bot environments.} 
+Bot environments are added to the league, to stabelize training, by continuing the PPO training against the CoacAI and Mayari built-in bots of MicroRTS, which the base agent was trained against.
+Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with finding weaknesses in the Main Agent/league (e.g., if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against), which is the main purpose of the exploiters.
+In MicriRTS-Py the environments for built-in bots and for SP are not interchangeable, since the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT direktly. 
+The number of parallel environment instances and their bult-in bot opponent (if any) have to be defined at initialization of the MicroRTS-Py environments, which means the number of environments for each built-in bot would stay fixed.
+A main improvement of LT is that training against opponents with bad learning signals is reduced.
+To retain that improvement we want the Bot environments count to be dynamic.
+Therefore, the bot environments count is adjusted dynamically by reinitializing an MicroRTS instance, which is only used for training against the built-in bots and not for SP/FSP/LT (because reinitialization also means resetting the environments in the MicroRTS instance).
+MicroRTS instance for built-in bots executes a its step function at the same time as the SP/FSP/LT instance.
+
+\paragraph{number of parallel bot environment instances.}
+Given is an hyperparameter for the maximum number of parallel bot environment instances and a hyperparameter for the minimum number of parallel bot environment instances.
+% TODO: A Buffer for observations, actions, invalid action masks with ... % zu viel Codedetails?
+Among other things, references to the observation, action, and invalid action mask buffers must be adjusted to the correct size and partially reset whenever the number of parallel bot environment instances is changed.
+%%%%%%%%%%%%%%%%
+
+
+
+
+\paragraph{Select opponent.}
+PFSP samples the next opponent from the given agents, with probabilities based on the current learning Agent’s win rates against the potential opponents.
+% TODO: füge matchmaking Graph hier ein
+
 
 \paragraph{Why exploiters are needed.}
 A league containing only historical Main Agent snapshots can still drift towards strategies that are strong only against the averaged historical distribution.
