@@ -259,6 +259,22 @@ class LeagueTrainer:
     def _sample_unit_bonus_distr(self, shape, device: torch.device) -> torch.Tensor:
         return torch.rand(shape, device=device) * self._unit_bonus_max(device)
 
+    def _log_endgame_unit_counts(
+        self,
+        writer,
+        done_agent,
+        scalar_features_step: torch.Tensor,
+        done_idx: int,
+        game_index: int,
+        game_type: str,
+    ) -> None:
+        unit_counts = scalar_features_step[done_idx, 3:7].detach()
+        unit_names = ("worker", "light", "heavy", "ranged")
+
+        for unit_name, count in zip(unit_names, unit_counts):
+            value = count.item()
+            writer.add_scalar(f"{done_agent.name}_endgame_units/{game_type}_{unit_name}", value, game_index)
+
     def _get_exploiter_ent_bounds(self) -> tuple[float, float]:
         if self.args.exploiter_anneal_ent:
             ent_min = self.args.exploiter_ent_coef_min
@@ -764,6 +780,14 @@ class LeagueTrainer:
                                 league.log_general_main_results(writer, args.global_step, infos, winloss, game_length, attack, done_idx, self.hist_reward, done_agent)
                                 
                         if done_idx > args.num_selfplay_envs - 1:
+                            self._log_endgame_unit_counts(
+                                writer=writer,
+                                done_agent=done_agent,
+                                scalar_features_step=scalar_features[step],
+                                done_idx=int(done_idx.item()),
+                                game_index=num_done_botgames,
+                                game_type="bot_game",
+                            )
                             league.log_bot_game_results(args, writer, infos, attack, done_idx, winloss, num_done_botgames, done_agent)
                             num_done_botgames += 1
                             last_bot_env_change += 1
@@ -773,6 +797,15 @@ class LeagueTrainer:
                                 non_learning_done_idx = done_idx + 1
                             else:
                                 non_learning_done_idx = done_idx - 1 
+
+                            self._log_endgame_unit_counts(
+                                writer=writer,
+                                done_agent=done_agent,
+                                scalar_features_step=scalar_features[step],
+                                done_idx=int(done_idx.item()),
+                                game_index=num_done_selfplaygames,
+                                game_type="selfplay",
+                            )
 
                             # update League match results
                             self.active_league_agents[non_learning_done_idx], last_logged_selfplay_games, old_opp = league_instance.handle_game_end(
