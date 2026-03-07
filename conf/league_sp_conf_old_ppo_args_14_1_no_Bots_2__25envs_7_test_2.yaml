@@ -10,7 +10,7 @@ ExperimentConfig:
   wandb_group_name: worker_exploit
 
 
-
+  resume: false
   starting_historical: false
 
 
