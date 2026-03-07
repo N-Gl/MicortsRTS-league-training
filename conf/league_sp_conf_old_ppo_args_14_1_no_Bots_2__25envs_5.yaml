@@ -5,7 +5,7 @@ ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
   model_path: models/finished_PPO_Basis_thesis.pt
-  exp_name: 06_03_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_exploiter__unit_exploration_bonus_enabled_1
+  exp_name: 06_03_26__finished_PPO_Basis_thesis__league_sp_conf_old_ppo_args_exploiter__unit_exploration_bonus_enabled_2
   wandb_group_name: new_sp_28_01_26_no_Bots
 
 
@@ -59,8 +59,8 @@ ExperimentConfig:
   kle_rollback: false
   exploiter_kle_rollback: false
 
-  exploiter_unit_exploration_bonus_enabled: true
-  exploiter_unit_exploration_bonus: 0.07 # bis etwa 0.15
+  exploiter_unit_exploration_bonus_enabled: true  
+  exploiter_unit_exploration_bonus: 0.15 # bis etwa 0.15 von 0.07
 
   # Parameter aus dem Sweep ohne Bots
 
