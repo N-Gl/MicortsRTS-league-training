@@ -1,4 +1,4 @@
-[2026-03-08T08:12:51+00:00] Start league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1 (seed: 1348915658)
+[2026-03-08T08:15:20+00:00] Start league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1 (seed: 3360850960)
 /home/nglaser/BA/MicortsRTS-league-training/main.py:45: UserWarning: 
 The version_base parameter is not specified.
 Please specify a compatability version level, or None.
@@ -135,7 +135,7 @@ Experiment config:
     "resume": false,
     "rewardscore": 0.002,
     "save_gpu_memory": false,
-    "seed": 1348915658,
+    "seed": 3360850960,
     "selfplay": false,
     "selfplay_evaluate_testing": false,
     "selfplay_ready_save_interval": 30000000,
@@ -173,36 +173,30 @@ wandb:  $ pip install wandb --upgrade
 wandb: Tracking run with wandb version 0.10.24
 wandb: Syncing run league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1
 wandb: ⭐️ View project at https://wandb.ai/glaspaul244-hhu/new_selfplay
-wandb: 🚀 View run at https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/9lx7otwk
-wandb: Run data is saved locally in /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081255-9lx7otwk
+wandb: 🚀 View run at https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/sx5fduuz
+wandb: Run data is saved locally in /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081524-sx5fduuz
 wandb: Run `wandb offline` to turn off syncing.
 
 cuda
 opponents: 
-[<function coacAI at 0x73e0cc2f0e50>]
-Error executing job with overrides: ['ExperimentConfig.exp_name=league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1', 'ExperimentConfig.seed=1348915658']
+[<function coacAI at 0x7abf410f5e50>]
+Error executing job with overrides: ['ExperimentConfig.exp_name=league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1', 'ExperimentConfig.seed=3360850960']
 Traceback (most recent call last):
-  File "/home/nglaser/BA/MicortsRTS-league-training/main.py", line 446, in main
-    historical_agent.set_weights(path_historical)
-  File "/home/nglaser/BA/MicortsRTS-league-training/agent_model.py", line 182, in set_weights
-    weights = torch.load(weights, map_location=self.device, weights_only=True)
-  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/torch/serialization.py", line 1484, in load
-    with _open_file_like(f, "rb") as opened_file:
-  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/torch/serialization.py", line 759, in _open_file_like
-    return _open_file(name_or_buffer, mode)
-  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/torch/serialization.py", line 740, in __init__
-    super().__init__(open(name, mode))
-FileNotFoundError: [Errno 2] No such file or directory: 'models/saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt/agent.pt'
+  File "/home/nglaser/BA/MicortsRTS-league-training/main.py", line 330, in main
+    path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
+  File "/home/nglaser/BA/MicortsRTS-league-training/main.py", line 31, in _resolve_checkpoint_path
+    if resume or BC_path:
+NameError: name 'BC_path' is not defined
 
 Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
-wandb: Waiting for W&B process to finish, PID 95790
+wandb: Waiting for W&B process to finish, PID 96855
 wandb: Program failed with code 1.  Press ctrl-c to abort syncing.
 wandb: - 0.00MB of 0.00MB uploaded (0.00MB deduped)wandb: \ 0.00MB of 0.00MB uploaded (0.00MB deduped)wandb: | 0.01MB of 0.01MB uploaded (0.00MB deduped)wandb:                                                                                
-wandb: Find user logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081255-9lx7otwk/logs/debug.log
-wandb: Find internal logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081255-9lx7otwk/logs/debug-internal.log
+wandb: Find user logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081524-sx5fduuz/logs/debug.log
+wandb: Find internal logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081524-sx5fduuz/logs/debug-internal.log
 wandb: Run summary:
 wandb:   global_step 0
-wandb:    _timestamp 1772957577.01283
+wandb:    _timestamp 1772957726.16288
 wandb:         _step 0
 wandb: Run history:
 wandb:   global_step ▁
@@ -211,5 +205,5 @@ wandb:         _step ▁
 wandb: 
 wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
 wandb: 
-wandb: Synced league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1: https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/9lx7otwk
+wandb: Synced league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_1: https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/sx5fduuz
 

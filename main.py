@@ -28,7 +28,7 @@ cstore.store(name="experiment_config", node=ExperimentConfig)
 
 
 def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True, direct_path=False) -> str:
-    if resume or BC_path:
+    if resume or direct_path:
         if model_path.endswith(".pt"):
             if exp_name == None:
                 raise ValueError("exp_name must be provided when model_path ends with '.pt'")
