@@ -27,8 +27,8 @@ cstore = ConfigStore.instance()
 cstore.store(name="experiment_config", node=ExperimentConfig)
 
 
-def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True) -> str:
-    if resume:
+def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True, BC_path=False) -> str:
+    if resume or BC_path:
         if model_path.endswith(".pt"):
             if exp_name == None:
                 raise ValueError("exp_name must be provided when model_path ends with '.pt'")
@@ -427,7 +427,7 @@ def main(cfg: ExperimentConfig):
     if args.league_training:
         from selfplay_league import LeagueTrainer
 
-        path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
+        path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume, BC_path=True)
         BCagent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
         BCagent.set_weights(path_BCagent)
         for param in BCagent.parameters():

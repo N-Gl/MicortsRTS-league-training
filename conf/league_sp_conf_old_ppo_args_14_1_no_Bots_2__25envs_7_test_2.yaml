@@ -4,7 +4,8 @@ defaults:
 ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
-  model_path: models/BCagent.pt
+  model_path: p
+  BC_model_path: models/BCagent.pt
   other_historicals_paths: ["saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt"]
   exp_name: 08_03_26__BCAgent__worker_exploit
   wandb_group_name: worker_exploit
@@ -62,7 +63,7 @@ ExperimentConfig:
   exploiter_kle_rollback: false
 
   exploiter_unit_exploration_bonus_enabled: true
-  exploiter_unit_exploration_bonus: 0.07 # bis etwa 0.15
+  exploiter_unit_exploration_bonus: 0.15 # bis etwa 0.15
 
   # Parameter aus dem Sweep ohne Bots
 
@@ -82,7 +83,7 @@ ExperimentConfig:
   # exploiter_kl_coeff: 0.38
 
 
-  unit_bonus_max_worker: 0.0
+  unit_bonus_max_worker: 5.0
   unit_bonus_max_light: 0.0
-  unit_bonus_max_heavy: 0.0
-  unit_bonus_max_ranged: 5.0
+  unit_bonus_max_heavy: -5.0
+  unit_bonus_max_ranged: 0.0
