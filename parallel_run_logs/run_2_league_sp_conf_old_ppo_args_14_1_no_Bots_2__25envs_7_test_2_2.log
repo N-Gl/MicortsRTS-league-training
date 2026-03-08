@@ -1,0 +1,215 @@
+[2026-03-08T08:12:51+00:00] Start league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_2 (seed: 2303960624)
+/home/nglaser/BA/MicortsRTS-league-training/main.py:45: UserWarning: 
+The version_base parameter is not specified.
+Please specify a compatability version level, or None.
+Will assume defaults for version 1.1
+  @hydra.main(config_path="conf", config_name="config")
+/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/_internal/defaults_list.py:251: UserWarning: In 'league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2': Defaults list is missing `_self_`. See https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/default_composition_order for more information
+  warnings.warn(msg, UserWarning)
+/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/wandb/sdk/internal/sender.py:15: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version
+wandb: Currently logged in as: glaspaul244-hhu (use `wandb login --relogin` to force relogin)
+Experiment config:
+{
+  "ExperimentConfig": {
+    "BC_aget_as_Historical": false,
+    "BC_finetuning": false,
+    "BC_learning_rate": 1e-06,
+    "BC_model_path": "models/BCagent.pt",
+    "BC_weight_decay": 0.0,
+    "Bot_as_player_1": true,
+    "PPO_learning_rate": 5e-05,
+    "PPO_weight_decay": 0.0,
+    "Unit_reward_per_exploiter": false,
+    "anneal_lr": true,
+    "attack_reward_weight": 0.0,
+    "capture_video": false,
+    "checkpoint_end_buffer_steps": 0,
+    "checkpoint_frequency": 10,
+    "clip_coef": 0.15,
+    "clip_vloss": true,
+    "create_run_id_file": false,
+    "cuda": true,
+    "cur_main_exploiter_path": null,
+    "cur_main_path": null,
+    "dbg_all_player_0": false,
+    "dbg_all_player_1": false,
+    "dbg_deterministic_actions": false,
+    "dbg_exploiter_update": false,
+    "dbg_no_main_agent_ppo_update": false,
+    "dbg_non_legal_action": false,
+    "dbg_reset": false,
+    "dbg_seed": false,
+    "dbg_update_gaes": false,
+    "deterministic": true,
+    "dyn_attack_reward": 0.0,
+    "dyn_num_bot_envs": true,
+    "early_updates": true,
+    "endgame_maps": false,
+    "ent_coef": 0.015,
+    "epochs": 30,
+    "evaluate": false,
+    "even_opponent_split": true,
+    "exact_seed": true,
+    "exp_name": "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_2",
+    "exploiter_PPO_learning_rate": 5e-05,
+    "exploiter_anneal_ent": true,
+    "exploiter_anneal_lr": true,
+    "exploiter_clip_coef": 0.15,
+    "exploiter_clip_vloss": true,
+    "exploiter_ent_coef": 0.015,
+    "exploiter_ent_coef_max": 0.0075,
+    "exploiter_ent_coef_min": 0.03,
+    "exploiter_gae_lambda": 0.95,
+    "exploiter_gamma": 1,
+    "exploiter_kl_coeff": 0.3,
+    "exploiter_kle_rollback": false,
+    "exploiter_kle_stop": true,
+    "exploiter_max_grad_norm": 0.5,
+    "exploiter_norm_adv": true,
+    "exploiter_target_kl": 0.01,
+    "exploiter_unit_exploration_bonus": 0.15,
+    "exploiter_unit_exploration_bonus_enabled": true,
+    "exploiter_update_epochs": 4,
+    "exploiter_vf_coef": 0.15,
+    "gae_lambda": 0.95,
+    "gamma": 1,
+    "gym_id": "MicrortsBC",
+    "initial_BC": false,
+    "kl_coeff": 0.3,
+    "kle_rollback": false,
+    "kle_stop": true,
+    "league_exploiter_pfsp_weighting": "variance",
+    "league_exploiter_selfplay_save_interval": 30000000,
+    "league_exploiter_winrate_threshold": 0.7,
+    "league_training": true,
+    "log_exploiter_tables": false,
+    "log_exploiter_winrates": false,
+    "log_unweighted_losses": true,
+    "lower_selfplay_winrate_offset": null,
+    "main_PFSP_prob": 0.7,
+    "main_SP_prob": 0.1,
+    "main_exploiter_main_prob_when_max_historical_winrate": 0,
+    "main_exploiter_max_historical_winrate_threshold": 2,
+    "main_exploiter_no_draw_winrate_threshold": 0.25,
+    "main_exploiter_pfsp_weighting": "variance",
+    "main_exploiter_ready_use_historicals": false,
+    "main_exploiter_selfplay_save_interval": 30000000,
+    "main_exploiter_vs_main_winrate_threshold": 0.4,
+    "main_exploiter_winrate_threshold": 0.7,
+    "main_pfsp_weighting": "focused_strong",
+    "main_selfplay_save_interval": 30000000,
+    "main_winrate_threshold": 0.7,
+    "max_bot_winrate": 0.98,
+    "max_grad_norm": 0.5,
+    "max_num_bot_envs": 1,
+    "min_bot_winrate": 0.955,
+    "min_num_bot_envs": 1,
+    "model_path": "p",
+    "n_minibatch": 4,
+    "new_hist_rewards": 0,
+    "newdata": false,
+    "norm_adv": true,
+    "num_bot_envs": 1,
+    "num_bot_envs_per_main_exploiter": 0,
+    "num_envs": 51,
+    "num_envs_per_league_exploiters": 1,
+    "num_envs_per_main_exploiters": 1,
+    "num_eval_episodes": 100,
+    "num_league_exploiters": 0,
+    "num_main_envs": 25,
+    "num_main_exploiters": 0,
+    "num_parallel_eval_games": 0,
+    "num_selfplay_envs": 0,
+    "num_steps": 512,
+    "nurwins": false,
+    "other_historicals_paths": [
+      "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt"
+    ],
+    "pfsp": true,
+    "pfsp_min_prob_factor": 0.25,
+    "ppo": false,
+    "prod_mode": true,
+    "render": false,
+    "render_all": false,
+    "resume": false,
+    "rewardscore": 0.002,
+    "save_gpu_memory": false,
+    "seed": 2303960624,
+    "selfplay": false,
+    "selfplay_evaluate_testing": false,
+    "selfplay_ready_save_interval": 30000000,
+    "selfplay_save_interval": 10,
+    "sp": true,
+    "starting_historical": false,
+    "target_kl": 0.01,
+    "torch_deterministic": true,
+    "total_timesteps": 30000000,
+    "train_on_old_mains": false,
+    "training_on_bot_envs": false,
+    "unit_bonus": false,
+    "unit_bonus_max_heavy": -5.0,
+    "unit_bonus_max_light": 0.0,
+    "unit_bonus_max_ranged": 0.0,
+    "unit_bonus_max_worker": 5.0,
+    "unit_exploiters": false,
+    "update_epochs": 4,
+    "upper_selfplay_winrate_offset": null,
+    "use_no_draw_winrates": true,
+    "value_warmup_updates": -1,
+    "vf_coef": 0.15,
+    "wandb_entity": null,
+    "wandb_group_name": "worker_exploit",
+    "wandb_project_name": "new_selfplay",
+    "warmup_epochs": 20,
+    "zero_unit_bonus_for_main": true
+  }
+}
+change config in conf/config.yaml
+/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/wandb/sdk/internal/sender.py:15: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version
+wandb: wandb version 0.25.0 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.10.24
+wandb: Syncing run league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_2
+wandb: ⭐️ View project at https://wandb.ai/glaspaul244-hhu/new_selfplay
+wandb: 🚀 View run at https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/9kbpop3t
+wandb: Run data is saved locally in /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081255-9kbpop3t
+wandb: Run `wandb offline` to turn off syncing.
+
+cuda
+opponents: 
+[<function coacAI at 0x72d99ac70e50>]
+Error executing job with overrides: ['ExperimentConfig.exp_name=league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_2', 'ExperimentConfig.seed=2303960624']
+Traceback (most recent call last):
+  File "/home/nglaser/BA/MicortsRTS-league-training/main.py", line 446, in main
+    historical_agent.set_weights(path_historical)
+  File "/home/nglaser/BA/MicortsRTS-league-training/agent_model.py", line 182, in set_weights
+    weights = torch.load(weights, map_location=self.device, weights_only=True)
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/torch/serialization.py", line 1484, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/torch/serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/torch/serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: 'models/saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt/agent.pt'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+wandb: Waiting for W&B process to finish, PID 95792
+wandb: Program failed with code 1.  Press ctrl-c to abort syncing.
+wandb: - 0.00MB of 0.00MB uploaded (0.00MB deduped)wandb: \ 0.00MB of 0.00MB uploaded (0.00MB deduped)wandb: | 0.01MB of 0.01MB uploaded (0.00MB deduped)wandb:                                                                                
+wandb: Find user logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081255-9kbpop3t/logs/debug.log
+wandb: Find internal logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260308_081255-9kbpop3t/logs/debug-internal.log
+wandb: Run summary:
+wandb:   global_step 0
+wandb:    _timestamp 1772957576.94911
+wandb:         _step 0
+wandb: Run history:
+wandb:   global_step ▁
+wandb:    _timestamp ▁
+wandb:         _step ▁
+wandb: 
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: 
+wandb: Synced league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_2_2: https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/9kbpop3t
+

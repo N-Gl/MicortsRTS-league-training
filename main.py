@@ -27,7 +27,7 @@ cstore = ConfigStore.instance()
 cstore.store(name="experiment_config", node=ExperimentConfig)
 
 
-def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True, BC_path=False) -> str:
+def _resolve_checkpoint_path(model_path: str, exp_name=None, resume=True, direct_path=False) -> str:
     if resume or BC_path:
         if model_path.endswith(".pt"):
             if exp_name == None:
@@ -427,7 +427,7 @@ def main(cfg: ExperimentConfig):
     if args.league_training:
         from selfplay_league import LeagueTrainer
 
-        path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume, BC_path=True)
+        path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume, direct_path=True)
         BCagent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
         BCagent.set_weights(path_BCagent)
         for param in BCagent.parameters():
@@ -441,7 +441,7 @@ def main(cfg: ExperimentConfig):
 
         if args.other_historicals_paths is not None:
             for historical_path in args.other_historicals_paths:
-                path_historical = _resolve_checkpoint_path(historical_path, args.exp_name, resume=args.resume)
+                path_historical = _resolve_checkpoint_path(historical_path, args.exp_name, resume=args.resume, direct_path=True)
                 historical_agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
                 historical_agent.set_weights(path_historical)
                 for param in historical_agent.parameters():
