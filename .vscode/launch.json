@@ -119,6 +119,16 @@
     },
 
     {
+      "name": "Python: league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_5",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_5",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+    },
+
+    {
       "name": "Python: dbg_league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_2_dbg",
       "type": "debugpy",
       "request": "launch",

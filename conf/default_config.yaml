@@ -148,6 +148,11 @@ ExperimentConfig:
   unit_bonus_max_light: 1.0
   unit_bonus_max_heavy: 1.0
   unit_bonus_max_ranged: 1.0
+
+
+  sp_rand: false
+
+  
 hydra:
   job:
     chdir: false
