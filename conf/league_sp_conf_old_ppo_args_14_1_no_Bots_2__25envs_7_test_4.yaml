@@ -4,14 +4,13 @@ defaults:
 ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
-  model_path: p
+  model_path: models/BCagent.pt
   BC_model_path: models/BCagent.pt
   other_historicals_paths: ["saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt"]
-  exp_name: 08_03_26__BCAgent__worker_exploit
+  exp_name: 09_03_26__BCAgent__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_4
   wandb_group_name: worker_exploit
 
 
-  resume: false
   starting_historical: false
 
 
