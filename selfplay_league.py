@@ -722,6 +722,9 @@ class LeagueTrainer:
                     )
 
                 if args.unit_bonus:
+                    sc = scalar_features[step]
+                    sp_sc = sc[:args.num_selfplay_envs]
+                    bot_sc = sc[args.num_selfplay_envs:]
                     sp_score_tensor = self._add_unit_bonus_to_score(
                         sp_score_tensor,
                         sp_sc[:, 3:7],
