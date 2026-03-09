@@ -32,13 +32,13 @@
 \contentsline {paragraph}{Prioritization Function.}{8}{section*.28}%
 \contentsline {paragraph}{Implemented Prioritization Function.}{8}{section*.29}%
 \contentsline {subsection}{\numberline {3.6}\hskip -1em.~league training (LT)}{8}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}\hskip -1em.~league training (LT)}{8}{subsection.3.7}%
 \contentsline {paragraph}{League composition and roles.}{8}{section*.30}%
 \contentsline {paragraph}{Training loop and snapshot management.}{8}{section*.31}%
 \contentsline {paragraph}{Bot environments.}{9}{section*.32}%
 \contentsline {paragraph}{number of parallel bot environment instances.}{9}{section*.33}%
-\contentsline {paragraph}{Select opponent.}{9}{section*.34}%
-\contentsline {paragraph}{Why exploiters are needed.}{9}{section*.35}%
-\contentsline {paragraph}{Practical considerations in MicroRTS.}{9}{section*.36}%
+\contentsline {paragraph}{Summary: Opponent Selection.}{9}{section*.34}%
+\contentsline {paragraph}{Resetting Exploiters.}{9}{section*.35}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{9}{section.4}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{10}{section.5}%
-\contentsline {section}{Erkl\"arung}{12}{section*.41}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{9}{section.5}%
+\contentsline {section}{Erkl\"arung}{12}{section*.40}%

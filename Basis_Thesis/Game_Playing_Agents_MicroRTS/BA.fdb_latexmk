@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex BA"] 1772810268.28602 "BA.aux" "BA.bbl" "BA" 1773051587.54239 0
+["bibtex BA"] 1773068348.85235 "BA.aux" "BA.bbl" "BA" 1773068478.54991 0
   "./references.bib" 1772712280.51071 13083 b6345d511968894087d7bf87b2facde3 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "BA.aux" 1773051587.48975 16675 6e8057aab48339df1b8ba0f3fe524603 "pdflatex"
+  "BA.aux" 1773068478.49908 17214 cadb82ef3287a55782497e3723946e2f "pdflatex"
   (generated)
   "BA.bbl"
   "BA.blg"
   (rewritten before read)
-["pdflatex"] 1773051586.45375 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1773051587.54251 0
+["pdflatex"] 1773068477.47427 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1773068478.55003 0
   "/etc/texmf/web2c/texmf.cnf" 1770636971.26796 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1772810252.81145 44889 d65e0adbe906360d708615cf86b1b797 ""
+  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1773068477.26696 45209 fc26d927ea5365f26e054e30bffb4603 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -127,12 +127,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770636977.92702 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770636989 7277872 ffab420a662be251f461743f3256ccdd ""
-  "BA.aux" 1773051587.48975 16675 6e8057aab48339df1b8ba0f3fe524603 "pdflatex"
-  "BA.bbl" 1772810268.29294 4556 e461803caf82c8a80a76a0385cdc9569 "bibtex BA"
-  "BA.brf" 1773051587.48975 3102 3e0bd6d098d79b1868b24ec8e268101d "pdflatex"
-  "BA.out" 1773051587.48975 1790 b2054d087ebcaf84549b15c0f0bf5d92 "pdflatex"
-  "BA.tex" 1772810252.81145 44889 d65e0adbe906360d708615cf86b1b797 ""
-  "BA.toc" 1773051587.48975 3183 875b3f7b683447f84d32b92ddb0dd03e "pdflatex"
+  "BA.aux" 1773068478.49908 17214 cadb82ef3287a55782497e3723946e2f "pdflatex"
+  "BA.bbl" 1773068348.8545 4498 01912933fc76493dfac67e01010edbef "bibtex BA"
+  "BA.brf" 1773068478.49908 3046 d06acb2c5a701193c106ace427210420 "pdflatex"
+  "BA.out" 1773068478.49908 1973 a72dddc5dd52d89364739294d8f132a8 "pdflatex"
+  "BA.tex" 1773068477.26696 45209 fc26d927ea5365f26e054e30bffb4603 ""
+  "BA.toc" 1773068478.49908 3206 1e923118c6f29f1492c67d850704a889 "pdflatex"
   "hhu_logo.png" 1770636797.59944 8264 c1f1bd10a1563342031d75de2fe3fc15 ""
   "images/16x16.png" 1770636797.60726 5264 3bfdf6f174daeff65e05470c243d5d81 ""
   "images/Barracks.png" 1772712280.50711 212 2e9be254617f9bf748a6332eddca254b ""
@@ -141,13 +141,14 @@
   "images/Fig4.png" 1770636797.65423 641040 2af16d45bac89b5d1919b780d12e5ac4 ""
   "images/Heavy.png" 1772712280.50711 486 d939c1fad47347095317e62746c01f0d ""
   "images/Light.png" 1772712280.50711 410 2aab3c17e2714892f14a89fd7895f1e2 ""
+  "images/Matchmaking.pdf" 1773067769.68015 76209 0b3b3af180dcbfe6767a1ba78a3735db ""
   "images/Ranged.png" 1772712280.50711 431 4470b66b6c8a83247ff66e07af560096 ""
   "images/Resource.png" 1772712280.50711 274 a0f49ec63409536568be777434cb9901 ""
   "images/Worker.png" 1772712280.50711 371 31ddb2b78c14ae91d99c8694ab3cc352 ""
   "images/action_konflikt.png" 1772712280.51071 524725 881440d98751b47bd16df384bc6cd764 ""
   "images/adjust_obs.pdf" 1772712344.41614 113777 e2f39db1dafa10528f4dcd77a59459ec ""
   "images/diagram.png" 1770636797.62292 51067 01fd5dffd6837cf668841fde74b6ded8 ""
-  "images/focused_strong_boosted_with_draws.pdf" 1772721069.37341 30895 4587e13747a0410a5e819c7b26ebe0b5 ""
+  "images/focused_strong_boosted_with_draws.pdf" 1773067519.5298 30368 ba5cf7e72835b04d8e982128e0c17220 ""
   "sarmata.sty" 1770636797.59548 22690 28a43753b8bb8493d62e7a16d2556ab7 ""
   (generated)
   "BA.aux"

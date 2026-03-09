@@ -134,7 +134,39 @@ class BehaviorCloning:
             self._finalize_logging()
 
     def _collect_new_data(self):
-        opponents = [
+        bc_expert_ai = getattr(self.args, "bc_expert_ai", None)
+        bc_opponent_ai = getattr(self.args, "bc_opponent_ai", bc_expert_ai)
+        bc_opponent_ais = getattr(self.args, "bc_opponent_ais", None)
+        bc_num_runs = int(getattr(self.args, "bc_num_runs", 250))
+
+        if bc_expert_ai:
+            opponent_ai_names = []
+            if bc_opponent_ais:
+                if isinstance(bc_opponent_ais, str):
+                    opponent_ai_names = [bc_opponent_ais]
+                else:
+                    opponent_ai_names = [str(ai_name) for ai_name in bc_opponent_ais]
+            elif bc_opponent_ai:
+                opponent_ai_names = [bc_opponent_ai]
+
+            if not opponent_ai_names:
+                raise ValueError(
+                    "Set bc_opponent_ai or bc_opponent_ais when bc_expert_ai is provided."
+                )
+            if bc_num_runs <= 0:
+                raise ValueError("bc_num_runs must be > 0.")
+            expert_ai_callable = self._resolve_ai_callable(bc_expert_ai)
+            opponents = [
+                [expert_ai_callable, self._resolve_ai_callable(opponent_ai_name)]
+                for opponent_ai_name in opponent_ai_names
+            ]
+            num_runs = [bc_num_runs for _ in opponents]
+            print(
+                f"Using custom BC replay collection: {bc_expert_ai} vs {opponent_ai_names}, "
+                f"{bc_num_runs} episodes per opponent."
+            )
+        else:
+            opponents = [
             # new (BA Parameter) CoacAI gegen alle 14 Bots - guidedRojoA3N (wegen Crash) rausgenommen
             [microrts_ai.coacAI, microrts_ai.workerRushAI],
             [microrts_ai.coacAI, microrts_ai.passiveAI],
@@ -164,10 +196,10 @@ class BehaviorCloning:
             [microrts_ai.mayari, microrts_ai.tiamat],
             [microrts_ai.mayari, microrts_ai.droplet],
             [microrts_ai.mayari, microrts_ai.naiveMCTSAI],
-        ]
+            ]
 
-        num_runs = [ 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250,
-            200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250]
+            num_runs = [ 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250,
+                200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250]
 
         expert_name_to_id = {
             "coacAI": 0,
@@ -178,6 +210,7 @@ class BehaviorCloning:
             "randomAI": 5,
             "randomBiasedAI": 6,
             "rojo": 7,
+            "mixedBot": 8,
             "mixedbot": 8,
             "izanagi": 9,
             "droplet": 10,
@@ -226,9 +259,19 @@ class BehaviorCloning:
                 if self.args.nurwins and reward.item() != 1:
                     pass
                 else:
+                    expert_name = ai_pair[0].__name__
+                    expert_id = expert_name_to_id.setdefault(
+                        expert_name, max(expert_name_to_id.values(), default=-1) + 1
+                    )
                     obsten = torch.cat((obsten, torch.tensor(np.array(obs_arr)).squeeze(1)), dim=0)
                     actten = torch.cat((actten, torch.tensor(np.array(act_arr))), dim=0)
-                    ztorch = torch.cat((ztorch, torch.tensor(expert_name_to_id[ai_pair[0].__name__]).repeat(len(obs_arr), 1)), dim=0,)
+                    ztorch = torch.cat(
+                        (
+                            ztorch,
+                            torch.tensor(expert_id).repeat(len(obs_arr), 1),
+                        ),
+                        dim=0,
+                    )
 
                 if ((ep + 1) % 50 == 0) or ((ep + 1) == num_runs[index]):
                     replay_path = os.path.join(
@@ -256,6 +299,15 @@ class BehaviorCloning:
 
             env_transform.close()
             env.close()
+
+    def _resolve_ai_callable(self, ai_name: str):
+        ai_callable = getattr(microrts_ai, ai_name, None)
+        if ai_callable is None:
+            raise ValueError(
+                f"Unknown AI '{ai_name}' for BC replay collection. "
+                "Use names from gym_microrts.microrts_ai, e.g. workerRushAI."
+            )
+        return ai_callable
 
     def _train_epoch(self, loader, optimizer, warmup_epochs, epoch):
         train_loss_sum = 0.0

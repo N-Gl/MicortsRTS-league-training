@@ -270,6 +270,9 @@ def main(cfg: ExperimentConfig):
 
     def getScalarFeatures(obs, res, numenvs):
         # old_Sc = old_getScalarFeatures(obs, res, numenvs)
+        if not torch.is_tensor(obs):
+            obs = torch.as_tensor(obs).to(dtype=torch.float32)
+
         num_envs = obs.shape[0]
         device = obs.device
         dtype = obs.dtype
