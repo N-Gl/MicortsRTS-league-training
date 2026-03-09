@@ -374,6 +374,9 @@ class MainPlayer(Player):
         for verification matches against forgotten main players and past main exploiters.
         If there are no forgotten players or strong exploiters, that probability is used for self-play instead.'''
         if self.args.sp:
+            if self.args.sp_rand:
+                rand = np.random.randint(len(self._payoff.players))
+                return self._payoff.players[rand], True
             return self._payoff.players[0], True
         coin_toss = np.random.random()
 

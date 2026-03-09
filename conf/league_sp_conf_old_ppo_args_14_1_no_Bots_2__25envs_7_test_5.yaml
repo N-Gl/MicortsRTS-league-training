@@ -7,10 +7,12 @@ ExperimentConfig:
   model_path: p
   BC_model_path: models/BCagent.pt
   other_historicals_paths: ["models/BCagent.pt", "saved_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400.pt"]
-  exp_name: 09_03_26__BCAgent__worker_exploit
+  exp_name: 09_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_5_4
   wandb_group_name: worker_exploit
 
-
+  
+  render: true
+  sp_rand: true
   resume: false
   starting_historical: false
 

@@ -10,14 +10,14 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "league_models/05_03_2026__PPO_Unit_Bonus/Main_agent_backups/agent_update_540.pt",
+                          "saved_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "05_03_2026__PPO_Unit_Bonus",
+          "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "05_03_2026__PPO_Unit_Bonus"
+  exp_name: "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
