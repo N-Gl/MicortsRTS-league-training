@@ -375,7 +375,7 @@ class MainPlayer(Player):
         If there are no forgotten players or strong exploiters, that probability is used for self-play instead.'''
         if self.args.sp:
             if self.args.sp_rand:
-                rand = np.random.randint(len(self._payoff.players))
+                rand = np.random.randint(len(self._payoff.players)-1)
                 return self._payoff.players[rand], True
             return self._payoff.players[0], True
         coin_toss = np.random.random()
