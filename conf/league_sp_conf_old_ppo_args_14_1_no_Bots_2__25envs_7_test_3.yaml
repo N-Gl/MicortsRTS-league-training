@@ -12,6 +12,7 @@ ExperimentConfig:
 
 
   resume: false
+  unit_bonus: true
   starting_historical: false
 
 
@@ -23,7 +24,18 @@ ExperimentConfig:
   max_num_bot_envs: 1 # 15 # changed from 9 (3)
   training_on_bot_envs: false   # true
 
-  num_main_envs: 25
+  num_main_exploiters: 1
+  num_league_exploiters: 0
+  num_envs_per_main_exploiters: 25
+
+  sp: false
+  dbg_no_main_agent_ppo_update: true # false
+
+  log_exploiter_tables: true
+  log_exploiter_winrates: true
+  log_unweighted_losses: true 
+
+  num_main_envs: 1
 
   # attack_reward_weight: 0.05
   # rewardscore: 0.0
