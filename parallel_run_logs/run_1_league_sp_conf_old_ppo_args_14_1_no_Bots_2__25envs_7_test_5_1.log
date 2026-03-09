@@ -178,3 +178,2619 @@ wandb: 🚀 View run at https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/d7f1g
 wandb: Run data is saved locally in /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260309_071134-d7f1g6hk
 wandb: Run `wandb offline` to turn off syncing.
 wandb: WARNING Step cannot be set when using syncing with tensorboard. Please log your step values as a metric such as 'global_step'
+
+cuda
+opponents: 
+[<function coacAI at 0x775e3f2b2e50>]
+Added historical agent from models/BCagent.pt
+Added historical agent from saved_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400.pt
+Creating Historical Checkpoint of MainPlayer
+Creating Historical Checkpoint of MainPlayer
+League PPO training started
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=15418, episode_reward=-10.003, score_reward_sum=-0.093
+selfplay_winrate_no_draw_11=0.000, selfplay_winrate_with_draw_0.5_11=0.455
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=16042, episode_reward=-10.003, score_reward_sum=-0.135
+selfplay_winrate_no_draw_12=0.000, selfplay_winrate_with_draw_0.5_12=0.417
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=16510, episode_reward=-10.003, score_reward_sum=-0.204
+selfplay_winrate_no_draw_13=0.000, selfplay_winrate_with_draw_0.5_13=0.385
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=17914, episode_reward=-10.003, score_reward_sum=-0.133
+selfplay_winrate_no_draw_14=0.000, selfplay_winrate_with_draw_0.5_14=0.357
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=18330, episode_reward=-10.003, score_reward_sum=-0.236
+selfplay_winrate_no_draw_15=0.000, selfplay_winrate_with_draw_0.5_15=0.333
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=18512, episode_reward=-10.003, score_reward_sum=-0.256
+selfplay_winrate_no_draw_16=0.000, selfplay_winrate_with_draw_0.5_16=0.312
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=18850, episode_reward=-10.003, score_reward_sum=-0.254, bot_winrate_11=0.000, bot_winrate_with_draw_0.5_11=0.455
+bot_winrate_11=0.000, bot_winrate_with_draw_0.5_11=0.455
+match in Botgame 1, result: -1.0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=19396, episode_reward=-10.003, score_reward_sum=-0.332
+selfplay_winrate_no_draw_17=0.000, selfplay_winrate_with_draw_0.5_17=0.294
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=21164, episode_reward=-10.003, score_reward_sum=-0.178
+selfplay_winrate_no_draw_18=0.000, selfplay_winrate_with_draw_0.5_18=0.278
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=22776, episode_reward=-10.003, score_reward_sum=-0.296
+selfplay_winrate_no_draw_19=0.000, selfplay_winrate_with_draw_0.5_19=0.263
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=25584, episode_reward=-10.003, score_reward_sum=-0.845
+selfplay_winrate_no_draw_20=0.000, selfplay_winrate_with_draw_0.5_20=0.250
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=27144, episode_reward=-10.003, score_reward_sum=-0.614
+selfplay_winrate_no_draw_21=0.000, selfplay_winrate_with_draw_0.5_21=0.238
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=27404, episode_reward=-10.003, score_reward_sum=-0.432
+selfplay_winrate_no_draw_22=0.000, selfplay_winrate_with_draw_0.5_22=0.227
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=34970, episode_reward=-10.003, score_reward_sum=-1.171
+selfplay_winrate_no_draw_23=0.000, selfplay_winrate_with_draw_0.5_23=0.217
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=37258, episode_reward=-10.003, score_reward_sum=-0.515
+selfplay_winrate_no_draw_24=0.000, selfplay_winrate_with_draw_0.5_24=0.208
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=39156, episode_reward=-10.003, score_reward_sum=-0.320
+selfplay_winrate_no_draw_25=0.000, selfplay_winrate_with_draw_0.5_25=0.200
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=41210, episode_reward=-10.003, score_reward_sum=-1.497
+selfplay_winrate_no_draw_26=0.000, selfplay_winrate_with_draw_0.5_26=0.192
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=41340, episode_reward=-10.003, score_reward_sum=-0.291, bot_winrate_12=0.000, bot_winrate_with_draw_0.5_12=0.417
+bot_winrate_12=0.000, bot_winrate_with_draw_0.5_12=0.417
+match in Botgame 1, result: -1.0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=43134, episode_reward=-10.003, score_reward_sum=-0.102
+selfplay_winrate_no_draw_27=0.000, selfplay_winrate_with_draw_0.5_27=0.185
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=43316, episode_reward=-10.003, score_reward_sum=-1.700
+selfplay_winrate_no_draw_28=0.000, selfplay_winrate_with_draw_0.5_28=0.179
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=45864, episode_reward=-10.003, score_reward_sum=-1.780
+selfplay_winrate_no_draw_29=0.000, selfplay_winrate_with_draw_0.5_29=0.172
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=46462, episode_reward=-10.003, score_reward_sum=-0.653
+selfplay_winrate_no_draw_30=0.000, selfplay_winrate_with_draw_0.5_30=0.167
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=46540, episode_reward=-10.003, score_reward_sum=-0.767
+selfplay_winrate_no_draw_31=0.000, selfplay_winrate_with_draw_0.5_31=0.161
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=48256, episode_reward=-10.003, score_reward_sum=-2.313
+selfplay_winrate_no_draw_32=0.000, selfplay_winrate_with_draw_0.5_32=0.156
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=50336, episode_reward=-10.003, score_reward_sum=-1.083
+selfplay_winrate_no_draw_33=0.000, selfplay_winrate_with_draw_0.5_33=0.152
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=50960, episode_reward=-10.003, score_reward_sum=-2.409
+selfplay_winrate_no_draw_34=0.000, selfplay_winrate_with_draw_0.5_34=0.147
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=-0.003, score_reward_sum=-2.759
+selfplay_winrate_no_draw_35=0.000, selfplay_winrate_with_draw_0.5_35=0.157
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=-0.003, score_reward_sum=-2.638
+selfplay_winrate_no_draw_36=0.000, selfplay_winrate_with_draw_0.5_36=0.167
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=0.001, score_reward_sum=0.075
+selfplay_winrate_no_draw_37=0.000, selfplay_winrate_with_draw_0.5_37=0.176
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=-0.003, score_reward_sum=-1.663
+selfplay_winrate_no_draw_38=0.000, selfplay_winrate_with_draw_0.5_38=0.184
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=-0.001, score_reward_sum=-1.037
+selfplay_winrate_no_draw_39=0.000, selfplay_winrate_with_draw_0.5_39=0.192
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=-0.001, score_reward_sum=-0.914
+selfplay_winrate_no_draw_40=0.000, selfplay_winrate_with_draw_0.5_40=0.200
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=52000, episode_reward=-0.002, score_reward_sum=-1.235
+selfplay_winrate_no_draw_41=0.000, selfplay_winrate_with_draw_0.5_41=0.207
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=55380, episode_reward=-10.003, score_reward_sum=-0.337
+selfplay_winrate_no_draw_42=0.000, selfplay_winrate_with_draw_0.5_42=0.202
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=63414, episode_reward=-10.003, score_reward_sum=-0.917
+selfplay_winrate_no_draw_43=0.000, selfplay_winrate_with_draw_0.5_43=0.198
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=63440, episode_reward=-10.003, score_reward_sum=-0.283, bot_winrate_13=0.000, bot_winrate_with_draw_0.5_13=0.385
+bot_winrate_13=0.000, bot_winrate_with_draw_0.5_13=0.385
+match in Botgame 1, result: -1.0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=65104, episode_reward=-10.003, score_reward_sum=-0.452
+selfplay_winrate_no_draw_44=0.000, selfplay_winrate_with_draw_0.5_44=0.193
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=65364, episode_reward=-10.003, score_reward_sum=-0.293
+selfplay_winrate_no_draw_45=0.000, selfplay_winrate_with_draw_0.5_45=0.189
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=67314, episode_reward=-10.003, score_reward_sum=-0.128
+selfplay_winrate_no_draw_46=0.000, selfplay_winrate_with_draw_0.5_46=0.185
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=68458, episode_reward=-10.003, score_reward_sum=-0.187
+selfplay_winrate_no_draw_47=0.000, selfplay_winrate_with_draw_0.5_47=0.181
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=69420, episode_reward=-10.003, score_reward_sum=-0.342
+selfplay_winrate_no_draw_48=0.000, selfplay_winrate_with_draw_0.5_48=0.177
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=70512, episode_reward=-0.003, score_reward_sum=-2.074
+selfplay_winrate_no_draw_49=0.000, selfplay_winrate_with_draw_0.5_49=0.184
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=70564, episode_reward=-10.003, score_reward_sum=-0.589
+selfplay_winrate_no_draw_50=0.000, selfplay_winrate_with_draw_0.5_50=0.180
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=71396, episode_reward=-0.003, score_reward_sum=-1.715
+selfplay_winrate_no_draw_51=0.000, selfplay_winrate_with_draw_0.5_51=0.186
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=73164, episode_reward=-0.003, score_reward_sum=-2.444
+selfplay_winrate_no_draw_52=0.000, selfplay_winrate_with_draw_0.5_52=0.192
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=74776, episode_reward=-0.003, score_reward_sum=-2.802
+selfplay_winrate_no_draw_53=0.000, selfplay_winrate_with_draw_0.5_53=0.198
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=78078, episode_reward=-10.003, score_reward_sum=-0.454
+selfplay_winrate_no_draw_54=0.000, selfplay_winrate_with_draw_0.5_54=0.194
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=79404, episode_reward=-0.003, score_reward_sum=-2.443
+selfplay_winrate_no_draw_55=0.000, selfplay_winrate_with_draw_0.5_55=0.200
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=79716, episode_reward=-10.003, score_reward_sum=-0.077
+selfplay_winrate_no_draw_56=0.000, selfplay_winrate_with_draw_0.5_56=0.196
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=80210, episode_reward=-10.003, score_reward_sum=-1.115
+selfplay_winrate_no_draw_57=0.000, selfplay_winrate_with_draw_0.5_57=0.193
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=82706, episode_reward=-10.003, score_reward_sum=-0.871
+selfplay_winrate_no_draw_58=0.000, selfplay_winrate_with_draw_0.5_58=0.190
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=82888, episode_reward=-10.003, score_reward_sum=-0.789
+selfplay_winrate_no_draw_59=0.000, selfplay_winrate_with_draw_0.5_59=0.186
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=88582, episode_reward=-10.003, score_reward_sum=-0.407, bot_winrate_14=0.000, bot_winrate_with_draw_0.5_14=0.357
+bot_winrate_14=0.000, bot_winrate_with_draw_0.5_14=0.357
+match in Botgame 1, result: -1.0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=89102, episode_reward=-10.003, score_reward_sum=-0.087
+selfplay_winrate_no_draw_60=0.000, selfplay_winrate_with_draw_0.5_60=0.183
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=90584, episode_reward=-10.003, score_reward_sum=-1.762
+selfplay_winrate_no_draw_61=0.000, selfplay_winrate_with_draw_0.5_61=0.180
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=91156, episode_reward=-0.001, score_reward_sum=-0.848
+selfplay_winrate_no_draw_62=0.000, selfplay_winrate_with_draw_0.5_62=0.185
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=92352, episode_reward=-10.003, score_reward_sum=-0.201
+selfplay_winrate_no_draw_63=0.000, selfplay_winrate_with_draw_0.5_63=0.183
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=92742, episode_reward=-10.003, score_reward_sum=-1.626
+selfplay_winrate_no_draw_64=0.000, selfplay_winrate_with_draw_0.5_64=0.180
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=93210, episode_reward=-0.003, score_reward_sum=-2.636
+selfplay_winrate_no_draw_65=0.000, selfplay_winrate_with_draw_0.5_65=0.185
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=95706, episode_reward=-10.003, score_reward_sum=-0.792
+selfplay_winrate_no_draw_66=0.000, selfplay_winrate_with_draw_0.5_66=0.182
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=96148, episode_reward=-10.003, score_reward_sum=-0.226
+selfplay_winrate_no_draw_67=0.000, selfplay_winrate_with_draw_0.5_67=0.179
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=98540, episode_reward=-0.003, score_reward_sum=-1.540
+selfplay_winrate_no_draw_68=0.000, selfplay_winrate_with_draw_0.5_68=0.184
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=100022, episode_reward=-10.003, score_reward_sum=-1.543
+selfplay_winrate_no_draw_69=0.000, selfplay_winrate_with_draw_0.5_69=0.181
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=100386, episode_reward=-10.003, score_reward_sum=-1.418
+selfplay_winrate_no_draw_70=0.000, selfplay_winrate_with_draw_0.5_70=0.179
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=100776, episode_reward=-10.003, score_reward_sum=-0.099
+selfplay_winrate_no_draw_71=0.000, selfplay_winrate_with_draw_0.5_71=0.176
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=104000, episode_reward=-0.003, score_reward_sum=-2.525
+selfplay_winrate_no_draw_72=0.000, selfplay_winrate_with_draw_0.5_72=0.181
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=104000, episode_reward=0.000, score_reward_sum=0.061
+selfplay_winrate_no_draw_73=0.000, selfplay_winrate_with_draw_0.5_73=0.185
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=104000, episode_reward=-0.001, score_reward_sum=-1.062
+selfplay_winrate_no_draw_74=0.000, selfplay_winrate_with_draw_0.5_74=0.189
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=105768, episode_reward=-10.003, score_reward_sum=-0.433
+selfplay_winrate_no_draw_75=0.000, selfplay_winrate_with_draw_0.5_75=0.187
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=106106, episode_reward=-10.003, score_reward_sum=-0.552
+selfplay_winrate_no_draw_76=0.000, selfplay_winrate_with_draw_0.5_76=0.184
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=106938, episode_reward=-10.003, score_reward_sum=-0.650
+selfplay_winrate_no_draw_77=0.000, selfplay_winrate_with_draw_0.5_77=0.182
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=108394, episode_reward=-10.003, score_reward_sum=-0.122
+selfplay_winrate_no_draw_78=0.000, selfplay_winrate_with_draw_0.5_78=0.179
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=109200, episode_reward=-10.003, score_reward_sum=-0.179, bot_winrate_15=0.000, bot_winrate_with_draw_0.5_15=0.333
+bot_winrate_15=0.000, bot_winrate_with_draw_0.5_15=0.333
+match in Botgame 1, result: -1.0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=109720, episode_reward=-10.003, score_reward_sum=-1.267
+selfplay_winrate_no_draw_79=0.000, selfplay_winrate_with_draw_0.5_79=0.177
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=110240, episode_reward=-10.003, score_reward_sum=-1.913
+selfplay_winrate_no_draw_80=0.000, selfplay_winrate_with_draw_0.5_80=0.175
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=111592, episode_reward=-10.003, score_reward_sum=-0.253
+selfplay_winrate_no_draw_81=0.000, selfplay_winrate_with_draw_0.5_81=0.173
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=116792, episode_reward=-10.003, score_reward_sum=-0.218
+selfplay_winrate_no_draw_82=0.000, selfplay_winrate_with_draw_0.5_82=0.171
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=119028, episode_reward=-10.003, score_reward_sum=-0.883
+selfplay_winrate_no_draw_83=0.000, selfplay_winrate_with_draw_0.5_83=0.169
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=119314, episode_reward=-0.003, score_reward_sum=-2.493
+selfplay_winrate_no_draw_84=0.000, selfplay_winrate_with_draw_0.5_84=0.173
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=120692, episode_reward=-10.003, score_reward_sum=-0.437
+selfplay_winrate_no_draw_85=0.000, selfplay_winrate_with_draw_0.5_85=0.171
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=121420, episode_reward=-0.003, score_reward_sum=-1.944
+selfplay_winrate_no_draw_86=0.000, selfplay_winrate_with_draw_0.5_86=0.174
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=122434, episode_reward=-10.003, score_reward_sum=-0.439
+selfplay_winrate_no_draw_87=0.000, selfplay_winrate_with_draw_0.5_87=0.172
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=122564, episode_reward=-0.003, score_reward_sum=-2.581
+selfplay_winrate_no_draw_88=0.000, selfplay_winrate_with_draw_0.5_88=0.176
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=123396, episode_reward=-0.003, score_reward_sum=-2.506
+selfplay_winrate_no_draw_89=0.000, selfplay_winrate_with_draw_0.5_89=0.180
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=123760, episode_reward=-10.003, score_reward_sum=-0.146
+selfplay_winrate_no_draw_90=0.000, selfplay_winrate_with_draw_0.5_90=0.178
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=124826, episode_reward=-10.003, score_reward_sum=-0.491
+selfplay_winrate_no_draw_91=0.000, selfplay_winrate_with_draw_0.5_91=0.176
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=126984, episode_reward=-10.003, score_reward_sum=-1.173
+selfplay_winrate_no_draw_92=0.000, selfplay_winrate_with_draw_0.5_92=0.174
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=128856, episode_reward=-10.003, score_reward_sum=-0.244
+selfplay_winrate_no_draw_93=0.000, selfplay_winrate_with_draw_0.5_93=0.172
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=129168, episode_reward=-10.003, score_reward_sum=-0.342
+selfplay_winrate_no_draw_94=0.000, selfplay_winrate_with_draw_0.5_94=0.170
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=131690, episode_reward=-10.003, score_reward_sum=-0.504, bot_winrate_16=0.000, bot_winrate_with_draw_0.5_16=0.312
+bot_winrate_16=0.000, bot_winrate_with_draw_0.5_16=0.312
+match in Botgame 1, result: -1.0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=131716, episode_reward=-0.003, score_reward_sum=-1.943
+selfplay_winrate_no_draw_95=0.000, selfplay_winrate_with_draw_0.5_95=0.174
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Saving model checkpoint...
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=134212, episode_reward=-10.003, score_reward_sum=-0.833
+selfplay_winrate_no_draw_96=0.000, selfplay_winrate_with_draw_0.5_96=0.172
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=138008, episode_reward=-10.003, score_reward_sum=-0.513
+selfplay_winrate_no_draw_97=0.000, selfplay_winrate_with_draw_0.5_97=0.170
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=138736, episode_reward=-10.003, score_reward_sum=-1.399
+selfplay_winrate_no_draw_98=0.000, selfplay_winrate_with_draw_0.5_98=0.168
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=140270, episode_reward=-10.003, score_reward_sum=-0.192
+selfplay_winrate_no_draw_99=0.000, selfplay_winrate_with_draw_0.5_99=0.167
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=140504, episode_reward=-10.003, score_reward_sum=-1.189
+selfplay_winrate_no_draw_100=0.000, selfplay_winrate_with_draw_0.5_100=0.165
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=140868, episode_reward=-10.003, score_reward_sum=-0.563
+selfplay_winrate_no_draw_101=0.000, selfplay_winrate_with_draw_0.5_101=0.163
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=144352, episode_reward=-0.002, score_reward_sum=-1.067
+selfplay_winrate_no_draw_102=0.000, selfplay_winrate_with_draw_0.5_102=0.167
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=145210, episode_reward=-0.003, score_reward_sum=-2.211
+selfplay_winrate_no_draw_103=0.000, selfplay_winrate_with_draw_0.5_103=0.170
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=145470, episode_reward=-10.003, score_reward_sum=-2.111
+selfplay_winrate_no_draw_104=0.000, selfplay_winrate_with_draw_0.5_104=0.168
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=145600, episode_reward=-10.003, score_reward_sum=-1.584
+selfplay_winrate_no_draw_105=0.000, selfplay_winrate_with_draw_0.5_105=0.167
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=147706, episode_reward=-0.003, score_reward_sum=-2.223
+selfplay_winrate_no_draw_106=0.000, selfplay_winrate_with_draw_0.5_106=0.170
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=151632, episode_reward=-10.003, score_reward_sum=-0.435
+selfplay_winrate_no_draw_107=0.000, selfplay_winrate_with_draw_0.5_107=0.168
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=152438, episode_reward=-10.003, score_reward_sum=-0.266, bot_winrate_17=0.000, bot_winrate_with_draw_0.5_17=0.294
+bot_winrate_17=0.000, bot_winrate_with_draw_0.5_17=0.294
+match in Botgame 1, result: -1.0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=154856, episode_reward=-10.003, score_reward_sum=-0.553
+selfplay_winrate_no_draw_108=0.000, selfplay_winrate_with_draw_0.5_108=0.167
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=155896, episode_reward=-10.003, score_reward_sum=-0.122
+selfplay_winrate_no_draw_109=0.000, selfplay_winrate_with_draw_0.5_109=0.165
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=159614, episode_reward=-10.003, score_reward_sum=-0.269
+selfplay_winrate_no_draw_110=0.000, selfplay_winrate_with_draw_0.5_110=0.164
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=161018, episode_reward=-10.003, score_reward_sum=-0.393
+selfplay_winrate_no_draw_111=0.000, selfplay_winrate_with_draw_0.5_111=0.162
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=161720, episode_reward=-0.003, score_reward_sum=-2.234
+selfplay_winrate_no_draw_112=0.000, selfplay_winrate_with_draw_0.5_112=0.165
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=163592, episode_reward=-0.003, score_reward_sum=-2.542
+selfplay_winrate_no_draw_113=0.000, selfplay_winrate_with_draw_0.5_113=0.168
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=164554, episode_reward=-10.003, score_reward_sum=-0.754
+selfplay_winrate_no_draw_114=0.000, selfplay_winrate_with_draw_0.5_114=0.167
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=168038, episode_reward=-10.003, score_reward_sum=-1.527
+selfplay_winrate_no_draw_115=0.000, selfplay_winrate_with_draw_0.5_115=0.165
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=168792, episode_reward=-0.002, score_reward_sum=-1.030
+selfplay_winrate_no_draw_116=0.000, selfplay_winrate_with_draw_0.5_116=0.168
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=169234, episode_reward=-10.003, score_reward_sum=-0.856
+selfplay_winrate_no_draw_117=0.000, selfplay_winrate_with_draw_0.5_117=0.167
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=169728, episode_reward=-10.003, score_reward_sum=-0.094
+selfplay_winrate_no_draw_118=0.000, selfplay_winrate_with_draw_0.5_118=0.165
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=171314, episode_reward=-0.001, score_reward_sum=-0.837
+selfplay_winrate_no_draw_119=0.000, selfplay_winrate_with_draw_0.5_119=0.168
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=172536, episode_reward=-10.003, score_reward_sum=-0.174
+selfplay_winrate_no_draw_120=0.000, selfplay_winrate_with_draw_0.5_120=0.167
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=172692, episode_reward=-0.002, score_reward_sum=-1.419
+selfplay_winrate_no_draw_121=0.000, selfplay_winrate_with_draw_0.5_121=0.169
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=172796, episode_reward=-10.003, score_reward_sum=-0.187, bot_winrate_18=0.000, bot_winrate_with_draw_0.5_18=0.278
+bot_winrate_18=0.000, bot_winrate_with_draw_0.5_18=0.278
+match in Botgame 1, result: -1.0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=173420, episode_reward=-0.003, score_reward_sum=-2.370
+selfplay_winrate_no_draw_122=0.000, selfplay_winrate_with_draw_0.5_122=0.172
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=174564, episode_reward=-0.002, score_reward_sum=-2.202
+selfplay_winrate_no_draw_123=0.000, selfplay_winrate_with_draw_0.5_123=0.175
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=175760, episode_reward=-0.003, score_reward_sum=-2.287
+selfplay_winrate_no_draw_124=0.000, selfplay_winrate_with_draw_0.5_124=0.177
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=176826, episode_reward=-0.001, score_reward_sum=-0.966
+selfplay_winrate_no_draw_125=0.000, selfplay_winrate_with_draw_0.5_125=0.180
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=178386, episode_reward=-10.003, score_reward_sum=-0.123
+selfplay_winrate_no_draw_126=0.000, selfplay_winrate_with_draw_0.5_126=0.179
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=178984, episode_reward=-0.003, score_reward_sum=-2.443
+selfplay_winrate_no_draw_127=0.000, selfplay_winrate_with_draw_0.5_127=0.181
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=185770, episode_reward=-10.003, score_reward_sum=-0.145
+selfplay_winrate_no_draw_128=0.000, selfplay_winrate_with_draw_0.5_128=0.180
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=185848, episode_reward=-10.003, score_reward_sum=-0.611
+selfplay_winrate_no_draw_129=0.000, selfplay_winrate_with_draw_0.5_129=0.178
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=186212, episode_reward=-0.003, score_reward_sum=-2.113
+selfplay_winrate_no_draw_130=0.000, selfplay_winrate_with_draw_0.5_130=0.181
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=189566, episode_reward=-10.003, score_reward_sum=-1.685
+selfplay_winrate_no_draw_131=0.000, selfplay_winrate_with_draw_0.5_131=0.179
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=190528, episode_reward=-10.003, score_reward_sum=-0.424
+selfplay_winrate_no_draw_132=0.000, selfplay_winrate_with_draw_0.5_132=0.178
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=192504, episode_reward=-0.003, score_reward_sum=-2.461
+selfplay_winrate_no_draw_133=0.000, selfplay_winrate_with_draw_0.5_133=0.180
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=195936, episode_reward=-10.003, score_reward_sum=-0.504
+selfplay_winrate_no_draw_134=0.000, selfplay_winrate_with_draw_0.5_134=0.179
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=196352, episode_reward=-0.003, score_reward_sum=-2.339
+selfplay_winrate_no_draw_135=0.000, selfplay_winrate_with_draw_0.5_135=0.181
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=197210, episode_reward=-0.003, score_reward_sum=-2.080
+selfplay_winrate_no_draw_136=0.000, selfplay_winrate_with_draw_0.5_136=0.184
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=197470, episode_reward=-0.000, score_reward_sum=-0.539
+selfplay_winrate_no_draw_137=0.000, selfplay_winrate_with_draw_0.5_137=0.186
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=198796, episode_reward=-10.003, score_reward_sum=-0.287, bot_winrate_19=0.000, bot_winrate_with_draw_0.5_19=0.263
+bot_winrate_19=0.000, bot_winrate_with_draw_0.5_19=0.263
+match in Botgame 1, result: -1.0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=199706, episode_reward=-0.003, score_reward_sum=-2.172
+selfplay_winrate_no_draw_138=0.000, selfplay_winrate_with_draw_0.5_138=0.188
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=205062, episode_reward=-10.003, score_reward_sum=-0.254
+selfplay_winrate_no_draw_139=0.000, selfplay_winrate_with_draw_0.5_139=0.187
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=205530, episode_reward=-10.003, score_reward_sum=-0.128
+selfplay_winrate_no_draw_140=0.000, selfplay_winrate_with_draw_0.5_140=0.186
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=206050, episode_reward=-10.003, score_reward_sum=-0.373
+selfplay_winrate_no_draw_141=0.000, selfplay_winrate_with_draw_0.5_141=0.184
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=207558, episode_reward=-10.003, score_reward_sum=-0.661
+selfplay_winrate_no_draw_142=0.000, selfplay_winrate_with_draw_0.5_142=0.183
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=207896, episode_reward=-0.003, score_reward_sum=-1.671
+selfplay_winrate_no_draw_143=0.000, selfplay_winrate_with_draw_0.5_143=0.185
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=208052, episode_reward=-10.003, score_reward_sum=-0.606
+selfplay_winrate_no_draw_144=0.000, selfplay_winrate_with_draw_0.5_144=0.184
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=213018, episode_reward=-0.003, score_reward_sum=-2.141
+selfplay_winrate_no_draw_145=0.000, selfplay_winrate_with_draw_0.5_145=0.186
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=213486, episode_reward=-10.003, score_reward_sum=-0.203
+selfplay_winrate_no_draw_146=0.000, selfplay_winrate_with_draw_0.5_146=0.185
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=215774, episode_reward=-10.003, score_reward_sum=-0.413
+selfplay_winrate_no_draw_147=0.000, selfplay_winrate_with_draw_0.5_147=0.184
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=216242, episode_reward=-10.003, score_reward_sum=-0.123, bot_winrate_20=0.000, bot_winrate_with_draw_0.5_20=0.250
+bot_winrate_20=0.000, bot_winrate_with_draw_0.5_20=0.250
+match in Botgame 1, result: -1.0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=217620, episode_reward=-10.003, score_reward_sum=-0.403
+selfplay_winrate_no_draw_148=0.000, selfplay_winrate_with_draw_0.5_148=0.182
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=220038, episode_reward=-0.003, score_reward_sum=-2.543
+selfplay_winrate_no_draw_149=0.000, selfplay_winrate_with_draw_0.5_149=0.185
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=221728, episode_reward=-0.003, score_reward_sum=-2.248
+selfplay_winrate_no_draw_150=0.000, selfplay_winrate_with_draw_0.5_150=0.187
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=221988, episode_reward=-10.003, score_reward_sum=-2.366
+selfplay_winrate_no_draw_151=0.000, selfplay_winrate_with_draw_0.5_151=0.185
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=222690, episode_reward=-10.003, score_reward_sum=-0.104
+selfplay_winrate_no_draw_152=0.000, selfplay_winrate_with_draw_0.5_152=0.184
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=223314, episode_reward=-0.002, score_reward_sum=-1.515
+selfplay_winrate_no_draw_153=0.000, selfplay_winrate_with_draw_0.5_153=0.186
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=224536, episode_reward=-0.003, score_reward_sum=-2.384
+selfplay_winrate_no_draw_154=0.000, selfplay_winrate_with_draw_0.5_154=0.188
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=225420, episode_reward=-0.003, score_reward_sum=-1.791
+selfplay_winrate_no_draw_155=0.000, selfplay_winrate_with_draw_0.5_155=0.190
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=226564, episode_reward=0.001, score_reward_sum=-0.037
+selfplay_winrate_no_draw_156=0.000, selfplay_winrate_with_draw_0.5_156=0.192
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=227760, episode_reward=-0.003, score_reward_sum=-2.537
+selfplay_winrate_no_draw_157=0.000, selfplay_winrate_with_draw_0.5_157=0.194
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=228826, episode_reward=-0.003, score_reward_sum=-2.381
+selfplay_winrate_no_draw_158=0.000, selfplay_winrate_with_draw_0.5_158=0.196
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=229840, episode_reward=-10.003, score_reward_sum=-0.792
+selfplay_winrate_no_draw_159=0.000, selfplay_winrate_with_draw_0.5_159=0.195
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=230386, episode_reward=-0.002, score_reward_sum=-0.979
+selfplay_winrate_no_draw_160=0.000, selfplay_winrate_with_draw_0.5_160=0.197
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=235352, episode_reward=-10.003, score_reward_sum=-0.114
+selfplay_winrate_no_draw_161=0.000, selfplay_winrate_with_draw_0.5_161=0.196
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=235872, episode_reward=-10.003, score_reward_sum=-1.841
+selfplay_winrate_no_draw_162=0.000, selfplay_winrate_with_draw_0.5_162=0.194
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=236444, episode_reward=-10.003, score_reward_sum=-0.238, bot_winrate_21=0.000, bot_winrate_with_draw_0.5_21=0.238
+bot_winrate_21=0.000, bot_winrate_with_draw_0.5_21=0.238
+match in Botgame 1, result: -1.0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=237146, episode_reward=-10.003, score_reward_sum=-0.661
+selfplay_winrate_no_draw_163=0.000, selfplay_winrate_with_draw_0.5_163=0.193
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=238212, episode_reward=-0.003, score_reward_sum=-2.154
+selfplay_winrate_no_draw_164=0.000, selfplay_winrate_with_draw_0.5_164=0.195
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=239850, episode_reward=-10.003, score_reward_sum=-0.533
+selfplay_winrate_no_draw_165=0.000, selfplay_winrate_with_draw_0.5_165=0.194
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=245518, episode_reward=-10.003, score_reward_sum=-2.346
+selfplay_winrate_no_draw_166=0.000, selfplay_winrate_with_draw_0.5_166=0.193
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=245544, episode_reward=-10.003, score_reward_sum=-0.722
+selfplay_winrate_no_draw_167=0.000, selfplay_winrate_with_draw_0.5_167=0.192
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=246012, episode_reward=-10.003, score_reward_sum=-1.887
+selfplay_winrate_no_draw_168=0.000, selfplay_winrate_with_draw_0.5_168=0.190
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=248352, episode_reward=-0.003, score_reward_sum=-2.752
+selfplay_winrate_no_draw_169=0.000, selfplay_winrate_with_draw_0.5_169=0.192
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=248612, episode_reward=-10.003, score_reward_sum=-2.025
+selfplay_winrate_no_draw_170=0.000, selfplay_winrate_with_draw_0.5_170=0.191
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=254358, episode_reward=-10.003, score_reward_sum=-2.296
+selfplay_winrate_no_draw_171=0.000, selfplay_winrate_with_draw_0.5_171=0.190
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=257634, episode_reward=-10.003, score_reward_sum=-0.322, bot_winrate_22=0.000, bot_winrate_with_draw_0.5_22=0.227
+bot_winrate_22=0.000, bot_winrate_with_draw_0.5_22=0.227
+match in Botgame 1, result: -1.0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=259246, episode_reward=-10.003, score_reward_sum=-0.969
+selfplay_winrate_no_draw_172=0.000, selfplay_winrate_with_draw_0.5_172=0.189
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=259558, episode_reward=-0.003, score_reward_sum=-2.338
+selfplay_winrate_no_draw_173=0.000, selfplay_winrate_with_draw_0.5_173=0.191
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=259948, episode_reward=-10.003, score_reward_sum=-1.433
+selfplay_winrate_no_draw_174=0.000, selfplay_winrate_with_draw_0.5_174=0.190
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=260052, episode_reward=-0.003, score_reward_sum=-2.617
+selfplay_winrate_no_draw_175=0.000, selfplay_winrate_with_draw_0.5_175=0.191
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=260208, episode_reward=-10.003, score_reward_sum=-0.078
+selfplay_winrate_no_draw_176=0.000, selfplay_winrate_with_draw_0.5_176=0.190
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=260572, episode_reward=-10.003, score_reward_sum=-0.099
+selfplay_winrate_no_draw_177=0.000, selfplay_winrate_with_draw_0.5_177=0.189
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=265486, episode_reward=-0.003, score_reward_sum=-2.550
+selfplay_winrate_no_draw_178=0.000, selfplay_winrate_with_draw_0.5_178=0.191
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=266162, episode_reward=-10.003, score_reward_sum=-0.903
+selfplay_winrate_no_draw_179=0.000, selfplay_winrate_with_draw_0.5_179=0.190
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Saving model checkpoint...
+SPS: 275
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=267774, episode_reward=-0.001, score_reward_sum=-0.808
+selfplay_winrate_no_draw_180=0.000, selfplay_winrate_with_draw_0.5_180=0.192
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=267930, episode_reward=-10.003, score_reward_sum=-0.464
+selfplay_winrate_no_draw_181=0.000, selfplay_winrate_with_draw_0.5_181=0.191
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=268060, episode_reward=-10.003, score_reward_sum=-0.532
+selfplay_winrate_no_draw_182=0.000, selfplay_winrate_with_draw_0.5_182=0.190
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=270192, episode_reward=-10.003, score_reward_sum=-1.777
+selfplay_winrate_no_draw_183=0.000, selfplay_winrate_with_draw_0.5_183=0.189
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=271648, episode_reward=-10.003, score_reward_sum=-0.205
+selfplay_winrate_no_draw_184=0.000, selfplay_winrate_with_draw_0.5_184=0.188
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=273780, episode_reward=-10.003, score_reward_sum=-1.290
+selfplay_winrate_no_draw_185=0.000, selfplay_winrate_with_draw_0.5_185=0.186
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=273988, episode_reward=-0.003, score_reward_sum=-2.139
+selfplay_winrate_no_draw_186=0.000, selfplay_winrate_with_draw_0.5_186=0.188
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=274690, episode_reward=-0.002, score_reward_sum=-1.343
+selfplay_winrate_no_draw_187=0.000, selfplay_winrate_with_draw_0.5_187=0.190
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=276224, episode_reward=-10.003, score_reward_sum=-0.514
+selfplay_winrate_no_draw_188=0.000, selfplay_winrate_with_draw_0.5_188=0.189
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=277082, episode_reward=-10.003, score_reward_sum=-0.174
+selfplay_winrate_no_draw_189=0.000, selfplay_winrate_with_draw_0.5_189=0.188
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=277082, episode_reward=-10.003, score_reward_sum=-0.224
+selfplay_winrate_no_draw_190=0.000, selfplay_winrate_with_draw_0.5_190=0.187
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=277420, episode_reward=-0.003, score_reward_sum=-2.338
+selfplay_winrate_no_draw_191=0.000, selfplay_winrate_with_draw_0.5_191=0.188
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=278278, episode_reward=-10.003, score_reward_sum=-0.204
+selfplay_winrate_no_draw_192=0.000, selfplay_winrate_with_draw_0.5_192=0.188
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=278564, episode_reward=-0.001, score_reward_sum=-0.402
+selfplay_winrate_no_draw_193=0.000, selfplay_winrate_with_draw_0.5_193=0.189
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=280826, episode_reward=-0.003, score_reward_sum=-2.439
+selfplay_winrate_no_draw_194=0.000, selfplay_winrate_with_draw_0.5_194=0.191
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=281840, episode_reward=-0.003, score_reward_sum=-1.878
+selfplay_winrate_no_draw_195=0.000, selfplay_winrate_with_draw_0.5_195=0.192
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=282386, episode_reward=-0.003, score_reward_sum=-2.467
+selfplay_winrate_no_draw_196=0.000, selfplay_winrate_with_draw_0.5_196=0.194
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=283270, episode_reward=-10.003, score_reward_sum=-0.579, bot_winrate_23=0.000, bot_winrate_with_draw_0.5_23=0.217
+bot_winrate_23=0.000, bot_winrate_with_draw_0.5_23=0.217
+match in Botgame 1, result: -1.0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=287872, episode_reward=-0.003, score_reward_sum=-2.216
+selfplay_winrate_no_draw_197=0.000, selfplay_winrate_with_draw_0.5_197=0.195
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=288730, episode_reward=-10.003, score_reward_sum=-0.087
+selfplay_winrate_no_draw_198=0.000, selfplay_winrate_with_draw_0.5_198=0.194
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=289796, episode_reward=-10.003, score_reward_sum=-1.037
+selfplay_winrate_no_draw_199=0.000, selfplay_winrate_with_draw_0.5_199=0.193
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=290576, episode_reward=-10.003, score_reward_sum=-0.542
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=297544, episode_reward=-0.003, score_reward_sum=-2.770
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=300612, episode_reward=-0.003, score_reward_sum=-2.290
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=301782, episode_reward=-10.003, score_reward_sum=-0.529
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=302458, episode_reward=-10.003, score_reward_sum=-1.933
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=305422, episode_reward=-10.003, score_reward_sum=-1.079
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=306072, episode_reward=-10.003, score_reward_sum=-0.300, bot_winrate_24=0.000, bot_winrate_with_draw_0.5_24=0.208
+bot_winrate_24=0.000, bot_winrate_with_draw_0.5_24=0.208
+match in Botgame 1, result: -1.0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=309946, episode_reward=-10.003, score_reward_sum=-0.968
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=310232, episode_reward=-10.003, score_reward_sum=-1.428
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=311220, episode_reward=-10.003, score_reward_sum=-2.063
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.177
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=312026, episode_reward=-10.003, score_reward_sum=-0.927
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.175
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=312572, episode_reward=-0.003, score_reward_sum=-2.107
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.175
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=314132, episode_reward=-10.003, score_reward_sum=-0.416
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.175
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=316628, episode_reward=-10.003, score_reward_sum=-1.325
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.175
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=317486, episode_reward=-0.003, score_reward_sum=-2.512
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.177
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=318526, episode_reward=-10.003, score_reward_sum=-0.977
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.177
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=319722, episode_reward=-10.003, score_reward_sum=-2.737
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.177
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=319930, episode_reward=-0.003, score_reward_sum=-2.168
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=321490, episode_reward=-10.003, score_reward_sum=-1.467
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=322478, episode_reward=-10.003, score_reward_sum=-0.313
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=323648, episode_reward=-0.003, score_reward_sum=-2.006
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=325780, episode_reward=-0.000, score_reward_sum=-0.645
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=326144, episode_reward=-10.003, score_reward_sum=-1.941
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=326404, episode_reward=-10.003, score_reward_sum=-0.668
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=328224, episode_reward=-0.003, score_reward_sum=-1.871
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=328328, episode_reward=-10.003, score_reward_sum=-1.726
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=328718, episode_reward=-10.003, score_reward_sum=-0.460, bot_winrate_25=0.000, bot_winrate_with_draw_0.5_25=0.200
+bot_winrate_25=0.000, bot_winrate_with_draw_0.5_25=0.200
+match in Botgame 1, result: -1.0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=329082, episode_reward=-0.003, score_reward_sum=-1.867
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=333502, episode_reward=-10.003, score_reward_sum=-0.335
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=334386, episode_reward=-0.003, score_reward_sum=-2.056
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=336986, episode_reward=-10.003, score_reward_sum=-1.260
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=338962, episode_reward=-10.003, score_reward_sum=-1.057
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=339274, episode_reward=-10.003, score_reward_sum=-0.685
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=339872, episode_reward=-0.003, score_reward_sum=-2.329
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=341900, episode_reward=-10.003, score_reward_sum=-0.109
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=344838, episode_reward=-10.003, score_reward_sum=-1.535
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=344994, episode_reward=-10.003, score_reward_sum=-0.962
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=346606, episode_reward=-10.003, score_reward_sum=-0.686
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=351702, episode_reward=-10.003, score_reward_sum=-0.362, bot_winrate_26=0.000, bot_winrate_with_draw_0.5_26=0.192
+bot_winrate_26=0.000, bot_winrate_with_draw_0.5_26=0.192
+match in Botgame 1, result: -1.0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=351780, episode_reward=-10.003, score_reward_sum=-0.654
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=352612, episode_reward=-0.001, score_reward_sum=-0.954
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=355498, episode_reward=-10.003, score_reward_sum=-0.740
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=356018, episode_reward=-10.003, score_reward_sum=-1.397
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=359710, episode_reward=-10.003, score_reward_sum=-1.309
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=359814, episode_reward=-10.003, score_reward_sum=-0.144
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=360932, episode_reward=-10.003, score_reward_sum=-0.670
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=362752, episode_reward=-10.003, score_reward_sum=-1.219
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=363662, episode_reward=-10.003, score_reward_sum=-0.728
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=364572, episode_reward=-0.003, score_reward_sum=-1.920
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=366002, episode_reward=-10.003, score_reward_sum=-1.405
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=366132, episode_reward=-0.002, score_reward_sum=-1.485
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=366496, episode_reward=-10.003, score_reward_sum=-0.454
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=367198, episode_reward=-10.003, score_reward_sum=-0.130
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=368628, episode_reward=-0.001, score_reward_sum=-0.702
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=370526, episode_reward=-0.003, score_reward_sum=-2.433
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=370708, episode_reward=-10.003, score_reward_sum=-0.693
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=371930, episode_reward=-0.002, score_reward_sum=-2.073
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=373490, episode_reward=-0.000, score_reward_sum=-0.549
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=373776, episode_reward=-10.003, score_reward_sum=-1.394
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=375180, episode_reward=-10.003, score_reward_sum=-0.220, bot_winrate_27=0.000, bot_winrate_with_draw_0.5_27=0.185
+bot_winrate_27=0.000, bot_winrate_with_draw_0.5_27=0.185
+match in Botgame 1, result: -1.0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=377416, episode_reward=-10.003, score_reward_sum=-0.067
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=378144, episode_reward=-0.003, score_reward_sum=-2.293
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=378716, episode_reward=-10.003, score_reward_sum=-0.307
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=380224, episode_reward=-10.003, score_reward_sum=-0.092
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=381316, episode_reward=-10.003, score_reward_sum=-0.678
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=382044, episode_reward=-10.003, score_reward_sum=-0.173
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=384722, episode_reward=-10.003, score_reward_sum=-0.123
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=384982, episode_reward=-10.003, score_reward_sum=-0.762
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=385112, episode_reward=-10.003, score_reward_sum=-0.649
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=386386, episode_reward=-0.001, score_reward_sum=-0.599
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=387088, episode_reward=-10.003, score_reward_sum=-0.146
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=388206, episode_reward=-10.003, score_reward_sum=-0.598
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=390000, episode_reward=-10.003, score_reward_sum=-1.764
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=391872, episode_reward=-0.003, score_reward_sum=-2.288
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=395226, episode_reward=-10.003, score_reward_sum=-0.263
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=396838, episode_reward=-0.003, score_reward_sum=-1.842
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=396994, episode_reward=-0.000, score_reward_sum=-0.481
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=397774, episode_reward=-10.003, score_reward_sum=-0.256, bot_winrate_28=0.000, bot_winrate_with_draw_0.5_28=0.179
+bot_winrate_28=0.000, bot_winrate_with_draw_0.5_28=0.179
+match in Botgame 1, result: -1.0
+
+Saving model checkpoint...
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=402974, episode_reward=-10.003, score_reward_sum=-0.471
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=404560, episode_reward=-10.003, score_reward_sum=-0.857
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.180
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=404612, episode_reward=-0.003, score_reward_sum=-2.003
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=407758, episode_reward=-10.003, score_reward_sum=-1.350
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=409292, episode_reward=-10.003, score_reward_sum=-0.413
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=409656, episode_reward=-10.003, score_reward_sum=-0.129
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=410228, episode_reward=-10.003, score_reward_sum=-0.442
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=410644, episode_reward=-10.003, score_reward_sum=-1.292
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.182
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=415662, episode_reward=-0.003, score_reward_sum=-2.388
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.185
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=418496, episode_reward=-0.002, score_reward_sum=-1.286
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=419198, episode_reward=-0.001, score_reward_sum=-1.001
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=419198, episode_reward=-10.003, score_reward_sum=-0.164, bot_winrate_29=0.000, bot_winrate_with_draw_0.5_29=0.172
+bot_winrate_29=0.000, bot_winrate_with_draw_0.5_29=0.172
+match in Botgame 1, result: -1.0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=419822, episode_reward=-10.003, score_reward_sum=-0.159
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=421408, episode_reward=-10.003, score_reward_sum=-0.858
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=423930, episode_reward=-0.003, score_reward_sum=-1.981
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=425490, episode_reward=-0.003, score_reward_sum=-1.772
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=428298, episode_reward=-10.003, score_reward_sum=-1.275
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=430144, episode_reward=0.000, score_reward_sum=-0.358
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=430976, episode_reward=-10.003, score_reward_sum=-1.684
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=431340, episode_reward=-10.003, score_reward_sum=-1.637
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=432224, episode_reward=0.001, score_reward_sum=0.004
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=434044, episode_reward=-0.003, score_reward_sum=-2.496
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=434590, episode_reward=-10.003, score_reward_sum=-0.435
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=434720, episode_reward=-10.003, score_reward_sum=-0.608
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=436722, episode_reward=0.000, score_reward_sum=-0.077
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=437112, episode_reward=-0.000, score_reward_sum=-0.719
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=438386, episode_reward=-0.003, score_reward_sum=-2.361
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=439478, episode_reward=-10.003, score_reward_sum=-0.413
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=439634, episode_reward=-10.003, score_reward_sum=-0.278
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=439660, episode_reward=-10.003, score_reward_sum=-1.619
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=441168, episode_reward=-10.003, score_reward_sum=-0.332
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=441194, episode_reward=-10.003, score_reward_sum=-0.203, bot_winrate_30=0.000, bot_winrate_with_draw_0.5_30=0.167
+bot_winrate_30=0.000, bot_winrate_with_draw_0.5_30=0.167
+match in Botgame 1, result: -1.0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=444080, episode_reward=-10.003, score_reward_sum=-0.243
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=445406, episode_reward=-10.003, score_reward_sum=-0.369
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=445432, episode_reward=-10.003, score_reward_sum=-0.709
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=448838, episode_reward=-0.003, score_reward_sum=-1.846
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=450164, episode_reward=-10.003, score_reward_sum=-0.459
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=456560, episode_reward=0.003, score_reward_sum=0.430
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=456612, episode_reward=-0.003, score_reward_sum=-2.502
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=460096, episode_reward=-10.003, score_reward_sum=-2.474
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=461656, episode_reward=-0.003, score_reward_sum=-2.646
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=462436, episode_reward=-10.003, score_reward_sum=-0.263
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=462644, episode_reward=-0.002, score_reward_sum=-2.000
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=464490, episode_reward=-10.003, score_reward_sum=-0.966
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=464906, episode_reward=-10.003, score_reward_sum=-0.275, bot_winrate_31=0.000, bot_winrate_with_draw_0.5_31=0.161
+bot_winrate_31=0.000, bot_winrate_with_draw_0.5_31=0.161
+match in Botgame 1, result: -1.0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=467194, episode_reward=-10.003, score_reward_sum=-1.238
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=468806, episode_reward=-10.003, score_reward_sum=-1.650
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=470496, episode_reward=0.001, score_reward_sum=0.374
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=471016, episode_reward=-10.003, score_reward_sum=-0.778
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=473382, episode_reward=-10.003, score_reward_sum=-0.844
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=475488, episode_reward=-10.003, score_reward_sum=-0.160
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=480064, episode_reward=-10.003, score_reward_sum=-0.204
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=483340, episode_reward=-0.003, score_reward_sum=-1.922
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=484224, episode_reward=-0.001, score_reward_sum=-0.502
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=486044, episode_reward=-0.003, score_reward_sum=-2.070
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=486720, episode_reward=-0.003, score_reward_sum=-1.446
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=488072, episode_reward=-10.003, score_reward_sum=-0.423
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=489112, episode_reward=-0.000, score_reward_sum=-0.400
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=489216, episode_reward=-10.003, score_reward_sum=-0.396, bot_winrate_32=0.000, bot_winrate_with_draw_0.5_32=0.156
+bot_winrate_32=0.000, bot_winrate_with_draw_0.5_32=0.156
+match in Botgame 1, result: -1.0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=490386, episode_reward=-0.002, score_reward_sum=-1.865
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=490412, episode_reward=-10.003, score_reward_sum=-0.318
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=491166, episode_reward=-10.003, score_reward_sum=-0.312
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=491634, episode_reward=0.000, score_reward_sum=-0.248
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=491660, episode_reward=-0.003, score_reward_sum=-1.728
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=493168, episode_reward=-0.003, score_reward_sum=-2.063
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=496080, episode_reward=-0.003, score_reward_sum=-1.847
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=497432, episode_reward=-0.003, score_reward_sum=-2.510
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=500162, episode_reward=-10.003, score_reward_sum=-2.136
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=500838, episode_reward=-0.003, score_reward_sum=-2.498
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=505180, episode_reward=-10.003, score_reward_sum=-0.191
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=508612, episode_reward=-0.003, score_reward_sum=-2.015
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=508846, episode_reward=-10.003, score_reward_sum=-0.147, bot_winrate_33=0.000, bot_winrate_with_draw_0.5_33=0.152
+bot_winrate_33=0.000, bot_winrate_with_draw_0.5_33=0.152
+match in Botgame 1, result: -1.0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=511420, episode_reward=-10.003, score_reward_sum=-0.839
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=512096, episode_reward=-0.001, score_reward_sum=-0.782
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=512824, episode_reward=-10.003, score_reward_sum=-0.340
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=513370, episode_reward=-10.003, score_reward_sum=-0.203
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=513656, episode_reward=-0.003, score_reward_sum=-2.391
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=515034, episode_reward=-10.003, score_reward_sum=-1.501
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=516490, episode_reward=-0.001, score_reward_sum=-0.907
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=520806, episode_reward=-0.001, score_reward_sum=-0.804
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.203
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=523016, episode_reward=-0.003, score_reward_sum=-1.935
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.205
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=523692, episode_reward=-10.003, score_reward_sum=-0.515
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.203
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=525746, episode_reward=-10.003, score_reward_sum=-0.110, bot_winrate_34=0.000, bot_winrate_with_draw_0.5_34=0.147
+bot_winrate_34=0.000, bot_winrate_with_draw_0.5_34=0.147
+match in Botgame 1, result: -1.0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=525798, episode_reward=-10.003, score_reward_sum=-1.098
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=526162, episode_reward=-10.003, score_reward_sum=-0.245
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=526188, episode_reward=-10.003, score_reward_sum=-1.629
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=527488, episode_reward=-0.003, score_reward_sum=-2.582
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=528372, episode_reward=-10.003, score_reward_sum=-0.086
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=528970, episode_reward=-10.003, score_reward_sum=-0.778
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=531882, episode_reward=-10.003, score_reward_sum=-0.126
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Saving model checkpoint...
+SPS: 309
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=535210, episode_reward=-10.003, score_reward_sum=-2.137
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 16 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=536692, episode_reward=-10.003, score_reward_sum=-1.184
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.188
+
+New Match in Game 16: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=538044, episode_reward=-0.001, score_reward_sum=-0.733
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=538720, episode_reward=-0.003, score_reward_sum=-2.273
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 15 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=539838, episode_reward=-10.003, score_reward_sum=-0.871
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.190
+
+New Match in Game 15: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 23 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=540072, episode_reward=-0.003, score_reward_sum=-2.093
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 23: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 21 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=541710, episode_reward=-10.003, score_reward_sum=-0.128
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 21: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=542412, episode_reward=-0.003, score_reward_sum=-1.239
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=543166, episode_reward=-0.002, score_reward_sum=-1.931
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 14 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=543504, episode_reward=-10.003, score_reward_sum=-0.570
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 14: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=543634, episode_reward=-0.003, score_reward_sum=-1.513
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 22 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=543660, episode_reward=-0.003, score_reward_sum=-2.390
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 22: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=544700, episode_reward=-10.003, score_reward_sum=-0.087, bot_winrate_35=0.000, bot_winrate_with_draw_0.5_35=0.143
+bot_winrate_35=0.000, bot_winrate_with_draw_0.5_35=0.143
+match in Botgame 1, result: -1.0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=545922, episode_reward=-10.003, score_reward_sum=-0.529
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=549926, episode_reward=-10.003, score_reward_sum=-0.724
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 6 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=555308, episode_reward=-10.003, score_reward_sum=-0.518
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 6: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=559156, episode_reward=-10.003, score_reward_sum=-0.241
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=560196, episode_reward=-10.003, score_reward_sum=-1.226
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 19 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=561288, episode_reward=-10.003, score_reward_sum=-2.231
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 19: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=561834, episode_reward=-10.003, score_reward_sum=-0.349
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 20 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=562120, episode_reward=-10.003, score_reward_sum=-0.987
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 20: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 3 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=563420, episode_reward=-0.002, score_reward_sum=-1.570
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 3: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=564096, episode_reward=-0.003, score_reward_sum=-2.465
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=564668, episode_reward=-10.003, score_reward_sum=-0.349, bot_winrate_36=0.000, bot_winrate_with_draw_0.5_36=0.139
+bot_winrate_36=0.000, bot_winrate_with_draw_0.5_36=0.139
+match in Botgame 1, result: -1.0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=565786, episode_reward=-10.003, score_reward_sum=-0.385
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 13 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=567034, episode_reward=-0.000, score_reward_sum=-0.362
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 13: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 18 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=567684, episode_reward=-10.003, score_reward_sum=-0.592
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 18: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 24 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=572338, episode_reward=-10.003, score_reward_sum=-0.226
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 24: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 10 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=572546, episode_reward=-10.003, score_reward_sum=-1.044
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 10: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 8 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=576654, episode_reward=-10.003, score_reward_sum=-1.148
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 8: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 5 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=578162, episode_reward=-0.003, score_reward_sum=-1.827
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 5: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 0 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=578188, episode_reward=-0.003, score_reward_sum=-2.295
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 0: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 11 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=579488, episode_reward=-0.003, score_reward_sum=-1.559
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 11: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 17 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=579748, episode_reward=-10.003, score_reward_sum=-0.319
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 17: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 9 ended: MainPlayer vs Historical_(MainPlayer)_0, result: 0.0
+global_step=580372, episode_reward=-0.000, score_reward_sum=-0.519
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 9: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 12 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=580606, episode_reward=-10.003, score_reward_sum=-0.544
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.200
+
+New Match in Game 12: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 2 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=581048, episode_reward=-10.003, score_reward_sum=-0.102
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 2: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 1 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=583154, episode_reward=-10.003, score_reward_sum=-0.303
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.198
+
+New Match in Game 1: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 7 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=584584, episode_reward=-10.003, score_reward_sum=-0.411
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.195
+
+New Match in Game 7: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 4 ended: MainPlayer vs Historical_(MainPlayer)_0, result: -1.0
+global_step=585156, episode_reward=-10.003, score_reward_sum=-0.284
+selfplay_winrate_no_draw_200=0.000, selfplay_winrate_with_draw_0.5_200=0.193
+
+New Match in Game 4: MainPlayer vs Historical_(MainPlayer)_0
+
+Game 26 ended, result: -1.0
+global_step=585728, episode_reward=-10.003, score_reward_sum=-0.324, bot_winrate_37=0.000, bot_winrate_with_draw_0.5_37=0.135
+bot_winrate_37=0.000, bot_winrate_with_draw_0.5_37=0.135
+match in Botgame 1, result: -1.0
+
+Traceback (most recent call last):
+  File "/home/nglaser/BA/MicortsRTS-league-training/main.py", line 581, in <module>
+    main()
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/main.py", line 94, in decorated_main
+    _run_hydra(
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/_internal/utils.py", line 394, in _run_hydra
+    _run_app(
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/_internal/utils.py", line 457, in _run_app
+    run_and_report(
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/_internal/utils.py", line 220, in run_and_report
+    return func()
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/_internal/utils.py", line 458, in <lambda>
+    lambda: hydra.run(
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/_internal/hydra.py", line 119, in run
+    ret = run_job(
+  File "/home/nglaser/miniforge/envs/py39/lib/python3.9/site-packages/hydra/core/utils.py", line 186, in run_job
+    ret.return_value = task_function(task_cfg)
+  File "/home/nglaser/BA/MicortsRTS-league-training/main.py", line 466, in main
+    league_trainer.train()
+  File "/home/nglaser/BA/MicortsRTS-league-training/selfplay_league.py", line 550, in train
+    actions[step, sp_inds], logprobs[step, sp_inds], _, invalid_action_masks[step, sp_inds] = agent.selfplay_get_action(
+  File "/home/nglaser/BA/MicortsRTS-league-training/agent_model.py", line 431, in selfplay_get_action
+    action, logprob, entropy, invalid_action_masks = self.get_action(
+  File "/home/nglaser/BA/MicortsRTS-league-training/agent_model.py", line 304, in get_action
+    invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in process_envs]).to(self.device)
+  File "/home/nglaser/BA/MicortsRTS-league-training/agent_model.py", line 304, in <listcomp>
+    invalid_action_masks = torch.stack([torch.tensor(envs.debug_matrix_mask(i), dtype=torch.bool) for i in process_envs]).to(self.device)
+KeyboardInterrupt
+wandb: Waiting for W&B process to finish, PID 1692527
+wandb: Program failed with code 255.  Press ctrl-c to abort syncing.
+wandb: - 0.22MB of 0.22MB uploaded (0.00MB deduped)wandb: \ 0.22MB of 0.22MB uploaded (0.00MB deduped)wandb: | 0.24MB of 0.24MB uploaded (0.00MB deduped)wandb:                                                                                
+wandb: Find user logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260309_071134-d7f1g6hk/logs/debug.log
+wandb: Find internal logs for this run at: /home/nglaser/BA/MicortsRTS-league-training/wandb/run-20260309_071134-d7f1g6hk/logs/debug-internal.log
+wandb: Run summary:
+wandb:                                                                global_step 585728
+wandb:                                                                 _timestamp 1773038585.9653
+wandb:                                                                      _step 564
+wandb:                                                  main_charts/learning_rate 5e-05
+wandb:                                                            progress/update 44.0
+wandb:                                                          losses/value_loss 0.0244
+wandb:                                                         losses/policy_loss -0.00379
+wandb:                                                             losses/kl_loss -0.00147
+wandb:                                                          losses/total_loss -0.0033
+wandb:                                                        losses/entropy_loss 0.02244
+wandb:                                                           losses/approx_kl -0.00163
+wandb:                                      main_charts/grad_norm_before_clipping 0.52255
+wandb:                                                      losses/value_loss_raw 0.16269
+wandb:                                                    losses/entropy_loss_raw 1.49621
+wandb:                                                       main_charts/r2_score 0.78884
+wandb:                                                     main_delta_scores/mean -0.0
+wandb:                                                 main_delta_scores/abs_mean 0.0
+wandb:                                                         debug/pg_stop_iter 4.0
+wandb:                                             main_charts/old_episode_reward -144.75948
+wandb:                                                    main_charts/Game_length 810.0
+wandb:                                main_charts/Episode_reward_with_hist_reward -10.00295
+wandb:                                                 main_charts/Episode_reward -10.00295
+wandb:                                                   main_charts/AttackReward 0.0
+wandb:                                          main_charts/WinLossRewardFunction -10.0
+wandb:                                         main_charts/steps_since_checkpoint 566927.0
+wandb:                                   MainPlayer_endgame_units/selfplay_worker 0.0
+wandb:                                    MainPlayer_endgame_units/selfplay_light 0.0
+wandb:                                    MainPlayer_endgame_units/selfplay_heavy 0.0
+wandb:                                   MainPlayer_endgame_units/selfplay_ranged 0.0
+wandb:                                                progress/num_selfplay_games 383.0
+wandb:                                   main_winrates/selfplay_Winrate_with_draw 0.1925
+wandb:                                     main_winrates/selfplay_Winrate_no_draw 0.0
+wandb:                                 main_winrates/selfplay_Winrate_no_draw_std 0.4866
+wandb:               main_winrates/combined_selfplay_no_draw_plus_bot_with_draw_0 0.0
+wandb:                                             charts/main_player_historicals 2.0
+wandb:                                          charts/main_exploiter_historicals 0.0
+wandb:                                        charts/league_exploiter_historicals 0.0
+wandb:                                                   charts/total_historicals 2.0
+wandb:                                          charts/selfplay_reward_scores_sum -0.28431
+wandb:                                                                   _runtime 1894
+wandb:                                   MainPlayer_endgame_units/bot_game_worker 1.0
+wandb:                                    MainPlayer_endgame_units/bot_game_light 0.0
+wandb:                                    MainPlayer_endgame_units/bot_game_heavy 0.0
+wandb:                                   MainPlayer_endgame_units/bot_game_ranged 0.0
+wandb:                                                     progress/num_bot_games 26.0
+wandb:                                      main_winrates/bot_Winrate_with_Draw_0 0.0
+wandb:                                              main_winrates/bot_Winrate_std 0.0
+wandb:                                    main_winrates/bot_Winrate_with_draw_0.5 0.13514
+wandb:                                               charts/bot_reward_scores_sum -0.32352
+wandb:               winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_no_draw 0.0
+wandb:             winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_with_draw 0.20428
+wandb:   aprox_pfsp_probabilities_per_opp_MainPlayer/vs_Historical_(MainPlayer)_0 0.1481
+wandb:   aprox_pfsp_probabilities_per_opp_MainPlayer/vs_Historical_(MainPlayer)_1 0.8519
+wandb:                  aprox_pfsp_probabilities_per_opp_MainPlayer/vs_MainPlayer 0.0
+wandb:                                              main_advantage/advantage_mean -0.0751
+wandb:                                               main_advantage/advantage_std 0.55292
+wandb:                                               main_advantage/advantage_min -8.82487
+wandb:                                               main_advantage/advantage_max 2.52838
+wandb:                                          main_advantage/advantage_pos_frac 0.46656
+wandb:                                                                 charts/sps 309.0
+wandb:                                              charts/num_parallel_Bot_Games 1.0
+wandb: Run history:
+wandb:                                                                global_step ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:                                                                 _timestamp ▁▁▁▁▁▁▂▂▂▃▃▃▃▃▃▃▃▄▄▄▅▅▅▅▅▅▅▅▅▆▆▇▇▇▇▇▇▇▇█
+wandb:                                                                      _step ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇███
+wandb:                                                  main_charts/learning_rate ████▇▇▇▇▇▇▆▆▆▆▆▅▅▅▅▅▄▄▄▄▄▄▃▃▃▃▃▂▂▂▂▂▂▁▁▁
+wandb:                                                            progress/update ▁▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:                                                          losses/value_loss ▁█▄█▄▄▆▆▄▅▃▃▂▂▃▄▃▃▄▅▂▅▄▄▄▄▅▃▄▂▄▃▃▃▂▃▃▃▂▄
+wandb:                                                         losses/policy_loss ▇██████▇▇▇▇▇▇▇▆▇▅▆▆▆▅▆▄▆▅▄▅▄▅▅▅▅▃▃▁▅▄▄▁▅
+wandb:                                                             losses/kl_loss ██████████████████▇▇▇▇▇▆▇▇▇▇▇▆▆▆▄▄▄▃▃▁▂▂
+wandb:                                                          losses/total_loss ▂█▅█▅▅▆▇▄▆▃▄▂▂▄▄▄▄▄▆▂▅▄▄▃▄▄▂▄▁▃▂▂▂▁▃▄▃▁▄
+wandb:                                                        losses/entropy_loss ▂▅▄▃▃▄▄▃▂▂▄▃▅▄▃▂▂▄▂▁▄▃▄▅▅▄▄▆▅▆▆█▆▆▅▄▃▄▅▄
+wandb:                                                           losses/approx_kl ▇▅▅▅▅▅▅▅▅▅▅▅▄▄▅▄▄▄▄▄▄▃▄▁▅▂▁▆▅▂▅▆▅▇▄▇▃▆█▃
+wandb:                                      main_charts/grad_norm_before_clipping ▁▂▁▁▁▁▁▂▂▁▂▂▂▂▂▂▂▃▁▅▂▂▃▁▄▂▆▅▄▂▄▂▇▅▆▃▅▆▃█
+wandb:                                                      losses/value_loss_raw ▁█▄█▄▄▆▆▄▅▃▃▂▂▃▄▃▃▄▅▂▅▄▄▄▄▅▃▄▂▄▃▃▃▂▃▃▃▂▄
+wandb:                                                    losses/entropy_loss_raw ▂▅▄▃▃▄▄▃▂▂▄▃▅▄▃▂▂▄▂▁▄▃▄▅▅▄▄▆▅▆▆█▆▆▅▄▃▄▅▄
+wandb:                                                       main_charts/r2_score █▁▁▁▂▂▂▂▂▃▄▄▅▅▅▅▆▅▅▅▆▅▆▆▆▆▅▇▆█▇█▇▇▇▇▇▇█▇
+wandb:                                                     main_delta_scores/mean █▁▆▆▅▆▅▆▄▅▅▆▆▆▄▆▆▆▅▅▅▇▆▅▆▆▄▆▅█▆▇▆▇▇▅▆▆▆▅
+wandb:                                                 main_delta_scores/abs_mean ▄█▂▂▄▃▄▃▅▄▄▃▃▃▅▂▃▂▃▃▃▁▃▅▃▃▅▄▄▂▅▃▃▂▄▄▃▄▄▄
+wandb:                                                         debug/pg_stop_iter ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                             main_charts/old_episode_reward ▆▅▁▅▄▃▆▅▄▂▃▁▅▁▆▄▁▅▁▁▄▂▃▃▃▅▅▅▆▅█▃▅▃▃▃▄▅▆▆
+wandb:                                                    main_charts/Game_length ▁▃▇▂▄▆▁▂▄▇▅█▄█▁▂▇▃██▄▇▅▅█▁▂▂███▅██▆▆█▂▂▂
+wandb:                                main_charts/Episode_reward_with_hist_reward ▁▁▁▁▁▁▁▁▁▁▁█▁█▁▁▁▁██▁▁▁▁█▁▁▁███▁██▁▁█▁▁▁
+wandb:                                                 main_charts/Episode_reward ▁▁▁▁▁▁▁▁▁▁▁█▁█▁▁▁▁██▁▁▁▁█▁▁▁███▁██▁▁█▁▁▁
+wandb:                                                   main_charts/AttackReward ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                          main_charts/WinLossRewardFunction ▁▁▁▁▁▁▁▁▁▁▁█▁█▁▁▁▁██▁▁▁▁█▁▁▁███▁██▁▁█▁▁▁
+wandb:                                         main_charts/steps_since_checkpoint ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:                                   MainPlayer_endgame_units/selfplay_worker ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▁▁▁▁▁▁▂▁▁▂▁▁▂▂▁▁▁▅█▁▁▄▁▁▁
+wandb:                                    MainPlayer_endgame_units/selfplay_light ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                    MainPlayer_endgame_units/selfplay_heavy ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                   MainPlayer_endgame_units/selfplay_ranged ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                                progress/num_selfplay_games ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:                                   main_winrates/selfplay_Winrate_with_draw █▃▁▁▂▁▁▁▁▁▁▁▁▂▂▂▂▂▂▂▁▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂
+wandb:                                     main_winrates/selfplay_Winrate_no_draw ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                 main_winrates/selfplay_Winrate_no_draw_std ▁█▄▅▇▅▅▅▄▄▄▅▅▆▆▆▆▆▆▆▅▅▆▆▆▅▅▅▆▆▆▇▆▆▇▇▆▇▆▇
+wandb:               main_winrates/combined_selfplay_no_draw_plus_bot_with_draw_0 ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                             charts/main_player_historicals ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                          charts/main_exploiter_historicals ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                        charts/league_exploiter_historicals ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                                   charts/total_historicals ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                          charts/selfplay_reward_scores_sum █▇▆▇█▃█▂▇▁▆▁▇▆▁▃▂▇▁▅▇▂▂▄▄▄▆▂▃▆▇▄▇▇█▇▆▇▇█
+wandb:                                                                   _runtime ▁▁▁▁▁▁▁▂▂▂▂▂▂▂▂▂▂▂▂▃▃▃▃▃▃▃▃▃▃▃▄▄▅▅▅▆▆▇▇█
+wandb:                                   MainPlayer_endgame_units/bot_game_worker ███████▁█▁████████████▁▁▁██
+wandb:                                    MainPlayer_endgame_units/bot_game_light ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                    MainPlayer_endgame_units/bot_game_heavy ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                   MainPlayer_endgame_units/bot_game_ranged ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                                     progress/num_bot_games ▁▁▂▂▂▂▃▃▃▃▄▄▄▅▅▅▅▆▆▆▆▇▇▇▇██
+wandb:                                      main_winrates/bot_Winrate_with_Draw_0 ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                              main_winrates/bot_Winrate_std ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                    main_winrates/bot_Winrate_with_draw_0.5 █▇▆▆▅▅▄▄▄▄▃▃▃▃▂▂▂▂▂▂▂▁▁▁▁▁▁
+wandb:                                               charts/bot_reward_scores_sum ▆▅▅▃▇▂▅▇▅▇▆▅▁▅▃▄▆▆▇▆▅▄▇██▄▅
+wandb:               winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_no_draw ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:             winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_with_draw ▁▁▅▅▅▅▆▆▅▅▆▇▇▇█▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇██████
+wandb:   aprox_pfsp_probabilities_per_opp_MainPlayer/vs_Historical_(MainPlayer)_0 ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:   aprox_pfsp_probabilities_per_opp_MainPlayer/vs_Historical_(MainPlayer)_1 ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                  aprox_pfsp_probabilities_per_opp_MainPlayer/vs_MainPlayer ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                                              main_advantage/advantage_mean ▁█
+wandb:                                               main_advantage/advantage_std █▁
+wandb:                                               main_advantage/advantage_min ▁█
+wandb:                                               main_advantage/advantage_max ▁█
+wandb:                                          main_advantage/advantage_pos_frac ▁█
+wandb:                                                                 charts/sps ▁█
+wandb:                                              charts/num_parallel_Bot_Games ▁▁
+wandb: 
+wandb: Synced 4 W&B file(s), 120 media file(s), 120 artifact file(s) and 0 other file(s)
+wandb: 
+wandb: Synced league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_5_1: https://wandb.ai/glaspaul244-hhu/new_selfplay/runs/d7f1g6hk
+
