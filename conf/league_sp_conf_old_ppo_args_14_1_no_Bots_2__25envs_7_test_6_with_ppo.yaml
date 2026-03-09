@@ -10,7 +10,7 @@ ExperimentConfig:
   exp_name: 09_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_6_with_ppo
   wandb_group_name: worker_exploit
 
-  
+  unit_bonus: true
   sp_rand: true
   resume: false
   starting_historical: false
@@ -18,7 +18,7 @@ ExperimentConfig:
 
 
 
-
+  
   num_bot_envs: 25 # 3
   dyn_num_bot_envs: true
   min_num_bot_envs: 5  # minimum number of bot envs
