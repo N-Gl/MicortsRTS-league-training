@@ -1458,7 +1458,10 @@ class LeagueTrainer:
         self._refresh_exploiter_indices(args)
 
 
-        opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+        if args.all_passiveAi:
+            opponents = [microrts_ai.passiveAI for _ in range(args.num_bot_envs)]
+        else:
+            opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
         reward_weight = np.array([1.0, 1.0, 1.0, 0.2, 1.0, 4.0, 5.25, 6.0, 0])
         
         envs = MicroRTSGridModeVecEnv(

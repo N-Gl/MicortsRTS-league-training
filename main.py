@@ -151,7 +151,9 @@ def main(cfg: ExperimentConfig):
         args.num_bot_envs = args.num_parallel_eval_envs
 
     else:
-        if args.even_opponent_split:
+        if args.all_passiveAi:
+            opponents = [microrts_ai.passiveAI for _ in range(args.num_bot_envs)]
+        elif args.even_opponent_split:
             opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
         else:
             if args.num_bot_envs > 16:
