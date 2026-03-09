@@ -1,0 +1,89 @@
+defaults:
+  - league_sp_conf_old_ppo_args_3
+
+ExperimentConfig:
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
+  model_path: p
+  BC_model_path: models/BCagent.pt
+  other_historicals_paths: ["models/BCagent.pt", "saved_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400.pt"]
+  exp_name: 09_03_26__BCAgent__worker_exploit
+  wandb_group_name: worker_exploit
+
+
+  resume: false
+  starting_historical: false
+
+
+
+
+  num_bot_envs: 1 # 3
+  dyn_num_bot_envs: true
+  min_num_bot_envs: 1  # minimum number of bot envs
+  max_num_bot_envs: 1 # 15 # changed from 9 (3)
+  training_on_bot_envs: false   # true
+
+  num_main_envs: 25
+
+  # attack_reward_weight: 0.05
+  # rewardscore: 0.0
+
+  # clip_coef: 0.01
+  # exploiter_clip_coef: 0.01
+
+  clip_coef: 0.15
+  exploiter_clip_coef: 0.15
+
+  # PPO_learning_rate: 7.5e-5
+  # exploiter_PPO_learning_rate: 7.5e-5
+
+  ent_coef: 0.015
+  exploiter_ent_coef: 0.015
+
+  # TODO: ent_coef: 0.0175
+  # TODO: exploiter_ent_coef: 0.0175
+
+  kl_coeff: 0.3
+  exploiter_kl_coeff: 0.3
+  exploiter_ent_coef_min: 0.03 # TODO: nur falls league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_4 funktioniert hat
+  exploiter_ent_coef_max: 0.0075 # TODO: nur falls league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_4 funktioniert hat
+  exploiter_anneal_ent: true # TODO: nur falls league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_4 funktioniert hat
+
+
+  # target_kl: 0.01
+  # exploiter_target_kl: 0.01
+  
+  # vf_coef: 0.15
+  # exploiter_vf_coef: 0.15
+
+  vf_coef: 0.15
+  exploiter_vf_coef: 0.15
+
+  kle_rollback: false
+  exploiter_kle_rollback: false
+
+  exploiter_unit_exploration_bonus_enabled: true
+  exploiter_unit_exploration_bonus: 0.15 # bis etwa 0.15
+
+  # Parameter aus dem Sweep ohne Bots
+
+  # PPO_learning_rate: 9.5e-5 # TODO: 2.5 × 10^−5    # new (BA Parameter) (learning rate = 2.5 × 10^−5)
+  # exploiter_PPO_learning_rate: 9.5e-5
+# 
+  # ent_coef: 0.0025
+  # exploiter_ent_coef: 0.0025
+# 
+  # clip_coef: 0.175
+  # exploiter_clip_coef: 0.175
+# 
+  # vf_coef: 0.25
+  # exploiter_vf_coef: 0.25
+# 
+  # kl_coeff: 0.38
+  # exploiter_kl_coeff: 0.38
+
+
+  unit_bonus_max_worker: 5.0
+  unit_bonus_max_light: 0.0
+  unit_bonus_max_heavy: -5.0
+  unit_bonus_max_ranged: 0.0
