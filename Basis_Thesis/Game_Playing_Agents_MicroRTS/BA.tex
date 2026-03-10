@@ -516,17 +516,17 @@ The Biggest problem with the training setup is the opponent diversity.
 To make exploiters more diverse the exploration can be increased with hyperparameters such as learning rate and entropy coefficient and kl regularization coefficient.
 
 \paragraph{Problems with overall increased exploration.}
-Increasing the exploration too much for exploiters can lead to a worse performance and longer training.
-The problem is, that the starting point (Base Agent) is already very strong and the effective strategies for different Units are very different, which means that the agent has to almost entirely unlearn the current strategy, before it can learn new strategies for other units.
-Inbetween the unlearning and learning phase, the agent performs very poorly, which leads to very distant clusters (for different Units) of local maxima in the reward landscape, which can make training very difficult and time-consuming.
-% Beispiel Bild für 4 Cluster (Markieren, dass es nicht echte Daten sondern ein Beispiel für die bessere Vorstellung ist)?
-Further more, the same Problem occurs for every exploiter, multiplying the problem.
-Making diversity even more difficult is, that in an complex environment such as MicroRTS, the league training will most likely not cover all possible Main Agent weaknesses, that can be exploited by an exploiter using Heavy Units (which the Base Agent strongly favors).
-Meaning that we expect, that there are always easier to reach weaknesses than weaknesses exploitable by changing the focused Unit, even after the training.
+Excessively increasing the exploration for exploiters can lead to worse performance and longer training.
+We Hypothesis that the problem is that the starting point (the Base Agent) is already very strong and the effective strategies for different unit types are very different, which means that the agent has to almost entirely unlearn the current strategy, before it can learn new strategies for other units.
+In between the unlearning and learning phase, the agent performs very poorly, which leads us to belive there are very distant clusters (corresponding to different unit types) of local maxima in the reward landscape, which is why finding different maxima with the same unit type is possible, but changing to a strategie for different unit types very difficult and time-consuming.
+Furthermore, the same problem occurs for every exploiter, multiplying the problem.
+What makes diversity even more difficult is that in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses, that can be exploited by an exploiter using Heavy Units (which the Base Agent strongly favors).
+This means that we expect, that there are always easier to reach weaknesses than weaknesses exploitable by changing the focused Unit, even after the training.
 % TODO: Beispiel behalten?
-As an Example if the Base Agent that favors an attack using Heavy units should exploit a weakness, that accours when the Main Agent is attacked by many Worker units, than for every step every Worker on the field is not allowed to build Barracks (which wastes to much Recources to make the strategy work), instead of 2 Workers the Agent has to make as many as possible, all Units beside 2 have to rush the opponent.
-The Agent only gets rewarded positively, if all of that happens in the same game, making it unlikely to happen.
-The second strategie of the example is a built-in Bot strategy of MicroRTS called workerRushAI.
+For example if the Base Agent that favors an attack using Heavy units is to exploit a weakness, that occurs when the Main Agent is attacked by many Worker units, then for every step every Worker on the field is not allowed to build Barracks (which wastes too many Recources to make the strategy work).
+Instead of using only 2 Workers the Agent has to produce as many as possible and but two units have to rush the opponent.
+The Agent only gets rewarded positively, if all of that happens in the same game, making it unlikely to occur.
+The second strategy in the example is a built-in Bot strategy of MicroRTS called workerRushAI.
 
 \paragraph{Producing Exploration Bonus.}
 To further increase Exploration, without decreasing efficiency too much, an exploration bonus targeting the production of Workers, Ranged, Heavy and Light Units can be added to the reward.
