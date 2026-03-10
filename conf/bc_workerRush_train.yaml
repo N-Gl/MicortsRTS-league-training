@@ -23,8 +23,8 @@ ExperimentConfig:
   # Train on already collected replays in replays/initial.
   newdata: false
   epochs: 100
-  start_epoch: 6
-  warmup_epochs: 10
+  start_epoch: 9
+  warmup_epochs: 8
   nurwins: false
 
 
@@ -37,3 +37,6 @@ ExperimentConfig:
 # [Epoch 3] Train Loss: 0.000929, learning rate: 0.000979
 # [Epoch 4] Train Loss: 0.000762, learning rate: 0.000968
 # [Epoch 5] Train Loss: 0.000656, learning rate: 0.000958
+# [Epoch 6] Train Loss: 0.000557, learning rate: 0.000949
+# [Epoch 7] Train Loss: 0.000471, learning rate: 0.000939
+# [Epoch 8] Train Loss: 0.000409, learning rate: 0.000929
