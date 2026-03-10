@@ -14,6 +14,40 @@ from microrts_space_transformbots import MicroRTSSpaceTransformbot
 from torch.utils.data import DataLoader, IterableDataset
 
 
+
+def getScalarFeatures(obs, res, numenvs, device):
+        ScFeatures = torch.zeros(numenvs, 11).to(device)
+
+        for i in range(numenvs):
+
+            res_plane = (obs[i, :, :, 1] * obs[i, :, :, 7])
+            lightunit_plane = (obs[i, :, :, 11])
+            heavyunit_plane = (obs[0, :, :, 12])
+            rangedunit_plane = (obs[0, :, :, 13])
+            total_res = res_plane.sum().item()
+
+
+            worker_plane = obs[i, :, :, 10]
+            building_plane = obs[i, :, :, 9]
+            player0_plane = obs[i, :, :, 4]
+            player1_plane = obs[i, :, :, 5]
+
+            ScFeatures[i,0]  = res[i][0] #Player0 res
+            ScFeatures[i, 1] =  res[i][1] #Player1 res
+            ScFeatures[i, 2] =  total_res #vorhandene res
+            ScFeatures[i, 3] = (worker_plane * player0_plane).sum().item()  # Player0 worker
+            ScFeatures[i, 4] = (lightunit_plane * player0_plane).sum().item()  # Player0 light
+            ScFeatures[i, 5] = (heavyunit_plane * player0_plane).sum().item()  # Player0 heavy
+            ScFeatures[i, 6] = (rangedunit_plane * player0_plane).sum().item()  # Player0 ranged
+            ScFeatures[i, 7] = (worker_plane * player1_plane).sum().item()  # Player1 worker
+            ScFeatures[i, 8] = (lightunit_plane * player1_plane).sum().item()  # Player1 light
+            ScFeatures[i, 9] = (heavyunit_plane * player1_plane).sum().item()  # Player1 heavy
+            ScFeatures[i, 10] = (rangedunit_plane * player1_plane).sum().item()  # Player1 ranged
+
+        #Time step in the game
+        return ScFeatures
+
+
 class ReplayDataset(IterableDataset):
     """Streams compressed replay files without loading everything into memory."""
 
@@ -134,7 +168,39 @@ class BehaviorCloning:
             self._finalize_logging()
 
     def _collect_new_data(self):
-        opponents = [
+        bc_expert_ai = getattr(self.args, "bc_expert_ai", None)
+        bc_opponent_ai = getattr(self.args, "bc_opponent_ai", bc_expert_ai)
+        bc_opponent_ais = getattr(self.args, "bc_opponent_ais", None)
+        bc_num_runs = int(getattr(self.args, "bc_num_runs", 250))
+
+        if bc_expert_ai:
+            opponent_ai_names = []
+            if bc_opponent_ais:
+                if isinstance(bc_opponent_ais, str):
+                    opponent_ai_names = [bc_opponent_ais]
+                else:
+                    opponent_ai_names = [str(ai_name) for ai_name in bc_opponent_ais]
+            elif bc_opponent_ai:
+                opponent_ai_names = [bc_opponent_ai]
+
+            if not opponent_ai_names:
+                raise ValueError(
+                    "Set bc_opponent_ai or bc_opponent_ais when bc_expert_ai is provided."
+                )
+            if bc_num_runs <= 0:
+                raise ValueError("bc_num_runs must be > 0.")
+            expert_ai_callable = self._resolve_ai_callable(bc_expert_ai)
+            opponents = [
+                [expert_ai_callable, self._resolve_ai_callable(opponent_ai_name)]
+                for opponent_ai_name in opponent_ai_names
+            ]
+            num_runs = [bc_num_runs for _ in opponents]
+            print(
+                f"Using custom BC replay collection: {bc_expert_ai} vs {opponent_ai_names}, "
+                f"{bc_num_runs} episodes per opponent."
+            )
+        else:
+            opponents = [
             # new (BA Parameter) CoacAI gegen alle 14 Bots - guidedRojoA3N (wegen Crash) rausgenommen
             [microrts_ai.coacAI, microrts_ai.workerRushAI],
             [microrts_ai.coacAI, microrts_ai.passiveAI],
@@ -164,10 +230,10 @@ class BehaviorCloning:
             [microrts_ai.mayari, microrts_ai.tiamat],
             [microrts_ai.mayari, microrts_ai.droplet],
             [microrts_ai.mayari, microrts_ai.naiveMCTSAI],
-        ]
+            ]
 
-        num_runs = [ 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250,
-            200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250]
+            num_runs = [ 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250,
+                200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250]
 
         expert_name_to_id = {
             "coacAI": 0,
@@ -178,6 +244,7 @@ class BehaviorCloning:
             "randomAI": 5,
             "randomBiasedAI": 6,
             "rojo": 7,
+            "mixedBot": 8,
             "mixedbot": 8,
             "izanagi": 9,
             "droplet": 10,
@@ -226,9 +293,19 @@ class BehaviorCloning:
                 if self.args.nurwins and reward.item() != 1:
                     pass
                 else:
+                    expert_name = ai_pair[0].__name__
+                    expert_id = expert_name_to_id.setdefault(
+                        expert_name, max(expert_name_to_id.values(), default=-1) + 1
+                    )
                     obsten = torch.cat((obsten, torch.tensor(np.array(obs_arr)).squeeze(1)), dim=0)
                     actten = torch.cat((actten, torch.tensor(np.array(act_arr))), dim=0)
-                    ztorch = torch.cat((ztorch, torch.tensor(expert_name_to_id[ai_pair[0].__name__]).repeat(len(obs_arr), 1)), dim=0,)
+                    ztorch = torch.cat(
+                        (
+                            ztorch,
+                            torch.tensor(expert_id).repeat(len(obs_arr), 1),
+                        ),
+                        dim=0,
+                    )
 
                 if ((ep + 1) % 50 == 0) or ((ep + 1) == num_runs[index]):
                     replay_path = os.path.join(
@@ -256,6 +333,15 @@ class BehaviorCloning:
 
             env_transform.close()
             env.close()
+
+    def _resolve_ai_callable(self, ai_name: str):
+        ai_callable = getattr(microrts_ai, ai_name, None)
+        if ai_callable is None:
+            raise ValueError(
+                f"Unknown AI '{ai_name}' for BC replay collection. "
+                "Use names from gym_microrts.microrts_ai, e.g. workerRushAI."
+            )
+        return ai_callable
 
     def _train_epoch(self, loader, optimizer, warmup_epochs, epoch):
         train_loss_sum = 0.0

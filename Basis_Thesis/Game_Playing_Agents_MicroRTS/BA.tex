@@ -204,7 +204,7 @@ The agent in AlphaStar was pre-trained with \emph{imitation learning} from human
 
 \paragraph{Pre-League Training.}
 In this thesis, we replace imitation learning with the BC phases and the PPO phase. 
-Simmilar to AlphaStar our agent was further trained in a league of different agent types (Main Agent, Main Exploiters, League Exploiters, and historical snapshots (\emph{historical agents})) to reduce overfitting and forgetting and to promote diversity. 
+Similar to AlphaStar our agent was further trained in a league of different agent types (Main Agent, Main Exploiters, League Exploiters, and historical snapshots (\emph{historical agents})) to reduce overfitting and forgetting and to promote diversity. 
 
 \paragraph{League Composition and Training.}
 As in AlphaStar, in this thesis Main Exploiters are trained by training the base agent against all historical versions of the Main Agenten in the league, in order to identify and exploit weaknesses.
@@ -426,70 +426,75 @@ In this thesis PFSP was modified so that all agents have a non-zero probability 
 
 
 \subsection{league training (LT)}
-% TODO: ab hier überarbeiten
+
+
+\subsection{league training (LT)}
 \label{sec:LT}
-LT combines and extends SP and PFSP to further stabilize training and promote robustness by training against opponents drawn from a \emph{league}, including Historical agents, main exploiters and league exploiters (that are only trained against all historical agents) \cite{vinyals2019alphastar}.
+LT combines and extends SP and PFSP to further stabilize training.
+It also promotes robustness by training against opponents sampled from a \emph{league}, including Main Exploiters and League Exploiters and Historical Agents \cite{vinyals2019alphastar}.
+
 \paragraph{League composition and roles.} 
-Simmilar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis consists of the following agent types:
+Learning Agents of the league were trained in parallel.
+Similar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis consists of the following agent types:
 \begin{itemize}
-    \item \textbf{Main Agent (MA):} the primary policy that is optimized and evaluated.
-    \item \textbf{Historical Agents:} frozen MA or exploiter snapshots of earlier agent parameters. 
-    They stabilize training by providing a stationary distribution of past strategies and mitigate catastrophic forgetting.
-    \item \textbf{Main Exploiters (ME):} agents only trained against historical Main Agents, wich encourages them to find weaknesses in the Main Agent
-    \item \textbf{League Exploiters (LE):} trained against all historical agents, which further promotes diversity and by finding systemic weaknesses of the entire league.
+    \item \textbf{Main Agent (MA):} The primary policy that is optimized and evaluated.
+    \item \textbf{Historical Agents:} Frozen snapshots of earlier MA or exploiter agent policies. 
+    They stabilize training by providing a distribution of past strategies and mitigate catastrophic forgetting.
+    \item \textbf{Main Exploiters (ME):} Agents trained only against Historical Main Agents, which encourages them to identify and exploit weaknesses in the Main Agent.
+    \item \textbf{League Exploiters (LE):} Agents trained against all Historical Agents, which further promotes diversity by identifying systemic weaknesses of the league.
 \end{itemize}
-\cite{vinyals2019alphastar}
-The only differences between roles is the opponent sampling distribution and hyperparameters.
-All agents share the same observation/action representation (GridNet with invalid action masking) and train with different hyperparameters (e.g., learning rate, prioritization function for PFSP), but the same underlying PPO algorithm.
+Historical Agents are the only agent type that is not a learning agent.
+The main differences between the roles are the opponent-sampling distribution and the hyperparameters.
+All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but are trained with role-specific hyperparameters (e.g., learning rate and PFSP prioritization function).
 
 
 \paragraph{Training loop and snapshot management.}
-LT itterates through the cycles consisting of:
+LT iterates through cycles consisting of the following phases:
 \begin{enumerate}
     \item \textbf{Select opponent:} Sample an opponent from the league.
-    \item \textbf{Collect rollouts:} Run matches between the learning agent and the sampled opponent for a fixed number of steps. No agent ist updated during this phase.
+    \item \textbf{Collect rollouts:} Run matches between the learning agent and the sampled opponent for a fixed number of steps. No agent is updated during this phase.
     \item \textbf{Update policy:} Perform PPO updates using the collected trajectories against the sampled opponent.
     \item \textbf{Update statistics:} Periodically evaluate against a subset of league members to update win-rate estimates used by PFSP.
-    \item \textbf{Add snapshots:} At predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new historical agent.
+    \item \textbf{Add snapshots:} At predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new Historical Agent.
 \end{enumerate}
-A phase in the training loop is only finished, after every agent type (MA, ME, LE) has finished the phase.
-For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have finished the current phase.
+A phase of the training loop is considered completed only after every agent type (MA, ME, LE) has completed the phase.
+For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have completed the current phase.
 
 \paragraph{Bot environments.} 
-Bot environments are added to the league, to stabelize training, by continuing the PPO training against the CoacAI and Mayari built-in bots of MicroRTS, which the base agent was trained against.
-Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with finding weaknesses in the Main Agent/league (e.g., if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against), which is the main purpose of the exploiters.
-In MicriRTS-Py the environments for built-in bots and for SP are not interchangeable, since the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT direktly. 
-The number of parallel environment instances and their bult-in bot opponent (if any) have to be defined at initialization of the MicroRTS-Py environments, which means the number of environments for each built-in bot would stay fixed.
-A main improvement of LT is that training against opponents with bad learning signals is reduced.
-To retain that improvement we want the Bot environments count to be dynamic.
-Therefore, the bot environments count is adjusted dynamically by reinitializing an MicroRTS instance, which is only used for training against the built-in bots and not for SP/FSP/LT (because reinitialization also means resetting the environments in the MicroRTS instance).
-MicroRTS instance for built-in bots executes a its step function at the same time as the SP/FSP/LT instance.
+Bot environments are added to the league to stabilize training by continuing the PPO training against the built-in MicroRTS bots CoacAI and Mayari, which the base agent was trained against.
+Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with identifying and exploiting weaknesses in the Main Agent or the league, which is the main purpose of the exploiters (e.g., if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against).
+In MicroRTS-Py the environments for built-in bots and for SP are not interchangeable, since the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT directly. 
+The number of parallel environment instances and their built-in bot opponent (if any) have to be defined at initialization of the MicroRTS-Py environments, which means the number of environments for each built-in bot remains fixed.
+One of the main advantages of LT is that training against opponents with bad learning signals is reduced.
+To retain that improvement we want the number of bot environments to be dynamic.
+Therefore, the number of bot environments is adjusted dynamically by reinitializing a MicroRTS instance, which is only used for training against the built-in bots and not for SP/FSP/LT (because reinitialization also means resetting the environments in the MicroRTS instance).
+The MicroRTS instance for built-in bots executes its step function at the same time as the SP/FSP/LT instance.
 
 \paragraph{number of parallel bot environment instances.}
-Given is an hyperparameter for the maximum number of parallel bot environment instances and a hyperparameter for the minimum number of parallel bot environment instances.
+Two hyperparameters define the maximum number of parallel bot environment instances and the minimum number of parallel bot environment instances.
 % TODO: A Buffer for observations, actions, invalid action masks with ... % zu viel Codedetails?
 Among other things, references to the observation, action, and invalid action mask buffers must be adjusted to the correct size and partially reset whenever the number of parallel bot environment instances is changed.
-%%%%%%%%%%%%%%%%
+% TODO: alle "invalid action mask" zu "invalid-action-mask"?
 
 
+\paragraph{Summary: Opponent Selection.}
+PFSP samples the next opponent from a given set of possible opponents, with probabilities based on the current learning agent’s win rates against the potential opponents, whereas SP always trains against the current learning Agent.
+The opponent selection for the League is illustrated in Figure \ref{fig:Matchmaking}.
+Depending on the agent role, opponents are either the current Main Agent or sampled from specific subsets of historical agents using PFSP. 
+The Main Agent also trains against additional bot environments, while Main Exploiters and League Exploiters are matched only against agents from the league.
+% TODO: vielleicht die Grafik erst ans Ende verschieben und hier nur verlinken. Dort dann über die Gesammte Seite.
+\begin{center}
+    \includegraphics[width=1.2\linewidth, height=0.5\textheight,keepaspectratio]{images/Matchmaking.pdf}
+    \captionof{figure}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}
+    \label{fig:Matchmaking}
+\end{center}
 
-
-\paragraph{Select opponent.}
-PFSP samples the next opponent from the given agents, with probabilities based on the current learning Agent’s win rates against the potential opponents.
-% TODO: füge matchmaking Graph hier ein (MA gegen MA muss der Pfeil auch nach unten gehen oder nicht obs Aufbau machen)
-
-
-\paragraph{Why exploiters are needed.}
-A league containing only historical Main Agent snapshots can still drift towards strategies that are strong only against the averaged historical distribution.
-Exploiters counteract this by explicitly searching for vulnerabilities: if the Main Agent exhibits systematic weaknesses (e.g., against specific rush timings or unit compositions), exploiters can amplify those weaknesses into consistent counter-strategies.
-Training the Main Agent against these exploiters encourages robust policies that generalize better to unseen opponents than policies trained with SP/FSP alone \cite{vinyals2019alphastar}.
-
-\paragraph{Practical considerations in MicroRTS.}
-In MicroRTS, generating PPO rollouts against very strong search-based opponents can be prohibitively slow.
-LT provides a scalable alternative because league opponents are neural policies (historical snapshots and exploiters) with fast inference, enabling efficient data collection while maintaining opponent diversity.
-Moreover, the explicit control over opponent sampling (PFSP) is crucial in MicroRTS because certain opponent matchups can lead to long stalemates near the episode length limit, reducing sample efficiency; therefore, the prioritization functions in this thesis were adapted to emphasize opponents that yield informative learning signal while still preserving diversity through non-zero exploration over the league.
-
-
+\paragraph{Resetting Exploiters.}
+% TODO: unit bonus distribution im Text lassen?
+The Paper for AlphaStar \cite{vinyals2019alphastar} only explains that exploiters reset their weights however, in this theses exploiter resets also reset optimizers, game statistics (e.g., win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable).
+On top of that exploiters only reset after the game ended, which means exploiters can reset in an rollout.
+If that happens, then the rollout contains trajectories from the old policy and therefore can not be used for the on-policy training.
+To keep the training as simple as possible, the entire update after an exploiter reset is skipped.
 
 % \subsection{Neural Network Architecture}
 

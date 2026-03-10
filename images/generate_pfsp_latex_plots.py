@@ -32,6 +32,9 @@ FORMULAS = {
     "focused_strong_with_draws": (focused_strong_with_draws, ("orange!85!black", "#C76B00")),
 }
 
+X_AXIS_LABEL = "win rate against opponent"
+Y_AXIS_LABEL = "weighting for opponent selection"
+
 
 def tex_escape(text: str) -> str:
     return text.replace("_", r"\_")
@@ -52,8 +55,8 @@ def axis_header(title: str, with_legend: bool) -> list[str]:
     options = [
         r"width=12cm,",
         r"height=7cm,",
-        r"xlabel={$x$},",
-        r"ylabel={$f(x)$},",
+        rf"xlabel={{{X_AXIS_LABEL}}},",
+        rf"ylabel={{{Y_AXIS_LABEL}}},",
         rf"title={{{title}}},",
         r"xmin=0, xmax=1,",
         r"grid=both,",
@@ -282,10 +285,10 @@ def build_svg_plot(
         f'<rect x="{margin_left}" y="{margin_top}" width="{plot_w}" height="{plot_h}" fill="none" stroke="#222222" stroke-width="2"/>'
     )
     lines.append(
-        f'<text x="{margin_left + plot_w / 2:.2f}" y="{height - 24}" text-anchor="middle" font-size="18" font-family="Arial">x</text>'
+        f'<text x="{margin_left + plot_w / 2:.2f}" y="{height - 24}" text-anchor="middle" font-size="18" font-family="Arial">{svg_escape(X_AXIS_LABEL)}</text>'
     )
     lines.append(
-        f'<text x="30" y="{margin_top + plot_h / 2:.2f}" transform="rotate(-90 30,{margin_top + plot_h / 2:.2f})" text-anchor="middle" font-size="18" font-family="Arial">f(x)</text>'
+        f'<text x="30" y="{margin_top + plot_h / 2:.2f}" transform="rotate(-90 30,{margin_top + plot_h / 2:.2f})" text-anchor="middle" font-size="18" font-family="Arial">{svg_escape(Y_AXIS_LABEL)}</text>'
     )
 
     for name, hex_color, x_values, y_values in curves:

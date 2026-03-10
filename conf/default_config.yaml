@@ -106,9 +106,11 @@ ExperimentConfig:
   clip_vloss: true 
 
   epochs: 30                   # new (BA Parameter) 100 Epochen, BC-finetuning 70 Epochen
+  start_epoch: 1               # first epoch index used by BC loop
   warmup_epochs: 20            # new (BA Parameter) (Over 30 epochs, α linearly decreases to zero) (changed: 20)
   newdata: false                
   nurwins: false                
+  num_expert_embeddings: 10    # must be > max replay expert-id used for z_embedding
 
   save_gpu_memory: false
   dbg_no_main_agent_ppo_update: false
