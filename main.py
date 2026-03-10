@@ -55,8 +55,7 @@ def main(cfg: ExperimentConfig):
         raise ValueError("Please provide a model path via config model_path")
     
     if args.league_training and args.selfplay:
-        raise ValueError("league_training and selfplay are not possible with the same call")
-    
+        raise ValueError("league_training and selfplay are not possible with the same call")  
     
     if args.evaluate:
         args.__dict__.setdefault('num_selfplay_envs', args.num_parallel_eval_envs)
@@ -478,11 +477,27 @@ def main(cfg: ExperimentConfig):
                 other_historicals.append(historical_agent)
                 print(f"Added historical agent from {historical_path}")
 
+        main_exploiter_initial_agents = None
+        if len(args.main_exploiters_paths) > 0:
+            main_exploiter_initial_agents = []
+            for main_exploiter_path in args.main_exploiters_paths:
+                path_exploiter = _resolve_checkpoint_path(main_exploiter_path, args.exp_name, resume=args.resume, direct_path=True)
+                main_exploiter_agent = build_agent(
+                    action_plane_nvec,
+                    device,
+                    unit_exploiters=args.unit_exploiters,
+                    num_expert_embeddings=num_expert_embeddings,
+                )
+                main_exploiter_agent.set_weights(path_exploiter)
+                main_exploiter_initial_agents.append(main_exploiter_agent)
+                print(f"Added main exploiter init agent from {main_exploiter_path}")
+
 
         league_trainer = LeagueTrainer(
             agent=agent,
             supervised_agent=initial_agent,
             other_historicals=other_historicals,
+            main_exploiter_initial_agents=main_exploiter_initial_agents,
             envs=envsT,
             sp_envs=sp_envsT,
             args=args,

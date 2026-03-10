@@ -41,3 +41,11 @@ ExperimentConfig:
 # [Epoch 8] Train Loss: 0.000409, learning rate: 0.000929
 # [Epoch 9] Train Loss: 0.000363, learning rate: 0.000919
 # [Epoch 10] Train Loss: 0.000321, learning rate: 0.000909
+# [Epoch 11] Train Loss: 0.000300, learning rate: 0.000899
+# [Epoch 12] Train Loss: 0.000267, learning rate: 0.000889
+# [Epoch 13] Train Loss: 0.000243, learning rate: 0.000879
+# [Epoch 14] Train Loss: 0.000223, learning rate: 0.000869
+# [Epoch 15] Train Loss: 0.000202, learning rate: 0.000859
+# [Epoch 16] Train Loss: 0.000182, learning rate: 0.000848
+# [Epoch 17] Train Loss: 0.000162, learning rate: 0.000838
+# [Epoch 18] Train Loss: 0.000147, learning rate: 0.000828

@@ -202,6 +202,7 @@ class LeagueTrainer:
         agent,
         supervised_agent,
         other_historicals,
+        main_exploiter_initial_agents,
         envs,
         sp_envs,
         args,
@@ -213,6 +214,7 @@ class LeagueTrainer:
         self.agent = agent
         self.supervised_agent = supervised_agent
         self.other_historicals = other_historicals
+        self.main_exploiter_initial_agents = main_exploiter_initial_agents
         self.envs = envs
         self.sp_envs = sp_envs
         self.args = args
@@ -330,7 +332,13 @@ class LeagueTrainer:
         if args.num_envs == 0:
             raise ValueError("league training requires at least one environment")
         
-        league_instance, self.active_league_agents, self.learning_indices = league.initialize_league(args, device, agent, other_initial_agents=self.other_historicals)
+        league_instance, self.active_league_agents, self.learning_indices = league.initialize_league(
+            args,
+            device,
+            agent,
+            other_initial_agents=self.other_historicals,
+            main_exploiter_initial_agents=self.main_exploiter_initial_agents,
+        )
 
         if not args.cur_main_exploiter_path is None:
             for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
