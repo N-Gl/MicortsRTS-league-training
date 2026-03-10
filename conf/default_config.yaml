@@ -7,6 +7,7 @@ ExperimentConfig:
   exp_name:
   gym_id: MicrortsBC
   other_historicals_paths:
+  main_exploiters_paths: []
 
   initial_BC: false
   BC_finetuning: false
@@ -110,7 +111,7 @@ ExperimentConfig:
   warmup_epochs: 20            # new (BA Parameter) (Over 30 epochs, α linearly decreases to zero) (changed: 20)
   newdata: false                
   nurwins: false                
-  num_expert_embeddings: 10    # must be > max replay expert-id used for z_embedding
+  num_expert_embeddings: 32    # must be > max replay expert-id used for z_embedding
 
   save_gpu_memory: false
   dbg_no_main_agent_ppo_update: false

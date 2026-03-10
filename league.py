@@ -738,7 +738,8 @@ class League:
         args,
         initial_main_agent: torch.nn.Module,
         initial_exploiter_agent: torch.nn.Module = None,
-        other_initial_agents: List[torch.nn.Module] = None
+        other_initial_agents: List[torch.nn.Module] = [],
+        main_exploiter_initial_agents: List[torch.nn.Module] = [],
     ):
         # am Anfang legt man fest, wie viele Environments für das Training von jedem Agententyp genutzt werden (denen gibt man mit .match einen Gegner)
         self._payoff = Payoff()
@@ -746,6 +747,10 @@ class League:
         
         if initial_exploiter_agent is None:
             initial_exploiter_agent = initial_main_agent
+        if len(main_exploiter_initial_agents) > 0:
+            assert len(main_exploiter_initial_agents) == args.num_main_exploiters, (
+                "main_exploiter_initial_agents length must match num_main_exploiters"
+            )
 
         # nur aktive Spieler (nicht Historical)
         self._learning_agents =  []
@@ -767,7 +772,15 @@ class League:
         self._payoff.add_player(main_agent)
 
         for main_exp_idx in range(args.num_main_exploiters):
-            main_exploiter = MainExploiter(initial_exploiter_agent, self._payoff, args=args, main_exp_idx=main_exp_idx)
+            main_exploiter_initial_agent = initial_exploiter_agent
+            if len(main_exploiter_initial_agents) > 0:
+                main_exploiter_initial_agent = main_exploiter_initial_agents[main_exp_idx]
+            main_exploiter = MainExploiter(
+                main_exploiter_initial_agent,
+                self._payoff,
+                args=args,
+                main_exp_idx=main_exp_idx,
+            )
             for _ in range(args.num_envs_per_main_exploiters):
                 self._learning_agents.append(
                     main_exploiter)
@@ -1000,8 +1013,13 @@ class League:
         return opp, last_logged_selfplay_games, old_opp
 
 
-def initialize_league(args, device, agent, other_initial_agents=[]):
-    league_instance = League(args=args, initial_main_agent=agent, other_initial_agents=other_initial_agents)
+def initialize_league(args, device, agent, other_initial_agents=[], main_exploiter_initial_agents=[]):
+    league_instance = League(
+        args=args,
+        initial_main_agent=agent,
+        other_initial_agents=other_initial_agents,
+        main_exploiter_initial_agents=main_exploiter_initial_agents,
+    )
 
     # initiale Environments mit den jeweiligen Gegnern gefüllt
     active_league_agents = []

@@ -423,11 +423,6 @@ In this thesis PFSP was modified so that all agents have a non-zero probability 
 
 % Bild einfügen?
 
-
-
-\subsection{league training (LT)}
-
-
 \subsection{league training (LT)}
 \label{sec:LT}
 LT combines and extends SP and PFSP to further stabilize training.
@@ -489,6 +484,7 @@ The Main Agent also trains against additional bot environments, while Main Explo
     \label{fig:Matchmaking}
 \end{center}
 
+% TODO: ab hier überarbeiten
 \paragraph{Resetting Exploiters.}
 % TODO: unit bonus distribution im Text lassen?
 The Paper for AlphaStar \cite{vinyals2019alphastar} only explains that exploiters reset their weights however, in this theses exploiter resets also reset optimizers, game statistics (e.g., win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable).
@@ -496,7 +492,66 @@ On top of that exploiters only reset after the game ended, which means exploiter
 If that happens, then the rollout contains trajectories from the old policy and therefore can not be used for the on-policy training.
 To keep the training as simple as possible, the entire update after an exploiter reset is skipped.
 
+
+
+\paragraph{Alphastar Pseudo Code.}
+In addition to the modifications to fit the Pseudo Code to the new Environment the following corrections to the pseudocode for AlphaStar in the original paper \cite{vinyals2019alphastar} where made:
+\begin{itemize}
+    \item While resetting Exploiters the pseudo code first reset the weights and then saved the snapshot for the Historical Agent, now the order is reversed, so that the snapshot is not of the reset Exploiter.
+    \item Main Exploiters where only trained against the current Main, if it has a high winrate against the Main Agent from the very start.
+    As soon as the win rate against the Main Agent dropped the Main Exploiter stopped training against the Main Agent for the rest of this reset cycle.
+    However in the pseudo code Main Exploiters only reset/checkpointed (which creates a Historical Main Exploiter), if the win rate against the Main Agent is high, which means that the Main Exploiter would never reset if it initialy had a low win rate against the Main Agent.
+    Since the current Main Exploiter has already trained against the Base Agent, it is very likely that the Main Exploiter never checkpoints before the maximum number of steps is reached, even if it has a high win rate against the all historical Main Agents.
+    To solve this Problem the win rate against the Main Agent is replaced with the minimum win rate against all historical Main Agents.
+    This ensures, that the Main Exploiter is reset and checkpointed as soon it is likely achieving a high win rate against the Main Agent and does not have much to learn from the possible opponents.
+    \item Another change to the pseudo code is that the win rates are set to 0.5 for the initial games, which makes it less likely that the agent will ignore opponents that it has not yet played against, which could be outliers with a very high or low win rate, including the Main Exploiter and Main Agent matchup.
+\end{itemize}
+
+
+
+
+
+\subsection{Additional modifications for diversity}
+The Biggest problem with the training setup is the opponent diversity.
+To make exploiters more diverse the exploration can be increased with hyperparameters such as learning rate and entropy coefficient and kl regularization coefficient.
+
+\paragraph{Problems with overall increased exploration.}
+Excessively increasing the exploration for exploiters can lead to worse performance and longer training.
+We Hypothesis that the problem is that the starting point (the Base Agent) is already very strong and the effective strategies for different unit types are very different, which means that the agent has to almost entirely unlearn the current strategy, before it can learn new strategies for other units.
+In between the unlearning and learning phase, the agent performs very poorly, which leads us to belive there are very distant clusters (corresponding to different unit types) of local maxima in the reward landscape, which is why finding different maxima with the same unit type is possible, but changing to a strategie for different unit types very difficult and time-consuming.
+Furthermore, the same problem occurs for every exploiter, multiplying the problem.
+What makes diversity even more difficult is that in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses, that can be exploited by an exploiter using Heavy Units (which the Base Agent strongly favors).
+This means that we expect, that there are always easier to reach weaknesses than weaknesses exploitable by changing the focused Unit, even after the training.
+% TODO: Beispiel behalten?
+For example if the Base Agent that favors an attack using Heavy units is to exploit a weakness, that occurs when the Main Agent is attacked by many Worker units, then for every step every Worker on the field is not allowed to build Barracks (which wastes too many Recources to make the strategy work).
+Instead of using only 2 Workers the Agent has to produce as many as possible and but two units have to rush the opponent.
+The Agent only gets rewarded positively, if all of that happens in the same game, making it unlikely to occur.
+The second strategy in the example is a built-in Bot strategy of MicroRTS called workerRushAI.
+
+\paragraph{Producing Exploration Bonus.}
+To further increase Exploration, without decreasing efficiency too much, an exploration bonus targeting the production of Workers, Ranged, Heavy and Light Units can be added to the reward.
+By targeting the production of different Units, the agent is encouraged to explore different strategies for different Units, which can lead to more diverse exploiters.
+This was achieved, by using a mask, to only give Barracks and Bases (which can only produce Units) a bonus for Entropie.
+While  this helped to increase Exploration with other units, which can be seen because the Agent uses more different Units, it was not enough to make the agent explore different strategies for different Units.
+% TODO: Bild von Unit Count nach Spiel ende mit und ohne Bonus?
+
+\paragraph{Unit Bonus.}
+To address the problem of insufficient diversity, a clipped unit bonus can be added to the reward, encouraging the agent to use different units (e.g., by giving the Base Agent a bonus every time it produces a Ranged Unit).
+The number of other Units increased, while using the Unit Bonus, however even with weaker Agents like the agent state after the BC phase and over 20 Million steps, the agent did not use strategys for different units and instead produced the Units with an Bonus at the End of an Round, when the result was decided.
+
+\paragraph{Unit Bonus Distribution.}
+Unit Bonus Distribution is an improved methode to increase the diversity of exploiters based on the Unit Bonus.
+The Idea is to continue training the Agent with a new feature, that recieves a the Unit Bonus, that is sampled from a distribution which is updated every game.
+Then the trained Agent can be used as an Exploiter with an static bonus/distribution bonus, resulting in an Exploiter with definable tendencys toward different Units.
+This also allows to retrain the BC and PPO phases with the Unit Bonus, because only 1 Agent needs to be trained instead of multiple with different fixed Unit Bonus, which would be very time consuming.
+% TODO: entfernen? Bild? Run?
+Retraining the Agent from scratch with the Unit Bonus Distribution showed promising results, however the training was not continued long enough to evaluate the effect of the Unit Bonus Distribution on the diversity of the exploiters, since the training with the Unit Bonus Distribution is very time consuming, because the BC phase did not work with the Unit Bonus Distribution methode and had to be skipped.
+Continuing the Trainig with the Basis Agent had the same problem as the training with the Unit Bonus.
 % \subsection{Neural Network Architecture}
+
+
+
+
 
 
 \label{sec:nn-architecture}
@@ -504,13 +559,6 @@ To keep the training as simple as possible, the entire update after an exploiter
  
 
 
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1.1\linewidth, height=10cm]{images/diagram.png}
-    \caption{The Network Architecture}
-    \label{Figure 76}
-\end{figure}
 
 
 
@@ -544,30 +592,10 @@ GAE parameter $\lambda$ & 0.95 \\
 
 
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1\linewidth]{images/Fig3.png}
-    \caption{Episode rewards (y-axis) as a function of training timesteps (x-axis) on the BC-FT agent.}
-    \label{Figure 4}
-\end{figure}
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1\linewidth]{images/Fig4.png}
-    \caption{Episode rewards (y-axis) as a function of training timesteps (x-axis) on the final agent.}
-    \label{Figure 5}
-\end{figure}
-
 
 % \subsection{Discussion}
 
 
-\begin{itemize}
-    \item \textbf{Generalization to random opponents:}
-    \item \textbf{Map and observability constraints:} 
-    \item \textbf{Replay and training bottlenecks:}
-    \item \textbf{Exploitability:}
-\end{itemize}
 
 
 \section{Conclusion}
