@@ -12,7 +12,7 @@ ExperimentConfig:
   model_path: BC_workerRush
   BC_model_path:
   exp_name: BC_workerRush_train
-  wandb_project_name: BC_workerRush
+  wandb_project_name: worker_focus
 
   resume: false
   prod_mode: false
@@ -22,6 +22,18 @@ ExperimentConfig:
 
   # Train on already collected replays in replays/initial.
   newdata: false
-  epochs: 30
+  epochs: 100
+  start_epoch: 6
   warmup_epochs: 10
   nurwins: false
+
+
+  num_expert_embeddings: 6
+
+
+
+# [Epoch 1] Train Loss: 0.001603, learning rate: 0.001000
+# [Epoch 2] Train Loss: 0.001194, learning rate: 0.000989
+# [Epoch 3] Train Loss: 0.000929, learning rate: 0.000979
+# [Epoch 4] Train Loss: 0.000762, learning rate: 0.000968
+# [Epoch 5] Train Loss: 0.000656, learning rate: 0.000958

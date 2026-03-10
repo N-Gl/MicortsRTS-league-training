@@ -325,19 +325,32 @@ def main(cfg: ExperimentConfig):
 
     if not args.evaluate:
         action_plane_nvec = envsT.action_plane_space.nvec
+        num_expert_embeddings = int(getattr(args, "num_expert_embeddings", 32))
 
-        agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
+        agent = build_agent(
+            action_plane_nvec,
+            device,
+            unit_exploiters=args.unit_exploiters,
+            num_expert_embeddings=num_expert_embeddings,
+        )
         # agent = torch.compile(agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else agent
 
         if args.BC_model_path and not args.league_training:
             path_initial_agent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume)
         else:
             path_initial_agent = _resolve_checkpoint_path(args.model_path, args.exp_name, resume=args.resume)
-        initial_agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
+        initial_agent = build_agent(
+            action_plane_nvec,
+            device,
+            unit_exploiters=args.unit_exploiters,
+            num_expert_embeddings=num_expert_embeddings,
+        )
         # initial_agent = torch.compile(initial_agent, mode="reduce-overhead") if hasattr(torch, "compile") and device.type == "cuda" else initial_agent
 
-        start_epoch = 1
-        if args.prod_mode and wandb.run.resumed:
+        start_epoch = int(getattr(args, "start_epoch", 1))
+        if start_epoch < 1:
+            raise ValueError("start_epoch must be >= 1")
+        if args.prod_mode and wandb.run.resumed and start_epoch == 1:
             if run.summary.get('charts/BCepoch'):
                 start_epoch = run.summary.get('charts/BCepoch') + 1
             else:
@@ -433,7 +446,12 @@ def main(cfg: ExperimentConfig):
         from selfplay_league import LeagueTrainer
 
         path_BCagent = _resolve_checkpoint_path(args.BC_model_path, args.exp_name, resume=args.resume, direct_path=True)
-        BCagent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
+        BCagent = build_agent(
+            action_plane_nvec,
+            device,
+            unit_exploiters=args.unit_exploiters,
+            num_expert_embeddings=num_expert_embeddings,
+        )
         BCagent.set_weights(path_BCagent)
         for param in BCagent.parameters():
             param.requires_grad = False
@@ -447,7 +465,12 @@ def main(cfg: ExperimentConfig):
         if args.other_historicals_paths is not None:
             for historical_path in args.other_historicals_paths:
                 path_historical = _resolve_checkpoint_path(historical_path, args.exp_name, resume=args.resume, direct_path=True)
-                historical_agent = build_agent(action_plane_nvec, device, unit_exploiters=args.unit_exploiters)
+                historical_agent = build_agent(
+                    action_plane_nvec,
+                    device,
+                    unit_exploiters=args.unit_exploiters,
+                    num_expert_embeddings=num_expert_embeddings,
+                )
                 historical_agent.set_weights(path_historical)
                 for param in historical_agent.parameters():
                     param.requires_grad = False

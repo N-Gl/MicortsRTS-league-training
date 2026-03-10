@@ -14,6 +14,40 @@ from microrts_space_transformbots import MicroRTSSpaceTransformbot
 from torch.utils.data import DataLoader, IterableDataset
 
 
+
+def getScalarFeatures(obs, res, numenvs, device):
+        ScFeatures = torch.zeros(numenvs, 11).to(device)
+
+        for i in range(numenvs):
+
+            res_plane = (obs[i, :, :, 1] * obs[i, :, :, 7])
+            lightunit_plane = (obs[i, :, :, 11])
+            heavyunit_plane = (obs[0, :, :, 12])
+            rangedunit_plane = (obs[0, :, :, 13])
+            total_res = res_plane.sum().item()
+
+
+            worker_plane = obs[i, :, :, 10]
+            building_plane = obs[i, :, :, 9]
+            player0_plane = obs[i, :, :, 4]
+            player1_plane = obs[i, :, :, 5]
+
+            ScFeatures[i,0]  = res[i][0] #Player0 res
+            ScFeatures[i, 1] =  res[i][1] #Player1 res
+            ScFeatures[i, 2] =  total_res #vorhandene res
+            ScFeatures[i, 3] = (worker_plane * player0_plane).sum().item()  # Player0 worker
+            ScFeatures[i, 4] = (lightunit_plane * player0_plane).sum().item()  # Player0 light
+            ScFeatures[i, 5] = (heavyunit_plane * player0_plane).sum().item()  # Player0 heavy
+            ScFeatures[i, 6] = (rangedunit_plane * player0_plane).sum().item()  # Player0 ranged
+            ScFeatures[i, 7] = (worker_plane * player1_plane).sum().item()  # Player1 worker
+            ScFeatures[i, 8] = (lightunit_plane * player1_plane).sum().item()  # Player1 light
+            ScFeatures[i, 9] = (heavyunit_plane * player1_plane).sum().item()  # Player1 heavy
+            ScFeatures[i, 10] = (rangedunit_plane * player1_plane).sum().item()  # Player1 ranged
+
+        #Time step in the game
+        return ScFeatures
+
+
 class ReplayDataset(IterableDataset):
     """Streams compressed replay files without loading everything into memory."""
 

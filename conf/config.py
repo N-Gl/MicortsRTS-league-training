@@ -92,10 +92,12 @@ class ExperimentConfig:
     checkpoint_frequency: int
     resume: bool
     epochs: int
+    start_epoch: int
     warmup_epochs: int
     newdata: bool
     deterministic: bool
     nurwins: bool
+    num_expert_embeddings: int
     num_eval_episodes: int
     num_parallel_eval_envs: int
     num_parallel_selfplay_eval_games: int

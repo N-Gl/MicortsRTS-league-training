@@ -109,6 +109,8 @@ class Agent(nn.Module):
         mapsize: int = 16 * 16,
         lstm_hidden: int = 384,
         lstm_layers: int = 3,
+        num_expert_embeddings: int = 32,
+        z_dim: int = 8,
         initial_weights: Optional[Union[str, Dict[str, torch.Tensor]]] = None,
         logits: Optional[torch.Tensor] = None,
         values: Optional[torch.Tensor] = None,
@@ -129,6 +131,8 @@ class Agent(nn.Module):
         self.num_action_params = len(self.action_nvec_list)
         self.action_dim = int(nvec.sum())
         self.unit_exploiters = unit_exploiters
+        self.num_expert_embeddings = num_expert_embeddings
+        self.z_dim = z_dim
         self.network = nn.Sequential(
             layer_init(nn.Conv2d(73, 64, kernel_size=3, stride=2, padding=1)),
             nn.GELU(),
@@ -143,23 +147,23 @@ class Agent(nn.Module):
             layer_init(nn.Linear(64 * 8 * 8, 256)),
             nn.ReLU(),
         )
-        self.z_embedding = nn.Embedding(num_embeddings=2, embedding_dim=8)
-        self.z_encoder = ZSampler(obs_dim=self.mapsize * 73, z_dim=8)
+        self.z_embedding = nn.Embedding(num_embeddings=num_expert_embeddings, embedding_dim=z_dim)
+        self.z_encoder = ZSampler(obs_dim=self.mapsize * 73, z_dim=z_dim)
         self.scalar_encoder = ScalarFeatureEncoder(11)
         # print(envsT.action_plane_space.nvec.sum())
 
         if self.unit_exploiters:
             self.actor = layer_init(
-                nn.Linear(256 + 32 + 8 + 4, self.mapsize * self.action_dim),
+                nn.Linear(256 + 32 + z_dim + 4, self.mapsize * self.action_dim),
                 std=0.01,
             )
-            self.critic = layer_init(nn.Linear(256 + 32 + 8 + 4, 1), std=1)
+            self.critic = layer_init(nn.Linear(256 + 32 + z_dim + 4, 1), std=1)
         else:
             self.actor = layer_init(
-                nn.Linear(256 + 32 + 8, self.mapsize * self.action_dim),
+                nn.Linear(256 + 32 + z_dim, self.mapsize * self.action_dim),
                 std=0.01,
             )
-            self.critic = layer_init(nn.Linear(256 + 32 + 8, 1), std=1)
+            self.critic = layer_init(nn.Linear(256 + 32 + z_dim, 1), std=1)
         if initial_weights is not None:
             self.set_weights(initial_weights)
 
@@ -217,6 +221,22 @@ class Agent(nn.Module):
                 print(
                     f"Adjusted checkpoint tensor '{key}' from {tuple(src.shape)} to {tuple(dst.shape)} "
                     "by dropping the last 4 feature columns."
+                )
+
+        # Compatibility for changed number of expert embeddings.
+        key = "z_embedding.weight"
+        if key in patched_weights and key in model_state:
+            src = patched_weights[key]
+            dst = model_state[key]
+            if src.shape != dst.shape and src.ndim == 2 and dst.ndim == 2 and src.shape[1] == dst.shape[1]:
+                rows = min(src.shape[0], dst.shape[0])
+                adapted = torch.zeros_like(dst)
+                adapted[:rows] = src[:rows].to(device=dst.device, dtype=dst.dtype)
+                patched_weights[key] = adapted
+                action = "padding with zeros" if src.shape[0] < dst.shape[0] else "truncating rows"
+                print(
+                    f"Adjusted checkpoint tensor '{key}' from {tuple(src.shape)} to {tuple(dst.shape)} "
+                    f"by {action}."
                 )
 
         self.load_state_dict(patched_weights, strict=True)
@@ -518,12 +538,16 @@ def build_agent(
     action_plane_nvec: Sequence[int],
     device: torch.device,
     unit_exploiters: bool = False,
+    num_expert_embeddings: int = 32,
+    z_dim: int = 8,
 ) -> Agent:
     """Factory-methode"""
     return Agent(
         action_plane_nvec=action_plane_nvec,
         device=device,
         unit_exploiters=unit_exploiters,
+        num_expert_embeddings=num_expert_embeddings,
+        z_dim=z_dim,
     ).to(device)
 
 
