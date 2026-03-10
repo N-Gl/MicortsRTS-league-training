@@ -28,7 +28,6 @@ ExperimentConfig:
   nurwins: false
 
 
-  num_expert_embeddings: 6
 
 
 
@@ -40,3 +39,5 @@ ExperimentConfig:
 # [Epoch 6] Train Loss: 0.000557, learning rate: 0.000949
 # [Epoch 7] Train Loss: 0.000471, learning rate: 0.000939
 # [Epoch 8] Train Loss: 0.000409, learning rate: 0.000929
+# [Epoch 9] Train Loss: 0.000363, learning rate: 0.000919
+# [Epoch 10] Train Loss: 0.000321, learning rate: 0.000909
