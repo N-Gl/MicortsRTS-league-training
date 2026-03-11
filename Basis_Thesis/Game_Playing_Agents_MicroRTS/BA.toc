@@ -48,4 +48,4 @@
 \contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{11}{section.4}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{11}{section.5}%
-\contentsline {section}{Erkl\"arung}{14}{figure.5}%
+\contentsline {section}{Erkl\"arung}{15}{figure.5}%

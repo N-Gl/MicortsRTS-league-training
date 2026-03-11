@@ -223,13 +223,13 @@
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Hyperparameters used for the League Training setups (1/3)}}{12}{table.caption.42}\protected@file@percent }
 \newlabel{tab:league_hyperparameter}{{2}{12}{Hyperparameters used for the League Training setups (1/3)}{table.caption.42}{}}
 \newlabel{tab:league_hyperparameter@cref}{{[table][2][]2}{[1][11][]12}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Hyperparameters used for the League Training setups (2/3)}}{12}{table.caption.44}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Hyperparameters used for the League Training setups (3/3)}}{13}{table.caption.45}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Training parameters for PPO training.}}{13}{table.caption.46}\protected@file@percent }
-\newlabel{tab:training_params}{{5}{13}{Training parameters for PPO training}{table.caption.46}{}}
-\newlabel{tab:training_params@cref}{{[table][5][]5}{[1][11][]13}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}}{14}{figure.5}\protected@file@percent }
-\newlabel{fig:Matchmaking}{{5}{14}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}{figure.5}{}}
-\newlabel{fig:Matchmaking@cref}{{[figure][5][]5}{[1][14][]14}}
-\@writefile{toc}{\contentsline {section}{Erkl\"arung}{15}{figure.5}\protected@file@percent }
-\gdef \@abspage@last{16}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Hyperparameters used for the League Training setups (2/3)}}{13}{table.caption.44}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Hyperparameters used for the League Training setups (3/3)}}{14}{table.caption.45}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Training parameters for PPO training.}}{15}{table.caption.46}\protected@file@percent }
+\newlabel{tab:training_params}{{5}{15}{Training parameters for PPO training}{table.caption.46}{}}
+\newlabel{tab:training_params@cref}{{[table][5][]5}{[1][11][]15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}}{16}{figure.5}\protected@file@percent }
+\newlabel{fig:Matchmaking}{{5}{16}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}{figure.5}{}}
+\newlabel{fig:Matchmaking@cref}{{[figure][5][]5}{[1][16][]16}}
+\@writefile{toc}{\contentsline {section}{Erkl\"arung}{17}{figure.5}\protected@file@percent }
+\gdef \@abspage@last{18}
