@@ -20,16 +20,15 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  # Collect only; BC loop starts at epoch 1, so epochs=1 skips training.
   newdata: true
   epochs: 1
   warmup_epochs: 1
   nurwins: false
 
-  # Custom replay collection target.
   bc_expert_ai: coacAI
   bc_opponent_ais:
     - workerRushAI
+    - lightRushAI
     - mayari
     - coacAI
   bc_num_runs: 2000

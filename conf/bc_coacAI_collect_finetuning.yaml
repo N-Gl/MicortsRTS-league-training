@@ -31,6 +31,7 @@ ExperimentConfig:
   bc_expert_ai: coacAI
   bc_opponent_ais:
     - workerRushAI
+    - lightRushAI
     - mayari
     - coacAI
   bc_num_runs: 2000
