@@ -38,12 +38,14 @@
 \contentsline {paragraph}{number of parallel bot environment instances.}{9}{section*.33}%
 \contentsline {paragraph}{Summary: Opponent Selection.}{9}{section*.34}%
 \contentsline {paragraph}{Resetting Exploiters.}{9}{section*.35}%
-\contentsline {paragraph}{Alphastar Pseudo Code.}{9}{section*.36}%
+\contentsline {paragraph}{AlphaStar Pseudocode.}{9}{section*.36}%
 \contentsline {subsection}{\numberline {3.7}\hskip -1em.~Additional modifications for diversity}{10}{subsection.3.7}%
 \contentsline {paragraph}{Problems with overall increased exploration.}{10}{section*.37}%
-\contentsline {paragraph}{Producing Exploration Bonus.}{10}{section*.38}%
+\contentsline {paragraph}{Production Exploration Bonus.}{10}{section*.38}%
 \contentsline {paragraph}{Unit Bonus.}{10}{section*.39}%
 \contentsline {paragraph}{Unit Bonus Distribution.}{10}{section*.40}%
+\contentsline {paragraph}{Anneal Entropie Coefficient.}{10}{section*.41}%
+\contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{11}{section.4}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{11}{section.5}%
-\contentsline {section}{Erkl\"arung}{12}{section*.42}%
+\contentsline {section}{Erkl\"arung}{14}{figure.5}%

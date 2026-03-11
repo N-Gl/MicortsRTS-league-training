@@ -301,11 +301,6 @@ INPUT ./images/focused_strong_boosted_with_draws.pdf
 INPUT ./images/focused_strong_boosted_with_draws.pdf
 INPUT ./images/focused_strong_boosted_with_draws.pdf
 INPUT ./images/focused_strong_boosted_with_draws.pdf
-INPUT ./images/Matchmaking.pdf
-INPUT ./images/Matchmaking.pdf
-INPUT ./images/Matchmaking.pdf
-INPUT ./images/Matchmaking.pdf
-INPUT ./images/Matchmaking.pdf
 INPUT ./BA.bbl
 INPUT ./BA.bbl
 INPUT BA.bbl
@@ -330,6 +325,11 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmri7t.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmri7t.vf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm
+INPUT ./images/Matchmaking.pdf
+INPUT ./images/Matchmaking.pdf
+INPUT ./images/Matchmaking.pdf
+INPUT ./images/Matchmaking.pdf
+INPUT ./images/Matchmaking.pdf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb7t.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmb7t.vf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
