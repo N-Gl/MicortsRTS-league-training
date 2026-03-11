@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "models/18_12_25__12_12_25__04_12_25__BCagent__selfplay__bot_adding_ent_coef_0.005_last_bot_env_change_20_PPO_learning_rate_0_000025_update_270.pt",
+                          "league_models/10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8/MainExploiter/MainExploiter_0_update_350.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "16_12_25__04_12_25__BCagent__selfplay__fixed_non_legal_actions_update_430",
+          "10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "18_12_25__12_12_25__04_12_25__BCagent__selfplay__bot_adding_ent_coef_0.005_last_bot_env_change_20_PPO_learning_rate_0_000025_update_270"
+  exp_name: "10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8"
   wandb_project_name: testing_Evaluation
   prod_mode: true
 

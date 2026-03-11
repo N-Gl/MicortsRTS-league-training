@@ -1,0 +1,28 @@
+defaults:
+  - default_config
+
+ExperimentConfig:
+  initial_BC: false
+  BC_finetuning: true
+  ppo: false
+  evaluate: false
+  selfplay: false
+  league_training: false
+
+  model_path: BC_coacAI
+  BC_model_path:
+  exp_name: BC_coacAI_train_finetuning
+  wandb_project_name: Ranged_focus
+
+  resume: false
+  prod_mode: false
+  seed: 462
+  render: false
+  render_all: false
+
+  # Train directly on existing replays in replays/finetuning.
+  newdata: false
+  epochs: 8
+  start_epoch: 1
+  warmup_epochs: 5
+  nurwins: true

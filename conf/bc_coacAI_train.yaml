@@ -16,13 +16,29 @@ ExperimentConfig:
 
   resume: false
   prod_mode: false
-  seed: 1
+  seed: 462
   render: false
   render_all: false
 
   # Train on already collected replays in replays/initial.
   newdata: false
-  epochs: 100
-  start_epoch: 9
-  warmup_epochs: 8
+  epochs: 8
+  start_epoch: 1
+  warmup_epochs: 5
   nurwins: false
+
+# try 1:
+# [Epoch 9] Train Loss: 0.058557, learning rate: 0.000919
+# [Epoch 10] Train Loss: 0.003816, learning rate: 0.000909
+# [Epoch 11] Train Loss: 0.002266, learning rate: 0.000899
+# [Epoch 12] Train Loss: 0.001620, learning rate: 0.000889
+# [Epoch 13] Train Loss: 0.001276, learning rate: 0.000879
+# [Epoch 14] Train Loss: 0.001056, learning rate: 0.000869
+# [Epoch 15] Train Loss: 0.000878, learning rate: 0.000859
+# [Epoch 16] Train Loss: 0.000741, learning rate: 0.000848
+# [Epoch 17] Train Loss: 0.000665, learning rate: 0.000838
+# [Epoch 18] Train Loss: 0.000583, learning rate: 0.000828
+# [Epoch 19] Train Loss: 0.000499, learning rate: 0.000818
+
+# try 2:
+
