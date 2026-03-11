@@ -617,7 +617,7 @@ The attack bonus was removed for our training and we adjusted the Delta Score in
 
 \begin{table*}[t]
 \centering
-\caption{Hyperparameters used for the League Training setups (1/3)}
+\caption{Hyperparameters used for the League Training setups}
 \label{tab:league_hyperparameter}
 \scriptsize
 \begin{threeparttable}
@@ -639,6 +639,17 @@ League & \texttt{num\_league\_exploiters} & 2 & Number of League Exploiters. \\
 % League & \texttt{training\_on\_bot\_envs} & true & Training on bot environments is enabled. \\
 % League & \texttt{even\_opponent\_split} & true & Opponent selection is distributed evenly. \\
 % League & \texttt{use\_no\_draw\_winrates} & false & Draws are not excluded separately when computing win rates. \\
+League & \texttt{selfplay\_ready\_save\_interval} & $5 \cdot 10^5$ & Step interval for potential league checkpoints. (checkpoint if the win rate is sufficiently high)\\
+League & \texttt{main\_selfplay\_save\_interval} & $6 \cdot 10^6$ & Step interval for forced Main-Agent checkpoints. \\
+League & \texttt{main\_exploiter\_selfplay\_save\_interval} & $9 \cdot 10^6$ & Step interval for forced Main-Exploiter checkpoints. \\
+League & \texttt{league\_exploiter\_selfplay\_save\_interval} & $9 \cdot 10^6$ & Step interval for forced League-Exploiter checkpoints. \\
+League & \texttt{main\_winrate\_threshold} & 0{,}7 & win rate threshold for Main Agent checkpoints. \\
+League & \texttt{main\_exploiter\_winrate\_threshold} & 0{,}7 & win rate threshold for Main Exploiter checkpoints. \\
+League & \texttt{league\_exploiter\_winrate\_threshold} & 0{,}7 & win rate threshold for League Exploiter checkpoints. \\
+League & \texttt{main\_exploiter\_vs\_main\_winrate\_threshold} & 0{,}3 & Threshold for Main Exploiters against the Main Agent. \\
+PFSP & \texttt{pfsp\_min\_prob\_factor} & 0{,}25 & Minimum probability factor added to PFSP. \\
+PFSP & \texttt{main\_PFSP\_prob} & 0{,}5 & Probability of using PFSP with historicals for the Main Agent. \\
+PFSP & \texttt{main\_SP\_prob} & 0{,}35 & Probability of SP for the Main Agent. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Environments and Training Scope}} \\
 \midrule
@@ -664,31 +675,11 @@ Reward & \texttt{attack\_reward\_weight} & 0{,}0 & Weight of the attack reward. 
 Reward & \texttt{rewardscore} & 0{,}002 & Scaling factor of Delta Score. \\
 % Reward & \texttt{value\_warmup\_updates} & $-1$ & No separate warm-up for the value function. \\
 % Reward & \texttt{endgame\_maps} & false & No dedicated endgame maps are used. \\
-\bottomrule
-\end{tabularx}
-\begin{tablenotes}
-\footnotesize
-\item Listed are the hyperparameters and control parameters used in this thesis. Some Parameters (e.g., model paths, project names, or logging names) were omitted for clarity.
-\end{tablenotes}
-\end{threeparttable}
-\end{table*}
-
-
-
-\begin{table*}[t]
-\centering
-\caption{Hyperparameters used for the League Training setups (2/3)}
-\scriptsize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
-\toprule
-\textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Main Agent)}} \\
 \midrule
 PPO Main Agent & \texttt{PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Main Agent. \\
-PPO Main Agent & \texttt{PPO\_weight\_decay} & 0{,}0 & No weight-decay regularization. \\
+% PPO Main Agent & \texttt{PPO\_weight\_decay} & 0{,}0 & No weight-decay regularization. \\
 PPO Main Agent & \texttt{num\_steps} & 512 & Number of steps per rollout. \\
 PPO Main Agent & \texttt{gamma} & 1{,}0 & Discount factor. \\
 PPO Main Agent & \texttt{gae\_lambda} & 0{,}95 & GAE parameter. \\
@@ -705,62 +696,109 @@ PPO Main Agent & \texttt{norm\_adv} & true & Advantages are normalized. \\
 PPO Main Agent & \texttt{anneal\_lr} & true & Learning-rate annealing is enabled. \\
 PPO Main Agent & \texttt{clip\_vloss} & true & Value-loss clipping is enabled. \\
 \midrule
-\multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters)}} \\
+\multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters) (only differences to Main Agent hyperparameters)}} \\
 \midrule
-PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
-PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
+% PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
 PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the Exploiters. \\
 PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
-PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
-PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
-PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
-PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
-PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\
+% PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
+% PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+% PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
+% PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
+% PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
+% PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\
 \bottomrule
 \end{tabularx}
+\begin{tablenotes}
+\footnotesize
+\item Listed are the hyperparameters and control parameters used in this thesis. Some Parameters (e.g., model paths, project names, or logging names) were omitted for clarity.
+\end{tablenotes}
+\end{threeparttable}
 \end{table*}
 
 
-\begin{table*}[t]
-\centering
-\caption{Hyperparameters used for the League Training setups (3/3)}
-\scriptsize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
-\toprule
-\textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
-\midrule
-\multicolumn{4}{@{}l}{\textbf{Self-Play, Checkpoints, and Opponent Selection}} \\
-\midrule
-Self-Play & \texttt{selfplay\_ready\_save\_interval} & $5 \cdot 10^5$ & Step interval for potential league checkpoints. (checkpoint if the win rate is sufficiently high)\\
-Self-Play & \texttt{main\_selfplay\_save\_interval} & $6 \cdot 10^6$ & Step interval for forced Main-Agent checkpoints. \\
-Self-Play & \texttt{main\_exploiter\_selfplay\_save\_interval} & $9 \cdot 10^6$ & Step interval for forced Main-Exploiter checkpoints. \\
-Self-Play & \texttt{league\_exploiter\_selfplay\_save\_interval} & $9 \cdot 10^6$ & Step interval for forced League-Exploiter checkpoints. \\
-Self-Play & \texttt{main\_winrate\_threshold} & 0{,}7 & win rate threshold for Main Agent checkpoints. \\
-Self-Play & \texttt{main\_exploiter\_winrate\_threshold} & 0{,}7 & win rate threshold for Main Exploiter checkpoints. \\
-Self-Play & \texttt{league\_exploiter\_winrate\_threshold} & 0{,}7 & win rate threshold for League Exploiter checkpoints. \\
-Self-Play & \texttt{main\_exploiter\_vs\_main\_winrate\_threshold} & 0{,}3 & Threshold for Main Exploiters against the Main Agent. \\
+
+% \begin{table*}[t]
+% \centering
+% \caption{Hyperparameters used for the League Training setups (2/2)}
+% \scriptsize
+% \setlength{\tabcolsep}{4pt}
+% \renewcommand{\arraystretch}{1.05}
+% \begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
+% \toprule
+% \textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Main Agent)}} \\
+% \midrule
+% PPO Main Agent & \texttt{PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Main Agent. \\
+% % PPO Main Agent & \texttt{PPO\_weight\_decay} & 0{,}0 & No weight-decay regularization. \\
+% PPO Main Agent & \texttt{num\_steps} & 512 & Number of steps per rollout. \\
+% PPO Main Agent & \texttt{gamma} & 1{,}0 & Discount factor. \\
+% PPO Main Agent & \texttt{gae\_lambda} & 0{,}95 & GAE parameter. \\
+% PPO Main Agent & \texttt{ent\_coef} & 0{,}01 & Entropy regularization coefficient. \\
+% PPO Main Agent & \texttt{vf\_coef} & 0{,}15 & Weight of the value loss. \\
+% PPO Main Agent & \texttt{max\_grad\_norm} & 0{,}5 & Gradient clipping threshold. \\
+% PPO Main Agent & \texttt{clip\_coef} & 0{,}15 & PPO clipping coefficient. \\
+% PPO Main Agent & \texttt{update\_epochs} & 4 & Number of update epochs per PPO cycle. \\
+% PPO Main Agent & \texttt{kle\_stop} & true & Early stopping when KL divergence becomes too large. \\
+% PPO Main Agent & \texttt{kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+% PPO Main Agent & \texttt{target\_kl} & 0{,}01 & Target KL-divergence value. \\
+% PPO Main Agent & \texttt{kl\_coeff} & 0{,}3 & Coefficient of the KL penalty term. \\
+% PPO Main Agent & \texttt{norm\_adv} & true & Advantages are normalized. \\
+% PPO Main Agent & \texttt{anneal\_lr} & true & Learning-rate annealing is enabled. \\
+% PPO Main Agent & \texttt{clip\_vloss} & true & Value-loss clipping is enabled. \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters) (only differences to Main Agent)}} \\
+% \midrule
+% % PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
+% % PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
+% % PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+% % PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
+% % PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
+% % PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
+% % PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\
+% \bottomrule
+% \end{tabularx}
+% \end{table*}
+
+
+% \begin{table*}[t]
+% \centering
+% \caption{Hyperparameters used for the League Training setups (3/3)}
+% \scriptsize
+% \setlength{\tabcolsep}{4pt}
+% \renewcommand{\arraystretch}{1.05}
+% \begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
+% \toprule
+% \textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{Self-Play, Checkpoints, and Opponent Selection}} \\
+% \midrule
 % Self-Play & \texttt{main\_exploiter\_ready\_use\_historicals} & true & Historical agents are used for Main Exploiters. \\
 % TODO: Self-Play & \texttt{main\_exploiter\_no\_draw\_winrate\_threshold} & 0{,}65 & win rate threshold excluding draws. \\
 % Self-Play & \texttt{main\_exploiter\_max\_historical\_winrate\_threshold} & 2{,}0 & Value greater than 1 used to effectively disable the Historical trigger. \\
 % Self-Play & \texttt{main\_exploiter\_main\_prob\_when\_max\_historical\_winrate} & 0{,}0 & Probability of playing against the Main Agent when the threshold is exceeded. \\
-\midrule
-\multicolumn{4}{@{}l}{\textbf{PFSP Weighting and Sampling}} \\
-\midrule
-PFSP & \texttt{pfsp\_min\_prob\_factor} & 0{,}25 & Minimum probability factor added to PFSP. \\
-PFSP & \texttt{main\_PFSP\_prob} & 0{,}5 & Probability of using PFSP with historicals for the Main Agent. \\
-PFSP & \texttt{main\_SP\_prob} & 0{,}35 & Probability of SP for the Main Agent. \\
-PFSP & \texttt{main\_pfsp\_weighting} & \texttt{focused\_strong\_with\_draws} & PFSP Weighting scheme for the Main Agent. \\
-PFSP & \texttt{main\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for Main Exploiters. \\
-PFSP & \texttt{league\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for League Exploiters. \\
-\midrule
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{PFSP Weighting and Sampling}} \\
+% \midrule
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_pfsp\_weighting} & \texttt{focused\_strong\_with\_draws} & PFSP Weighting scheme for the Main Agent. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for Main Exploiters. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{league\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for League Exploiters. \\
+% \midrule
 % \multicolumn{4}{@{}l}{\textbf{Unit-Specific Bonus Parameters}} \\
 % \midrule
 % Unit Bonus & \texttt{unit\_bonus\_max\_worker} & 1{,}0 & Maximum bonus for Worker units. \\
@@ -768,8 +806,8 @@ PFSP & \texttt{league\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_bo
 % Unit Bonus & \texttt{unit\_bonus\_max\_heavy} & 1{,}0 & Maximum bonus for Heavy units. \\
 % Unit Bonus & \texttt{unit\_bonus\_max\_ranged} & 1{,}0 & Maximum bonus for Ranged units. \\
 % \bottomrule
-\end{tabularx}
-\end{table*}
+% \end{tabularx}
+% \end{table*}
 
 
 
