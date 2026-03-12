@@ -8,7 +8,7 @@ ExperimentConfig:
   gym_id: MicrortsBC
   other_historicals_paths:
   main_exploiters_paths: []
-
+  
   initial_BC: false
   BC_finetuning: false
   ppo: false

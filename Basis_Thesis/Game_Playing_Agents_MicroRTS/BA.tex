@@ -555,12 +555,12 @@ However, the training was not continued long enough to evaluate the effect of th
 Continuing the training with the Base Agent had the same problem as training with the Unit Bonus.
 
 % TODO: ab hier überarbeiten
-\paragraph{Anneal Entropie Coefficient.}
-Anneal Entropie Coefficient decreases the weighting for entropie bonus in the loss function and with that the exploration of the agent over the course of training.
-This was implemented for the exploiters to further increase exploration for the early training steps, while retaining an more deterministic policy in the later stages of training.
-This coefficient resetts, when the Exploiters coresponding to the coefficient resetts.
-In case of an League Exploiter it is possible, that the exploiter checkpoints but does not reset.
-If that happens, Anneal Entropie Coefficient restarts at half of the last initial Anneal Entropie Coefficient.
+\paragraph{Annealed Entropy Coefficient.}
+The Annealed Entropy Coefficient decreases the weighting of the entropy bonus in the loss function and thereby decreases the exploration of the agent over the course of training.
+This was implemented for the exploiters to further increase exploration during the early training steps, while retaining a more deterministic policy in the later stages of training.
+This coefficient resets, when the Exploiter corresponding to it resets.
+In the case of a League Exploiter, it is possible that the exploiter checkpoints but does not reset.
+If that happens, Annealed Entropy Coefficient restarts at half of the last initial Annealed Entropy Coefficient.
 
 
 
