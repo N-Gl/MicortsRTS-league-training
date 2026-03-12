@@ -17,13 +17,13 @@ ExperimentConfig:
   resume: false
   prod_mode: false
   seed: 1
-  render: true
+  render: false
   render_all: false
 
   # Collect only; BC loop starts at epoch 1, so epochs=1 skips training.
   newdata: true
-  epochs: 1
-  warmup_epochs: 1
+  epochs: 0
+  warmup_epochs: 0
   nurwins: false
 
   # Custom replay collection target.
