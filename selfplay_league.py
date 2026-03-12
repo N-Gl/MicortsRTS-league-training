@@ -342,9 +342,11 @@ class LeagueTrainer:
             main_exploiter_initial_agents=self.main_exploiter_initial_agents,
         )
 
+        model_idx = 0
         for idx, ag in enumerate(self.active_league_agents):
             if isinstance(ag, league.MainExploiter):
-                ag.current_model = self.initial_model_names[idx]
+                ag.current_model = self.initial_model_names[model_idx]
+                model_idx += 1
                 
 
         league.log_models(writer, league_agents=self.active_league_agents)
