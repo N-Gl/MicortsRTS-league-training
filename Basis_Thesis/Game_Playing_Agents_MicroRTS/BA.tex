@@ -566,10 +566,10 @@ If that happens, the Annealed Entropy Coefficient is reinitialized to half of it
 
 \paragraph{New Initial Agents.}
 % TODO: starte den Satz anders
-To address the problem of insufficient diversity we created new initial agents that are focused on different unit types, which can be used as the initial Main Exploiters in the League Training.
-This makes it possible for the Agent th exploit weaknesses related to different unit types, without having to unlearn the strategy for the unit type favored by the Base Agent first, which can lead to more diverse exploiters in less training steps.
-We only created new initial agents for the Main Exploiters, because we want to focus on training the already strong Base Agent further.
-The new initial Agents were not trained long enough, to compare against the Base Agent, but they are strong enough to identify weaknesses in the Main Agent and thereby improve generalization.
+To mitigate the insufficient opponent diversity, we created new initial agents that focused on different unit types and can be used as alternative initial agents for the Main Exploiters in LT.
+This enables the exploiters to exploit weaknesses related to different unit types without having to first unlearn the strategy for the unit type favored by the Base Agent, which can lead to more diverse exploiters in fewer training steps.
+We didn not created new initial agents for the Main Agent because we prioritize further training the already strong Base Agent.
+The new initial agents were not trained long enough to be as strong as the Base Agent, but they are strong enough to identify weaknesses in the Main Agent from a previous run that did not use the new initial agents and thereby contribute to improved generalization.
 
 
 
