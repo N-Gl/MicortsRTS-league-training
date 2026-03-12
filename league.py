@@ -461,6 +461,7 @@ class MainExploiter(Player):
         self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
         self.recent_reset = False
         self.name = f"MainExploiter_{main_exp_idx}"
+        self.current_model = "initial_agents"
 
     def get_match(self):
         '''wählt  main agenten als gegner, wenn die winrate gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
@@ -521,11 +522,14 @@ class MainExploiter(Player):
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
 
-    def checkpoint(self):
+    def checkpoint(self, no_reset=False):
         '''Resets the agent to its initial weights and creates a new checkpoint.'''
         self.agent.checkpoint_step = self.agent.get_steps()
         checkpoint = self._create_checkpoint()
 
+        if no_reset:
+            return checkpoint, self.current_model
+        
         self.reset()
 
         return checkpoint
@@ -566,6 +570,28 @@ class MainExploiter(Player):
         return win_rates.min() > self.args.main_exploiter_winrate_threshold or steps_passed > self.args.main_exploiter_selfplay_save_interval # // (self.args.num_selfplay_envs // 2 + self.args.num_bot_envs)  * self.args.num_envs_per_main_exploiters
 
     def reset(self):
+        # self.args.exploiter_reset_path_probs = {"modelpath.pt": (name, probability)}
+
+
+        if len(self.args.exploiter_reset_path_probs.items()) > 0:
+            model_paths = []
+            model_names = []
+            probs = []
+            for model_path, (model_name, prob) in self.args.exploiter_reset_path_probs.items():
+                model_paths.append(model_path)
+                model_names.append(model_name)
+                probs.append(float(prob))
+
+            probs = np.asarray(probs, dtype=float)
+            assert probs.sum() == 1, "The probabilities in exploiter_reset_path_probs must sum to 1."
+
+            sampled_idx = np.random.choice(len(model_paths), p=probs)
+            model_path = model_paths[sampled_idx]
+            model_name = model_names[sampled_idx]
+            self._initial_weights = torch.load(model_path, map_location=self.agent.device, weights_only=True)
+            self.current_model = model_name
+
+
         self.agent.checkpoint_step = self.agent.get_steps()
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None
@@ -997,6 +1023,7 @@ class League:
         )
         if done_agent.ready_to_checkpoint():
             self.add_player(done_agent.checkpoint())
+            log_models(writer, [done_agent], args.global_step)
 
             if isinstance(done_agent, MainExploiter) or isinstance(done_agent, LeagueExploiter):
                 print(done_agent.name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")
@@ -1202,6 +1229,14 @@ def log_exploiter_ppo_update(
             else:
                 save_league_model(save_agent=exploiter_agent_batch['player'].agent, experiment_name=experiment_name, dir_name=f"{exploiter_agent_batch['player'].__class__.__name__}", file_name=f"{player.name}_update_{update}")
 
+def log_models(writer, league_agents, global_step=None):
+    for ag in league_agents:
+        if hasattr(ag, "current_model") and ag.current_model is not None:
+            writer.add_text(
+                f"{ag.name}_charts/model_name",
+                str(ag.current_model),
+                global_step
+            )
 
 # not used
 def train_exploiters(

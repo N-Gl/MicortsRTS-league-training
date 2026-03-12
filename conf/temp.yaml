@@ -20,7 +20,7 @@ ExperimentConfig:
 
   prod_mode: true
   render: true
-  render_all: true
+  render_all: false
 
   seed: 
 
