@@ -7,7 +7,7 @@ ExperimentConfig:
   model_path: models/BC_coacAI_train/initial_BC/BC_coacAI_train_epoch_7/agent.pt
   BC_model_path: models/BCagent.pt
   other_historicals_paths: ["models/BCagent.pt", "saved_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_3_3_update_1400.pt", "models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8
+  exp_name: 12_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8
   wandb_group_name: worker_exploit
 
   
