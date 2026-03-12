@@ -34,17 +34,20 @@ def log(
     values=None,
     returns=None,
     delta_rewards_score=None,
+    ent_coef=None,
 ):
     should_log_every_20_updates = (update % 20 == 0)
+    ent_coef = args.ent_coef if ent_coef is None else ent_coef
 
     writer.add_scalar("main_charts/learning_rate", optimizer.param_groups[0]["lr"], global_step)
+    writer.add_scalar("main_charts/ent_coef", ent_coef, global_step)
     writer.add_scalar("progress/update", update, global_step)
     if loss is not None:
         writer.add_scalar("losses/value_loss", args.vf_coef * v_loss.item(), global_step)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
         writer.add_scalar("losses/kl_loss", kl_loss.item(), global_step)
         writer.add_scalar("losses/total_loss", loss.item(), global_step)
-        writer.add_scalar("losses/entropy_loss", args.ent_coef * entropy_loss.item(), global_step)
+        writer.add_scalar("losses/entropy_loss", ent_coef * entropy_loss.item(), global_step)
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("main_charts/grad_norm_before_clipping", grad_norm, global_step)
         if getattr(args, "log_unweighted_losses", True):

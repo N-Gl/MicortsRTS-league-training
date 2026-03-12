@@ -290,6 +290,38 @@ class LeagueTrainer:
         else:
             return self.args.exploiter_ent_coef, self.args.exploiter_ent_coef
 
+    def _get_main_ent_bounds(self) -> tuple[float, float]:
+        if self.args.main_anneal_ent:
+            ent_min = self.args.main_ent_coef_min
+            ent_max = self.args.main_ent_coef_max
+
+            if ent_min > ent_max:
+                ent_min, ent_max = ent_max, ent_min
+            return ent_min, ent_max
+        else:
+            return self.args.ent_coef, self.args.ent_coef
+
+    def _set_main_ent_anneal_start(self, start_update: int, start_frac: float) -> None:
+        self.main_ent_anneal_start_update = start_update
+        self.main_ent_anneal_start_frac = float(np.clip(start_frac, 0.0, 1.0))
+
+    def _get_main_ent_coef(self, update: int, num_updates: int) -> float:
+        if not self.args.main_anneal_ent:
+            return float(self.args.ent_coef)
+
+        ent_min, ent_max = self._get_main_ent_bounds()
+        if not hasattr(self, "main_ent_anneal_start_update"):
+            self._set_main_ent_anneal_start(update, 1.0)
+
+        start_update = self.main_ent_anneal_start_update
+        start_frac = self.main_ent_anneal_start_frac
+        if num_updates <= 0:
+            frac = 0.0
+        else:
+            progress = (update - start_update) / num_updates
+            frac = max(start_frac * (1.0 - progress), 0.0)
+        return ent_min + (ent_max - ent_min) * frac
+
     def _set_exploiter_ent_anneal_start(self, exploiter, start_update: int, start_frac: float) -> None:
         exploiter.ent_anneal_start_update = start_update
         exploiter.ent_anneal_start_frac = float(np.clip(start_frac, 0.0, 1.0))
@@ -948,6 +980,7 @@ class LeagueTrainer:
             # inds: indices from the batch
             main_batch_size = int(self.main_indices_count * args.num_steps)
             main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
+            main_ent_coef = self._get_main_ent_coef(update, num_updates)
 
             
             
@@ -963,6 +996,7 @@ class LeagueTrainer:
                 "returns": b_returns,
                 "values": values,
                 "masks": invalid_action_masks,
+                "ent_coef": main_ent_coef,
                 "skip_policy_update": args.dbg_no_main_agent_ppo_update,
                 "agent_idx": self.main_indices,
                 "full_tensores": True,
@@ -1025,7 +1059,8 @@ class LeagueTrainer:
                 advantages=main_agent_batch["advantages"][:, self.b_main_indices].reshape(-1),
                 values=main_agent_batch["values"][:, self.main_indices].reshape(-1),
                 returns=main_agent_batch["returns"][:, self.b_main_indices].reshape(-1),
-                delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices]
+                delta_rewards_score=b_delta_rewards_score[:, self.b_main_indices],
+                ent_coef=main_ent_coef,
             )
             if not args.dbg_exploiter_update:
                 # main batch tensors can be large when indexed with non-contiguous env ids
