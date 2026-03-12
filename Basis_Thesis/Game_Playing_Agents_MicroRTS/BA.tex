@@ -522,7 +522,8 @@ To make exploiters more diverse, exploration can be increased with hyperparamete
 Excessively increasing exploration for exploiters can lead to worse performance and longer training times.
 We hypothesize that is because the starting point (the Base Agent) is already very strong and effective strategies differ substantially between unit types, so that the agent must unlearn a very large portion of the current strategy before it can learn new strategies for other unit types.
 In between the unlearning and learning phases, the agent performs very poorly, which leads us to believe that there are very distant clusters (corresponding to different unit types) of local maxima in the reward landscape.
-This could explain why finding different maxima with the same unit type is possible, but changing to a strategy for different unit types is very difficult and time-consuming. Furthermore, the same problem occurs for every exploiter, which compounds the problem.
+This could explain why finding different maxima with the same unit type is possible, but changing to a strategy for different unit types is very difficult and time-consuming. 
+Furthermore, the same problem occurs for every exploiter, which compounds the problem.
 What makes diversity even more difficult is that, in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses that can be exploited by an exploiter using Heavy Units (the unit type strongly favored by the Base Agent).
 This suggests that, even after training, there will remain weaknesses that are easier to exploit than those that require shifting the focus to a different unit type.
 % TODO: Beispiel behalten?
@@ -554,25 +555,27 @@ Retraining the agent from scratch with the Unit Bonus Distribution showed promis
 However, the training was not continued long enough to evaluate the effect of the Unit Bonus Distribution on the diversity of the exploiters, since training with the Unit Bonus Distribution is very time-consuming because the BC phase did not work with the Unit Bonus Distribution method and therefore had to be skipped.
 Continuing the training with the Base Agent had the same problem as training with the Unit Bonus.
 
-% TODO: ab hier überarbeiten
 \paragraph{Annealed Entropy Coefficient.}
-The Annealed Entropy Coefficient decreases the weighting of the entropy bonus in the loss function and thereby decreases the exploration of the agent over the course of training.
+The Annealed Entropy Coefficient decreases the weight of the entropy bonus in the loss function and thereby decreases the exploration of the agent over the course of training.
 This was implemented for the exploiters to further increase exploration during the early training steps, while retaining a more deterministic policy in the later stages of training.
-This coefficient resets, when the Exploiter corresponding to it resets.
+This coefficient resets when the corresponding Exploiter resets.
 In the case of a League Exploiter, it is possible that the exploiter checkpoints but does not reset.
-If that happens, Annealed Entropy Coefficient restarts at half of the last initial Annealed Entropy Coefficient.
+If that happens, the Annealed Entropy Coefficient is reinitialized to half of its previous initial value.
+
+
+
+\paragraph{New Initial Agents.}
+% TODO: starte den Satz anders
+To address the problem of insufficient diversity we created new initial agents that are focused on different unit types, which can be used as the initial Main Exploiters in the League Training.
+This makes it possible for the Agent th exploit weaknesses related to different unit types, without having to unlearn the strategy for the unit type favored by the Base Agent first, which can lead to more diverse exploiters in less training steps.
+We only created new initial agents for the Main Exploiters, because we want to focus on training the already strong Base Agent further.
+The new initial Agents were not trained long enough, to compare against the Base Agent, but they are strong enough to identify weaknesses in the Main Agent and thereby improve generalization.
 
 
 
 
 
-% TODO: schreibe darüber, wie AlphaStar mehrere Main Agenten für unterschiedliche Units hatte, was man hier nicht machen kann, weil es keine Hauptunit, wie in Starcraft II gibt (stimmt das?).
-% Aber man kann etwas ähnliches machen: Die Fokusierungen auf unit types auf unterschiedliche Agenten aufteilen.
-% In dieser Arbeit wurde nur für die3 Exploiters gemacht, weil wir einen Agenten weiter trainieren wollen, der schon sehr stark ist und die Agenten für die anderen unit types dafür nicht lange genug trainiert wurden.
-
-
-
-
+% TODO: ab hier überarbeiten
 \subsection{Delta Score.}
 To better lead the agent through the sparse reward landscape of MicroRTS, we added the change in score from MicroRTS \cite{huang2021gym, Ontanon2013CombinatorialBandit} between two time steps to the reward.
 The score for each environment is calculated based on the current game state, which includes the number and type of units, their hit points, and the resources of both players.
