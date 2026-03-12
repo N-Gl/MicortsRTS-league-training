@@ -7,8 +7,8 @@ ExperimentConfig:
   exp_name:
   gym_id: MicrortsBC
   other_historicals_paths:
-  main_exploiters_paths: []
-
+  main_exploiters_paths: [] # [(name, "models/BC_workerRush_train_epoch_8_agent.pt")]
+  exploiter_reset_path_probs: {} # {"modelpath.pt": (name, probability)}
   initial_BC: false
   BC_finetuning: false
   ppo: false

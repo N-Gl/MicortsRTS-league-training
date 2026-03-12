@@ -18,6 +18,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{threeparttable}
 \usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
 \usepackage[none]{hyphenat}
 % Support for easy cross-referencing
@@ -26,6 +28,8 @@
 \Crefname{section}{Section}{Sections}
 \Crefname{table}{Table}{Tables}
 \crefname{table}{Tab.}{Tabs.}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
 
 \begin{document}
@@ -449,7 +453,7 @@ LT iterates through cycles consisting of the following phases:
     \item \textbf{Select opponent:} Sample an opponent from the league.
     \item \textbf{Collect rollouts:} Run matches between the learning agent and the sampled opponent for a fixed number of steps. No agent is updated during this phase.
     \item \textbf{Update policy:} Perform PPO updates using the collected trajectories against the sampled opponent.
-    \item \textbf{Update statistics:} Periodically evaluate against a subset of league members to update win-rate estimates used by PFSP.
+    \item \textbf{Update statistics:} Periodically evaluate against a subset of league members to update win rate estimates used by PFSP.
     \item \textbf{Add snapshots:} At predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new Historical Agent.
 \end{enumerate}
 A phase of the training loop is considered completed only after every agent type (MA, ME, LE) has completed the phase.
@@ -518,7 +522,8 @@ To make exploiters more diverse, exploration can be increased with hyperparamete
 Excessively increasing exploration for exploiters can lead to worse performance and longer training times.
 We hypothesize that is because the starting point (the Base Agent) is already very strong and effective strategies differ substantially between unit types, so that the agent must unlearn a very large portion of the current strategy before it can learn new strategies for other unit types.
 In between the unlearning and learning phases, the agent performs very poorly, which leads us to believe that there are very distant clusters (corresponding to different unit types) of local maxima in the reward landscape.
-This could explain why finding different maxima with the same unit type is possible, but changing to a strategy for different unit types is very difficult and time-consuming. Furthermore, the same problem occurs for every exploiter, which compounds the problem.
+This could explain why finding different maxima with the same unit type is possible, but changing to a strategy for different unit types is very difficult and time-consuming. 
+Furthermore, the same problem occurs for every exploiter, which compounds the problem.
 What makes diversity even more difficult is that, in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses that can be exploited by an exploiter using Heavy Units (the unit type strongly favored by the Base Agent).
 This suggests that, even after training, there will remain weaknesses that are easier to exploit than those that require shifting the focus to a different unit type.
 % TODO: Beispiel behalten?
@@ -534,6 +539,7 @@ This was achieved by using a mask that gives Barracks and Bases (units whose onl
 While this helped to increase exploration of a broader range of unit types, as reflected by the fact that the agent uses a wider variety of units, it was not enough to make the agent explore strategies for different unit types.
 % TODO: Bild von Unit Count nach Spiel ende mit und ohne Bonus?
 
+% TODO: nächsten 2 subsections lieber in Experiments?
 \paragraph{Unit Bonus.}
 To address the problem of insufficient diversity, a clipped unit bonus can be added to the reward, encouraging the agent to use different unit types (e.g., by giving the Base Agent a bonus every time it produces a Ranged Unit).
 The number of other units types increased when using the Unit Bonus.
@@ -549,19 +555,27 @@ Retraining the agent from scratch with the Unit Bonus Distribution showed promis
 However, the training was not continued long enough to evaluate the effect of the Unit Bonus Distribution on the diversity of the exploiters, since training with the Unit Bonus Distribution is very time-consuming because the BC phase did not work with the Unit Bonus Distribution method and therefore had to be skipped.
 Continuing the training with the Base Agent had the same problem as training with the Unit Bonus.
 
+\paragraph{Annealed Entropy Coefficient.}
+The Annealed Entropy Coefficient decreases the weight of the entropy bonus in the loss function and thereby decreases the exploration of the agent over the course of training.
+This was implemented for the exploiters to further increase exploration during the early training steps, while retaining a more deterministic policy in the later stages of training.
+This coefficient resets when the corresponding Exploiter resets.
+In the case of a League Exploiter, it is possible that the exploiter checkpoints but does not reset.
+If that happens, the Annealed Entropy Coefficient is reinitialized to half of its previous initial value.
+
+
+
+\paragraph{New Initial Agents.}
+% TODO: starte den Satz anders
+To mitigate the insufficient opponent diversity, we created new initial agents that focused on different unit types and can be used as alternative initial agents for the Main Exploiters in LT.
+This enables the exploiters to exploit weaknesses related to different unit types without having to first unlearn the strategy for the unit type favored by the Base Agent, which can lead to more diverse exploiters in fewer training steps.
+We didn not created new initial agents for the Main Agent because we prioritize further training the already strong Base Agent.
+The new initial agents were not trained long enough to be as strong as the Base Agent, but they are strong enough to identify weaknesses in the Main Agent from a previous run that did not use the new initial agents and thereby contribute to improved generalization.
+
+
+
+
+
 % TODO: ab hier überarbeiten
-\paragraph{Anneal Entropie Coefficient.}
-Anneal Entropie Coefficient decreases the weighting for entropie bonus in the loss function and with that the exploration of the agent over the course of training.
-This was implemented for the exploiters to further increase exploration for the early training steps, while retaining an more deterministic policy in the later stages of training.
-
-
-% TODO: schreibe darüber, wie AlphaStar mehrere Main Agenten für unterschiedliche Units hatte, was man hier nicht machen kann, weil es keine Hauptunit, wie in Starcraft II gibt (stimmt das?).
-% Aber man kann etwas ähnliches machen: Die Fokusierungen auf unit types auf unterschiedliche Agenten aufteilen.
-% In dieser Arbeit wurde nur für die3 Exploiters gemacht, weil wir einen Agenten weiter trainieren wollen, der schon sehr stark ist und die Agenten für die anderen unit types dafür nicht lange genug trainiert wurden.
-
-
-
-
 \subsection{Delta Score.}
 To better lead the agent through the sparse reward landscape of MicroRTS, we added the change in score from MicroRTS \cite{huang2021gym, Ontanon2013CombinatorialBandit} between two time steps to the reward.
 The score for each environment is calculated based on the current game state, which includes the number and type of units, their hit points, and the resources of both players.
@@ -576,19 +590,230 @@ The attack bonus was removed for our training and we adjusted the Delta Score in
 
 
 
-
-
-
-\label{sec:nn-architecture}
-
- 
-
-
-
-
-
 \section{Experimente}
 \label{sec:experimente}
+
+
+% TODO: über folgendes schreiben:
+% Training:
+% Map
+% Base Agent: BC, PPO
+% -> LT: Main Agent, Main Exploiter, League Exploiter
+% welche initialen Agenten
+% wie viele Schritte, wie viele Schritte pro Agent
+% Main vs Bot (welche Bots)
+% welche Hyperparameter (siehe Tabelle), erklären?
+% wie oft war welcher Exploiter gut?
+% Tabelle mit Ergebnissen (auch im Durchschnitt)
+% 
+% Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
+% <-- Verbesserung überträgt sich auch zu anderen besseren ähnlichen Agenten?
+
+% Vergleiche LT, FSP, SP?
+
+% zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
+
+
+% Verbesserungs möglichkeiten
+
+% endgame\_maps
+
+\begin{table*}[t]
+\centering
+\caption{Hyperparameters used for the League Training setups}
+\label{tab:league_hyperparameter}
+\scriptsize
+\begin{threeparttable}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
+\toprule
+\textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{League Setup}} \\
+\midrule
+% League & \texttt{league\_training} & true & Enables league training. \\
+% League & \texttt{train\_on\_old\_mains} & false & No additional training against historical Main Agents. \\
+% League & \texttt{pfsp} & true & Prioritized Fictitious Self-Play is enabled. \\
+League & \texttt{num\_main\_exploiters} & 4 & Number of Main Exploiters. \\
+League & \texttt{num\_league\_exploiters} & 2 & Number of League Exploiters. \\
+% League & \texttt{starting\_historical} & true & Historical agents are present from the beginning. \\
+% League & \texttt{BC\_agent\_as\_Historical} & false & The BC agent is not included as a Historical agent. \\
+% League & \texttt{training\_on\_bot\_envs} & true & Training on bot environments is enabled. \\
+% League & \texttt{even\_opponent\_split} & true & Opponent selection is distributed evenly. \\
+% League & \texttt{use\_no\_draw\_winrates} & false & Draws are not excluded separately when computing win rates. \\
+League & \texttt{selfplay\_ready\_save\_interval} & $5 \cdot 10^5$ & Step interval for potential league checkpoints. (checkpoint if the win rate is sufficiently high)\\
+League & \texttt{main\_selfplay\_save\_interval} & $6 \cdot 10^6$ & Step interval for forced Main-Agent checkpoints. \\
+League & \texttt{main\_exploiter\_selfplay\_save\_interval} & $9 \cdot 10^6$ & Step interval for forced Main-Exploiter checkpoints. \\
+League & \texttt{league\_exploiter\_selfplay\_save\_interval} & $9 \cdot 10^6$ & Step interval for forced League-Exploiter checkpoints. \\
+League & \texttt{main\_winrate\_threshold} & 0{,}7 & win rate threshold for Main Agent checkpoints. \\
+League & \texttt{main\_exploiter\_winrate\_threshold} & 0{,}7 & win rate threshold for Main Exploiter checkpoints. \\
+League & \texttt{league\_exploiter\_winrate\_threshold} & 0{,}7 & win rate threshold for League Exploiter checkpoints. \\
+League & \texttt{main\_exploiter\_vs\_main\_winrate\_threshold} & 0{,}3 & Threshold for Main Exploiters against the Main Agent. \\
+PFSP & \texttt{pfsp\_min\_prob\_factor} & 0{,}25 & Minimum probability factor added to PFSP. \\
+PFSP & \texttt{main\_PFSP\_prob} & 0{,}5 & Probability of using PFSP with historicals for the Main Agent. \\
+PFSP & \texttt{main\_SP\_prob} & 0{,}35 & Probability of SP for the Main Agent. \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{Environments and Training Scope}} \\
+\midrule
+Environments & \texttt{num\_bot\_envs} & 5 & Initial number of bot environments. \\
+% Environments & \texttt{dyn\_num\_bot\_envs} & true & Dynamic adjustment of the number of bot environments. \\
+Environments & \texttt{min\_num\_bot\_envs} & 5 & Lower bound for the number of bot environments. \\
+Environments & \texttt{max\_num\_bot\_envs} & 10 & Upper bound for the number of bot environments. \\
+Environments & \texttt{min\_bot\_winrate} & 0{,}955 & Lower win rate threshold for bot-environment adjustment. (if crossed \texttt{num\_bot\_envs} == \texttt{max\_num\_bot\_envs}) \\
+Environments & \texttt{max\_bot\_winrate} & 0{,}98 & Upper win rate threshold for bot-environment adjustment. (if crossed \texttt{num\_bot\_envs} == \texttt{min\_num\_bot\_envs}) \\
+Environments & \texttt{num\_main\_envs} & 25 & Number of parallel environments for the Main Agent. \\
+Environments & \texttt{num\_envs\_per\_main\_exploiters} & 25 & Number of environments per Main Exploiter. \\
+Environments & \texttt{num\_envs\_per\_league\_exploiters} & 25 & Number of environments per League Exploiter. \\
+Training & \texttt{total\_timesteps} & 200\,000\,000 & Total number of training steps. \\
+% Training & \texttt{checkpoint\_frequency} & 3 & Frequency of regular checkpoints. \\
+Training & \texttt{checkpoint\_end\_buffer\_steps} & $3 \cdot 10^6$ & Exploiters cannot checkpoint \texttt{checkpoint\_end\_buffer\_steps} steps bevor reaching \texttt{total\_timesteps} . \\
+% Training & \texttt{early\_updates} & false & No early updates are used. \\
+% Training & \texttt{seed} & not set & No explicit seed is specified. \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{Reward Function}} \\
+\midrule
+Reward & \texttt{attack\_reward\_weight} & 0{,}0 & Weight of the attack reward. \\
+% Reward & \texttt{dyn\_attack\_reward} & 0{,}0 & No dynamic attack reward is used. \\
+Reward & \texttt{rewardscore} & 0{,}002 & Scaling factor of Delta Score. \\
+% Reward & \texttt{value\_warmup\_updates} & $-1$ & No separate warm-up for the value function. \\
+% Reward & \texttt{endgame\_maps} & false & No dedicated endgame maps are used. \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Main Agent)}} \\
+\midrule
+PPO Main Agent & \texttt{PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Main Agent. \\
+% PPO Main Agent & \texttt{PPO\_weight\_decay} & 0{,}0 & No weight-decay regularization. \\
+PPO Main Agent & \texttt{num\_steps} & 512 & Number of steps per rollout. \\
+PPO Main Agent & \texttt{gamma} & 1{,}0 & Discount factor. \\
+PPO Main Agent & \texttt{gae\_lambda} & 0{,}95 & GAE parameter. \\
+PPO Main Agent & \texttt{ent\_coef} & 0{,}01 & Entropy regularization coefficient. \\
+PPO Main Agent & \texttt{vf\_coef} & 0{,}15 & Weight of the value loss. \\
+PPO Main Agent & \texttt{max\_grad\_norm} & 0{,}5 & Gradient clipping threshold. \\
+PPO Main Agent & \texttt{clip\_coef} & 0{,}15 & PPO clipping coefficient. \\
+PPO Main Agent & \texttt{update\_epochs} & 4 & Number of update epochs per PPO cycle. \\
+PPO Main Agent & \texttt{kle\_stop} & true & Early stopping when KL divergence becomes too large. \\
+PPO Main Agent & \texttt{kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+PPO Main Agent & \texttt{target\_kl} & 0{,}01 & Target KL-divergence value. \\
+PPO Main Agent & \texttt{kl\_coeff} & 0{,}3 & Coefficient of the KL penalty term. \\
+PPO Main Agent & \texttt{norm\_adv} & true & Advantages are normalized. \\
+PPO Main Agent & \texttt{anneal\_lr} & true & Learning-rate annealing is enabled. \\
+PPO Main Agent & \texttt{clip\_vloss} & true & Value-loss clipping is enabled. \\
+\midrule
+\multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters) (only differences to Main Agent hyperparameters)}} \\
+\midrule
+% PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
+% PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
+PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the Exploiters. \\
+PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
+% PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+% PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
+% PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
+% PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
+% PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}
+\footnotesize
+\item Listed are the hyperparameters and control parameters used in this thesis. Some Parameters (e.g., model paths, project names, or logging names) were omitted for clarity.
+\end{tablenotes}
+\end{threeparttable}
+\end{table*}
+
+
+
+% \begin{table*}[t]
+% \centering
+% \caption{Hyperparameters used for the League Training setups (2/2)}
+% \scriptsize
+% \setlength{\tabcolsep}{4pt}
+% \renewcommand{\arraystretch}{1.05}
+% \begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
+% \toprule
+% \textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Main Agent)}} \\
+% \midrule
+% PPO Main Agent & \texttt{PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Main Agent. \\
+% % PPO Main Agent & \texttt{PPO\_weight\_decay} & 0{,}0 & No weight-decay regularization. \\
+% PPO Main Agent & \texttt{num\_steps} & 512 & Number of steps per rollout. \\
+% PPO Main Agent & \texttt{gamma} & 1{,}0 & Discount factor. \\
+% PPO Main Agent & \texttt{gae\_lambda} & 0{,}95 & GAE parameter. \\
+% PPO Main Agent & \texttt{ent\_coef} & 0{,}01 & Entropy regularization coefficient. \\
+% PPO Main Agent & \texttt{vf\_coef} & 0{,}15 & Weight of the value loss. \\
+% PPO Main Agent & \texttt{max\_grad\_norm} & 0{,}5 & Gradient clipping threshold. \\
+% PPO Main Agent & \texttt{clip\_coef} & 0{,}15 & PPO clipping coefficient. \\
+% PPO Main Agent & \texttt{update\_epochs} & 4 & Number of update epochs per PPO cycle. \\
+% PPO Main Agent & \texttt{kle\_stop} & true & Early stopping when KL divergence becomes too large. \\
+% PPO Main Agent & \texttt{kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+% PPO Main Agent & \texttt{target\_kl} & 0{,}01 & Target KL-divergence value. \\
+% PPO Main Agent & \texttt{kl\_coeff} & 0{,}3 & Coefficient of the KL penalty term. \\
+% PPO Main Agent & \texttt{norm\_adv} & true & Advantages are normalized. \\
+% PPO Main Agent & \texttt{anneal\_lr} & true & Learning-rate annealing is enabled. \\
+% PPO Main Agent & \texttt{clip\_vloss} & true & Value-loss clipping is enabled. \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters) (only differences to Main Agent)}} \\
+% \midrule
+% % PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
+% % PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
+% % PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
+% % PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
+% % PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
+% % PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
+% % PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\
+% \bottomrule
+% \end{tabularx}
+% \end{table*}
+
+
+% \begin{table*}[t]
+% \centering
+% \caption{Hyperparameters used for the League Training setups (3/3)}
+% \scriptsize
+% \setlength{\tabcolsep}{4pt}
+% \renewcommand{\arraystretch}{1.05}
+% \begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.34\textwidth}L{0.14\textwidth}Y@{}}
+% \toprule
+% \textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{Self-Play, Checkpoints, and Opponent Selection}} \\
+% \midrule
+% Self-Play & \texttt{main\_exploiter\_ready\_use\_historicals} & true & Historical agents are used for Main Exploiters. \\
+% TODO: Self-Play & \texttt{main\_exploiter\_no\_draw\_winrate\_threshold} & 0{,}65 & win rate threshold excluding draws. \\
+% Self-Play & \texttt{main\_exploiter\_max\_historical\_winrate\_threshold} & 2{,}0 & Value greater than 1 used to effectively disable the Historical trigger. \\
+% Self-Play & \texttt{main\_exploiter\_main\_prob\_when\_max\_historical\_winrate} & 0{,}0 & Probability of playing against the Main Agent when the threshold is exceeded. \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{PFSP Weighting and Sampling}} \\
+% \midrule
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_pfsp\_weighting} & \texttt{focused\_strong\_with\_draws} & PFSP Weighting scheme for the Main Agent. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for Main Exploiters. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{league\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for League Exploiters. \\
+% \midrule
+% \multicolumn{4}{@{}l}{\textbf{Unit-Specific Bonus Parameters}} \\
+% \midrule
+% Unit Bonus & \texttt{unit\_bonus\_max\_worker} & 1{,}0 & Maximum bonus for Worker units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_light} & 1{,}0 & Maximum bonus for Light units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_heavy} & 1{,}0 & Maximum bonus for Heavy units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_ranged} & 1{,}0 & Maximum bonus for Ranged units. \\
+% \bottomrule
+% \end{tabularx}
+% \end{table*}
+
+
+
 
 % \subsection{Setup}
 \begin{table}[h]

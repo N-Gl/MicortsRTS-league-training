@@ -478,18 +478,35 @@ def main(cfg: ExperimentConfig):
                 print(f"Added historical agent from {historical_path}")
 
         main_exploiter_initial_agents = []
+        names = None
         if len(args.main_exploiters_paths) > 0:
-            for main_exploiter_path in args.main_exploiters_paths:
-                path_exploiter = _resolve_checkpoint_path(main_exploiter_path, args.exp_name, resume=args.resume, direct_path=True)
-                main_exploiter_agent = build_agent(
-                    action_plane_nvec,
-                    device,
-                    unit_exploiters=args.unit_exploiters,
-                    num_expert_embeddings=num_expert_embeddings,
-                )
-                main_exploiter_agent.set_weights(path_exploiter)
-                main_exploiter_initial_agents.append(main_exploiter_agent)
-                print(f"Added main exploiter init agent from {main_exploiter_path}")
+            names = []
+            if isinstance(args.main_exploiters_paths[0], str):
+                names = ["initial_agent"] * args.num_envs
+                for main_exploiter_path in args.main_exploiters_paths:
+                    path_exploiter = _resolve_checkpoint_path(main_exploiter_path, args.exp_name, resume=args.resume, direct_path=True)
+                    main_exploiter_agent = build_agent(
+                        action_plane_nvec,
+                        device,
+                        unit_exploiters=args.unit_exploiters,
+                        num_expert_embeddings=num_expert_embeddings,
+                    )
+                    main_exploiter_agent.set_weights(path_exploiter)
+                    main_exploiter_initial_agents.append(main_exploiter_agent)
+                    print(f"Added main exploiter init agent from {main_exploiter_path}")
+            else:
+                for name, main_exploiter_path in args.main_exploiters_paths:
+                    path_exploiter = _resolve_checkpoint_path(main_exploiter_path, args.exp_name, resume=args.resume, direct_path=True)
+                    main_exploiter_agent = build_agent(
+                        action_plane_nvec,
+                        device,
+                        unit_exploiters=args.unit_exploiters,
+                        num_expert_embeddings=num_expert_embeddings,
+                    )
+                    main_exploiter_agent.set_weights(path_exploiter)
+                    main_exploiter_initial_agents.append(main_exploiter_agent)
+                    names.append(name)
+                    print(f"Added main exploiter init agent from {main_exploiter_path}")
 
 
         league_trainer = LeagueTrainer(
@@ -503,7 +520,8 @@ def main(cfg: ExperimentConfig):
             writer=writer,
             device=device,
             experiment_name=experiment_name,
-            get_scalar_features=getScalarFeatures
+            get_scalar_features=getScalarFeatures,
+            initial_model_names=names
         )
         league_trainer.train()
 

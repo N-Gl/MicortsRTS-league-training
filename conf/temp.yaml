@@ -14,13 +14,13 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_path, falls BC_model_path None ist
   other_historicals_paths: # ["models/finished_PPO_Basis_thesis.pt"]
-  main_exploiters_paths: ["models/BC_workerRush_train_epoch_8_agent.pt", "models/finished_PPO_Basis_thesis.pt"]
+  # main_exploiters_paths: ["models/BC_workerRush_train_epoch_8_agent.pt", "models/finished_PPO_Basis_thesis.pt"]
   wandb_project_name: league_training
   wandb_group_name: debugging
 
   prod_mode: true
   render: true
-  render_all: true
+  render_all: false
 
   seed: 
 

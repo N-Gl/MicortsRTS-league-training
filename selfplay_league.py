@@ -209,7 +209,8 @@ class LeagueTrainer:
         writer,
         device: torch.device,
         experiment_name: str,
-        get_scalar_features: Callable
+        get_scalar_features: Callable,
+        initial_model_names = None
     ):
         self.agent = agent
         self.supervised_agent = supervised_agent
@@ -222,6 +223,7 @@ class LeagueTrainer:
         self.device = device
         self.experiment_name = experiment_name
         self.get_scalar_features = get_scalar_features
+        self.initial_model_names = initial_model_names
         self.active_league_agents = []
         self.league_agent = Selfplay_agent(agent)
         self.league_supervised_agent = Selfplay_agent(supervised_agent)
@@ -339,6 +341,17 @@ class LeagueTrainer:
             other_initial_agents=self.other_historicals,
             main_exploiter_initial_agents=self.main_exploiter_initial_agents,
         )
+
+
+        if args.main_exploiters_paths is not None and len(args.main_exploiters_paths) > 0:
+            model_idx = 0
+            for ag in self.active_league_agents:
+                if isinstance(ag, league.MainExploiter):
+                    ag.current_model = self.initial_model_names[model_idx]
+                    model_idx += 1
+                    
+    
+            league.log_models(writer, league_agents=self.active_league_agents)
 
         if not args.cur_main_exploiter_path is None:
             for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():

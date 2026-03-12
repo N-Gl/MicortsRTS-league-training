@@ -44,8 +44,9 @@
 \contentsline {paragraph}{Production Exploration Bonus.}{10}{section*.38}%
 \contentsline {paragraph}{Unit Bonus.}{10}{section*.39}%
 \contentsline {paragraph}{Unit Bonus Distribution.}{10}{section*.40}%
-\contentsline {paragraph}{Anneal Entropie Coefficient.}{10}{section*.41}%
+\contentsline {paragraph}{Annealed Entropy Coefficient.}{10}{section*.41}%
+\contentsline {paragraph}{New Initial Agents.}{11}{section*.42}%
 \contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{11}{section.4}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{11}{section.5}%
-\contentsline {section}{Erkl\"arung}{14}{figure.5}%
+\contentsline {section}{Erkl\"arung}{15}{figure.5}%
