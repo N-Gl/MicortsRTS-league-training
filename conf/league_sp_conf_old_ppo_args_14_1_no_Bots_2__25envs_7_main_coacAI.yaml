@@ -4,7 +4,7 @@ defaults:
 ExperimentConfig:
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
   # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
-  model_path: models/BC_coacAI_train/initial_BC/BC_coacAI_train_epoch_7/agent.pt
+  model_path: models/BC_coacAI_train_epoch_7/agent.pt
   BC_model_path: models/BCagent.pt
   other_historicals_paths: ["models/BCagent.pt", "saved_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_2_MainExploiter_0_update_1390.pt", "models/finished_PPO_Basis_thesis.pt"]
   exp_name: league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_3_main_anneal_ent
