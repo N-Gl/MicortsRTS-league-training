@@ -172,6 +172,11 @@ class BehaviorCloning:
         bc_opponent_ai = getattr(self.args, "bc_opponent_ai", bc_expert_ai)
         bc_opponent_ais = getattr(self.args, "bc_opponent_ais", None)
         bc_num_runs = int(getattr(self.args, "bc_num_runs", 250))
+        bc_expert_player = int(getattr(self.args, "bc_expert_player", 0))
+
+        if bc_expert_player not in (0, 1):
+            raise ValueError("bc_expert_player must be 0 or 1.")
+        expert_reference_index = bc_expert_player
 
         if bc_expert_ai:
             opponent_ai_names = []
@@ -190,14 +195,20 @@ class BehaviorCloning:
             if bc_num_runs <= 0:
                 raise ValueError("bc_num_runs must be > 0.")
             expert_ai_callable = self._resolve_ai_callable(bc_expert_ai)
-            opponents = [
-                [expert_ai_callable, self._resolve_ai_callable(opponent_ai_name)]
-                for opponent_ai_name in opponent_ai_names
-            ]
+            if expert_reference_index == 0:
+                opponents = [
+                    [expert_ai_callable, self._resolve_ai_callable(opponent_ai_name)]
+                    for opponent_ai_name in opponent_ai_names
+                ]
+            else:
+                opponents = [
+                    [self._resolve_ai_callable(opponent_ai_name), expert_ai_callable]
+                    for opponent_ai_name in opponent_ai_names
+                ]
             num_runs = [bc_num_runs for _ in opponents]
             print(
                 f"Using custom BC replay collection: {bc_expert_ai} vs {opponent_ai_names}, "
-                f"{bc_num_runs} episodes per opponent."
+                f"{bc_num_runs} episodes per opponent, expert as player {bc_expert_player}."
             )
         else:
             opponents = [
@@ -232,6 +243,9 @@ class BehaviorCloning:
             [microrts_ai.mayari, microrts_ai.naiveMCTSAI],
             ]
 
+            if expert_reference_index == 1:
+                opponents = [[ai_pair[1], ai_pair[0]] for ai_pair in opponents]
+
             num_runs = [ 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250,
                 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250]
 
@@ -258,51 +272,59 @@ class BehaviorCloning:
                 max_steps=2048,
                 ais=ai_pair,
                 map_paths=["maps/16x16/basesWorkers16x16A.xml"],
-                reference_indexes=[0],
+                reference_indexes=[expert_reference_index],
             )
             env_transform = MicroRTSSpaceTransformbot(env)
 
             obs_batch, _, res = env_transform.reset()
 
-            obsten = torch.zeros((0, 16, 16, 73), dtype=torch.int32)
-            actten = torch.zeros((0, 256, 7), dtype=torch.int8)
-            scten = torch.zeros((0, 11), dtype=torch.int8)
-            ztorch = torch.zeros((0, 1), dtype=torch.int8)
+            obsten = torch.zeros((0, 16, 16, 73), dtype=torch.float32)
+            actten = torch.zeros((0, 256, 7), dtype=torch.int64)
+            scten = torch.zeros((0, 11), dtype=torch.float32)
+            ztorch = torch.zeros((0, 1), dtype=torch.int64)
 
             for ep in range(num_runs[index]):
                 dones = np.array([False])
                 obs_arr = []
                 act_arr = []
+                sc_arr = []
 
                 while not dones.all():
                     if self.args.render:
                         env_transform.render()
 
                     obs_arr.append(obs_batch)
-                    scten = torch.cat(
-                        [scten, self.get_scalar_features(obs_batch, res, 1)], dim=0
-                    )
+                    res_arr = np.asarray(res)
+                    if res_arr.ndim >= 2 and res_arr.shape[0] > expert_reference_index:
+                        selected_res = res_arr[[expert_reference_index]]
+                    else:
+                        selected_res = res
+                    sc_arr.append(self.get_scalar_features(obs_batch, selected_res, 1).to(torch.float32))
 
                     obs_batch, _, dones, action, res, reward = env_transform.step("")
 
                     arr = np.zeros((256, 7), dtype=np.int64)
-                    for j in range(len(action[0])):
-                        arr[action[0][j][0]] = action[0][j][1:]
+                    for j in range(len(action[expert_reference_index])):
+                        arr[action[expert_reference_index][j][0]] = action[expert_reference_index][j][1:]
                     act_arr.append(arr)
 
                 if self.args.nurwins and reward.item() != 1:
                     pass
                 else:
-                    expert_name = ai_pair[0].__name__
+                    expert_name = ai_pair[expert_reference_index].__name__
                     expert_id = expert_name_to_id.setdefault(
                         expert_name, max(expert_name_to_id.values(), default=-1) + 1
                     )
-                    obsten = torch.cat((obsten, torch.tensor(np.array(obs_arr)).squeeze(1)), dim=0)
-                    actten = torch.cat((actten, torch.tensor(np.array(act_arr))), dim=0)
+                    obsten = torch.cat(
+                        (obsten, torch.as_tensor(np.array(obs_arr), dtype=torch.float32).squeeze(1)),
+                        dim=0,
+                    )
+                    actten = torch.cat((actten, torch.as_tensor(np.array(act_arr), dtype=torch.int64)), dim=0)
+                    scten = torch.cat((scten, torch.cat(sc_arr, dim=0)), dim=0)
                     ztorch = torch.cat(
                         (
                             ztorch,
-                            torch.tensor(expert_id).repeat(len(obs_arr), 1),
+                            torch.full((len(obs_arr), 1), expert_id, dtype=torch.int64),
                         ),
                         dim=0,
                     )
@@ -326,10 +348,10 @@ class BehaviorCloning:
                         compressor.write(buffer.getvalue())
                         compressor.flush(zstd.FLUSH_FRAME)
 
-                    obsten = torch.zeros((0, 16, 16, 73), dtype=torch.int32)
-                    actten = torch.zeros((0, 256, 7), dtype=torch.int32)
-                    scten = torch.zeros((0, 11), dtype=torch.int8)
-                    ztorch = torch.zeros((0, 1), dtype=torch.int8)
+                    obsten = torch.zeros((0, 16, 16, 73), dtype=torch.float32)
+                    actten = torch.zeros((0, 256, 7), dtype=torch.int64)
+                    scten = torch.zeros((0, 11), dtype=torch.float32)
+                    ztorch = torch.zeros((0, 1), dtype=torch.int64)
 
             env_transform.close()
             env.close()

@@ -101,6 +101,7 @@ class ExperimentConfig:
     deterministic: bool
     nurwins: bool
     num_expert_embeddings: int
+    bc_expert_player: int
     num_eval_episodes: int
     num_parallel_eval_envs: int
     num_parallel_selfplay_eval_games: int

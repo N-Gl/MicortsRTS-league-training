@@ -65,7 +65,7 @@ ExperimentConfig:
   exploiter_ent_coef_max: 0.0075 # TODO: nur falls league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_4 funktioniert hat
   exploiter_anneal_ent: true # TODO: nur falls league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_4 funktioniert hat
 
-  main_ent_coef_min: 0.04
+  main_ent_coef_min: 0.05
   main_ent_coef_max: 0.0075
   main_anneal_ent: true
 
