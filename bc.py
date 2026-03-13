@@ -11,7 +11,10 @@ import zstandard as zstd
 from gym_microrts import microrts_ai
 from gym_microrts.envs.microrts_bot_vec_env import MicroRTSBotGridVecEnv
 from microrts_space_transformbots import MicroRTSSpaceTransformbot
+from selfplay_league import adjust_action_selfplay, adjust_obs_selfplay
 from torch.utils.data import DataLoader, IterableDataset
+
+_BC_ADJUST_ARGS = type("AdjustArgs", (), {"num_selfplay_envs": 2})()
 
 
 
@@ -22,8 +25,8 @@ def getScalarFeatures(obs, res, numenvs, device):
 
             res_plane = (obs[i, :, :, 1] * obs[i, :, :, 7])
             lightunit_plane = (obs[i, :, :, 11])
-            heavyunit_plane = (obs[0, :, :, 12])
-            rangedunit_plane = (obs[0, :, :, 13])
+            heavyunit_plane = (obs[i, :, :, 12])
+            rangedunit_plane = (obs[i, :, :, 13])
             total_res = res_plane.sum().item()
 
 
@@ -97,6 +100,31 @@ class BehaviorCloning:
         self.replay_dir = replay_dir
         self.model_dir = model_dir
         self.wandb_log_fn = wandb_log_fn
+
+    @staticmethod
+    def _adjust_obs_to_player0(obs_batch, is_new_env: bool):
+        obs_tensor = torch.as_tensor(obs_batch).clone()
+        if obs_tensor.ndim != 4 or obs_tensor.shape[0] != 1:
+            return obs_batch
+        wrapped_obs = torch.zeros(
+            (2, obs_tensor.shape[1], obs_tensor.shape[2], obs_tensor.shape[3]),
+            dtype=obs_tensor.dtype,
+            device=obs_tensor.device,
+        )
+        wrapped_obs[1] = obs_tensor[0]
+        adjust_obs_selfplay(_BC_ADJUST_ARGS, wrapped_obs, is_new_env=is_new_env)
+        return wrapped_obs[1:2].cpu().numpy()
+
+    @staticmethod
+    def _adjust_actions_to_player0(expert_actions):
+        if len(expert_actions) == 0:
+            return np.zeros((0, 8), dtype=np.int64)
+        action_arr = np.asarray(expert_actions, dtype=np.int64)
+        if action_arr.ndim != 2 or action_arr.shape[1] < 8:
+            return action_arr
+        action_counts = np.array([0, action_arr.shape[0]], dtype=np.int64)
+        adjust_action_selfplay(_BC_ADJUST_ARGS, action_arr, action_counts)
+        return action_arr
 
     def run(self):
         print("BC training Setup")
@@ -277,6 +305,8 @@ class BehaviorCloning:
             env_transform = MicroRTSSpaceTransformbot(env)
 
             obs_batch, _, res = env_transform.reset()
+            if expert_reference_index == 1:
+                obs_batch = self._adjust_obs_to_player0(obs_batch, is_new_env=True)
 
             obsten = torch.zeros((0, 16, 16, 73), dtype=torch.int32)
             actten = torch.zeros((0, 256, 7), dtype=torch.int8)
@@ -303,10 +333,15 @@ class BehaviorCloning:
                     )
 
                     obs_batch, _, dones, action, res, reward = env_transform.step("")
+                    if expert_reference_index == 1:
+                        obs_batch = self._adjust_obs_to_player0(obs_batch, is_new_env=False)
 
                     arr = np.zeros((256, 7), dtype=np.int64)
-                    for j in range(len(action[expert_reference_index])):
-                        arr[action[expert_reference_index][j][0]] = action[expert_reference_index][j][1:]
+                    expert_actions = action[expert_reference_index]
+                    if expert_reference_index == 1:
+                        expert_actions = self._adjust_actions_to_player0(expert_actions)
+                    for j in range(len(expert_actions)):
+                        arr[expert_actions[j][0]] = expert_actions[j][1:]
                     act_arr.append(arr)
 
                 if self.args.nurwins and reward.item() != 1:

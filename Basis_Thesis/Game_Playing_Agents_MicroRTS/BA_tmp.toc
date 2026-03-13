@@ -2,12 +2,12 @@
 \contentsline {paragraph}{MicroRTS}{1}{section*.2}%
 \contentsline {paragraph}{Self-Play-Based Approaches.}{1}{section*.3}%
 \contentsline {paragraph}{league training (LT).}{1}{section*.4}%
-\contentsline {paragraph}{Thesis Outline:}{2}{section*.5}%
+\contentsline {paragraph}{Thesis Outline:}{1}{section*.5}%
 \contentsline {paragraph}{Training the Base Agent:}{2}{section*.6}%
 \contentsline {section}{\numberline {2}\hskip -1em.~Related Work}{2}{section.2}%
 \contentsline {paragraph}{Results and Limitations.}{2}{section*.7}%
 \contentsline {paragraph}{Proximal Policy Optimization (PPO) training.}{2}{section*.9}%
-\contentsline {paragraph}{GridNet.}{3}{section*.10}%
+\contentsline {paragraph}{GridNet.}{2}{section*.10}%
 \contentsline {paragraph}{Pre-League Training.}{3}{section*.11}%
 \contentsline {paragraph}{League Composition and Training.}{3}{section*.12}%
 \contentsline {paragraph}{Differences from AlphaStar.}{3}{section*.13}%
@@ -16,38 +16,38 @@
 \contentsline {paragraph}{Unit Types.}{3}{section*.14}%
 \contentsline {paragraph}{Game Setup.}{4}{section*.15}%
 \contentsline {paragraph}{Action Space.}{4}{section*.17}%
-\contentsline {paragraph}{Observation Space.}{5}{section*.18}%
+\contentsline {paragraph}{Observation Space.}{4}{section*.18}%
 \contentsline {subsection}{\numberline {3.2}\hskip -1em.~Training Pipeline}{5}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}\hskip -1em.~self-play (SP)}{5}{subsection.3.3}%
 \contentsline {paragraph}{Implementation.}{5}{section*.19}%
 \contentsline {paragraph}{Problems:}{5}{section*.20}%
-\contentsline {paragraph}{Solutions.}{6}{section*.21}%
-\contentsline {subsection}{\numberline {3.4}\hskip -1em.~fictitious self-play (FSP)}{7}{subsection.3.4}%
-\contentsline {paragraph}{Implementation.}{7}{section*.22}%
-\contentsline {paragraph}{Problem with the implementation.}{7}{section*.23}%
-\contentsline {paragraph}{Example.}{7}{section*.24}%
-\contentsline {paragraph}{Relevance for LT.}{7}{section*.25}%
+\contentsline {paragraph}{Solutions.}{5}{section*.21}%
+\contentsline {subsection}{\numberline {3.4}\hskip -1em.~fictitious self-play (FSP)}{6}{subsection.3.4}%
+\contentsline {paragraph}{Implementation.}{6}{section*.22}%
+\contentsline {paragraph}{Problem with the implementation.}{6}{section*.23}%
+\contentsline {paragraph}{Example.}{6}{section*.24}%
+\contentsline {paragraph}{Relevance for LT.}{6}{section*.25}%
 \contentsline {paragraph}{Solutions.}{7}{section*.27}%
-\contentsline {subsection}{\numberline {3.5}\hskip -1em.~prioritized fictitious self-play (PFSP)}{8}{subsection.3.5}%
-\contentsline {paragraph}{Prioritization Function.}{8}{section*.28}%
-\contentsline {paragraph}{Implemented Prioritization Function.}{8}{section*.29}%
-\contentsline {subsection}{\numberline {3.6}\hskip -1em.~league training (LT)}{8}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.5}\hskip -1em.~prioritized fictitious self-play (PFSP)}{7}{subsection.3.5}%
+\contentsline {paragraph}{Prioritization Function.}{7}{section*.28}%
+\contentsline {paragraph}{Implemented Prioritization Function.}{7}{section*.29}%
+\contentsline {subsection}{\numberline {3.6}\hskip -1em.~league training (LT)}{7}{subsection.3.6}%
 \contentsline {paragraph}{League composition and roles.}{8}{section*.30}%
 \contentsline {paragraph}{Training loop and snapshot management.}{8}{section*.31}%
-\contentsline {paragraph}{Bot environments.}{9}{section*.32}%
-\contentsline {paragraph}{number of parallel bot environment instances.}{9}{section*.33}%
-\contentsline {paragraph}{Summary: Opponent Selection.}{9}{section*.34}%
-\contentsline {paragraph}{Resetting Exploiters.}{9}{section*.35}%
+\contentsline {paragraph}{Bot environments.}{8}{section*.32}%
+\contentsline {paragraph}{number of parallel bot environment instances.}{8}{section*.33}%
+\contentsline {paragraph}{Summary: Opponent Selection.}{8}{section*.34}%
+\contentsline {paragraph}{Resetting Exploiters.}{8}{section*.35}%
 \contentsline {paragraph}{AlphaStar Pseudocode.}{9}{section*.36}%
-\contentsline {subsection}{\numberline {3.7}\hskip -1em.~Additional modifications for diversity}{10}{subsection.3.7}%
-\contentsline {paragraph}{Problems with overall increased exploration.}{10}{section*.37}%
-\contentsline {paragraph}{Production Exploration Bonus.}{10}{section*.38}%
+\contentsline {subsection}{\numberline {3.7}\hskip -1em.~Additional modifications for diversity}{9}{subsection.3.7}%
+\contentsline {paragraph}{Problems with overall increased exploration.}{9}{section*.37}%
+\contentsline {paragraph}{Production Exploration Bonus.}{9}{section*.38}%
 \contentsline {paragraph}{Unit Bonus.}{10}{section*.39}%
 \contentsline {paragraph}{Unit Bonus Distribution.}{10}{section*.40}%
 \contentsline {paragraph}{Annealed Entropy Coefficient.}{10}{section*.41}%
-\contentsline {paragraph}{New Initial Agents.}{11}{section*.42}%
-\contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}%
-\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{11}{section.4}%
+\contentsline {paragraph}{New Initial Agents.}{10}{section*.42}%
+\contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{10}{subsection.3.8}%
+\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{10}{section.4}%
 \contentsline {paragraph}{Checkpoint and Reset Statistics.}{11}{section*.43}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{11}{section.5}%
-\contentsline {section}{Erkl\"arung}{16}{figure.5}%
+\contentsline {section}{Erkl\"arung}{15}{figure.5}%

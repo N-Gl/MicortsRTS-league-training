@@ -577,12 +577,12 @@ The new initial agents were not trained long enough to be as strong as the Base 
 
 % TODO: ab hier überarbeiten
 \subsection{Delta Score.}
-To better lead the agent through the sparse reward landscape of MicroRTS, we added the change in score from MicroRTS \cite{huang2021gym, Ontanon2013CombinatorialBandit} between two time steps to the reward.
-The score for each environment is calculated based on the current game state, which includes the number and type of units, their hit points, and the resources of both players.
-The Delta Score is the difference between the score at the current time step and the score at the previous time step, which makes it a good immidiet learning signal for the agent.
-The Score does not always accuratly predict how well an agent is playing, that is why an coefficient is used to scale the Delta Score, so that the weighted score over an game is a lot smaller than the win/loss reward.
-In the prior work from M. Huft \cite{huft2023microrts} the agent we now use as the Base Agent was trained with an attack bonus, which is a reward for attacking the opponent’s units.
-The attack bonus was removed for our training and we adjusted the Delta Score in the initial games to be approxemetly as big as the attack bonus would have been.
+To better guide the agent in the sparse reward landscape of MicroRTS, we added the change in the MicroRTS score between two consecutive time steps to the reward \cite{huang2021gym, Ontanon2013CombinatorialBandit}.
+The score for each environment instance is calculated based on the current game state, which includes the number and type of units, their hit points, and the resources of both players.
+The Delta Score is the difference between the score at the current time step and the score at the previous time step, which makes it a good immediate learning signal for the agent.
+The score does not always accurately predict how well an agent is playing, which is why a coefficient is used to scale the Delta Score, so that the accumulated weighted Delta Score over a game is much smaller than the win/loss reward.
+In the prior work by M. Huft \cite{huft2023microrts}, the agent we now use as the Base Agent was trained with an attack bonus, which is a reward for attacking the opponent’s units.
+The attack bonus was removed for our training, and we adjusted the Delta Score in the early stages of training to be approximately as large as the attack bonus used in earlier training runs.
 
 
 
@@ -592,6 +592,28 @@ The attack bonus was removed for our training and we adjusted the Delta Score in
 
 \section{Experimente}
 \label{sec:experimente}
+We use the Base Agent, from the prior work by M. Huft \cite{huft2023microrts}, which was trained with the combination of BC and PPO for every initial agent, in this thesis, unless otherwise specified.
+The map used is basesWorkers16x16A, a symetrical map also used in the related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
+The Base Agent is trained in LT, with (???) 4 Main Exploiters, (???) 1 League Exploiters, with each (???) 25 environments for (???) steps.
+
+% TODO: auch eine Range geben? (z.B.: von 50% bis 100%)
+\paragraph{Checkpoint and Reset Statistics.}
+The following Table \ref{tab:checkpoint_statistics} shows the amount of checkpoints for each agent type and the win rate of the Agent type against the Main Agent avraged over the last 200 games for each reset.
+\begin{table*}[t]
+\centering
+\caption{checkpoint and reset statistics for the League Training setup}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c r@{}}
+\hline
+\textbf{Agent type} & \textbf{League Exploiter} & \textbf{Main Exploiter} & \textbf{acg. win rate} \\
+\hline
+    Base Agent & (???) & (???) & (???) \\
+    Worker\_focused & 0 & (???) & (???) \\
+    Ranged\_focused & 0 & (???) & (???) \\
+    Light\_focused & 0 & (???) & (???) \\
+\hline
+\end{tabular*}
+\label{tab:checkpoint_statistics}
+\end{table*}
 
 
 % TODO: über folgendes schreiben:
