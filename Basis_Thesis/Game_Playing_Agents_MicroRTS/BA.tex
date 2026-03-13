@@ -20,6 +20,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{threeparttable}
+\usepackage{csvsimple}
 \usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
 \usepackage[none]{hyphenat}
 % Support for easy cross-referencing
@@ -254,7 +255,7 @@ Movement is visualized with a gray line, attacking with a red line, and gatherin
 
 \paragraph{Game Setup.}
 Most games are decided within 2000 steps. Therefore, the maximum number of steps is set to 2000.
-The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in Figure~\ref{Figure 1}.
+The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in figure~\ref{Figure 1}.
 This symmetric map starts each player with one Base, five resources, two Workers, and 50 resources near the Base. \textbf{\cite{goodfriend2024raisocketai}}
 
 \begin{figure}[H]
@@ -590,29 +591,70 @@ The attack bonus was removed for our training, and we adjusted the Delta Score i
 
 
 
-\section{Experimente}
+\section{Experiments}
 \label{sec:experimente}
 We use the Base Agent, from the prior work by M. Huft \cite{huft2023microrts}, which was trained with the combination of BC and PPO for every initial agent, in this thesis, unless otherwise specified.
-The map used is basesWorkers16x16A, a symetrical map also used in the related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
+The map used is basesWorkers16x16A, a symmetrical map also used in the related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
 The Base Agent is trained in LT, with (???) 4 Main Exploiters, (???) 1 League Exploiters, with each (???) 25 environments for (???) steps.
+The Main Agent played (???) games against the built-in bots coacAI and Mayari in figure% TODO: ~\ref{} is the win rate over the global steps for both bots.
+The bot environments were evenly split between the two bots.
 
 % TODO: auch eine Range geben? (z.B.: von 50% bis 100%)
 \paragraph{Checkpoint and Reset Statistics.}
-The following Table \ref{tab:checkpoint_statistics} shows the amount of checkpoints for each agent type and the win rate of the Agent type against the Main Agent avraged over the last 200 games for each reset.
+The Table \ref{tab:checkpoint_statistics} shows the amount of checkpoints for each agent type and the win rate of the initial agent type against the Main Agent averaged over the last 200 games for each reset.
 \begin{table*}[t]
 \centering
-\caption{checkpoint and reset statistics for the League Training setup}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c r@{}}
+\caption{checkpoint amount per initial agent type, league agent type and averaged win rate against the Main Agent over 200 games per initial agent type} 
+% TODO: an alle alleine stehenden agent types league oder initial dazu schreiben
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c@{}}
 \hline
-\textbf{Agent type} & \textbf{League Exploiter} & \textbf{Main Exploiter} & \textbf{acg. win rate} \\
+\textbf{Agent type} & \textbf{League Exploiter} & \textbf{Main Exploiter} & \textbf{avg. win rate} & \textbf{total games} & \textbf{times win rate $>$ 70\%} \\
 \hline
-    Base Agent & (???) & (???) & (???) \\
-    Worker\_focused & 0 & (???) & (???) \\
-    Ranged\_focused & 0 & (???) & (???) \\
-    Light\_focused & 0 & (???) & (???) \\
+    Base Agent & (???) & (???) & (???) & (???) & (???) \\
+    Worker\_focused & 0 & (???) & (???) & (???) & (???) \\
+    Ranged\_focused & 0 & (???) & (???) & (???) & (???) \\
+    Light\_focused & 0 & (???) & (???) & (???) & (???) \\
+    Total & (???) & (???) & (???) & (???) & (???) \\
 \hline
 \end{tabular*}
 \label{tab:checkpoint_statistics}
+\end{table*}
+
+
+% TODO: nur passiveAI, workerRushAI, lightRushAI, randomAI, randomBiasedAI sind built-in bots. Habe ich das überall eingehalten?
+\begin{table*}[t]
+\centering
+\caption{Base Agent evaluation}
+\label{tab:base_agent_evaluation}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
+\toprule
+Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+\midrule
+\multicolumn{8}{l}{\textit{bots used in training}} \\
+\csvreader[
+    late after line=\\,
+    filter test=\ifnumless{\thecsvinputline}{4}
+]{images/Base_Agent_evaluation.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\multicolumn{8}{l}{\textit{Built-in bots}} \\
+\csvreader[
+    late after line=\\,
+    filter ifthen=\value{csvinputline}>3 \and \value{csvinputline}<9
+]{images/Base_Agent_evaluation.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\multicolumn{8}{l}{\textit{Other bots}} \\
+\csvreader[
+    late after line=\\,
+    filter test=\ifnumgreater{\thecsvinputline}{8}
+]{images/Base_Agent_evaluation.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\bottomrule
+\end{tabular*}
 \end{table*}
 
 
@@ -624,8 +666,10 @@ The following Table \ref{tab:checkpoint_statistics} shows the amount of checkpoi
 % welche initialen Agenten
 % wie viele Schritte, wie viele Schritte pro Agent
 % Main vs Bot (welche Bots)
-% welche Hyperparameter (siehe Tabelle), erklären?
 % wie oft war welcher Exploiter gut?
+
+% welche Hyperparameter (siehe Tabelle), erklären?
+
 % Tabelle mit Ergebnissen (auch im Durchschnitt)
 % 
 % Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
@@ -639,6 +683,7 @@ The following Table \ref{tab:checkpoint_statistics} shows the amount of checkpoi
 % Verbesserungs möglichkeiten
 
 % endgame\_maps
+
 
 \begin{table*}[t]
 \centering

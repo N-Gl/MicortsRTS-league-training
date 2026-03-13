@@ -3,8 +3,6 @@
 import time
 from typing import List, Tuple
 
-import numpy as np
-
 class Logger:
     @staticmethod
     def log_local_results(
@@ -17,7 +15,6 @@ class Logger:
         start_time: int
     ):
         total_games = sum(local_stats.values())
-        avg_reward = float(np.mean(local_episode_rewards)) if local_episode_rewards else 0.0
         win_rate = local_stats["win"] / total_games if total_games else 0.0
         draw_rate = local_stats["draw"] / total_games if total_games else 0.0
         loss_rate = local_stats["loss"] / total_games if total_games else 0.0
@@ -30,16 +27,14 @@ class Logger:
             f"Evaluation vs {opponent_name} over {total_games} games | "
             f"win: {local_stats['win']} ({win_rate:.2%}), "
             f"draw: {local_stats['draw']} ({draw_rate:.2%}), "
-            f"loss: {local_stats['loss']} ({loss_rate:.2%}), "
-            f"avg reward: {avg_reward:.3f}"
+            f"loss: {local_stats['loss']} ({loss_rate:.2%})"
         )
         sps = int(global_step / (time.time() - start_time))
         print("SPS:", sps)
         
     @staticmethod
-    def build_table_row(opponent_name: str, local_stats: dict, local_episode_rewards: List[float]):
+    def build_table_row(opponent_name: str, local_stats: dict, _local_episode_rewards: List[float]):
         total_games = sum(local_stats.values())
-        avg_reward = float(np.mean(local_episode_rewards)) if local_episode_rewards else 0.0
         win_rate = local_stats["win"] / total_games if total_games else 0.0
         draw_rate = local_stats["draw"] / total_games if total_games else 0.0
         loss_rate = local_stats["loss"] / total_games if total_games else 0.0
@@ -52,13 +47,11 @@ class Logger:
             win_rate,
             draw_rate,
             loss_rate,
-            avg_reward,
         )
 
     @staticmethod
-    def log_aggregate_results(aggregate_stats: dict, aggregate_episode_rewards: List[float], writer) -> None:
+    def log_aggregate_results(aggregate_stats: dict, _aggregate_episode_rewards: List[float], writer) -> None:
         total_games = sum(aggregate_stats.values())
-        avg_reward = float(np.mean(aggregate_episode_rewards)) if aggregate_episode_rewards else 0.0
         win_rate = aggregate_stats["win"] / total_games if total_games else 0.0
         draw_rate = aggregate_stats["draw"] / total_games if total_games else 0.0
         loss_rate = aggregate_stats["loss"] / total_games if total_games else 0.0
@@ -67,15 +60,13 @@ class Logger:
             f"Aggregate evaluation over {total_games} games | "
             f"win: {aggregate_stats['win']} ({win_rate:.2%}), "
             f"draw: {aggregate_stats['draw']} ({draw_rate:.2%}), "
-            f"loss: {aggregate_stats['loss']} ({loss_rate:.2%}), "
-            f"avg reward: {avg_reward:.2f}"
+            f"loss: {aggregate_stats['loss']} ({loss_rate:.2%})"
         )
 
         if writer is not None:
             writer.add_scalar("eval/win_rate", win_rate, total_games)
             writer.add_scalar("eval/draw_rate", draw_rate, total_games)
             writer.add_scalar("eval/loss_rate", loss_rate, total_games)
-            writer.add_scalar("eval/avg_episode_reward", avg_reward, total_games)
 
     @staticmethod
     def log_wandb_summary(
@@ -95,26 +86,17 @@ class Logger:
         if step is None:
             step = sum(aggregate_stats.values())
 
-        # Keep a stable schema to avoid UI panel errors if the same table key
-        # previously had avg_reward. For no_reward, we still include the column
-        # but fill it with NaN.
-        columns = ["agent", "opponent", "games", "wins", "draws", "losses", "win_rate", "draw_rate", "loss_rate", "avg_reward"]
+        columns = ["opponent", "games", "wins", "draws", "losses", "win_rate", "draw_rate", "loss_rate"]
 
         opponent_table = table if table is not None else wandb.Table(columns=columns)
         for row in opponent_table_rows:
-            # Prepend agent name once; then ensure the last column is NaN when no_reward is set.
-            base_row = (with_name if with_name else "nan",) + tuple(row)
-            if no_reward:
-                if len(base_row) == len(columns):
-                    row_with_reward = base_row
-                elif len(base_row) == len(columns) - 1:
-                    row_with_reward = (*base_row, float("nan"))
-                else:
-                    raise ValueError(f"Unexpected row length {len(base_row)} for columns {len(columns)}")
-            else:
-                row_with_reward = base_row
-
-            opponent_table.add_data(*row_with_reward)
+            normalized_row = tuple(row)
+            if len(normalized_row) == len(columns) + 1:
+                # Backward compatibility with historical rows that still had avg_reward.
+                normalized_row = normalized_row[:-1]
+            if len(normalized_row) != len(columns):
+                raise ValueError(f"Unexpected row length {len(normalized_row)} for columns {len(columns)}")
+            opponent_table.add_data(*normalized_row)
         # if with_name:
         #     table_name = f"{table_name}_{with_name}"
         try:

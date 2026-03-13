@@ -543,8 +543,8 @@ def main(cfg: ExperimentConfig):
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_1040", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_1_update_1040.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253.pt", None, False],
-            # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt", None, False],
-            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
+            ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt", None, False],
+            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
             # ["22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3", agent_model.Agent, "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3/Main_agent_backups/agent_update_830.pt", None, False],
             # ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None, False],
             # ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None, False],
@@ -555,20 +555,20 @@ def main(cfg: ExperimentConfig):
 
 
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
-            # ("coacAI", microrts_ai.coacAI),
-            # ("mayari", microrts_ai.mayari),
-            ("passiveAI", microrts_ai.passiveAI),
-            ("workerRushAI", microrts_ai.workerRushAI),
-            ("lightRushAI", microrts_ai.lightRushAI),
-            ("randomAI", microrts_ai.randomAI),
-            ("randomBiasedAI", microrts_ai.randomBiasedAI),
-            ("rojo", microrts_ai.rojo),
-            ("mixedBot", microrts_ai.mixedBot),
-            ("izanagi", microrts_ai.izanagi), 
-            ("tiamat", microrts_ai.tiamat),
-            ("droplet", microrts_ai.droplet),
-            ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("coacAI", microrts_ai.coacAI),
+            ("mayari", microrts_ai.mayari),
+            # ("passiveAI", microrts_ai.passiveAI),
+            # ("workerRushAI", microrts_ai.workerRushAI),
+            # ("lightRushAI", microrts_ai.lightRushAI),
+            # ("randomAI", microrts_ai.randomAI),
+            # ("randomBiasedAI", microrts_ai.randomBiasedAI),
+            # ("rojo", microrts_ai.rojo),
+            # ("mixedBot", microrts_ai.mixedBot),
+            # ("izanagi", microrts_ai.izanagi), 
+            # ("tiamat", microrts_ai.tiamat),
+            # ("droplet", microrts_ai.droplet),
+            # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
+            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:
@@ -633,7 +633,13 @@ def main(cfg: ExperimentConfig):
             opponent_table_rows.extend(bot_opponent_table_rows)
             from log_aggregate_result_table import Logger
             Logger.log_aggregate_results(aggregate_stats, aggregate_episode_rewards, writer)
-            table=Logger.log_wandb_summary(args, opponent_table_rows, aggregate_stats, with_name=name, table=table if 'table' in locals() else None)
+            safe_name = "".join(ch if ch.isalnum() or ch in ("_", "-") else "_" for ch in name).strip("_")
+            Logger.log_wandb_summary(
+                args,
+                opponent_table_rows,
+                aggregate_stats,
+                table_name=f"eval_{safe_name or 'agent'}",
+            )
             print("evaluation finished, logged summary to wandb")
 
 
