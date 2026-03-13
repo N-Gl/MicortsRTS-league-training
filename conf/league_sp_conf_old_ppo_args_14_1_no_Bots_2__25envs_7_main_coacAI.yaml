@@ -11,7 +11,7 @@ ExperimentConfig:
   wandb_group_name: ranged_exploit
 
   
-  render: true
+  render: false
   unit_bonus: false
   sp_rand: true
   resume: true
