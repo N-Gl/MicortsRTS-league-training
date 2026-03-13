@@ -278,16 +278,15 @@ class BehaviorCloning:
 
             obs_batch, _, res = env_transform.reset()
 
-            obsten = torch.zeros((0, 16, 16, 73), dtype=torch.float32)
-            actten = torch.zeros((0, 256, 7), dtype=torch.int64)
-            scten = torch.zeros((0, 11), dtype=torch.float32)
-            ztorch = torch.zeros((0, 1), dtype=torch.int64)
+            obsten = torch.zeros((0, 16, 16, 73), dtype=torch.int32)
+            actten = torch.zeros((0, 256, 7), dtype=torch.int8)
+            scten = torch.zeros((0, 11), dtype=torch.int8)
+            ztorch = torch.zeros((0, 1), dtype=torch.int8)
 
             for ep in range(num_runs[index]):
                 dones = np.array([False])
                 obs_arr = []
                 act_arr = []
-                sc_arr = []
 
                 while not dones.all():
                     if self.args.render:
@@ -299,7 +298,9 @@ class BehaviorCloning:
                         selected_res = res_arr[[expert_reference_index]]
                     else:
                         selected_res = res
-                    sc_arr.append(self.get_scalar_features(obs_batch, selected_res, 1).to(torch.float32))
+                    scten = torch.cat(
+                        [scten, self.get_scalar_features(obs_batch, selected_res, 1)], dim=0
+                    )
 
                     obs_batch, _, dones, action, res, reward = env_transform.step("")
 
@@ -315,16 +316,12 @@ class BehaviorCloning:
                     expert_id = expert_name_to_id.setdefault(
                         expert_name, max(expert_name_to_id.values(), default=-1) + 1
                     )
-                    obsten = torch.cat(
-                        (obsten, torch.as_tensor(np.array(obs_arr), dtype=torch.float32).squeeze(1)),
-                        dim=0,
-                    )
-                    actten = torch.cat((actten, torch.as_tensor(np.array(act_arr), dtype=torch.int64)), dim=0)
-                    scten = torch.cat((scten, torch.cat(sc_arr, dim=0)), dim=0)
+                    obsten = torch.cat((obsten, torch.tensor(np.array(obs_arr)).squeeze(1)), dim=0)
+                    actten = torch.cat((actten, torch.tensor(np.array(act_arr))), dim=0)
                     ztorch = torch.cat(
                         (
                             ztorch,
-                            torch.full((len(obs_arr), 1), expert_id, dtype=torch.int64),
+                            torch.tensor(expert_id).repeat(len(obs_arr), 1),
                         ),
                         dim=0,
                     )
@@ -348,10 +345,10 @@ class BehaviorCloning:
                         compressor.write(buffer.getvalue())
                         compressor.flush(zstd.FLUSH_FRAME)
 
-                    obsten = torch.zeros((0, 16, 16, 73), dtype=torch.float32)
-                    actten = torch.zeros((0, 256, 7), dtype=torch.int64)
-                    scten = torch.zeros((0, 11), dtype=torch.float32)
-                    ztorch = torch.zeros((0, 1), dtype=torch.int64)
+                    obsten = torch.zeros((0, 16, 16, 73), dtype=torch.int32)
+                    actten = torch.zeros((0, 256, 7), dtype=torch.int32)
+                    scten = torch.zeros((0, 11), dtype=torch.int8)
+                    ztorch = torch.zeros((0, 1), dtype=torch.int8)
 
             env_transform.close()
             env.close()
