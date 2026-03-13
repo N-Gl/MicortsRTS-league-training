@@ -274,10 +274,17 @@ class LeagueTrainer:
     ) -> None:
         unit_counts = scalar_features_step[done_idx, 3:7].detach()
         unit_names = ("worker", "light", "heavy", "ranged")
+        current_model = getattr(done_agent, "current_model", None)
 
         for unit_name, count in zip(unit_names, unit_counts):
             value = count.item()
             writer.add_scalar(f"{done_agent.name}_endgame_units/{game_type}_{unit_name}", value, game_index)
+            if current_model is not None:
+                writer.add_scalar(
+                    f"endgame_units_per_current_model_{current_model}/{game_type}_{unit_name}",
+                    value,
+                    game_index,
+                )
 
     def _get_exploiter_ent_bounds(self) -> tuple[float, float]:
         if self.args.exploiter_anneal_ent:
