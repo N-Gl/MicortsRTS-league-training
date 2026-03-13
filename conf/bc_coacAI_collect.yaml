@@ -25,6 +25,10 @@ ExperimentConfig:
   warmup_epochs: 1
   nurwins: false
 
+
+
+  bc_expert_player: 1
+
   bc_expert_ai: coacAI
   bc_opponent_ais:
     - workerRushAI

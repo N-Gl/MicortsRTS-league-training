@@ -11,7 +11,10 @@ import zstandard as zstd
 from gym_microrts import microrts_ai
 from gym_microrts.envs.microrts_bot_vec_env import MicroRTSBotGridVecEnv
 from microrts_space_transformbots import MicroRTSSpaceTransformbot
+from selfplay_league import adjust_action_selfplay, adjust_obs_selfplay
 from torch.utils.data import DataLoader, IterableDataset
+
+_BC_ADJUST_ARGS = type("AdjustArgs", (), {"num_selfplay_envs": 2})()
 
 
 
@@ -22,8 +25,8 @@ def getScalarFeatures(obs, res, numenvs, device):
 
             res_plane = (obs[i, :, :, 1] * obs[i, :, :, 7])
             lightunit_plane = (obs[i, :, :, 11])
-            heavyunit_plane = (obs[0, :, :, 12])
-            rangedunit_plane = (obs[0, :, :, 13])
+            heavyunit_plane = (obs[i, :, :, 12])
+            rangedunit_plane = (obs[i, :, :, 13])
             total_res = res_plane.sum().item()
 
 
@@ -97,6 +100,31 @@ class BehaviorCloning:
         self.replay_dir = replay_dir
         self.model_dir = model_dir
         self.wandb_log_fn = wandb_log_fn
+
+    @staticmethod
+    def _adjust_obs_to_player0(obs_batch, is_new_env: bool):
+        obs_tensor = torch.as_tensor(obs_batch).clone()
+        if obs_tensor.ndim != 4 or obs_tensor.shape[0] != 1:
+            return obs_batch
+        wrapped_obs = torch.zeros(
+            (2, obs_tensor.shape[1], obs_tensor.shape[2], obs_tensor.shape[3]),
+            dtype=obs_tensor.dtype,
+            device=obs_tensor.device,
+        )
+        wrapped_obs[1] = obs_tensor[0]
+        adjust_obs_selfplay(_BC_ADJUST_ARGS, wrapped_obs, is_new_env=is_new_env)
+        return wrapped_obs[1:2].cpu().numpy()
+
+    @staticmethod
+    def _adjust_actions_to_player0(expert_actions):
+        if len(expert_actions) == 0:
+            return np.zeros((0, 8), dtype=np.int64)
+        action_arr = np.asarray(expert_actions, dtype=np.int64)
+        if action_arr.ndim != 2 or action_arr.shape[1] < 8:
+            return action_arr
+        action_counts = np.array([0, action_arr.shape[0]], dtype=np.int64)
+        adjust_action_selfplay(_BC_ADJUST_ARGS, action_arr, action_counts)
+        return action_arr
 
     def run(self):
         print("BC training Setup")
@@ -172,6 +200,11 @@ class BehaviorCloning:
         bc_opponent_ai = getattr(self.args, "bc_opponent_ai", bc_expert_ai)
         bc_opponent_ais = getattr(self.args, "bc_opponent_ais", None)
         bc_num_runs = int(getattr(self.args, "bc_num_runs", 250))
+        bc_expert_player = int(getattr(self.args, "bc_expert_player", 0))
+
+        if bc_expert_player not in (0, 1):
+            raise ValueError("bc_expert_player must be 0 or 1.")
+        expert_reference_index = bc_expert_player
 
         if bc_expert_ai:
             opponent_ai_names = []
@@ -190,14 +223,20 @@ class BehaviorCloning:
             if bc_num_runs <= 0:
                 raise ValueError("bc_num_runs must be > 0.")
             expert_ai_callable = self._resolve_ai_callable(bc_expert_ai)
-            opponents = [
-                [expert_ai_callable, self._resolve_ai_callable(opponent_ai_name)]
-                for opponent_ai_name in opponent_ai_names
-            ]
+            if expert_reference_index == 0:
+                opponents = [
+                    [expert_ai_callable, self._resolve_ai_callable(opponent_ai_name)]
+                    for opponent_ai_name in opponent_ai_names
+                ]
+            else:
+                opponents = [
+                    [self._resolve_ai_callable(opponent_ai_name), expert_ai_callable]
+                    for opponent_ai_name in opponent_ai_names
+                ]
             num_runs = [bc_num_runs for _ in opponents]
             print(
                 f"Using custom BC replay collection: {bc_expert_ai} vs {opponent_ai_names}, "
-                f"{bc_num_runs} episodes per opponent."
+                f"{bc_num_runs} episodes per opponent, expert as player {bc_expert_player}."
             )
         else:
             opponents = [
@@ -232,6 +271,9 @@ class BehaviorCloning:
             [microrts_ai.mayari, microrts_ai.naiveMCTSAI],
             ]
 
+            if expert_reference_index == 1:
+                opponents = [[ai_pair[1], ai_pair[0]] for ai_pair in opponents]
+
             num_runs = [ 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250,
                 200, 50, 200, 250, 250, 100, 300, 100, 250, 250, 250, 250, 250]
 
@@ -258,11 +300,13 @@ class BehaviorCloning:
                 max_steps=2048,
                 ais=ai_pair,
                 map_paths=["maps/16x16/basesWorkers16x16A.xml"],
-                reference_indexes=[0],
+                reference_indexes=[expert_reference_index],
             )
             env_transform = MicroRTSSpaceTransformbot(env)
 
             obs_batch, _, res = env_transform.reset()
+            if expert_reference_index == 1:
+                obs_batch = self._adjust_obs_to_player0(obs_batch, is_new_env=True)
 
             obsten = torch.zeros((0, 16, 16, 73), dtype=torch.int32)
             actten = torch.zeros((0, 256, 7), dtype=torch.int8)
@@ -279,21 +323,31 @@ class BehaviorCloning:
                         env_transform.render()
 
                     obs_arr.append(obs_batch)
+                    res_arr = np.asarray(res)
+                    if res_arr.ndim >= 2 and res_arr.shape[0] > expert_reference_index:
+                        selected_res = res_arr[[expert_reference_index]]
+                    else:
+                        selected_res = res
                     scten = torch.cat(
-                        [scten, self.get_scalar_features(obs_batch, res, 1)], dim=0
+                        [scten, self.get_scalar_features(obs_batch, selected_res, 1)], dim=0
                     )
 
                     obs_batch, _, dones, action, res, reward = env_transform.step("")
+                    if expert_reference_index == 1:
+                        obs_batch = self._adjust_obs_to_player0(obs_batch, is_new_env=False)
 
                     arr = np.zeros((256, 7), dtype=np.int64)
-                    for j in range(len(action[0])):
-                        arr[action[0][j][0]] = action[0][j][1:]
+                    expert_actions = action[expert_reference_index]
+                    if expert_reference_index == 1:
+                        expert_actions = self._adjust_actions_to_player0(expert_actions)
+                    for j in range(len(expert_actions)):
+                        arr[expert_actions[j][0]] = expert_actions[j][1:]
                     act_arr.append(arr)
 
                 if self.args.nurwins and reward.item() != 1:
                     pass
                 else:
-                    expert_name = ai_pair[0].__name__
+                    expert_name = ai_pair[expert_reference_index].__name__
                     expert_id = expert_name_to_id.setdefault(
                         expert_name, max(expert_name_to_id.values(), default=-1) + 1
                     )

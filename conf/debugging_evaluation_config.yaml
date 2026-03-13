@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8/MainExploiter/MainExploiter_0_update_350.pt",
+                          "saved_models/06_03_2026__finished_PPO_Basis_thesis__league_training_2_1_update_1809.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8",
+          "06_03_2026__finished_PPO_Basis_thesis__league_training_2_1_update_1809",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "10_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8"
+  exp_name: "06_03_2026__finished_PPO_Basis_thesis__league_training_2_1_update_1809"
   wandb_project_name: testing_Evaluation
   prod_mode: true
 

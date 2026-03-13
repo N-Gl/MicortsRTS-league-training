@@ -288,6 +288,7 @@ class MainPlayer(Player):
         self.args = args
         self.unit_bonus_distr = torch.zeros(4, device=agent.device) if args.zero_unit_bonus_for_main and args.unit_exploiters else None
         self.name = name
+        self.current_model = "Base_Agent"
 
     def _pfsp_branch(self):
         '''sucht einen neuen gegner für selfplay mit pfsp verteilung'''
@@ -461,7 +462,7 @@ class MainExploiter(Player):
         self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
         self.recent_reset = False
         self.name = f"MainExploiter_{main_exp_idx}"
-        self.current_model = "initial_agents"
+        self.current_model = None
 
     def get_match(self):
         '''wählt  main agenten als gegner, wenn die winrate gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
@@ -625,6 +626,7 @@ class LeagueExploiter(Player):
         self.unit_bonus_distr = get_new_unit_bonus_distr(self.args, self.agent.device)
         self.recent_reset = False
         self.name = f"LeagueExploiter_{league_exp_idx}"
+        self.current_model = "Base_Agent"
     def get_match(self):
         '''wählt einen gegner aus allen historischen gegnern mit pfsp verteilung.'''
 
@@ -780,6 +782,7 @@ class League:
 
         # nur aktive Spieler (nicht Historical)
         self._learning_agents =  []
+        self._total_games_per_current_model = collections.defaultdict(int)
         # for _ in range(args.num_main_envs):
         #   main_agent = MainPlayer(initial_agent, self._payoff, args=args)
         #   self._learning_agents.append(main_agent)
@@ -1021,6 +1024,15 @@ class League:
             last_logged_selfplay_games,
             indices_per_exploiter
         )
+        if args.main_exploiters_paths is not None and len(args.main_exploiters_paths) > 0:
+            if hasattr(done_agent, "current_model") and done_agent.current_model is not None:
+                model_name = done_agent.current_model
+                self._total_games_per_current_model[model_name] += 1
+                writer.add_scalar(
+                    f"total_games_per_current_model/{model_name}",
+                    self._total_games_per_current_model[model_name],
+                    args.global_step,
+                )
         if done_agent.ready_to_checkpoint():
             self.add_player(done_agent.checkpoint())
             log_models(writer, [done_agent], args.global_step)

@@ -226,7 +226,6 @@ def _log_local_results(
     start_time: int
 ):
     total_games = sum(local_stats.values())
-    avg_reward = float(np.mean(local_episode_rewards)) if local_episode_rewards else 0.0
     win_rate = local_stats["win"] / total_games if total_games else 0.0
     draw_rate = local_stats["draw"] / total_games if total_games else 0.0
     loss_rate = local_stats["loss"] / total_games if total_games else 0.0
@@ -239,17 +238,15 @@ def _log_local_results(
         f"Evaluation vs {opponent_name} over {total_games} games | "
         f"win: {local_stats['win']} ({win_rate:.2%}), "
         f"draw: {local_stats['draw']} ({draw_rate:.2%}), "
-        f"loss: {local_stats['loss']} ({loss_rate:.2%}), "
-        f"avg reward: {avg_reward:.3f}"
+        f"loss: {local_stats['loss']} ({loss_rate:.2%})"
     )
 
     sps = int(global_step / (time.time() - start_time))
     print("SPS:", sps)
 
 
-def _build_table_row(opponent_name: str, local_stats: dict, local_episode_rewards: List[float]):
+def _build_table_row(opponent_name: str, local_stats: dict, _local_episode_rewards: List[float]):
     total_games = sum(local_stats.values())
-    avg_reward = float(np.mean(local_episode_rewards)) if local_episode_rewards else 0.0
     win_rate = local_stats["win"] / total_games if total_games else 0.0
     draw_rate = local_stats["draw"] / total_games if total_games else 0.0
     loss_rate = local_stats["loss"] / total_games if total_games else 0.0
@@ -262,5 +259,4 @@ def _build_table_row(opponent_name: str, local_stats: dict, local_episode_reward
         win_rate,
         draw_rate,
         loss_rate,
-        avg_reward,
     )
