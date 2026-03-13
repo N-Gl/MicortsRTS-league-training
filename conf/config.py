@@ -42,6 +42,9 @@ class ExperimentConfig:
     gamma: float
     gae_lambda: float
     ent_coef: float
+    main_ent_coef_min: float
+    main_ent_coef_max: float
+    main_anneal_ent: bool
     exploiter_ent_coef: float
     exploiter_ent_coef_min: float
     exploiter_ent_coef_max: float

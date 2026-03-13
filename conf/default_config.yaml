@@ -88,6 +88,9 @@ ExperimentConfig:
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
   gae_lambda: 0.95              # new (BA Parameter) (GAE parameter λ = 0.95)
   ent_coef: 0.005               # new (BA Parameter) (Entropy coefficient η = 0.005)
+  main_ent_coef_min: ${ExperimentConfig.ent_coef}
+  main_ent_coef_max: ${ExperimentConfig.ent_coef}
+  main_anneal_ent: false
   exploiter_ent_coef: ${ExperimentConfig.ent_coef}  # separate entropy bonus for exploiters (defaults to main ent_coef)
   exploiter_ent_coef_min: 0.03
   exploiter_ent_coef_max: 0.0075
