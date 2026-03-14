@@ -11,10 +11,10 @@
 set -euo pipefail
 
 REPO_DIR="/home/nglaser/BA/MicortsRTS-league-training"
-CONFIG_NAME="league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI"
+CONFIG_NAME="league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_lightRush"
 RUN_NAMES=(
-  "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_3_0_4_main_anneal_ent_1"
-  "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_3_0_4_main_anneal_ent_2"
+  "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_lightRush_1"
+  "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_lightRush_2"
 )
 
 cd "${REPO_DIR}"

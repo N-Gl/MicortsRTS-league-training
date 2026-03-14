@@ -26,3 +26,17 @@ ExperimentConfig:
   start_epoch: 1
   warmup_epochs: 5
   nurwins: false
+
+
+
+
+
+# [Epoch 1] Train Loss: 0.038065, learning rate: 0.001000
+# [Epoch 2] Train Loss: 0.002428, learning rate: 0.000889
+# [Epoch 3] Train Loss: 0.001185, learning rate: 0.000778
+# [Epoch 4] Train Loss: 0.000744, learning rate: 0.000667
+# [Epoch 5] Train Loss: 0.000543, learning rate: 0.000556
+# [Epoch 6] Train Loss: 0.000424, learning rate: 0.000444
+# [Epoch 7] Train Loss: 0.000342, learning rate: 0.000333
+# [Epoch 8] Train Loss: 0.000279, learning rate: 0.000222
+# [Epoch 9] Train Loss: 0.000233, learning rate: 0.000111
