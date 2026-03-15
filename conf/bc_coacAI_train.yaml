@@ -9,7 +9,7 @@ ExperimentConfig:
   selfplay: false
   league_training: false
 
-  model_path: BC_coacAI_train/initial_BC/BC_coacAI_train_epoch_2
+  model_path: BC_coacAI_train/initial_BC/BC_coacAI_train_epoch_6
   BC_model_path:
   exp_name: BC_coacAI_train
   wandb_project_name: Ranged_focus
@@ -23,7 +23,7 @@ ExperimentConfig:
   # Train on already collected replays in replays/initial.
   newdata: false
   epochs: 8
-  start_epoch: 3
+  start_epoch: 7
   warmup_epochs: 5
   nurwins: false
 
@@ -53,3 +53,8 @@ ExperimentConfig:
 # try 3:
 # [Epoch 1] Train Loss: 0.017920, learning rate: 0.001000
 # [Epoch 2] Train Loss: 0.001441, learning rate: 0.000857
+# [Epoch 3] Train Loss: 0.000788, learning rate: 0.000714
+# [Epoch 4] Train Loss: 0.000557, learning rate: 0.000571
+# [Epoch 5] Train Loss: 0.000431, learning rate: 0.000429
+# [Epoch 6] Train Loss: 0.000347, learning rate: 0.000286
+# [Epoch 7] Train Loss: 0.000287, learning rate: 0.000143
