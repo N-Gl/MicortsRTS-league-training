@@ -98,7 +98,7 @@ ExperimentConfig:
   norm_adv: true
   anneal_lr: true
   clip_vloss: true
-  main_ent_coef_min: 0.03
+  main_ent_coef_min: 0.025
   main_ent_coef_max: 0.0075
   main_anneal_ent: true
 
@@ -117,7 +117,7 @@ ExperimentConfig:
   exploiter_norm_adv: true
   exploiter_anneal_lr: true
   exploiter_clip_vloss: true
-  exploiter_ent_coef_min: 0.04
+  exploiter_ent_coef_min: 0.035
   exploiter_ent_coef_max: 0.0075
   exploiter_anneal_ent: true
   
