@@ -10,8 +10,8 @@ ExperimentConfig:
   # model_path: league_models/old_ppo_args__12_12_25__04_12_25__PPO/Main_agent_backups/agent_update_520.pt
   BC_model_path: models/BCagent.pt       # BC_model_path == model_pathfalls BC_model_path None ist
   other_historicals_paths: # ["league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_15_exploiter_max_grad_norm_0_7_PPO_learning_rate_5e-5/MainPlayer/Historical_(MainPlayer)_1.pt"]
-  main_exploiters_paths: [["Worker_focused", "models/BC_workerRush_train_epoch_8_agent.pt"], ["Base_Agent", "models/finished_PPO_Basis_thesis.pt"], ["Base_Agent", "models/finished_PPO_Basis_thesis.pt"], ["Base_Agent", "models/finished_PPO_Basis_thesis.pt"]]
-  exploiter_reset_path_probs: {"models/BC_workerRush_train_epoch_8_agent.pt": ["Worker_focused", 0.25], "models/finished_PPO_Basis_thesis.pt": ["Base_Agent", 0.75]} # {"modelpath.pt": [name, probability]}
+  main_exploiters_paths: [["Worker_focused", "models/used_models/BC_workerRush_train_epoch_8_agent.pt"], ["Ranged_focused", "models/used_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_new_1_update_830.pt"], ["Light_focused", "models/used_models/BC_lightRush_train_epoch_9.pt"], ["Base_Agent", "models/finished_PPO_Basis_thesis.pt"]]
+  exploiter_reset_path_probs: {"models/used_models/BC_lightRush_train_epoch_9.pt": ["Light_focused", 0.05], "models/used_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_new_1_update_830.pt": ["Ranged_focused", 0.15], "models/BC_workerRush_train_epoch_8_agent.pt": ["Worker_focused", 0.15], "models/finished_PPO_Basis_thesis.pt": ["Base_Agent", 0.65]} # {"modelpath.pt": [name, probability]}
   exp_name: 06_03_2026__finished_PPO_Basis_thesis__league_training_3__1_BC_workerRush
   wandb_project_name: league_training
   wandb_group_name: league_training

@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/06_03_2026__finished_PPO_Basis_thesis__league_training_2_1_update_1809.pt",
+                          "models/BC_workerRush_train_epoch_8_agent.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "06_03_2026__finished_PPO_Basis_thesis__league_training_2_1_update_1809",
+          "BC_workerRush_train_epoch_8_agent",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "06_03_2026__finished_PPO_Basis_thesis__league_training_2_1_update_1809"
+  exp_name: "BC_workerRush_train_epoch_8_agent"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
@@ -24,6 +24,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 100
-  num_parallel_eval_envs: 100
+  num_eval_episodes: 10
+  num_parallel_eval_envs: 10
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
