@@ -1,4 +1,5 @@
 import collections
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import os
@@ -7,6 +8,23 @@ from typing import List, Tuple
 
 from agent_model import Agent
 from log_aggregate_result_table import Logger
+
+try:
+    from PIL import Image as PILImage
+except Exception:  # pragma: no cover - optional dependency in some runtimes
+    PILImage = None
+
+
+def _ensure_pillow_resampling_compat():
+    """
+    Torch TensorBoard expects PIL.Image.Resampling on newer Pillow versions.
+    Older Pillow only provides constants like Image.LANCZOS.
+    """
+    if PILImage is None or hasattr(PILImage, "Resampling"):
+        return
+    class _Resampling:
+        LANCZOS = PILImage.LANCZOS
+    PILImage.Resampling = _Resampling
 
 
 
@@ -783,6 +801,7 @@ class League:
         # nur aktive Spieler (nicht Historical)
         self._learning_agents =  []
         self._total_games_per_current_model = collections.defaultdict(int)
+        self._total_resets_per_current_model = collections.defaultdict(int)
         # for _ in range(args.num_main_envs):
         #   main_agent = MainPlayer(initial_agent, self._payoff, args=args)
         #   self._learning_agents.append(main_agent)
@@ -1029,13 +1048,22 @@ class League:
                 model_name = done_agent.current_model
                 self._total_games_per_current_model[model_name] += 1
                 writer.add_scalar(
-                    f"total_games_per_current_model/{model_name}",
+                    f"total_games_per_current_model_{done_agent.name}/{model_name}",
                     self._total_games_per_current_model[model_name],
                     args.global_step,
                 )
         if done_agent.ready_to_checkpoint():
+            if hasattr(done_agent, "current_model") and done_agent.current_model is not None:
+                # logg model used in this checkpoint
+                model_name = done_agent.current_model
+                self._total_resets_per_current_model[model_name] += 1
+                writer.add_scalar(
+                    f"total_resets_per_current_model_{done_agent.name}/{model_name}",
+                    self._total_resets_per_current_model[model_name],
+                    args.global_step,
+                )
+
             self.add_player(done_agent.checkpoint())
-            log_models(writer, [done_agent], args.global_step)
 
             if isinstance(done_agent, MainExploiter) or isinstance(done_agent, LeagueExploiter):
                 print(done_agent.name + f" created its {done_agent.num_resets_checkpoints}th new Historical checkpoint and reset its weights.")

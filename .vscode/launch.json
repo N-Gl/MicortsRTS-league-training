@@ -93,6 +93,19 @@
     },
 
     {
+      "name": "Python: dbg_league_training_3",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "args": ["--config-name", "dbg_league_training_3",],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      //"env": {
+      //"CUDA_VISIBLE_DEVICES": "1"
+      //}
+    },
+
+    {
       "name": "Python: selfplay",
       "type": "debugpy",
       "request": "launch",

@@ -385,12 +385,12 @@ class LeagueTrainer:
         if args.main_exploiters_paths is not None and len(args.main_exploiters_paths) > 0:
             model_idx = 0
             for ag in self.active_league_agents:
-                if isinstance(ag, league.MainExploiter):
+                if isinstance(ag, league.MainExploiter) and ag.current_model is None:
                     ag.current_model = self.initial_model_names[model_idx]
                     model_idx += 1
                     
     
-            league.log_models(writer, league_agents=self.active_league_agents)
+            # league.log_models(writer, league_agents=self.active_league_agents)
 
         if not args.cur_main_exploiter_path is None:
             for ag, _ in agent.get_unique_agents(self.active_league_agents, output_league_agents=True).items():
