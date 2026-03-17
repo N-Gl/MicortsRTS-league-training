@@ -696,6 +696,7 @@ This example is an extreme case, to show what can happen when there is insuffici
 % TODO: Das Problem kann man nicht einfach lösen, ohne immer einen zufälligen initialen Agenten zu wählen, was das Training sehr zeitaufwendig macht.
 % TODO: alternativ in Spielen, in denen ein gutes verständniss der reward landscape möglich ist oder empirisch gezeigt werden kann, kann man die clusters von lokalen Maxima identifizieren und gezielt initiale Agenten wählen, die in verschiedenen Clustern liegen, um die Vielfalt der Exploiters zu erhöhen.
 % TODO: das ist wahrscheinlich auch ein Grund, weshalb in AlphaStar der initiale Agent mit imitation learning trainiert wurde, da viele verschiedene Strategien durch den menschlichen Spieler abgedeckt werden, was die Vielfalt der Exploiters erhöht und damit die Leistung des Main Agent verbessert.
+% TODO: Wärenddessen, muss man in BC extra strategien weglassen, um die Evaluation zu verbessern, was die Leistung des Main Agent einschränkt, da er nicht von diesen Strategien lernen kann und viele weitere Agenten sind zu langsam, um sie mit BC zu trainieren, was die Vielfalt der Exploiters weiter einschränkt.
 
 \paragraph{Exploration.}
 
