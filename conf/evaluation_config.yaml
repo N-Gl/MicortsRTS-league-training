@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_vs_finished_PPO_Basis_thesis/Main_agent_backups/agent_update_180.pt",
+                          "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_vs_finished_PPO_Basis_thesis",
+          "finished_PPO_Basis_thesis",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_coacAI_vs_finished_PPO_Basis_thesis"
+  exp_name: "finished_PPO_Basis_thesis"
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
@@ -24,6 +24,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 10
-  num_parallel_eval_envs: 10
-  num_parallel_selfplay_eval_games: 10        # Number of parallel environments 1 == 2 Selfplay envs
+  num_eval_episodes: 300
+  num_parallel_eval_envs: 300
+  num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
