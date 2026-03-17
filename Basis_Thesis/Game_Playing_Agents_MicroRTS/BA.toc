@@ -48,6 +48,12 @@
 \contentsline {paragraph}{New Initial Agents.}{11}{section*.42}%
 \contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}%
 \contentsline {section}{\numberline {4}\hskip -1em.~Experiments}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}\hskip -1em.~Hyperparameters.}{11}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}\hskip -1em.~Evaluation.}{11}{subsection.4.2}%
 \contentsline {paragraph}{Checkpoint and Reset Statistics.}{11}{section*.43}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{11}{section.5}%
-\contentsline {section}{Erkl\"arung}{16}{figure.5}%
+\contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results.}{11}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion.}{12}{subsection.4.4}%
+\contentsline {paragraph}{Exploration, Effects of new Initial Agents.}{12}{section*.44}%
+\contentsline {paragraph}{Exploration.}{12}{table.caption.52}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{12}{section.5}%
+\contentsline {section}{Erkl\"arung}{18}{figure.5}%

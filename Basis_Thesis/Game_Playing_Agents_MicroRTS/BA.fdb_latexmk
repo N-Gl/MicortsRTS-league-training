@@ -1,14 +1,15 @@
 # Fdb version 4
-["bibtex BA"] 1773415438.82527 "BA.aux" "BA.bbl" "BA" 1773415542.27189 0
+["bibtex BA"] 1773758571.83953 "BA.aux" "BA.bbl" "BA" 1773759593.86849 0
   "./references.bib" 1772712280.51071 13083 b6345d511968894087d7bf87b2facde3 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "BA.aux" 1773415542.16392 18877 dd991dee9eed2e96096be13f3485d66d "pdflatex"
+  "BA.aux" 1773759593.77702 20525 d192b7ecff294cf1e9c067bc257fc505 "pdflatex"
   (generated)
   "BA.bbl"
   "BA.blg"
   (rewritten before read)
-["pdflatex"] 1773415541.36975 "BA.tex" "BA.pdf" "BA" 1773415542.27202 0
+["pdflatex"] 1773759593.04754 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1773759593.8686 0
   "/etc/texmf/web2c/texmf.cnf" 1770636971.26796 475 c0e671620eb5563b2130f56340a5fde8 ""
+  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1773759592.88062 85967 e723d2d46b8292f1fd8fe65e38cf7089 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -147,19 +148,20 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770636977.92702 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770636989 7277872 ffab420a662be251f461743f3256ccdd ""
-  "BA.aux" 1773415542.16392 18877 dd991dee9eed2e96096be13f3485d66d "pdflatex"
-  "BA.bbl" 1773415438.83576 4556 e461803caf82c8a80a76a0385cdc9569 "bibtex BA"
-  "BA.brf" 1773415542.16392 3381 18109f4ae4c9f2767d1d4f0bea1303aa "pdflatex"
-  "BA.out" 1773415542.16392 2191 071135aca2928851e22e7f119e4923c4 "pdflatex"
-  "BA.tex" 1773415536.30515 72675 de671e59a7ec91bfdba57656a494d2ea ""
-  "BA.toc" 1773415542.16392 3892 5c48dd686573eab3c2f99d8024e3e6ee "pdflatex"
+  "BA.aux" 1773759593.77702 20525 d192b7ecff294cf1e9c067bc257fc505 "pdflatex"
+  "BA.bbl" 1773758571.84714 4498 01912933fc76493dfac67e01010edbef "bibtex BA"
+  "BA.brf" 1773759593.77702 3493 01c332fae8136f410418eeeba6b2af15 "pdflatex"
+  "BA.out" 1773759593.77702 2705 da93442bb3f08eed2864eaf120a6970c "pdflatex"
+  "BA.tex" 1773759592.88062 85967 e723d2d46b8292f1fd8fe65e38cf7089 ""
+  "BA.toc" 1773759593.77702 4410 f5e750c2d35de3d273ac0d86171ff3d9 "pdflatex"
   "hhu_logo.png" 1770636797.59944 8264 c1f1bd10a1563342031d75de2fe3fc15 ""
   "images/16x16.png" 1770636797.60726 5264 3bfdf6f174daeff65e05470c243d5d81 ""
   "images/Barracks.png" 1772712280.50711 212 2e9be254617f9bf748a6332eddca254b ""
   "images/Base.png" 1772712280.50711 250 08b60807e1715726793e9505a2aefdad ""
-  "images/Base_Agent_evaluation.csv" 1773415027.61891 494 666be286b7839dd97567c4f0180905a9 ""
+  "images/Base_Agent_evaluation.csv" 1773751720.73933 537 a1dc2b20832d98f6a84effa8ba85b3a3 ""
   "images/Heavy.png" 1772712280.50711 486 d939c1fad47347095317e62746c01f0d ""
   "images/Light.png" 1772712280.50711 410 2aab3c17e2714892f14a89fd7895f1e2 ""
+  "images/Main_Agent_evaluation_old.csv" 1773751030.2779 599 f7c018ae869a92176d185c7b99bfbb2b ""
   "images/Matchmaking.pdf" 1773225396.22803 76176 5bc3dc7d69d7b2791518532bdc6accf7 ""
   "images/Ranged.png" 1772712280.50711 431 4470b66b6c8a83247ff66e07af560096 ""
   "images/Resource.png" 1772712280.50711 274 a0f49ec63409536568be777434cb9901 ""
@@ -167,6 +169,7 @@
   "images/action_konflikt.png" 1772712280.51071 524725 881440d98751b47bd16df384bc6cd764 ""
   "images/adjust_obs.pdf" 1772712344.41614 113777 e2f39db1dafa10528f4dcd77a59459ec ""
   "images/focused_strong_boosted_with_draws.pdf" 1773067519.5298 30368 ba5cf7e72835b04d8e982128e0c17220 ""
+  "images/main_Agent_evaluation_no_worker_focus.csv" 1773756496.03685 580 dab959462681d3996b4b8ed8ec556578 ""
   "sarmata.sty" 1770636797.59548 22690 28a43753b8bb8493d62e7a16d2556ab7 ""
   (generated)
   "BA.aux"
