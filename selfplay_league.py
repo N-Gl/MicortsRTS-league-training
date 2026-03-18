@@ -308,25 +308,16 @@ class LeagueTrainer:
         else:
             return self.args.ent_coef, self.args.ent_coef
 
-    def _set_main_ent_anneal_start(self, start_update: int, start_frac: float) -> None:
-        self.main_ent_anneal_start_update = start_update
-        self.main_ent_anneal_start_frac = float(np.clip(start_frac, 0.0, 1.0))
-
-    def _get_main_ent_coef(self, update: int, num_updates: int) -> float:
+    def _get_main_ent_coef(self) -> float:
         if not self.args.main_anneal_ent:
             return float(self.args.ent_coef)
 
         ent_min, ent_max = self._get_main_ent_bounds()
-        if not hasattr(self, "main_ent_anneal_start_update"):
-            self._set_main_ent_anneal_start(update, 1.0)
-
-        start_update = self.main_ent_anneal_start_update
-        start_frac = self.main_ent_anneal_start_frac
-        if num_updates <= 0:
-            frac = 0.0
-        else:
-            progress = (update - start_update) / num_updates
-            frac = max(start_frac * (1.0 - progress), 0.0)
+        total_timesteps = self.args.total_timesteps
+        batch_size = self.args.batch_size
+        global_step = self.args.global_step
+        completed_steps = global_step - batch_size
+        frac = 1.0 - (completed_steps / total_timesteps)
         return ent_min + (ent_max - ent_min) * frac
 
     def _set_exploiter_ent_anneal_start(self, exploiter, start_update: int, start_frac: float) -> None:
@@ -987,7 +978,7 @@ class LeagueTrainer:
             # inds: indices from the batch
             main_batch_size = int(self.main_indices_count * args.num_steps)
             main_minibatch_size = int(main_batch_size // args.n_minibatch) # new (BA Parameter) (minibatch size = 3072 (=(num_envs*num_steps)/ n_minibatch = (24*512)/4))
-            main_ent_coef = self._get_main_ent_coef(update, num_updates)
+            main_ent_coef = self._get_main_ent_coef()
 
             
             
