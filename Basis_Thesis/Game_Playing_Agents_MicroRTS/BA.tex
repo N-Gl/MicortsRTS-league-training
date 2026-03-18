@@ -623,51 +623,18 @@ There were (???) checkpoints for the Main Agent, (???) checkpoints for the Main 
 Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for each agent type and the win rate of the checkpointed agent against the Main Agent, averaged over the last 200 games and then averaged over all resets.
 Checkpoints without resets are not included in the win rates.
 
-% TODO: ab hier überarbeiten
 \subsection{Results}
-The Agent learned to keep the Base defended, even while attacking with other units, which is a substantial improvement over the Base Agent, which often left the Base undefended while attacking.
+The Agent learned to keep the Base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the Base undefended while attacking.
 % TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used in edge cases in which Ranged Units are so effective that even one Ranged Unit can make a difference (e.g., when the opponent has only Workers or when only a small number of units remain and avoid the Agent in order to force a draw).
-As seen in Tables \ref{tab:base_agent_evaluation} and \ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against (???)all the diverse opponents in the evaluation.
+As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against ((???)all) most evaluated opponents.
 The win rates against the agents used in training are now (???)near 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
 The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
 However, the Main Agent still shows improvement over the results reported in that thesis, which had a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
-% TODO: use new evaluation results
-The trained Main Agent also performs well against the Base Agent, which it trained against, with a win rate of (???)83\%.
-The win rate against RandomBiasedAI also improved from 79\% to (???)92\%, showing that the trained Agent performs substantially better against bots that try to draw the game instead of winning in comparison to the Base Agent.
-The agents in the section "Other Bots" are substantially stronger than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against (???)all of them.
-Highlights include the win rate against Rojo, which improved from 81\% to (???)99\% and the win rate against MixedBot also increased from 43\% to (???)53\%.
-While the win rate against Izanagi fell from 72\% to (???)63\%, the loss rate improved from 16\% to (???)11\%, suggesting that the Main Agent now defends the Base more while attacking.
-% TODO: entfernen:
-% Evaluation vs coacAI over 100 games | win: 97 (97.00%), draw: 2 (2.00%), loss: 1 (1.00%)
-% SPS: 1552
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs mayari over 100 games | win: 64 (64.00%), draw: 6 (6.00%), loss: 30 (30.00%)
-% SPS: 1502
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs passiveAI over 100 games | win: 100 (100.00%), draw: 0 (0.00%), loss: 0 (0.00%)
-% SPS: 1512
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs workerRushAI over 100 games | win: 99 (99.00%), draw: 1 (1.00%), loss: 0 (0.00%)
-% SPS: 1516
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs lightRushAI over 100 games | win: 90 (90.00%), draw: 0 (0.00%), loss: 10 (10.00%)
-% SPS: 1529
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs randomAI over 100 games | win: 97 (97.00%), draw: 3 (3.00%), loss: 0 (0.00%)
-% SPS: 1523
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs randomBiasedAI over 100 games | win: 80 (80.00%), draw: 20 (20.00%), loss: 0 (0.00%)
-% SPS: 1515
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs rojo over 100 games | win: 77 (77.00%), draw: 14 (14.00%), loss: 9 (9.00%)
-% SPS: 1511
+The trained Main Agent also performs well against the Base Agent, against which it was trained, with a win rate of (???)83\%.
+The win rate against RandomBiasedAI also improved from 79\% to (???)92\%, showing that the trained Agent performs substantially better against bots that try to draw the game instead of winning, compared to the Base Agent.
+The agents in the section "Other Bots" are considerably stronger than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against ((???)all) most of these opponents.
+Highlights include the win rate against Rojo, which improved from 81\% to (???)99\%, while the win rate against MixedBot also increased from 43\% to (???)53\%.
+The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate improved from 16\% to (???)11\%, suggesting that the Main Agent now defends the Base more effectively while attacking.
 
 
 
@@ -675,7 +642,7 @@ While the win rate against Izanagi fell from 72\% to (???)63\%, the loss rate im
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
 
-
+% TODO: ab hier überarbeiten
 \subsection{Discussion.}
 LT improved the Main Agent’s performance against a wide range of opponents, including the built-in bots and the Base Agent, which it trained against and further genaralized to other bots, not used in the training.
 This can improve the Main Agent’s performance farther than ppo could without the Agent overfitting to the Agents used in the training.
