@@ -569,6 +569,16 @@ class MainExploiter(Player):
         # ]
         # win_rates = self._payoff[self, historical]
 
+
+        main = [
+            player for player in self._payoff.players
+            if isinstance(player, MainPlayer)
+        ]
+        win_rate = self._payoff[self, main][0]
+        if win_rate > self.args.main_exploiter_winrate_threshold:
+            return True
+
+
         if self.args.main_exploiter_ready_use_historicals:
             historical = [
                 player for player in self._payoff.players

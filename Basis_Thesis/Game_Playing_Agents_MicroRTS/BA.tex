@@ -739,7 +739,7 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \csvreader[
     late after line=\\,
     filter test=\ifnumless{\thecsvinputline}{4}
-]{images/Base_Agent_evaluation.csv}{}{
+]{images/Base_Agent_evaluation_300.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
@@ -747,7 +747,7 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \csvreader[
     late after line=\\,
     filter ifthen=\value{csvinputline}>3 \and \value{csvinputline}<9
-]{images/Base_Agent_evaluation.csv}{}{
+]{images/Base_Agent_evaluation_300.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
@@ -755,14 +755,14 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \csvreader[
     late after line=\\,
     filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<15
-]{images/Base_Agent_evaluation.csv}{}{
+]{images/Base_Agent_evaluation_300.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \csvreader[
     late after line=\\,
     filter test=\ifnumequal{\thecsvinputline}{15}
-]{images/Base_Agent_evaluation.csv}{}{
+]{images/Base_Agent_evaluation_300.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \bottomrule
