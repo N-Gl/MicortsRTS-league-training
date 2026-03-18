@@ -1272,6 +1272,31 @@ def test_adjust_selfplay_masks_rolls_and_flips():
         assert torch.equal(split_masks[idx][:start], original[idx][:start])
 
 
+def test_main_ent_coef_anneals_over_full_training_progress():
+    selfplay_league = pytest.importorskip("selfplay_league")
+    trainer = selfplay_league.LeagueTrainer.__new__(selfplay_league.LeagueTrainer)
+    trainer.args = _make_args(
+        main_anneal_ent=True,
+        ent_coef=0.01,
+        main_ent_coef_min=0.0075,
+        main_ent_coef_max=0.025,
+        total_timesteps=1000,
+        batch_size=100,
+        global_step=100,
+    )
+
+    trainer.main_ent_anneal_start_update = 999
+    trainer.main_ent_anneal_start_frac = 0.0
+
+    assert trainer._get_main_ent_coef() == pytest.approx(0.025)
+
+    trainer.args.global_step = 600
+    assert trainer._get_main_ent_coef() == pytest.approx(0.01625)
+
+    trainer.args.global_step = 1000
+    assert trainer._get_main_ent_coef() == pytest.approx(0.00925)
+
+
 def _load_league_sp_xp_config():
     omegaconf = pytest.importorskip("omegaconf")
     base_cfg = omegaconf.OmegaConf.load("conf/default_config.yaml")
