@@ -659,18 +659,21 @@ The results show that LT was able to discover policies that generalize well whil
 \paragraph{Exploration: Effects of New Initial Agents.}
 It was more difficult than expected to generate diverse exploiters because of the long transitions without reward between strategies for different unit types, which is why the introduction of new initial agents was particularly important.
 The new initial agents contributed to generalization across diverse opponents, which is reflected in the improved performance against a wider range of opponents compared to the evaluation of the previous run that did not use the new initial agents shown in Table~\ref{tab:main_agent_evaluation_no_worker_focus}.
-The most notable difference is that, in the training without the new initial agents, no opponents similar to WorkerRushAI developed, resulting in a very low win rate against WorkerRushAI, while the new Main Agent as well as the Base Agent have no difficulty defeating WorkerRushAI.
+The most notable difference is that, during the training without the new initial agents, no opponents similar to WorkerRushAI developed, resulting in a very low win rate against WorkerRushAI, while the new Main Agent as well as the Base Agent have no difficulty defeating WorkerRushAI.
 This lack of opponent diversity is also seen in the win rates against Droplet, which also has a different strategy than the Base Agent.
 This example is an extreme case showing what can happen when opponent diversity is  insufficient.
 There also were many other training sessions, after which the Main Agent had less problems defeating any of the built-in bots, than the Base Agent.
 
-It is likely, that exploiters can realistically find all different strategies within the stratedies for its own focused unit type, however this is a major weakness of the training approach of this thesis: 
-exploiters remain close to their initial agents, because otherwise training would take too long. 
-As a result, it is possible that not all strategies or weaknesses of the Main Agent are theoretically covered by the exploiters.
-However, in the final training, the final unit composition in Figure~(???) per potential initial agent shows that, although rarely, strategies for other unit types are still found. 
-This indicates that such strategies are possible, but very time-consuming to learn, and suggests that the diversity of the exploiters is nevertheless relatively high.
-For example, the agent focused on Light units learned to also frequently uses Ranged units, even though it was not initialy trained with them. 
-This also shows that mixed strategies can be achieved with this training setup.
+The results show that the exploiter are able to efficiently exploit the Main Agent, while staying within their respective unit type focus.
+This suggests, that exploiter diversity within the set of strategies for their respective focused unit type is sufficient, to find weaknesses in the Base Agent.
+A weakness of the training approach is that exploiters would need a very long time to discover strategies centered on different unit types, because transitions between such strategies often involve long reward-free phases.
+As a result, it is possible for strategies or weaknesses to exist in the Main Agent, that are only exploitable by similarly difficult to reach exploiter states, that are unlikely to be represented by an historical exploiter after the training.
+We do not know whether such weaknesses actually exist.
+% For example, strategies with mixed unit types, which are likely to be more difficult to find than strategies for a single unit type, may not be represented by any historical exploiter after the training, which can limit the performance of the Main Agent against opponents using such strategies.
+However, the final unit composition in Figure~(???) for each potential initial agent shows that, at least some mixed strategies can be achieved with this training setup.
+For example, the agent focused on Light units learned to also frequently use Ranged units, even though it was not initially trained with them.
+We have initial agents for each unit type for the exploiters, the many examples of working exploits within the set of strategies for the focused unit types and many other examples, that also show the exploiters capability of exploring strategies with mixed unit types. 
+This suggests that the exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Base Agent, even for other agents not in the training or evaluation.
 
 % Wahrscheinlich kann es unterschiedliche Strategie innerhal der eigenen unit types finden,
 % das ist aber auch die größte schwachstelle dieses Trainings (Exploiter bleiben in der Nähe ihrer initialen Agtenten, weil sonst das Training zu lange dauert, aber dadurch kann es passieren, das nicht alle Strategien/Schwachstellen des Main Agent abgedeckt werden.
