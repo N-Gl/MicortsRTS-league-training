@@ -644,8 +644,11 @@ The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate 
 
 % TODO: ab hier überarbeiten
 \subsection{Discussion.}
-LT improved the Main Agent’s performance against a wide range of opponents, including the built-in bots and the Base Agent, which it trained against and further genaralized to other bots, not used in the training.
-This can improve the Main Agent’s performance farther than ppo could without the Agent overfitting to the Agents used in the training.
+LT improved the Main Agent’s ((???)win rate, draw rate and loss rate) performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized further to other bots that were not used in training.
+This can improve the Main Agent’s performance further than PPO could without the agent overfitting to the opponents used in training.
+With LT the agent even achieved greater win rates against the bots, that were used in the Base Agents training, than the Base Agent itself, which shows that with LTs generalization is an improved state over the generalization achivable, by stopping PPO from overfitting.
+In PPO, when an generalized state is reached the training has to be stopped however there are more possible agent states, that are just as generalized and stronger against even the trainings opponents, but the training cannot reach them, because it would overfit.
+Meaning with PPO we can only see a tiny subset of the possible generalized states between when the agent improved and when it overfitted, while with LT we can reach many more of these states, which can lead to much stronger agents.
 
 % Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
 % TODO: <-- Verbesserung überträgt sich auch zu anderen besseren ähnlichen Agenten?
