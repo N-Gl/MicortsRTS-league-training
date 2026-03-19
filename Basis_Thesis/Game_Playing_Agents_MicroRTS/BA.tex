@@ -664,6 +664,14 @@ This lack of opponent diversity is also seen in the win rates against Droplet, w
 This example is an extreme case showing what can happen when opponent diversity is  insufficient.
 There also were many other training sessions, after which the Main Agent had less problems defeating any of the built-in bots, than the Base Agent.
 
+It is likely, that exploiters can realistically find all different strategies within the stratedies for its own focused unit type, however this is a major weakness of the training approach of this thesis: 
+exploiters remain close to their initial agents, because otherwise training would take too long. 
+As a result, it is possible that not all strategies or weaknesses of the Main Agent are theoretically covered by the exploiters.
+However, in the final training, the final unit composition in Figure~(???) per potential initial agent shows that, although rarely, strategies for other unit types are still found. 
+This indicates that such strategies are possible, but very time-consuming to learn, and suggests that the diversity of the exploiters is nevertheless relatively high.
+For example, the agent focused on Light units learned to also frequently uses Ranged units, even though it was not initialy trained with them. 
+This also shows that mixed strategies can be achieved with this training setup.
+
 % Wahrscheinlich kann es unterschiedliche Strategie innerhal der eigenen unit types finden,
 % das ist aber auch die größte schwachstelle dieses Trainings (Exploiter bleiben in der Nähe ihrer initialen Agtenten, weil sonst das Training zu lange dauert, aber dadurch kann es passieren, das nicht alle Strategien/Schwachstellen des Main Agent abgedeckt werden.
 % Allerdings kann man in dem entgültigen Training durch die Anzahl pro unit am ende des Spieles für die fokussierten initialen Agenten erkennen, das zwar selten aber doch Strategien für andere unit types gefunden werden, was zeigt, dass es möglich ist, aber eben sehr zeitaufwendig ist und das die "diversity" der Exploiter dennoch hoch ist.
