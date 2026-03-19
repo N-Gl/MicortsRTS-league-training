@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  19 MAR 2026 12:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  19 MAR 2026 13:56
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -608,14 +608,14 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 ]
 
 pdfTeX warning: pdflatex (file ./images/Matchmaking.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/Matchmaking.pdf, id=475, 975.645pt x 650.43pt>
+<images/Matchmaking.pdf, id=476, 975.645pt x 650.43pt>
 File: images/Matchmaking.pdf Graphic file (type pdf)
 <use images/Matchmaking.pdf>
-Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1105.
+Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1111.
 (pdftex.def)             Requested size: 496.85779pt x 331.23853pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1106.
+(caption)                particular \caption on input line 1112.
 See the caption package documentation for explanation.
 
 [18
@@ -635,21 +635,21 @@ LaTeX Warning: There were undefined references.
 Package rerunfilecheck Info: File `BA.out' has not changed.
 (rerunfilecheck)             Checksum: 185B6B70C2E21C620F21C5ADCCF3DDE6;3456.
 Package rerunfilecheck Info: File `BA.brf' has not changed.
-(rerunfilecheck)             Checksum: 5ED4D21A7FFEA1CC61EC525C413BF76C;3641.
+(rerunfilecheck)             Checksum: 6326731E9D35206E98BE501E9EB1D11E;3697.
  ) 
 Here is how much of TeX's memory you used:
  15735 strings out of 476129
  273204 string characters out of 5793187
- 1997975 words of memory out of 5000000
+ 1998975 words of memory out of 5000000
  37375 multiletter control sequences out of 15000+600000
  595191 words of font info for 107 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  90i,14n,93p,688b,636s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on BA.pdf (20 pages, 900769 bytes).
+Output written on BA.pdf (20 pages, 901100 bytes).
 PDF statistics:
- 577 PDF objects out of 1000 (max. 8388607)
- 493 compressed objects within 5 object streams
+ 578 PDF objects out of 1000 (max. 8388607)
+ 494 compressed objects within 5 object streams
  117 named destinations out of 1000 (max. 500000)
  250 words of extra memory for PDF output out of 10000 (max. 10000000)
 

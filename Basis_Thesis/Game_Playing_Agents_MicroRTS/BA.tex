@@ -641,25 +641,31 @@ The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate 
 
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
+% TODO: replace all (???)
 
 % TODO: ab hier überarbeiten
 \subsection{Discussion}
-LT improved the Main Agent’s ((???)win rate, draw rate, and loss rate) performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized further to other bots that were not used in training.
-This can improve the Main Agent’s performance further than PPO could without the agent overfitting to the opponents used in training.
-With LT, the agent even achieved greater win rates against the bots that were used in the Base Agent’s training than the Base Agent itself, which shows that LT improves generalization beyond the level achievable with PPO by preventing overfitting.
-In PPO, when a generalized state is reached, the training has to be stopped. However, there are more possible agent states that are just as generalized and performe better even against the training opponents, but the PPO training cannot reach them because it would overfit.
-This means that with PPO we only pass through a tiny subset of the possible generalized states between the point at which the agent improves and the point at which it overfits, while with LT we can reach many more of these states, which can lead to much stronger agents.
+LT improved the Main Agent’s ((???)win, draw, and loss rates) performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized to other bots that were not used in training.
+This can improve the Main Agent’s performance further than PPO could by itself, without the agent overfitting to the opponents used in training, even after many different training sessions and further PPO training \cite{huft2023microrts}.
+The underlying intuition is that pure PPO does not search for well-generalizing policies. Instead, the training optimizes performance against the limited set of training opponents. 
+It therefore may pass only briefly through policies that generalize well, before continuing towards more specialized solutions.
+As a result, within a single run, PPO may only traverse a limited subset of the policies with good generalization that are in principle reachable.
+In contrast, LT changes the training opponent distribution such that robust performance against diverse opponents becomes part of the optimization target itself.
+This makes it more likely that training explores and retains a broader range of policies with good generalization.
+The results show that LT was able to discover policies that generalize well while also outperforming the Base Agent even against the original training opponents, despite being trained against a larger set of opponents.
 
 % Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
 % TODO: <-- Verbesserung überträgt sich auch zu anderen besseren ähnlichen Agenten?
 \paragraph{Exploration, Effects of new Initial Agents.}
-% TODO: schwerer als erwartet strategie zu finden, die andere unit types verwenden (weil dazwischen sehr lange kein reward ist)
-
+It weas more difficult than expected, to generate diverse exploiters, because of the long periods without reward between strategies for different unit types.
 The new initial agents contributed to the generalization against diverse opponents, which is reflected in the improved performance against a wider range of opponents compared to the evaluation of the previous run that did not use the new initial agents shown in the table \ref{tab:main_agent_evaluation_no_worker_focus}.
 The biggest difference is that in the training without the new initial agents, no opponents simmilar to workerRushAI developed, resulting in a very low win rate against workerRushAI, while the new Main Agent as well as the Base Agent have no problem defeating workerRushAI.
 The lack of opponent diversity is also seen in the win rates against droplet, which also has a different strategy than the Base Agent.
 This example is an extreme case, to show what can happen when there is insufficient opponent diversity.
 
+% Wahrscheinlich kann es unterschiedliche Strategie innerhal der eigenen unit types finden,
+% das ist aber auch die größte schwachstelle dieses Trainings (Exploiter bleiben in der Nähe ihrer initialen Agtenten, weil sonst das Training zu lange dauert, aber dadurch kann es passieren, das nicht alle Strategien/Schwachstellen des Main Agent abgedeckt werden.
+% Allerdings kann man in dem entgültigen Training durch die Anzahl pro unit am ende des Spieles für die fokussierten initialen Agenten erkennen, das zwar selten aber doch Strategien für andere unit types gefunden werden, was zeigt, dass es möglich ist, aber eben sehr zeitaufwendig ist und das die "diversity" der Exploiter dennoch hoch ist.
 
 % TODO: braucht lange um zu trainieren
 % TODO: wärend wir keine Probleme mit zyklischem Training wie in SP haben haben wir dennoch Probleme, weil wir nicht den Agenten unendlich lange trainieren können.
