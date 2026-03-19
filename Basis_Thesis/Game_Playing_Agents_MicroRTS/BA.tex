@@ -8,7 +8,7 @@
 %%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
 %\usepackage[review]{sarmata}      % To produce the REVIEW version
 \usepackage{sarmata}              % To produce the CAMERA-READY version
-%\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+%\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g., for an arXiv version
 
 % Include other packages here, before hyperref.
 
@@ -115,7 +115,8 @@ These include:
     %TODO: füge weitere hinzu
     \item the efficient management and selection of opponents for training the Main Agent and for the specialized agents,
     \item stabilizing the training process under non-constant opponent distributions,
-    \item dealing with large action spaces and sparse or delayed rewards, and
+    \item dealing with large action spaces and sparse or delayed rewards,
+    \item ensuring opponent diversity through sufficient exploration and preventing overfitting to specific opponents or strategies
 %\item assessing the actual generalization capability of the trained agents.
 \end{itemize}
 In addition, we will compare and evaluate the Results emperically. 
@@ -134,8 +135,7 @@ This two-stage approach, in which a policy pre-trained with BC is refined by a D
 
 \section{Related Work}
 \label{sec:related-work}
-% TODO: \textbf und \paragraph sehen sehr ähnlich aus. (\paragraph sollte unter \textbf liegen)
-\noindent\textbf{Game Playing Agents in MicroRTS}
+\subsubsection{Game Playing Agents in MicroRTS}
 The (unpublished) bachelor’s thesis by M. Huft that underlies this work develops a competitive agent for MicroRTS and evaluates the hybrid training pipeline consisting of BC, BC-FT, and PPO for the base agent from the introduction \cite{huft2023microrts}.
 
 \paragraph{Results and Limitations.}
@@ -171,7 +171,7 @@ naiveMCTS        & 0 & 5& 3 \\
 \end{table}
 \vspace{10pt}
 
-\noindent\textbf{MicroRTS-Py (Gym-$\mu$RTS)}
+\subsubsection{MicroRTS-Py (Gym-$\mu$RTS)}
 Huang et al. provide an efficient Gym-compatible interface for our environment MicroRTS \cite{Ontanon2013CombinatorialBandit} with \emph{Gym-$\mu$RTS} / \emph{MicroRTS-Py} \cite{huang2021gym}.
 MicroRTS-Py is an established and widely used DRL baseline that enables the investigation of DRL approaches in full real-time strategy game scenarios without requiring extensive technical infrastructure such as high-performance computing clusters \cite{huang2021gym}.
 
@@ -189,7 +189,7 @@ Against the built-in bots of MicroRTS, which are based on heuristic rules, the P
 SP was also evaluated in the work. However, there was a bug in the code that likely strongly affected the results for SP \cite{goodfriend2024raisocketai}.
 \vspace{10pt}
 
-\noindent\textbf{RAISocketAI}
+\subsubsection{RAISocketAI}
 In 2023 RAISocketAI was the first DRL agent which won the IEEE MicroRTS Competition. RAISocketAI includes a re-implementation of MicroRTS-Py, which is used in our code. 
 Among other things, data generation via replays is an important basis for BC \cite{huft2023microrts}, and a bug in the old implementation was fixed that marked non-owned resources as owned resources when the agent is player 2. 
 According to Goodfriend, this likely caused SP in the previous MicroRTS-Py implementation to yield no improvements, The RAISocketAI implementation of FSP achieved an average win rate of 91\% against the same MicroRTS built-in bots as in MicroRTS-Py, which is significantly higher than 84\% in the previous implementation. 
@@ -198,11 +198,11 @@ With fine-tuning on CoacAI and Mayari, the average win rate against the built-in
 LT was not implemented or evaluated in the work.
 \vspace{10pt}
 
-\noindent\textbf{BeClone}
+\subsubsection{BeClone}
 \emph{BeClone} demonstrated the effectiveness of BC with DRL fine-tuning in MicroRTS-Py using a two-phase training strategy for RTS agents: first, an initial policy is learned from experts via BC, and subsequently an RL fine-tuning is performed using \emph{Advantage Actor-Critic} (A2C) \cite{martin2021beclone}.
 \vspace{10pt}
 
-\noindent\textbf{AlphaStar}
+\subsubsection{AlphaStar}
 AlphaStar is a DRL agent for the complex RTS game StarCraft II, which was developed by DeepMind \cite{vinyals2019alphastar}.
 It demonstrates that LT can decisively contribute to robustness in complex RTS domains. 
 The agent in AlphaStar was pre-trained with \emph{imitation learning} from human replays. 
@@ -275,7 +275,7 @@ The \emph{unit action space} is defined as an 8-dimensional vector per cell:
 \]
 The components of the unit-action vector are defined as follows:
 \begin{itemize}
-\item \textbf{pos:} Linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space; e.g., for a $16\times 16$ grid: range: [0, 255]).
+\item \textbf{pos:} Linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space (e.g., for a $16\times 16$ grid: range: [0, 255])).
 \item \textbf{type:} Action type (range: [0, 5], 0: Nop, 1: Move, 2 Harvest, 3: Return, 4: Produce, 5: Attack).
 \item \textbf{$d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}$:} Directions (range: [0, 3], 0: North, 1: East, 2: South, 3: West) for the respective actions.
 \item \textbf{pType:} Type of the unit to be produced. (range: [0, 6], 0: Resource, 1: Base, 2: Barracks, 3: Worker, 4: Light, 5: Heavy, 6: Ranged).
@@ -362,7 +362,7 @@ Heinrich et al. also demonstrate this empirically in poker experiments \cite{hei
 The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of historical agents (snapshots of the Main Agent at different training stages).
 
 \paragraph{Problem with the implementation.} 
-If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e.g. when both players want to move to the same cell).
+If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e.g., when both players want to move to the same cell).
 This gives player 2 a disadvantage, although it has only a minor effect on the results. 
 The actual problem is that the agent can exploit this prioritization in FSP if it learns that optimizing the training objective can be achieved primarily by improving player 1, while deliberately performing poorly as player 2.
 After sufficient training, the agent will learn a strategy that is based on player 1 being prioritized.
@@ -391,9 +391,8 @@ In the re-implementation of MicroRTS-Py, there is a mode that resolves conflicts
 However, this does not help in this case, because even before the conflict arises, invalid action masking masks out the action of player 2 since it is invalid.
 To solve this problem, the learning agents in the parallel games are alternated between playing as player 1 and player 2.
 This does not prevent the prioritization of player 1. 
-However, it can be shown empirically that the prioritization of player 1 has no major impact on the results.
-% TODO: füge ein Ergebnis ein, in dem die Ergebnisse von 2 gegeneinander spielenden Agenten 1 mal als Spieler 1, 1 mal als Spieler 2 dargestellt werden.
-% Evaluation vs 22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_1986 over 200 games | win: 76 (38.00%), draw: 56 (28.00%), loss: 68 (34.00%), avg reward: 1.403
+However, it can be shown empirically that the prioritization of player 1 has no major impact on the results, by evaluating an agent against itself.
+Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws, and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
 This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
@@ -472,7 +471,6 @@ The MicroRTS instance for built-in bots executes its step function at the same t
 
 \paragraph{number of parallel bot environment instances.}
 Two hyperparameters define the maximum number of parallel bot environment instances and the minimum number of parallel bot environment instances.
-% TODO: A Buffer for observations, actions, invalid action masks with ... % zu viel Codedetails?
 Among other things, references to the observation, action, and invalid action mask buffers must be adjusted to the correct size and partially reset whenever the number of parallel bot environment instances is changed.
 % TODO: alle "invalid action mask" zu "invalid-action-mask"?
 
@@ -487,7 +485,7 @@ The Main Agent also trains against additional bot environments, while Main Explo
 \paragraph{Resetting Exploiters.}
 % TODO: unit bonus distribution im Text lassen?
 The AlphaStar paper \cite{vinyals2019alphastar} describes that exploiters reset their weights to the initial values (here: the Base Agent). 
-In our approach exploiter resets also reset the optimizers, game statistics (e.g., win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable).
+In our approach exploiter resets also reset the optimizers, game statistics (e.g., win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable) that is later explained in this thesis.
 Furthermore exploiters only reset after a game has ended. 
 As a result, an exploiter can reset during a rollout.
 If that happens, then the rollout contains trajectories from the old policy and therefore cannot be used for the on-policy training in our PPO implementation.
@@ -502,10 +500,10 @@ In addition to the modifications made to adapt the pseudocode to the MicroRTS en
     In our implementation, this order is reversed so that the snapshot is not taken from the reset Exploiter.
     \item Main Exploiters were only trained against the current Main Agent, if they had a high win rate against the Main Agent from the very beginning.
     As soon as this win rate dropped, the Main Exploiter stopped training against the Main Agent for the remainder of this reset cycle.
-    However, in the pseudocode, Main Exploiters were only reset/checkpointed (thereby creating a Historical Main Exploiter) if the win rate against the Main Agent was high.
+    However, in the pseudocode, Main Exploiters were only reset/checkpointed (creating a Historical Main Exploiter) if the win rate against the Main Agent was high.
     This means that a Main Exploiter would never reset if it initially had a low win rate against the Main Agent.
     Since the current Main Exploiter has already trained against the Base Agent, it is very likely that it will never checkpoint before the maximum number of steps is reached, even if it has a high win rate against all historical Main Agents.
-    To solve this problem, the win rate against the Main Agent is replaced by the minimum win rate against all historical Main Agents.
+    To solve this problem, the win rate against the Main Agent is replaced by the maximum of the minimum win rate against all historical Main Agents and the win rate against the Main Agent.
     This ensures that the Main Exploiter is reset and checkpointed as soon as it achieves sufficiently high win rates against the available historical Main Agents (making high win rate against the Main Agent likely) and no longer has much to learn from the available opponents.
     \item Another change to the pseudocode is that win rates are initialized to 0.5 for the initial games.
     This makes it less likely that the agent will ignore opponents it has not yet played against because of outlier results with very high or very low win rates, including the Main-Exploiter, Main-Agent matchup.
@@ -566,7 +564,6 @@ If that happens, the Annealed Entropy Coefficient is reinitialized to half of it
 
 
 \paragraph{New Initial Agents.}
-% TODO: starte den Satz anders
 To mitigate the insufficient opponent diversity, we created new initial agents that focused on different unit types and can be used as alternative initial agents for the Main Exploiters in LT.
 This enables the exploiters to exploit weaknesses related to different unit types without having to first unlearn the strategy for the unit type favored by the Base Agent, which can lead to more diverse exploiters in fewer training steps.
 We didn not created new initial agents for the Main Agent because we prioritize further training the already strong Base Agent.
@@ -574,16 +571,13 @@ The new initial agents were not trained long enough to be as strong as the Base 
 
 
 
-
-
-% TODO: ab hier überarbeiten
 \subsection{Delta Score.}
 To better guide the agent in the sparse reward landscape of MicroRTS, we added the change in the MicroRTS score between two consecutive time steps to the reward \cite{huang2021gym, Ontanon2013CombinatorialBandit}.
 The score for each environment instance is calculated based on the current game state, which includes the number and type of units, their hit points, and the resources of both players.
-The Delta Score is the difference between the score at the current time step and the score at the previous time step, which makes it a good immediate learning signal for the agent.
+The Delta Score is the difference between the score at the current time step and the score at the previous time step, which makes it a usefull immediate learning signal for the agent.
 The score does not always accurately predict how well an agent is playing, which is why a coefficient is used to scale the Delta Score, so that the accumulated weighted Delta Score over a game is much smaller than the win/loss reward.
 In the prior work by M. Huft \cite{huft2023microrts}, the agent we now use as the Base Agent was trained with an attack bonus, which is a reward for attacking the opponent’s units.
-The attack bonus was removed for our training, and we adjusted the Delta Score in the early stages of training to be approximately as large as the attack bonus used in earlier training runs.
+The attack bonus was removed for our training, and we adjusted the per-step Delta Score in the early stages of training to be approximately as large as the per-step attack bonus used in earlier training runs.
 
 
 
@@ -593,80 +587,54 @@ The attack bonus was removed for our training, and we adjusted the Delta Score i
 
 \section{Experiments}
 \label{sec:experimente}
-We use the Base Agent, from the prior work by M. Huft \cite{huft2023microrts}, which was trained with the combination of BC and PPO for every initial agent, in this thesis, unless otherwise specified.
-The map used is basesWorkers16x16A, a symmetrical map also used in the related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
-The Base Agent is trained in LT, with (???)4 Main Exploiters, (???)1 League Exploiters, with each (???)25 environments for (???) steps.
-The Main Agent played (???) games against the built-in bots coacAI and Mayari in figure% TODO: ~\ref{} is the win rate over the global steps for both bots.
-The bot environments were evenly split between the two bots in max 10, min 5 environments.
-There were (???)160 total parallel environments for LT, if all bot environments were used.
-This requires a lot of computational resources, especially since the observations were not entirely boolean and therefore required more memory (the peak usage increases by approximately 2500 MiB for an agent with 25 parallel environments), however it is important to keep the number of environments per agent above a certain threshold, because the number of environments affects the rollout size and leads to unstable training.
+We use the Base Agent from the prior work of M. Huft \cite{huft2023microrts}, which was trained using a combination of BC and PPO, as the initial agent in this thesis unless otherwise specified.
+The map used is \texttt{basesWorkers16x16A}, a symmetrical map also used in related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
+The Base Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for (???) steps.
+% TODO: Füge Bild von winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_with_draw hinzu
+The Main Agent played (???) games against the built-in bots CoacAI and Mayari,
+In Figure~\ref{...} the win rate against both bots over the global training steps is shown.
+The bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
+This results a total of (???)160 parallel environments for LT when all bot environments are active.
+This requires a lot of computational resources, especially since the observations are not purely boolean and therefore required more memory.
+The peak memory usage increases by approximately 2500 MiB for an agent with 25 parallel environments.
+However, it is important to keep the number of environments per agent above a certain threshold, because the number of environments affects the rollout size, and a too small rollout can lead to unstable training.
 
-\subsection{Hyperparameters.}
-Remarkable hyperparameters for the Main Agent include a higher learning rate of $5e-5$ than for the Base Agents of $2.5e-5$, higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters. 
-% TODO: , as well as an annealed entropy coefficient starting at (???) 0.035 for the exploiters and 0.025, both ending at 0.0075, for the Main Agent and the exploiters.
-% TODO: stimmt das noch?      A higher entropie coeficient for exploiters helped the exploiters find the exploits faster, while the anneal entropie helped them to retain the found exploits and further improve them.
-% TODO: Main Agents entropie coeficient starts lower, to keep the Agent closer to the already strong Base Agent, but is annealed to further improve the Main Agent’s performance in the later stages of training.
-The entropy coefficient is very high in comparison to the Base Agent, with an constant coefficient of 0.005.
-This was mostly done, to overcome the strong preferences of the Base Agent, which can make it more difficult for the Agent to change its strategy and explore.
-All hyperparameters used are listed in Table \ref{tab:league_hyperparameter}.
+\subsection{Hyperparameters}
+Notable hyperparameters for the Main Agent include a higher learning rate of $5e\text{-}5$ than the Base Agent, namely $2.5e\text{-}5$, as well as higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters.
+% TODO: starten beide an der selben stelle --> Satz verbessern
+% TODO: An annealed entropy coefficient is used, starting at (???)0.025 for the exploiters and 0.025 for the Main Agent, with both ending at 0.0075.
+% TODO: After sufficient steps, the entropy coefficient for exploiters remaies high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
+% TODO: The Main Agent’s entropy coefficient starts lower to keep the Agent closer to the already strong Base Agent, but is annealed to further improve the Main Agent’s performance in the later stages of training.
+The entropy coefficient is very high in comparison to that of the Base Agent, which uses a constant coefficient of 0.005.
+This was mostly done to overcome the strong preferences of the Base Agent, which can make it more difficult for the agent to change its strategy and explore.
+All hyperparameters used are listed in Table~\ref{tab:league_hyperparameter}.
 
 
-\subsection{Evaluation.}
-We evaluated the Main Agent against other agents including the built-in bots and the Base Agent over 100 games.
-Table \ref{tab:base_agent_evaluation} shows the evaluation results of the Base Agent for comparison.
-The results vary from the thesis by M. Huft \cite{huft2023microrts}, because the original Base Agent from the prior work could not be found and therefore a different version of the Base Agent, with the same training was used.
-In Table \ref{tab:main_agent_evaluation} are the evaluation results of the Main Agent.
+
+\subsection{Evaluation}
+We evaluated the Main Agent against other agents, including the built-in bots and the Base Agent, across at least 100 games per opponent.
+Table~\ref{tab:base_agent_evaluation} lists the evaluation results of the Base Agent for comparison.
+The results vary from those reported in the thesis of M. Huft \cite{huft2023microrts} because the original Base Agent from the prior work could not be found, and therefore a different version of the Base Agent provided by M. Huft, but trained using the same procedure, was used.
+Table~\ref{tab:main_agent_evaluation} presents the evaluation results of the Main Agent.
 
 % TODO: auch eine Range geben? (z.B.: von 50% bis 100%)
 \paragraph{Checkpoint and Reset Statistics.}
 There were (???) checkpoints for the Main Agent, (???) checkpoints for the Main Exploiters, and (???) checkpoints for the League Exploiter.
-The Table \ref{tab:checkpoint_statistics} shows the amount of checkpoints for each agent type and the win rate of the initial agent type against the Main Agent averaged over the last 200 games for each reset.
+Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for each agent type and the win rate of the checkpointed agent against the Main Agent, averaged over the last 200 games and then averaged over all resets.
+Checkpoints without resets are not included in the win rates.
 
-
-
-\subsection{Results.}
-The Agent learned to keep the Base defended, even while attacking with other units, which is a significant improvement over the Base Agent, which often left the Base undefended while attacking.
-% TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used for edge cases, in wich Ranged Units are so effective that even one Ranged Unit can make a difference (e.g. when the opponent has only Workers or when a small number of units remaining avoid the Agent, to draw the game).
-As seen in the Tables \ref{tab:base_agent_evaluation} and \ref{tab:main_agent_evaluation}, LT improved the Agtent’s performance against (???)all the diverse opponents in the evaluation.
-The win rates against the agents used in the training are now (???)near 100\%, which is a major improvement over the Base Agent, which had a 97\% win rate against coacAI, but only a 64\% win rate against Mayari.
-Our Base Agents results strongly differ to the results of the thesis by M. Huft \cite{huft2023microrts}, however the Main Agent still shows improvement over the performance of the results of the thesis by M. Huft, which had a 96\% win rate against coacAI and a 95\% win rate against Mayari.
-% TODO: use new evaluation results
-The trained Main Agent also performs well against the Base Agent, wich it trained against, with a win rate of (???)83\%.
-The win rate against randomBiasedAI also improved from 80\% to (???)92\% showing, that the trained Agent has strong improvements in against bots, that are trying to draw the game instead of winning.
-The agents in the section "other bots" are a lot stronger than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against (???)all of them.
-Highlights include the win rate against rojo that improved from 77\% to (???)99\%, the win rate against mixedBot also increased from (???)47\% to (???)53\%.
-While the win rate against izanagi fell from (???)74\% to (???)63\%, the loss rate improved from (???)17\% to (???)11\%, showing that the Main Agent is now trying to defend the Base more, when attacking.
-% TODO: entfernen:
-% Evaluation vs coacAI over 100 games | win: 97 (97.00%), draw: 2 (2.00%), loss: 1 (1.00%)
-% SPS: 1552
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs mayari over 100 games | win: 64 (64.00%), draw: 6 (6.00%), loss: 30 (30.00%)
-% SPS: 1502
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs passiveAI over 100 games | win: 100 (100.00%), draw: 0 (0.00%), loss: 0 (0.00%)
-% SPS: 1512
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs workerRushAI over 100 games | win: 99 (99.00%), draw: 1 (1.00%), loss: 0 (0.00%)
-% SPS: 1516
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs lightRushAI over 100 games | win: 90 (90.00%), draw: 0 (0.00%), loss: 10 (10.00%)
-% SPS: 1529
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs randomAI over 100 games | win: 97 (97.00%), draw: 3 (3.00%), loss: 0 (0.00%)
-% SPS: 1523
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs randomBiasedAI over 100 games | win: 80 (80.00%), draw: 20 (20.00%), loss: 0 (0.00%)
-% SPS: 1515
-% RAIGridnetClient: Not disposing frame. Resource Leak!
-% Adjusted checkpoint tensor 'z_embedding.weight' from (2, 8) to (32, 8) by padding with zeros.
-% Evaluation vs rojo over 100 games | win: 77 (77.00%), draw: 14 (14.00%), loss: 9 (9.00%)
-% SPS: 1511
+\subsection{Results}
+The Agent learned to keep the Base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the Base undefended while attacking.
+% TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used in edge cases in which Ranged Units are so effective that even one Ranged Unit can make a difference (e.g., when the opponent has only Workers or when only a small number of units remain and avoid the Agent in order to force a draw).
+As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against ((???)all) most evaluated opponents.
+The win rates against the agents used in training are now (???)near 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
+The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
+However, the Main Agent still shows improvement over the results reported in that thesis, which had a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
+The trained Main Agent also performs well against the Base Agent, against which it was trained, with a win rate of (???)83\%.
+The win rate against RandomBiasedAI also improved from 79\% to (???)92\%, showing that the trained Agent performs substantially better against bots that try to draw the game instead of winning, compared to the Base Agent.
+The agents in the section "Other Bots" are considerably stronger than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against ((???)all) most of these opponents.
+Highlights include the win rate against Rojo, which improved from 81\% to (???)99\%, while the win rate against MixedBot also increased from 43\% to (???)53\%.
+The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate improved from 16\% to (???)11\%, suggesting that the Main Agent now defends the Base more effectively while attacking.
 
 
 
@@ -674,7 +642,7 @@ While the win rate against izanagi fell from (???)74\% to (???)63\%, the loss ra
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
 
-
+% TODO: ab hier überarbeiten
 \subsection{Discussion.}
 LT improved the Main Agent’s performance against a wide range of opponents, including the built-in bots and the Base Agent, which it trained against and further genaralized to other bots, not used in the training.
 This can improve the Main Agent’s performance farther than ppo could without the Agent overfitting to the Agents used in the training.
