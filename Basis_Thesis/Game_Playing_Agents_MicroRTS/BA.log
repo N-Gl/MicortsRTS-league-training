@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  19 MAR 2026 12:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  19 MAR 2026 12:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -633,7 +633,7 @@ L3 programming layer <2024-01-22>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `BA.out' has not changed.
-(rerunfilecheck)             Checksum: 03EC11C590666F9E9EFF9105504D728E;3461.
+(rerunfilecheck)             Checksum: 185B6B70C2E21C620F21C5ADCCF3DDE6;3456.
 Package rerunfilecheck Info: File `BA.brf' has not changed.
 (rerunfilecheck)             Checksum: 5ED4D21A7FFEA1CC61EC525C413BF76C;3641.
  ) 
@@ -646,7 +646,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  90i,14n,93p,688b,636s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on BA.pdf (20 pages, 900733 bytes).
+Output written on BA.pdf (20 pages, 900769 bytes).
 PDF statistics:
  577 PDF objects out of 1000 (max. 8388607)
  493 compressed objects within 5 object streams

@@ -643,12 +643,12 @@ The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate 
 
 
 % TODO: ab hier überarbeiten
-\subsection{Discussion.}
-LT improved the Main Agent’s ((???)win rate, draw rate and loss rate) performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized further to other bots that were not used in training.
+\subsection{Discussion}
+LT improved the Main Agent’s ((???)win rate, draw rate, and loss rate) performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized further to other bots that were not used in training.
 This can improve the Main Agent’s performance further than PPO could without the agent overfitting to the opponents used in training.
-With LT the agent even achieved greater win rates against the bots, that were used in the Base Agents training, than the Base Agent itself, which shows that with LTs generalization is an improved state over the generalization achivable, by stopping PPO from overfitting.
-In PPO, when an generalized state is reached the training has to be stopped however there are more possible agent states, that are just as generalized and stronger against even the trainings opponents, but the training cannot reach them, because it would overfit.
-Meaning with PPO we can only see a tiny subset of the possible generalized states between when the agent improved and when it overfitted, while with LT we can reach many more of these states, which can lead to much stronger agents.
+With LT, the agent even achieved greater win rates against the bots that were used in the Base Agent’s training than the Base Agent itself, which shows that LT improves generalization beyond the level achievable with PPO by preventing overfitting.
+In PPO, when a generalized state is reached, the training has to be stopped. However, there are more possible agent states that are just as generalized and performe better even against the training opponents, but the PPO training cannot reach them because it would overfit.
+This means that with PPO we only pass through a tiny subset of the possible generalized states between the point at which the agent improves and the point at which it overfits, while with LT we can reach many more of these states, which can lead to much stronger agents.
 
 % Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
 % TODO: <-- Verbesserung überträgt sich auch zu anderen besseren ähnlichen Agenten?
