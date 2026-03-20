@@ -695,28 +695,33 @@ Despite the improved the diversity and general performance of the Main Agent, th
 
 
 \paragraph{Exploiter Diversity In AlphaStar.} \cite{vinyals2019alphastar}
-LT mitigated the SP problem of cyclic training, however there is still a similar problem with exploiter diversity.
-While LT has a finite number of weaknesses that can be exploited within a training run, in complex environments such as MicroRTS, there are many more weaknesses that can be exploited by only slightly different strategies, than there are historical exploiters that can be created during training.
-This means that the exploiters will most likely only cover strategies that can be exploited by strategies similar to the exploiters’ initial agents.
-We hypothesize that the diversity of the initial agent is crucial for the diversity of the exploiters, and possibly more important than the initial agent's strength, because the initial agents of the exploiters strongly influence the likely to be reached strategy space of the exploiters.
-It is likely that this was not as big of a problem in AlphaStar, because the initial agent was trained with imitation learning on human data, which covered a much wider range of strategies, causing the initial agent to be competent across a broader range of strategies than our Base Agent used in this thesis, which was trained with BC and PPO against only two built-in bots and focused on one strategy.
-This diversity of the initial agent likely led to many more diverse strategies being similar to the exploiters’ initial agents, which made it more likely that an exploiter would exploit those diverse strategies.
-A more diverse set of exploiters would then improve the Main Agent's opponent diversity and generalization.
-Further constraining the diversity of our Base Agent is that, in BC and PPO, we even have to leave some possible opponents out of training to obtain a more robust evaluation, and many strong agents are too slow to be trained against.
-In contrast, in AlphaStar, the agent was evaluated against human players.
-% TODO: wärend wir keine Probleme mit zyklischem Training wie in SP haben haben wir dennoch Probleme, weil wir nicht den Agenten unendlich lange trainieren können.
-% TODO: deshalb gibt es viele erreichbare lokale Schwachstellen, die ausgenutzt werden können und die Exploiters wechseln nicht die Strategien, sondern finden eine Abweichung ihrer strategie, die funktioniert.
-% TODO: Das Problem kann man nicht einfach lösen, ohne immer einen zufälligen initialen Agenten zu wählen, was das Training sehr zeitaufwendig macht.
-% TODO: alternativ in Spielen, in denen ein gutes verständniss der reward landscape möglich ist oder empirisch gezeigt werden kann, kann man die clusters von lokalen Maxima identifizieren und gezielt initiale Agenten wählen, die in verschiedenen Clustern liegen, um die Vielfalt der Exploiters zu erhöhen.
-% TODO: das ist wahrscheinlich auch ein Grund, weshalb in AlphaStar der initiale Agent mit imitation learning trainiert wurde, da viele verschiedene Strategien durch den menschlichen Spieler abgedeckt werden, was die Vielfalt der Exploiters erhöht und damit die Leistung des Main Agent verbessert.
-% TODO: Wärenddessen, muss man in BC extra strategien weglassen, um die Evaluation zu verbessern, was die Leistung des Main Agent einschränkt, da er nicht von diesen Strategien lernen kann und viele weitere Agenten sind zu langsam, um sie mit BC zu trainieren, was die Vielfalt der Exploiters weiter einschränkt.
-
-% TODO: Alphastar nutzte human imitation learning --> Base Agent ist diverser --> diversere Exploiters --> bessere Main Agent Performance, evaluation gegen Menschen besser als gegen Bots, da Menschen diversesität gegen bots nur funktioniert, indem man nicht gegen ihn trainiert.
-
-
-\paragraph{Different Maps.}
+LT mitigated the SP problem of cyclic training, however, a related limitation remains in the diversity of the exploiters.
+Complex environments such as MicroRTS contain many more weaknesses that can be exploited by only slightly different strategies, than there are historical exploiters that can be created during training.
+As a result, the exploiters will most likely cover only those weaknesses that are exploitable from strategies similar to their initial agents policies.
+We therefore hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters, and possibly more important than the initial agents' strength, because the initial policies strongly influence which regions of the strategy space are likely to be reached during training.
+It is likely that this was less problematic in AlphaStar, because its initial policy was pre-trained by imitation learning on human replay data, which covered a much broader range of strategies.
+As a consequence, the initial policy was likely competent across a broader range of strategic situations than the Base Agent used in this thesis, which was trained with BC and PPO against only two built-in bots and was therefore biased towards a comparatively narrow strategy set.
+This broader initialization presumably made it easier for exploiters to reach and exploit a more diverse set of strategies.
+A more diverse set of exploiters would, improve the Main Agent's opponent diversity and thereby its generalization.
+The diversity of our Base Agent is further constrained by the fact that, during BC and PPO, some possible opponents must be excluded from training in order to obtain a more robust evaluation, while many strong agents are too slow to be practical training opponents.
+% wärend wir keine Probleme mit zyklischem Training wie in SP haben haben wir dennoch Probleme, weil wir nicht den Agenten unendlich lange trainieren können.
+% deshalb gibt es viele erreichbare lokale Schwachstellen, die ausgenutzt werden können und die Exploiters wechseln nicht die Strategien, sondern finden eine Abweichung ihrer strategie, die funktioniert.
+% Das Problem kann man nicht einfach lösen, ohne immer einen zufälligen initialen Agenten zu wählen, was das Training sehr zeitaufwendig macht.
+% alternativ in Spielen, in denen ein gutes verständniss der reward landscape möglich ist oder empirisch gezeigt werden kann, kann man die clusters von lokalen Maxima identifizieren und gezielt initiale Agenten wählen, die in verschiedenen Clustern liegen, um die Vielfalt der Exploiters zu erhöhen.
+% das ist wahrscheinlich auch ein Grund, weshalb in AlphaStar der initiale Agent mit imitation learning trainiert wurde, da viele verschiedene Strategien durch den menschlichen Spieler abgedeckt werden, was die Vielfalt der Exploiters erhöht und damit die Leistung des Main Agent verbessert.
+% Wärenddessen, muss man in BC extra strategien weglassen, um die Evaluation zu verbessern, was die Leistung des Main Agent einschränkt, da er nicht von diesen Strategien lernen kann und viele weitere Agenten sind zu langsam, um sie mit BC zu trainieren, was die Vielfalt der Exploiters weiter einschränkt.
+% Alphastar nutzte human imitation learning --> Base Agent ist diverser --> diversere Exploiters --> bessere Main Agent Performance, evaluation gegen Menschen besser als gegen Bots, da Menschen diversesität gegen bots nur funktioniert, indem man nicht gegen ihn trainiert.
 
 
+
+% TODO: Tabele mit differenzen zwischen LT und Base Agent
+
+\paragraph{Future Work: Map Diversity.}
+Change maps is already possible in MicroRTS-Py.
+Automatically generating new maps with different layouts and resource distributions and approximately the same winning chances for both players is an interesting direction for future work, which could force the agent to learn more general strategies, to adapt to different situations.
+This would also help to mitigate the problem of insufficient diversity, if the maps force the agent to learn different strategies, by starting the training with e.g., a map with a lot of ranged units.
+A good idea would also be, to then train an agent, to generate symmetrical maps, in which the learning Agent is weaker than the opponent.
+Then using the trained agent as an initial agent for the exploiters and Main Agent.
 
 
 

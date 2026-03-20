@@ -60,6 +60,6 @@
 \contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{12}{subsection.4.4}%
 \contentsline {paragraph}{Exploration: Effects of New Initial Agents.}{13}{section*.44}%
 \contentsline {paragraph}{Exploiter Diversity In AlphaStar.}{13}{section*.45}%
-\contentsline {paragraph}{Different Maps.}{14}{table.caption.53}%
+\contentsline {paragraph}{Future Work: Map Diversity.}{14}{section*.46}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{14}{section.5}%
 \contentsline {section}{Erkl\"arung}{20}{figure.5}%
