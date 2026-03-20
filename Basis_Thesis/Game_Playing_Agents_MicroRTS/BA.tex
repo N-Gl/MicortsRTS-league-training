@@ -641,6 +641,8 @@ The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate 
 
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
+% TODO: Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
+
 % TODO: replace all (???)
 
 \subsection{Discussion}
@@ -717,14 +719,28 @@ The diversity of our Base Agent is further constrained by the fact that, during 
 % TODO: Tabele mit differenzen zwischen LT und Base Agent
 
 \paragraph{Future Work: Map Diversity.}
-Change maps is already possible in MicroRTS-Py.
-Automatically generating new maps with different layouts and resource distributions and approximately the same winning chances for both players is an interesting direction for future work, which could force the agent to learn more general strategies, to adapt to different situations.
-This would also help to mitigate the problem of insufficient diversity, if the maps force the agent to learn different strategies, by starting the training with e.g., a map with a lot of ranged units.
-A good idea would also be, to then train an agent, to generate symmetrical maps, in which the learning Agent is weaker than the opponent.
-Then using the trained agent as an initial agent for the exploiters and Main Agent.
+Changing maps is already possible in MicroRTS-Py.
+Automatically generating new maps with different layouts and resource distributions and roughly equal chances of winning for both players is an interesting direction for future work, which could encourage the agent to learn more generalizable strategies and to adapt to different situations.
+This would also help to mitigate the problem of insufficient diversity if the maps force the agent to learn different strategies, for example by starting the training on maps that already contain units of different unit types, which can encourage different strategies.
+Another promising idea would be to train an agent to generate symmetrical maps on which the learning agent is weaker than the bot opponent during PPO or LT.
+The learning agent trained on those maps could then be used as a diverse initial agent for the exploiters and the Main Agent.
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+% TODO: Ergebnis: LT verbessert die Leistung, generalisierung --> zeigt, dass LT auch mit unserem Base Agenten funktioniert
+% TODO: besser mit diversen initialen Agenten.  --> MicroRTS spezifischer Workaround: neue initiale Agenten --> ist nicht perfekt (wenn nicht alle Clusters von lokalen Maxima abgedeckt sind)
+% TODO:                                         --> heißt auch: leider braucht man mit dieser thesis immer noch so viele diverse bot agenten, wie möglich (gehofft: nicht mehr so wichtig, da Exploiter diversität bieten)
+% TODO: --> lieber human imitation learning, wie in AlphaStar (wenn überhaupt möglich), um die vielfältigkeit der initailen Agenten zu erhöhen
+% TODO: oder von anfang an auf diversität abzielen, statt ein Agenten zu benutzen, der hohe Winrates erreichen soll. --> ohne neue initiale Agenten?
+% TODO: sehr kurze Zusammenfassung der Ergebnisse, Methoden (LT)
 
 
 
+% TODO: erkläre anfangs, dass der Base Agent fast "HeavyRush" ist?
+
+
+% \section{Reproducibility and Codebase}
 
 
 \begin{table*}[t]
@@ -878,29 +894,6 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{tabular*}
 \end{table*}
 
-
-% TODO: über folgendes schreiben:
-% Training:
-% Map
-% Base Agent: BC, PPO
-% -> LT: Main Agent, Main Exploiter, League Exploiter
-% welche initialen Agenten
-% wie viele Schritte, wie viele Schritte pro Agent
-% Main vs Bot (welche Bots)
-% wie oft war welcher Exploiter gut?
-% welche Hyperparameter (siehe Tabelle), erklären?
-% Tabelle mit Ergebnissen (auch im Durchschnitt)
-% 
-% Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
-% TODO: <-- Verbesserung überträgt sich auch zu anderen besseren ähnlichen Agenten?
-
-% TODO: Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
-
-
-
-% Verbesserungs möglichkeiten
-
-% endgame\_maps
 
 
 \begin{table*}[t]
@@ -1131,14 +1124,6 @@ GAE parameter $\lambda$ & 0.95 \\
 % \subsection{Discussion}
 
 
-
-
-\section{Conclusion}
-\label{sec:conclusion}
-
-
-
-% \section{Reproducibility and Codebase}
 
 
 
