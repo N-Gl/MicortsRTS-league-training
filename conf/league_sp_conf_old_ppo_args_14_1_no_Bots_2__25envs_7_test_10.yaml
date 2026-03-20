@@ -1,0 +1,64 @@
+defaults:
+  - league_sp_conf_old_ppo_args_3
+
+ExperimentConfig:
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league/Main_agent_backups/agent_update_20.pt
+  # model_path: league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt
+  model_path: models/finished_PPO_Basis_thesis.pt
+  BC_model_path: models/BCagent.pt
+  other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
+  exp_name: 19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP_2
+  wandb_group_name: SP
+
+  
+  render: true
+  unit_bonus: false
+  sp_rand: true
+  resume: true
+  starting_historical: false
+
+
+
+
+  num_bot_envs: 1 # 3
+  dyn_num_bot_envs: true
+  min_num_bot_envs: 1  # minimum number of bot envs
+  max_num_bot_envs: 1 # 15 # changed from 9 (3)
+  training_on_bot_envs: false   # true
+
+
+  num_main_exploiters: 3
+  num_league_exploiters: 0
+  num_envs_per_main_exploiters: 25
+
+  sp: false
+  dbg_no_main_agent_ppo_update: true # false
+
+  log_exploiter_tables: true
+  log_exploiter_winrates: true
+  log_unweighted_losses: true 
+
+  num_main_envs: 1
+
+  vf_coef: 0.15
+  kl_coeff: 0.3
+  clip_coef: 0.15
+  ent_coef: 0.015
+  kle_rollback: false
+
+  exploiter_clip_coef: 0.15
+  exploiter_ent_coef: 0.015
+  exploiter_kl_coeff: 0.3
+  exploiter_vf_coef: 0.1
+  exploiter_kle_rollback: false
+
+  exploiter_ent_coef_min: 0.0075
+  exploiter_ent_coef_max: 0.025
+  exploiter_anneal_ent: true
+
+
+
+  unit_bonus_max_worker: 1.0
+  unit_bonus_max_light: 1.0
+  unit_bonus_max_heavy: 1.0
+  unit_bonus_max_ranged: 1.0

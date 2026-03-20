@@ -728,12 +728,22 @@ The learning agent trained on those maps could then be used as a diverse initial
 
 \section{Conclusion}
 \label{sec:conclusion}
-% TODO: Ergebnis: LT verbessert die Leistung, generalisierung --> zeigt, dass LT auch mit unserem Base Agenten funktioniert
-% TODO: besser mit diversen initialen Agenten.  --> MicroRTS spezifischer Workaround: neue initiale Agenten --> ist nicht perfekt (wenn nicht alle Clusters von lokalen Maxima abgedeckt sind)
-% TODO:                                         --> heißt auch: leider braucht man mit dieser thesis immer noch so viele diverse bot agenten, wie möglich (gehofft: nicht mehr so wichtig, da Exploiter diversität bieten)
-% TODO: --> lieber human imitation learning, wie in AlphaStar (wenn überhaupt möglich), um die vielfältigkeit der initailen Agenten zu erhöhen
-% TODO: oder von anfang an auf diversität abzielen, statt ein Agenten zu benutzen, der hohe Winrates erreichen soll. --> ohne neue initiale Agenten?
-% TODO: sehr kurze Zusammenfassung der Ergebnisse, Methoden (LT)
+In this thesis, we implemented the League Training (LT) method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters, to improving the Main Agent's win, draw and loss rate against various opponents.
+We also hoped to mitigate the need for many different bot agents to achive diversity, by using exploiters to create a diverse set of opponents for the Main Agent. 
+As shown in the results, LT improves the Main Agent's performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalizes to other bots that were not used in training.
+This suggests the viability of the LT and PPO kombination for improving the performance of an Base Agent trained on BC and PPO in MicroRTS.
+However the diversity of the exploiters initial agents seems to be a crucial factor% TODO: , that we were able to mitigate by introducing new initial agents with different unit type focuses.
+This solution has its own limitations, such as: not guaranteeing that all relevant clusters in the reward landscape are covered by the initial agents, and complicating the training process by requiring the training of multiple initial agents.
+Further more this saddly means that for this approach, diverse bot agents for BA and PPO training are still just as or even more important for the performance of the Main Agent.
+While exploiters can provide some diversity and mitigate the need for a lot of bot agents with different but similar strategies, they cannot fully replace the need for diverse bot agents in this training approach, because more diverse strategies are likely to be more difficult to find for the exploiters, and therefore may not be represented.
+However we presume that, replacing our current BC and PPO approach with an approach focusing on learning diverse strategies from the start, with the Map Diversity method mentioned in the Future Work section, could further increase the Main Agent's performance, especially its generalization and robustness to a wider range of opponents, while also reducing the need for many different bot agents for training.
+Human imitation learning, as used in AlphaStar, seems to be a difficult approach for MicroRTS, because of the data availability and quality.
+% Ergebnis: LT verbessert die Leistung, generalisierung --> zeigt, dass LT auch mit unserem Base Agenten funktioniert
+% besser mit diversen initialen Agenten.  --> MicroRTS spezifischer Workaround: neue initiale Agenten --> ist nicht perfekt (wenn nicht alle Clusters von lokalen Maxima abgedeckt sind)
+%                                         --> heißt auch: leider braucht man mit dieser thesis immer noch so viele diverse bot agenten, wie möglich (gehofft: nicht mehr so wichtig, da Exploiter diversität bieten)
+% --> lieber human imitation learning, wie in AlphaStar (wenn überhaupt möglich), um die vielfältigkeit der initailen Agenten zu erhöhen
+% oder von anfang an auf diversität abzielen, statt ein Agenten zu benutzen, der hohe Winrates erreichen soll. --> ohne neue initiale Agenten?
+% sehr kurze Zusammenfassung der Ergebnisse, Methoden (LT)
 
 
 
