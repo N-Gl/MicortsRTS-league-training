@@ -8,7 +8,7 @@
 %%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
 %\usepackage[review]{sarmata}      % To produce the REVIEW version
 \usepackage{sarmata}              % To produce the CAMERA-READY version
-%\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g., for an arXiv version
+%\usepackage[pagenumbers]{cvpr} % To force page numbers, e. g. for an arXiv version
 
 % Include other packages here, before hyperref.
 
@@ -41,7 +41,7 @@
         \includegraphics[width=0.3\textwidth]{hhu_logo.png} \hfill \\[1cm]
 
         {\Large\textsc{Heinrich-Heine-Universität D\"usseldorf}}\\[3cm]
-        {\Large\textbf{Bachelor-Thesis}}\\[1cm]
+        {\Large\textbf{Bachelor Thesis}}\\[1cm]
 
         {\Huge\textbf{Implementation and evaluation of the reinforcement learning methods Self-Play and League Training in the MicroRTS environment}}\\[2cm]
 
@@ -92,12 +92,12 @@
 Reinforcement Learning (RL) has established itself in recent years as a powerful approach for developing agents in complex environments. 
 Game environments such as RTS games pose a particular challenge in this regard, with large action spaces, long-term planning and simultaneous decisions. However, they also provide clearly defined state spaces, reward structures and repeatable experiments, which makes them an ideal and challenging test environment for researching RL methods.
 
-\paragraph{MicroRTS}
+\paragraph{MicroRTS.}
 MicroRTS is a simplified version of RTS games that was developed specifically for research \cite{huang2021gym}. 
 It is discrete and reduces the visual and mechanical complexity of large commercial RTS games, such as StarCraft II. 
 At the same time, it retains the core difficulties, for example resource management, unit production, combat mechanics and tactical positioning. 
 MicroRTS is therefore suitable for the systematic investigation of learning methods. MicroRTS also contains numerous training challenges, such as large combinatorial action spaces, delayed rewards, multi-agent interactions, and it also requires robust strategies against different opponents. 
-For example, the agent must decide early on whether it wants to play aggressively or defensively against the current opponent, which affects the overall game strategy and requires long-term planning.
+For instance, the agent must decide early whether it wants to play aggressively or defensively against the current opponent, which affects the overall game strategy and requires long-term planning.
 
 \paragraph{Self-Play-Based Approaches.}
 A central problem in RL is generalization across different opponents and strategies: agents often learn strategies that are strongly tailored to the training opponent or a specific game situation. 
@@ -112,9 +112,9 @@ To reduce the instabilities of pure SP, the agent in FSP is not trained against 
 LT extends FSP by training the agent against historical opponents from a league that consists of different agent types, for example policy snapshots from earlier training stages as well as specialized agents \cite{vinyals2019alphastar}.
 The goal is to stabilize the learning environment, in which agents compete against a broad spectrum of strategies and thereby become more robust.
 
-\paragraph{Thesis Outline:}
+\paragraph{Thesis Outline.}
 Despite the theoretical advantages, the practical implementation of LT in complex environments such as MicroRTS is associated with significant challenges, that need to be addressed. 
-These include:
+These include
 \begin{itemize}
     %TODO: füge weitere hinzu
     \item the efficient management and selection of opponents for training the Main Agent and for the specialized agents,
@@ -123,11 +123,11 @@ These include:
     \item ensuring opponent diversity through sufficient exploration and preventing overfitting to specific opponents or strategies
 %\item assessing the actual generalization capability of the trained agents.
 \end{itemize}
-In addition, we will compare and evaluate the Results emperically. 
+In addition, we will compare and evaluate the results emperically. 
 In particular, we will analyze the learning curve, strategic diversity and robustness for the different training approaches.
 
-\paragraph{Training the Base Agent:}
-The base agent used in this project is trained in a three-stage procedure that combines BC and BC fine-tuning (BC-FT), followed by fine-tuning with PPO:
+\paragraph{Training of the Base Agent.}
+The Base Agent used in this project is trained in a three-stage procedure that combines Behavioral Cloning (BC) and BC fine-tuning (BC-FT), followed by fine-tuning with PPO:
 The two BC phases enable the agent to quickly learn a competent base strategy by imitating expert behavior \cite{torabi2018behavioral}. 
 This training approach reduces the initial, often inefficient exploration in DRL \cite{torabi2018behavioral}. 
 Learning from scratch with DRL methods such as PPO can be very time-consuming \cite{martin2021beclone}. 
@@ -140,13 +140,13 @@ This two-stage approach, in which a policy pre-trained with BC is refined by a D
 \section{Related Work}
 \label{sec:related-work}
 \subsubsection{Game Playing Agents in MicroRTS}
-The (unpublished) bachelor’s thesis by M. Huft that underlies this work develops a competitive agent for MicroRTS and evaluates the hybrid training pipeline consisting of BC, BC-FT and PPO for the base agent from the introduction \cite{huft2023microrts}.
+The unpublished bachelor thesis by M. Huft, on which this work builds, develops a competitive MicroRTS agent and evaluates the hybrid training pipeline of BC, BC-FT and PPO used to train the Base Agent introduced above \cite{huft2023microrts}.
 
 \paragraph{Results and Limitations.}
 The results show a clear performance increase across all three training phases (Table~\ref{tab:win rates_all}): BC mainly learns basic game mechanics, while BC-FT improves generalization against multiple bots. Finally, PPO achieves high win rates against many of the built-in bots \cite{huft2023microrts}.
-There still are agents in the results against which the base agent does not perform well. 
-The thesis also identifies limitations, in particular the focus on a single map and the limited opponent diversity, and proposes extensions using self-play or league mechanisms. 
-Exactly this proposal is taken up by the present work by extending the existing base agent and the initial code with SP and LT. 
+There are still agents in the results against which the Base Agent does not perform well. 
+The thesis also identifies limitations, in particular the focus on a single map and the limited opponent diversity, and proposes extensions using Self-Play or league mechanisms. 
+Exactly this proposal is taken up by the present work by extending the existing Base Agent and the initial code with SP and LT. 
 The opponents against which the evaluation is conducted include the MicroRTS built-in bots (RandomBiasedAI, WorkerRushAI, LightRushAI and CoacAI).
 \begin{table}[ht]
 \centering
@@ -176,60 +176,64 @@ naiveMCTS        & 0 & 5& 3 \\
 \vspace{10pt}
 
 \subsubsection{MicroRTS-Py (Gym-$\mu$RTS)}
-Huang et al. provide an efficient Gym-compatible interface for our environment MicroRTS \cite{Ontanon2013CombinatorialBandit} with \emph{Gym-$\mu$RTS} / \emph{MicroRTS-Py} \cite{huang2021gym}.
+Huang et al. provide an efficient Gym-compatible interface for our environment MicroRTS \cite{Ontanon2013CombinatorialBandit} with Gym-$\mu$RTS/MicroRTS-Py \cite{huang2021gym}.
 MicroRTS-Py is an established and widely used DRL baseline that enables the investigation of DRL approaches in full real-time strategy game scenarios without requiring extensive technical infrastructure such as high-performance computing clusters \cite{huang2021gym}.
 
 \paragraph{Proximal Policy Optimization (PPO) Training.}
-The \emph{openai/baselines} \cite{baselines} implementation of PPO was adapted in order to fit MicroRTS-Py. We use a large part of this implementation in LT \cite{huang2021gym}. 
-It was also previously used in the PPO training phases of the base agent \cite{huft2023microrts}.
-On top of openai/baselines, \emph{invalid action masking} and suitable action/observation representations (e.g., GridNet \cite{pmlr-v97-han19a}) as well as architectural choices (such as IMPALA-CNN-a deep convolutional neural network structure with residual blocks for processing grid-based state representations in RL) \cite{espeholt2018impala} were added \cite{huang2021gym}. 
+The openai/baselines \cite{baselines} implementation of PPO was adapted in order to fit MicroRTS-Py. We use a large part of this implementation in LT \cite{huang2021gym}. 
+It was also previously used in the PPO training phases of the Base Agent \cite{huft2023microrts}.
+On top of openai/baselines, invalid action masking and suitable action/observation representations (e. g. GridNet \cite{pmlr-v97-han19a}) as well as architectural choices (such as IMPALA-CNN, a deep convolutional neural network structure with residual blocks for processing grid-based state representations in RL) \cite{espeholt2018impala} were added \cite{huang2021gym}. 
 In a modified form, these are still used in the LT code.
 
 \paragraph{GridNet.}
-Huang et al. considered using \emph{GridNet} or \emph{Unit Action Simulation} (UAS) instead of GridNet. 
+Huang et al. considered using GridNet or Unit Action Simulation (UAS) instead of GridNet. 
 UAS iterates over all units at each step and returns the possible actions for each unit, which substantially reduces the action space. 
-GridNet, in contrast, predicts an action for each cell on the map. This means that GridNet executes its large action space in a single step, but this also simplefies the training \cite{huang2021gym, pmlr-v97-han19a}.
+In contrast, GridNet predicts an action for each cell on the map. 
+This means that GridNet executes its large action space in a single step, but this also simplifies the training \cite{huang2021gym, pmlr-v97-han19a}.
 Against the built-in bots of MicroRTS, which are based on heuristic rules, the PPO implementation with invalid action masking and IMPALA-CNN achieves an average win rate of 91\% with UAS and 84\% with GridNet. 
 Ultimately, the decision was made to focus on GridNet, since its lower complexity and its higher compatibility with SP (and LT) \cite{huang2021gym}.
-SP was also evaluated in the work. However, there was a bug in the code that likely strongly affected the results for SP \cite{goodfriend2024raisocketai}.
+SP was also evaluated in the work.
+However, there was a bug in the code that likely affected the results for SP \cite{goodfriend2024raisocketai}.
 \vspace{10pt}
 
 \subsubsection{RAISocketAI}
-In 2023 RAISocketAI was the first DRL agent which won the IEEE MicroRTS Competition. RAISocketAI includes a re-implementation of MicroRTS-Py, which is used in our code. 
+In 2023 RAISocketAI was the first DRL agent which won the IEEE MicroRTS Competition. 
+RAISocketAI includes a re-implementation of MicroRTS-Py, which is used in our code. 
 Among other things, data generation via replays is an important basis for BC \cite{huft2023microrts} and a bug in the old implementation was fixed that marked non-owned resources as owned resources when the agent is player 2. 
-According to Goodfriend, this likely caused SP in the previous MicroRTS-Py implementation to yield no improvements, The RAISocketAI implementation of FSP achieved an average win rate of 91\% against the same MicroRTS built-in bots as in MicroRTS-Py, which is significantly higher than 84\% in the previous implementation. 
+According to Goodfriend, this likely caused SP in the previous MicroRTS-Py implementation to yield no improvements.
+The RAISocketAI implementation of FSP achieved an average win rate of 91\% against the same MicroRTS built-in bots as in MicroRTS-Py, which is significantly higher than 84\% in the previous implementation. 
 However, FSP achieved only a 20\% win rate against CoacAI, whereas the best previous implementations were almost always able to defeat CoacAI. 
 With fine-tuning on CoacAI and Mayari, the average win rate against the built-in bots was increased to 98\% \cite{goodfriend2024raisocketai}.
 LT was not implemented or evaluated in the work.
 \vspace{10pt}
 
 \subsubsection{BeClone}
-\emph{BeClone} demonstrated the effectiveness of BC with DRL fine-tuning in MicroRTS-Py using a two-phase training strategy for RTS agents: first, an initial policy is learned from experts via BC, and subsequently an RL fine-tuning is performed using \emph{Advantage Actor-Critic} (A2C) \cite{martin2021beclone}.
+BeClone demonstrated the effectiveness of BC with DRL fine-tuning in MicroRTS-Py using a two-phase training strategy for RTS agents: first, an initial policy is learned from experts via BC, and subsequently an RL fine-tuning is performed using Advantage Actor-Critic (A2C) \cite{martin2021beclone}.
 \vspace{10pt}
 
 \subsubsection{AlphaStar}
 AlphaStar is a DRL agent for the complex RTS game StarCraft II, which was developed by DeepMind \cite{vinyals2019alphastar}.
 It demonstrates that LT can decisively contribute to robustness in complex RTS domains. 
-The agent in AlphaStar was pre-trained with \emph{imitation learning} from human replays. 
+The agent in AlphaStar was pre-trained with imitation learning from human replays. 
 
 \paragraph{Pre-League Training.}
 In this thesis, we replace imitation learning with the BC phases and the PPO phase. 
-Similar to AlphaStar our agent was further trained in a league of different agent types (Main Agent, Main Exploiters, League Exploiters and historical snapshots (\emph{historical agents})) to reduce overfitting and forgetting and to promote diversity. 
+Similar to AlphaStar our agent was further trained in a league of different agent types (Main Agent, Main Exploiters, League Exploiters and historical snapshots (Historical Agents)) to reduce overfitting and forgetting and to promote diversity. 
 
 \paragraph{League Composition and Training.}
-As in AlphaStar, in this thesis Main Exploiters are trained by training the base agent against all historical versions of the Main Agenten in the league, in order to identify and exploit weaknesses.
-At the same time, League Exploiters train against all historical agents.
-The Main Agent trains with \emph{Prioritized fictitious self-play} PFSP against historical versions of itself, Main Exploiters and League Exploiters.
-The prioritization of the historical opponents is computed based on the Main Agent’s win rate against the respective historical agents.
+As in AlphaStar, in this thesis Main Exploiters are trained by training the Base Agent against all historical versions of the Main Agenten in the league, in order to identify and exploit weaknesses.
+At the same time, League Exploiters train against all Historical Agents.
+The Main Agent trains with Prioritized Fictitious Self-Play PFSP against historical versions of itself, Main Exploiters and League Exploiters.
+The prioritization of the historical opponents is computed based on the Main Agent’s win rate against the respective Historical Agents.
 In this thesis, the prioritization formula was adjusted to better fit the MicroRTS environment.
-An exploiter is added to the league as a historical agent only when it shows a high win rate against all opponents or when a predefined step limit is reached \cite{vinyals2019alphastar}. 
+An exploiter is added to the league as a Historical Agent only when it shows a high win rate against all opponents or when a predefined step limit is reached \cite{vinyals2019alphastar}. 
 
 \paragraph{Differences from AlphaStar.}
 Although MicroRTS and StarCraft II substantially differ in complexity and representation, AlphaStar is an established reference design for stabilizing and generalizing SP through league-based matchmaking mechanisms and the inclusion of specialized exploiters \cite{vinyals2019alphastar}.
-AlphaStar performs policy updates using an \emph{actor–critic method} with an off-policy correction mechanism called \emph{V-trace} \cite{espeholt2018impala, vinyals2019alphastar}.
+AlphaStar performs policy updates using an actor-critic method with an off-policy correction mechanism called V-trace \cite{espeholt2018impala, vinyals2019alphastar}.
 This approach is better suited for LT than PPO due to its robustness to off-policy data and its typically better scalability in large distributed setups.
 However, the implementation of PPO in MicroRTS-Py is significantly simpler and faster to realize, which is why PPO is a practical choice for implementing LT \cite{vinyals2019alphastar}.
-In addition, AlphaStar uses TD($\lambda$) \cite{suttonbarto1998rl} for value estimation value-function estimation.
+In addition, AlphaStar uses TD($\lambda$) \cite{suttonbarto1998rl} for value-function estimation.
 
 
 \section{Methods}
@@ -238,13 +242,12 @@ In addition, AlphaStar uses TD($\lambda$) \cite{suttonbarto1998rl} for value est
 \label{sec:MicroRTS-environment}
 MicroRTS is a two-player zero-sum game that is played on a two-dimensional grid (the map).
 Different units can be located on each cell of this map and players can execute actions to move/train/attack units and to collect resources.
-The different units are:
+The different units types are:
 
 \newcommand{\uniticon}[2][1.6em]{%
   \raisebox{-0.25\height}{\includegraphics[height=#1]{#2}}%
 }
 
-\paragraph{Unit Types.}
 \begin{itemize}
 \item \textbf{Base:} \uniticon{images/Base.png} The Base can store resources and train Workers. It is very important, since it is the only way to store resources. (Cost (in resources): 10, hit points (hp): 10)
 \item \textbf{Resources:} \uniticon{images/Resource.png} There is only one type of resource. It can be stored by Workers in the Base. (Number of resources in a cell: depends on the map in our case 25)
@@ -274,13 +277,13 @@ This symmetric map starts each player with one Base, five resources, two Workers
 The action space used in this thesis is implemented using the combination of GridNet and invalid action masking \cite{huang2021gym}.
 GridNet produces a unit action (an action for one specific cell) for each cell of the map, regardless of whether a unit is located on the cell and whether the action is valid \cite{pmlr-v97-han19a}.
 Building on this, invalid action masking is used to mask invalid actions, thereby also masking actions empty cells \cite{huang2021gym}.
-The \emph{unit action space} is defined as an 8-dimensional vector per cell:
+The unit action space is defined as an 8-dimensional vector per cell:
 \[
 (\text{pos}, \text{type}, d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}, \text{pType}, \text{relPos})
 \]
 The components of the unit-action vector are defined as follows:
 \begin{itemize}
-\item \textbf{pos:} Linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space (e.g., for a $16\times 16$ grid: range: [0, 255])).
+\item \textbf{pos:} Linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space (e. g. for a $16\times 16$ grid: range: [0, 255])).
 \item \textbf{type:} Action type (range: [0, 5], 0: Nop, 1: Move, 2 Harvest, 3: Return, 4: Produce, 5: Attack).
 \item \textbf{$d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}$:} Directions (range: [0, 3], 0: North, 1: East, 2: South, 3: West) for the respective actions.
 \item \textbf{pType:} Type of the unit to be produced. (range: [0, 6], 0: Resource, 1: Base, 2: Barracks, 3: Worker, 4: Light, 5: Heavy, 6: Ranged).
@@ -291,11 +294,11 @@ The position is implicitly encoded by the linear grid indexing of the GridNet ou
 Given a map of size $h \times w$, the action space has shape $h \times w \times 78$.
 For our $16 \times 16$ map, the action space per environment in the GridNet representation would therefore contain $16 \times 16 \times 78 = 19968$ actions. However, many of them can be invalid and are masked by invalid action masking \cite{huang2021gym}.
 Afterward the position is incorporated before masking the actions, otherwise the masking would remove the structure of the Action-Space, which would remove the implicit encoding for the position.
-Depending on the action type, only parts of the action vector are relevant (e.g., if the action type is \texttt{Move}, then only the components \texttt{pos}, \texttt{type} and \texttt{$d_{\text{move}}$} are relevant (the other components are ignored)).
+Depending on the action type, only parts of the action vector are relevant (e. g. if the action type is \texttt{Move}, then only the components \texttt{pos}, \texttt{type} and \texttt{$d_{\text{move}}$} are relevant (the other components are ignored)).
 
 
 \paragraph{Observation Space.}
-Observations are represented as a grid of shape $h \times w \times c$ per environment, where $h$ and $w$ are the height and width of the map and $c$ is the number of encoded features of each cell in the game state (e.g., unit types, hit points, move direction, etc.) \cite{huang2021gym}.
+Observations are represented as a grid of shape $h \times w \times c$ per environment, where $h$ and $w$ are the height and width of the map and $c$ is the number of encoded features of each cell in the game state (e. g. unit types, hit points, move direction, etc.) \cite{huang2021gym}.
 The screenshot of the map basesWorkers16x16A \ref{Figure 1} visualizes the observation space, without any additional information.
 
 
@@ -315,7 +318,7 @@ In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and May
     % Die PPO-Zielfunktion besteht aus drei zentralen Termen: einem Policy-Term, der die erwartete Belohnung unter der Begrenzung der Policy-Updates durch die Clipping-Funktion maximiert, einem Value-Term für die Minimierung des Fehlers in der Value-Schätzung und einen Entropie-Term, der durch Maximierung der Aktionsentropie die Exploration fördert \cite{schulman2017ppo}. 
     
     % TODO: vielleicht nur LT ansprechen, wenn ich nicht mehr genug Zeit habe, um FSP zu evaluieren.
-    \item Using SP/FSP/LT, we aim to further generalize the base agent by training PPO not only against the built-in bots of MicroRTS (against which the base agent already achieves a high win rate), but also against opponents of equal strength or stronger.
+    \item Using SP/FSP/LT, we aim to further generalize the Base Agent by training PPO not only against the built-in bots of MicroRTS (against which the Base Agent already achieves a high win rate), but also against opponents of equal strength or stronger.
     However, many opponents at this level of performance are not suitable for training, since they are very slow and thus slow down the collection of rollouts for PPO.
     In addition, the agent’s generalization capability improves only to a limited extent when training against only a few new opponents, if the training environment does not provide sufficient opponent diversity.
     SP/FSP/LT address both problems by providing numerous opponents that continue to evolve over the course of training and achieve a high win rate against historical versions of the current agent.
@@ -329,21 +332,21 @@ To implement SP in the MicroRTS-Py reimplementation Huang et al. implemented the
 In RAISocketAI, that approach was improved and fixed \cite{goodfriend2024raisocketai}.
 In this Thesis, the same approach with some adustments is used to implement SP, which is also used as a basis for FSP and LT.
 
-\paragraph{Problems:}
+\paragraph{Problems.}
 \begin{itemize}
     \item The training is often unstable because of cyclical learning.
     For \textbf{example},  if policy B performs well against A, C performs well against B and A performs well against C, the agent may be trapped in a cycle in which it repeatedly relearns only the policy that performs well against itself, but not against other opponents \cite{vinyals2019alphastar}.
     \item A big problem in the SP training setup is that the agent has to learn to play as player 2 as well as player 1, which complicates the training and can lead to a slow learning process \cite{huang2021gym}.
     The biggest difference between player 1 and player 2 is that player 1 starts at the top left of the map, whereas player 2 starts at the bottom right.
     This means that the agent has to learn to start play in two different areas of the map, which can be difficult and time-consuming.
-    The problem is further exacerbated by the fact the training of this thesis does not start from scratch, but from a base agent that was only trained as player 1, which means that the agent would have to unlearn the bias towards starting at the top left of the map and learn to start at the bottom right as well.
+    The problem is further exacerbated by the fact the training of this thesis does not start from scratch, but from a Base Agent that was only trained as player 1, which means that the agent would have to unlearn the bias towards starting at the top left of the map and learn to start at the bottom right as well.
 \end{itemize}
 
 \paragraph{Solutions.} 
 FSP/PFSP are used to stabilize training and reduce cyclical learning.
 To address the second problem, the observations for player 2 are transformed by rotating them along by 180 degrees.
 From the agent’s perspective, player 2 also starts at the top-left of the map. 
-This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained base agent possible, even though the base agent was exclusively trained as player 1.
+This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained Base Agent possible, even though the Base Agent was exclusively trained as player 1.
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/adjust_obs.pdf}
     \captionof{figure}{Observation adjustment for player 2 in SP.
@@ -364,10 +367,10 @@ Under standard assumptions, FSP can converge towards an approximate Nash equilib
 Heinrich et al. also demonstrate this empirically in poker experiments \cite{heinrich2015fsp}.
 
 \paragraph{Implementation.} 
-The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of historical agents (snapshots of the Main Agent at different training stages).
+The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of Historical Agents (snapshots of the Main Agent at different training stages).
 
 \paragraph{Problem with the Implementation.} 
-If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e.g., when both players want to move to the same cell).
+If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e. g. when both players want to move to the same cell).
 This gives player 2 a disadvantage, although it has only a minor effect on the results. 
 The actual problem is that the agent can exploit this prioritization in FSP if it learns that optimizing the training objective can be achieved primarily by improving player 1, while deliberately performing poorly as player 2.
 After sufficient training, the agent will learn a strategy that is based on player 1 being prioritized.
@@ -380,7 +383,7 @@ In FSP, player 2 would then be blocked, while player 1 would not, allowing the a
 \paragraph{Relevance for LT.} 
 In LT, the Result of the problem is not quite as problematic because there are exploiters that can be trained against, which remain adversarial to the Main Agent.
 However, a large portion of the training becomes ineffective and provides poor learning signals if the agent exploits the player 1 priority.
-On top of that the Problem is particularly relevant for LT, which combines SP and FSP, because only historical Agents are available for training in FSP, making the feedback for player 2 very sparse, while in LT the Main Agent can directly train against the current Main Agent.
+On top of that the Problem is particularly relevant for LT, which combines SP and FSP, because only Historical Agents are available for training in FSP, making the feedback for player 2 very sparse, while in LT the Main Agent can directly train against the current Main Agent.
 This yieldes more immediate feedback on  the Main Agents performance as an opponent (player 2).
 As a result the agent no longer has to plan as far ahead in order to exploit this priority and minimize its own win rate as player 2.
 \begin{figure}[h]
@@ -410,7 +413,7 @@ The selection probability is based on the win rate of the learning agent against
 The exact prioritization function can differ for different agent types.
 In AlphaStar, for the Main Agent, opponents of medium difficulty (win rate close to 50\%) are prioritized. While exploiters prioritize the strongest opponent (against which the win rate is closest to 0\%).
 Adapted prioritization functions tailored to our training setup are used in this thesis,  which deviate from those used in AlphaStar.
-An important difference is that training against an opponent against which the base agent has a win rate close to 0\% yields little informative gradient or learning signal.
+An important difference is that training against an opponent against which the Base Agent has a win rate close to 0\% yields little informative gradient or learning signal.
 % und dass eine win rate von 0.5 meist heißt, dass keiner von beiden gewinnt/verliert. 
 % Stattdessen hieß das meistens, dass beide Spieler sich gegenseitig ignorieren, die Basis des Gegners angreifen und dann für den Rest des Spieles sich nicht mehr bewegen.
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
@@ -435,7 +438,7 @@ In this thesis PFSP was modified so that all agents have a non-zero probability 
 \subsection{League Training (LT)}
 \label{sec:LT}
 LT combines and extends SP and PFSP to further stabilize training.
-It also promotes robustness by training against opponents sampled from a \emph{league}, including Main Exploiters and League Exploiters and Historical Agents \cite{vinyals2019alphastar}.
+It also promotes robustness by training against opponents sampled from a league, including Main Exploiters and League Exploiters and Historical Agents \cite{vinyals2019alphastar}.
 
 \paragraph{League Composition and Roles.} 
 Learning Agents of the league were trained in parallel.
@@ -449,7 +452,7 @@ Similar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis cons
 \end{itemize}
 Historical Agents are the only agent type that is not a learning agent.
 The main differences between the roles are the opponent-sampling distribution and the hyperparameters.
-All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but are trained with role-specific hyperparameters (e.g., learning rate and PFSP prioritization function).
+All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but are trained with role-specific hyperparameters (e. g. learning rate and PFSP prioritization function).
 
 
 \paragraph{Training Loop and Snapshot Management.}
@@ -465,8 +468,8 @@ A phase of the training loop is considered completed only after every agent type
 For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have completed the current phase.
 
 \paragraph{Bot Environments.} 
-Bot environments are added to the league to stabilize training by continuing the PPO training against the built-in MicroRTS bots CoacAI and Mayari, which the base agent was trained against.
-Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with identifying and exploiting weaknesses in the Main Agent or the league, which is the main purpose of the exploiters (e.g., if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against).
+Bot environments are added to the league to stabilize training by continuing the PPO training against the built-in MicroRTS bots CoacAI and Mayari, which the Base Agent was trained against.
+Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with identifying and exploiting weaknesses in the Main Agent or the league, which is the main purpose of the exploiters (e. g. if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against).
 In MicroRTS-Py the environments for built-in bots and for SP are not interchangeable, since the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT directly. 
 The number of parallel environment instances and their built-in bot opponent (if any) have to be defined at initialization of the MicroRTS-Py environments, which means the number of environments for each built-in bot remains fixed.
 One of the main advantages of LT is that training against opponents with bad learning signals is reduced.
@@ -483,14 +486,14 @@ Among other things, references to the observation, action and invalid action mas
 \paragraph{Summary: Opponent Selection.}
 PFSP samples the next opponent from a given set of possible opponents, with probabilities based on the current learning agent’s win rates against the potential opponents, whereas SP always trains against the current learning Agent.
 The opponent selection for the League is illustrated in Figure \ref{fig:Matchmaking}.
-Depending on the agent role, opponents are either the current Main Agent or sampled from specific subsets of historical agents using PFSP. 
+Depending on the agent role, opponents are either the current Main Agent or sampled from specific subsets of Historical Agents using PFSP. 
 The Main Agent also trains against additional bot environments, while Main Exploiters and League Exploiters are matched only against agents from the league.
 
 
 \paragraph{Resetting Exploiters.}
 % TODO: unit bonus distribution im Text lassen?
 The AlphaStar paper \cite{vinyals2019alphastar} describes that exploiters reset their weights to the initial values (here: the Base Agent). 
-In our approach exploiter resets also reset the optimizers, game statistics (e.g., win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable) that is later explained in this thesis.
+In our approach exploiter resets also reset the optimizers, game statistics (e. g. win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable) that is later explained in this thesis.
 Furthermore exploiters only reset after a game has ended. 
 As a result, an exploiter can reset during a rollout.
 If that happens, then the rollout contains trajectories from the old policy and therefore cannot be used for the on-policy training in our PPO implementation.
@@ -545,7 +548,7 @@ While this helped to increase exploration of a broader range of unit types, as r
 
 % TODO: nächsten 2 subsections lieber in Experiments?
 \paragraph{Unit Bonus.}
-To address the problem of insufficient diversity, a clipped unit bonus can be added to the reward, encouraging the agent to use different unit types (e.g., by giving the Base Agent a bonus every time it produces a Ranged Unit).
+To address the problem of insufficient diversity, a clipped unit bonus can be added to the reward, encouraging the agent to use different unit types (e. g. by giving the Base Agent a bonus every time it produces a Ranged Unit).
 The number of other units types increased when using the Unit Bonus.
 However, even with weaker agents such as the agent after the BC phase and over 20 million steps, the agent did not develop strategies centered on different unit types and instead produced the unit type with a bonus at the end of a round, when the result was already decided.
 
@@ -631,7 +634,7 @@ Checkpoints without resets are not included in the win rates.
 
 \subsection{Results}
 The Agent learned to keep the Base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the Base undefended while attacking.
-% TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used in edge cases in which Ranged Units are so effective that even one Ranged Unit can make a difference (e.g., when the opponent has only Workers or when only a small number of units remain and avoid the Agent in order to force a draw).
+% TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used in edge cases in which Ranged Units are so effective that even one Ranged Unit can make a difference (e. g. when the opponent has only Workers or when only a small number of units remain and avoid the Agent in order to force a draw).
 As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against almost all evaluated opponents.
 The difference between the rates are listed in Table~\ref{tab:diff_main_agent_evaluation}, for better comparison.
 The win rates against the bots used in training are now 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
@@ -1065,8 +1068,8 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 % League & \texttt{pfsp} & true & Prioritized Fictitious Self-Play is enabled. \\
 League & \texttt{num\_main\_exploiters} & 4 & Number of Main Exploiters. \\
 League & \texttt{num\_league\_exploiters} & 2 & Number of League Exploiters. \\
-% League & \texttt{starting\_historical} & true & Historical agents are present from the beginning. \\
-% League & \texttt{BC\_agent\_as\_Historical} & false & The BC agent is not included as a Historical agent. \\
+% League & \texttt{starting\_historical} & true & Historical Agents are present from the beginning. \\
+% League & \texttt{BC\_agent\_as\_Historical} & false & The BC agent is not included as a Historical Agent. \\
 % League & \texttt{training\_on\_bot\_envs} & true & Training on bot environments is enabled. \\
 % League & \texttt{even\_opponent\_split} & true & Opponent selection is distributed evenly. \\
 % League & \texttt{use\_no\_draw\_winrates} & false & Draws are not excluded separately when computing win rates. \\
@@ -1148,7 +1151,7 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 \end{tabularx}
 \begin{tablenotes}
 \footnotesize
-\item Listed are the hyperparameters and control parameters used in this thesis. Some Parameters (e.g., model paths, project names, or logging names) were omitted for clarity.
+\item Listed are the hyperparameters and control parameters used in this thesis. Some Parameters (e. g. model paths, project names, or logging names) were omitted for clarity.
 \end{tablenotes}
 \end{threeparttable}
 \end{table*}
@@ -1219,7 +1222,7 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 % \midrule
 % \multicolumn{4}{@{}l}{\textbf{Self-Play, Checkpoints and Opponent Selection}} \\
 % \midrule
-% Self-Play & \texttt{main\_exploiter\_ready\_use\_historicals} & true & Historical agents are used for Main Exploiters. \\
+% Self-Play & \texttt{main\_exploiter\_ready\_use\_historicals} & true & Historical Agents are used for Main Exploiters. \\
 % TODO: Self-Play & \texttt{main\_exploiter\_no\_draw\_winrate\_threshold} & 0{,}65 & win rate threshold excluding draws. \\
 % Self-Play & \texttt{main\_exploiter\_max\_historical\_winrate\_threshold} & 2{,}0 & Value greater than 1 used to effectively disable the Historical trigger. \\
 % Self-Play & \texttt{main\_exploiter\_main\_prob\_when\_max\_historical\_winrate} & 0{,}0 & Probability of playing against the Main Agent when the threshold is exceeded. \\
