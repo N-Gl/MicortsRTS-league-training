@@ -10,27 +10,29 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "models/BC_coacAI_train/initial_BC/BC_coacAI_train_epoch_7/agent.pt",
+                          "saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1755.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "BC_coacAI_train_epoch_7",
+          "18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1755",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "BC_coacAI_train_epoch_7"
+  exp_name: "18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1755"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
   prod_mode: true
 
-  seed:
+  seed: 
   exact_seed: true
+
   
   dbg_deterministic_actions: false
 
+  capture_video: true
   render: true
   render_all: false
 
-  num_eval_episodes: 10
-  num_parallel_eval_envs: 10
+  num_eval_episodes: 100
+  num_parallel_eval_envs: 100
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs

@@ -544,7 +544,9 @@ def main(cfg: ExperimentConfig):
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt", None, False],
-            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
+            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
+            # ["worker_focus", agent_model.Agent, "models/used_models/BC_workerRush_train_epoch_8_agent.pt", None, False],
+            ["worker_focus_2", agent_model.Agent, "models/used_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670.pt", None, False],
             # ["22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3", agent_model.Agent, "league_models/22_01_26__finished_PPO_Basis_thesis_with_Bots_11_main_envs_11_main_exploiter_envs_with_bots__6_13_3/Main_agent_backups/agent_update_830.pt", None, False],
             # ["14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930", agent_model.Agent, "saved_models/14_01_26__finished_PPO_Basis_thesis_12_main_envs_12_main_exploiter_envs_more_exploiter_exploration_2_main_agent_update_930.pt", None, False],
             # ["29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs_update_250", agent_model.Agent, "league_models/29_12_25__finished_PPO_Basis_thesis__league__no_training_on_bot_envs/Main_agent_backups/agent_update_250.pt", None, False],
@@ -555,9 +557,9 @@ def main(cfg: ExperimentConfig):
 
 
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
-            ("coacAI", microrts_ai.coacAI),
-            ("mayari", microrts_ai.mayari),
-            ("passiveAI", microrts_ai.passiveAI),
+            # ("coacAI", microrts_ai.coacAI),
+            # ("mayari", microrts_ai.mayari),
+            # ("passiveAI", microrts_ai.passiveAI),
             ("workerRushAI", microrts_ai.workerRushAI),
             ("lightRushAI", microrts_ai.lightRushAI),
             ("randomAI", microrts_ai.randomAI),
@@ -589,7 +591,10 @@ def main(cfg: ExperimentConfig):
                 for opponent_name, opponent_bot in default_bot_opponents:
                     Bot_opponents.append((opponent_name, opponent_bot, "", None))
 
-                from selfplay_evaluate import evaluate_agent
+                if args.capture_video:
+                    from selfplay_evaluate_recording import evaluate_agent
+                else:
+                    from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
                 aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
                     args=args,
@@ -601,7 +606,10 @@ def main(cfg: ExperimentConfig):
                 )
 
             elif len(default_opponent_paths) > 0:
-                from selfplay_evaluate import evaluate_agent
+                if args.capture_video:
+                    from selfplay_evaluate_recording import evaluate_agent
+                else:
+                    from selfplay_evaluate import evaluate_agent
                 args.num_parallel_selfplay_eval_games = args.num_parallel_selfplay_eval_games * 2
                 args.num_selfplay_envs = args.num_parallel_selfplay_eval_games
                 aggregate_stats, aggregate_episode_rewards, opponent_table_rows = evaluate_agent(
@@ -614,7 +622,10 @@ def main(cfg: ExperimentConfig):
                 )
 
             if len(default_bot_opponents) > 0:
-                from evaluate import bot_evaluate_agent
+                if args.capture_video:
+                    from evaluate_recording import bot_evaluate_agent
+                else:
+                    from evaluate import bot_evaluate_agent
                 bot_aggregate_stats, bot_aggregate_episode_rewards, bot_opponent_table_rows = bot_evaluate_agent(
                     args=args,
                     evaluation_opponents=default_bot_opponents,

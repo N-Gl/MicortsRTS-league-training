@@ -801,14 +801,14 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \multicolumn{8}{l}{\textit{Other bots}} \\
 \csvreader[
     late after line=\\,
-    filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<15
+    filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<16
 ]{images/Base_Agent_evaluation_300.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \csvreader[
     late after line=\\,
-    filter test=\ifnumequal{\thecsvinputline}{15}
+    filter test=\ifnumequal{\thecsvinputline}{16}
 ]{images/Base_Agent_evaluation_300.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }

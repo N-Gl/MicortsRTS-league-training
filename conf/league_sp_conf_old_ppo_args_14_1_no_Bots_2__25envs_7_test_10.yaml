@@ -7,7 +7,7 @@ ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   BC_model_path: models/BCagent.pt
   other_historicals_paths: ["models/finished_PPO_Basis_thesis.pt"]
-  exp_name: 19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP_2
+  exp_name: 20_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_10_SP
   wandb_group_name: SP
 
   
