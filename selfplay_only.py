@@ -897,7 +897,17 @@ class SelfPlayTrainer:
         
 
 
-        opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+        if args.workerbots:
+            opponents = []
+            for i in range(args.num_bot_envs):
+                if i % 3 == 0:
+                    opponents.append(microrts_ai.workerRushAI)
+                elif i % 3 == 1:
+                    opponents.append(microrts_ai.coacAI)
+                else:
+                    opponents.append(microrts_ai.mayari)
+        else:
+            opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
         reward_weight = np.array([1.0, 1.0, 1.0, 0.2, 1.0, 4.0, 5.25, 6.0, 0])
         
         envs = MicroRTSGridModeVecEnv(

@@ -1515,7 +1515,16 @@ class LeagueTrainer:
         self._refresh_exploiter_indices(args)
 
 
-        if args.all_passiveAi:
+        if args.workerbots:
+            opponents = []
+            for i in range(args.num_bot_envs):
+                if i % 3 == 0:
+                    opponents.append(microrts_ai.workerRushAI)
+                elif i % 3 == 1:
+                    opponents.append(microrts_ai.coacAI)
+                else:
+                    opponents.append(microrts_ai.mayari)
+        elif args.all_passiveAi:
             opponents = [microrts_ai.passiveAI for _ in range(args.num_bot_envs)]
         else:
             opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
