@@ -626,16 +626,20 @@ Checkpoints without resets are not included in the win rates.
 \subsection{Results}
 The Agent learned to keep the Base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the Base undefended while attacking.
 % TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used in edge cases in which Ranged Units are so effective that even one Ranged Unit can make a difference (e.g., when the opponent has only Workers or when only a small number of units remain and avoid the Agent in order to force a draw).
-As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against ((???)all) most evaluated opponents.
-The win rates against the agents used in training are now (???)near 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
+As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against almost all evaluated opponents.
+The difference between the rates are listed in Table~\ref{tab:diff_main_agent_evaluation}, for better comparison.
+The win rates against the bots used in training are now 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
 The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
 However, the Main Agent still shows improvement over the results reported in that thesis, which had a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
-The trained Main Agent also performs well against the Base Agent, against which it was trained, with a win rate of (???)83\%.
-The win rate against RandomBiasedAI also improved from 79\% to (???)92\%, showing that the trained Agent performs substantially better against bots that try to draw the game instead of winning, compared to the Base Agent.
-The agents in the section "Other Bots" are considerably stronger than the built-in bots against the Base Agent, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against ((???)all) most of these opponents.
-Highlights include the win rate against Rojo, which improved from 81\% to (???)99\%, while the win rate against MixedBot also increased from 43\% to (???)53\%.
-The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate improved from 16\% to (???)11\%, suggesting that the Main Agent now defends the Base more effectively while attacking.
+The trained Main Agent also performs well against the Base Agent, against which it was trained, with a win rate of 89\%.
+The win rate against RandomBiasedAI is another major improvement from 79\% to 97\%, showing that, in comparison to the Base Agent, the trained Agent performs substantially better against bots that try to draw the game instead of winning.
+The agents in the section "Other Bots" are considerably stronger against the Base Agent than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against most of these opponents.
+Highlights include the win rate against Rojo, which improved from 81\% to 100\%, while the win rate against MixedBot also increased from 43\% to 57\%.
+The win rate against Izanagi fell from 72\% to 70\%, however the loss rate improved from 16\% to 7\%, suggesting that the Main Agent now defends the Base more effectively while attacking.
+WorkerRushAI is the only opponent against which the Main Agent performs worse than the Base Agent, and shows, that the Main Agent still has weaknesses that can be exploited.
 
+\paragraph{Main Agent Without Unit Focus Evaluation.}
+Table~\ref{tab:main_agent_no_unit_focus_evaluation} presents the evaluation results for a Main Agent trained without new initial agents for exploiter diversity.
 
 
 
@@ -646,9 +650,10 @@ The win rate against Izanagi fell from 72\% to (???)63\%, however the loss rate 
 % TODO: replace all (???)
 
 \subsection{Discussion}
-LT improved the Main Agent’s ((???)win, draw, and loss rates) performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized to other bots that were not used in training.
+LT improved the Main Agent’s win, draw, and loss rates against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized to other bots that were not used in training.
 This can improve the Main Agent’s performance further than PPO could by itself, without the agent overfitting to the opponents used in training, even after many different training sessions and further PPO training \cite{huft2023microrts}.
-The underlying intuition is that pure PPO does not search for well-generalizing policies. Instead, the training optimizes performance against the limited set of training opponents. 
+The possible interpretation is that pure PPO does not search for well-generalizing policies. 
+Instead, the training optimizes performance against the limited set of training opponents. 
 It therefore may pass only briefly through policies that generalize well, before continuing towards more specialized solutions.
 As a result, within a single run, PPO may only traverse a limited subset of the policies with good generalization that are in principle reachable.
 In contrast, LT changes the training opponent distribution such that robust performance against diverse opponents becomes part of the optimization target itself.
@@ -663,7 +668,7 @@ It was more difficult than expected to generate diverse exploiters because of th
 The new initial agents contributed to generalization across diverse opponents, which is reflected in the improved performance against a wider range of opponents compared to the evaluation of the previous run that did not use the new initial agents shown in Table~\ref{tab:main_agent_evaluation_no_worker_focus}.
 The most notable difference is that, during the training without the new initial agents, no opponents similar to WorkerRushAI developed, resulting in a very low win rate against WorkerRushAI, while the new Main Agent as well as the Base Agent have no difficulty defeating WorkerRushAI.
 This lack of opponent diversity is also seen in the win rates against Droplet, which also has a different strategy than the Base Agent.
-This example is an extreme case showing what can happen when opponent diversity is  insufficient.
+This example is an extreme case showing what can happen when opponent diversity is insufficient.
 There also were many other training sessions, after which the Main Agent had less problems defeating any of the built-in bots, than the Base Agent.
 However we did not find any exploiters with strategies focused on different unit types than the Base Agent in those training sessions.
 
@@ -680,7 +685,7 @@ Despite the improved the diversity and general performance of the Main Agent, th
     For example, the agent focused on worker units learned to also frequently use Ranged units, even though it was not initially trained with them. % TODO: https://wandb.ai/glaspaul244-hhu/league_training/groups/league_training/runs/8536rmu6?nw=nwuserglaspaul244 reset 1
     With this, we have initial agents for each unit type for the exploiters, as well as examples of effective exploits within the set of strategies for the focused unit types.
     % TODO: multiple other examples of capability to explore strategies with mixed unit types?
-    On top of that, we also have multiple other examples that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
+    On top of that, we also have multiple other examples in different runs, that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
     This suggests that the exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Main Agent, even many against other agents not included in the training or evaluation.
     \item \textbf{limitations: Computational Resources.}
     LT also requires a lot of computational resources.
@@ -822,6 +827,86 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \centering
 \caption{Main Agent evaluation}
 \label{tab:main_agent_evaluation}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
+\toprule
+Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+\midrule
+\multicolumn{8}{l}{\textit{bots used in training}} \\
+\csvreader[
+    late after line=\\,
+    filter test=\ifnumless{\thecsvinputline}{5}
+]{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\multicolumn{8}{l}{\textit{Built-in bots}} \\
+\csvreader[
+    late after line=\\,
+    filter ifthen=\value{csvinputline}>4 \and \value{csvinputline}<10
+]{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\multicolumn{8}{l}{\textit{Other bots}} \\
+\csvreader[
+    late after line=\\,
+    filter ifthen=\value{csvinputline}>9 \and \value{csvinputline}<17
+]{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\csvreader[
+    late after line=\\,
+    filter test=\ifnumequal{\thecsvinputline}{17}
+]{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+
+% TODO: vergleiche den Run mit dem alten Run ohne neue initiale Agenten? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
+% \begin{table*}[t]
+% \centering
+% \caption{Differance in evaluation results between the Main Agent and the Base Agent}
+% \label{tab:diff_main_agent_evaluation}
+% \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
+% \toprule
+% Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+% \midrule
+% \multicolumn{8}{l}{\textit{bots used in training}} \\
+% \csvreader[
+%     late after line=\\,
+%     filter test=\ifnumless{\thecsvinputline}{4}
+% ]{images/diff.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \midrule
+% \multicolumn{8}{l}{\textit{Built-in bots}} \\
+% \csvreader[
+%     late after line=\\,
+%     filter ifthen=\value{csvinputline}>3 \and \value{csvinputline}<9
+% ]{images/diff.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \midrule
+% \multicolumn{8}{l}{\textit{Other bots}} \\
+% \csvreader[
+%     late after line=\\,
+%     filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<17
+% ]{images/diff.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \bottomrule
+% \end{tabular*}
+% \end{table*}
+
+
+\begin{table*}[t]
+\centering
+\caption{Example for Main Agent without unit focus evaluation}
+\label{tab:main_agent_no_unit_focus_evaluation}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
 Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
@@ -1150,6 +1235,34 @@ GAE parameter $\lambda$ & 0.95 \\
     \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/Matchmaking.pdf}
     \captionof{figure}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}
     \label{fig:Matchmaking}
+\end{center}
+\clearpage
+
+\begin{center}
+    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberWorkersAfterGame.png}
+    \captionof{figure}{Number of Worker units after the game.}
+    \label{fig:numberWorkersAfterGame}
+\end{center}
+\clearpage
+
+\begin{center}
+    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberLightAfterGame.png}
+    \captionof{figure}{Number of Light units after the game.}
+    \label{fig:numberLightAfterGame}
+\end{center}
+\clearpage
+
+\begin{center}
+    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberHeavyAfterGame.png}
+    \captionof{figure}{Number of Heavy units after the game.}
+    \label{fig:numberHeavyAfterGame}
+\end{center}
+\clearpage
+
+\begin{center}
+    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberRangedAfterGame.png}
+    \captionof{figure}{Number of Ranged units after the game.}
+    \label{fig:numberRangedAfterGame}
 \end{center}
 \clearpage
 

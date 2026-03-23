@@ -1,0 +1,15 @@
+opponent,win_rate,draw_rate,loss_rate
+coacAI,0.04,-0.02,-0.02
+mayari,0.327,-0.053,-0.273
+passiveAI,0.003,-0.003,0
+workerRushAI,-0.65,0.1,0.55
+lightRushAI,0.02,0,-0.02
+randomAI,0.01,-0.01,0
+randomBiasedAI,0.18,-0.18,0
+rojo,0.19,-0.137,-0.053
+mixedBot,0.137,0.007,-0.143
+izanagi,-0.017,0.11,-0.093
+tiamat,0.06,0,-0.06
+droplet,-0.057,-0.073,0.13
+guidedRojoA3N,0.123,-0.107,-0.017
+naiveMCTSAI,0.013,0.013,-0.027
