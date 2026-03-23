@@ -41,9 +41,9 @@
         \includegraphics[width=0.3\textwidth]{hhu_logo.png} \hfill \\[1cm]
 
         {\Large\textsc{Heinrich-Heine-Universität D\"usseldorf}}\\[3cm]
-        {\Large\textbf{Bachelor Thesis}}\\[1cm]
+        {\Large\textbf{Bachelor-Thesis}}\\[1cm]
 
-        {\Huge\textbf{Implementierung und Evaluation der Reinforcement-Learning-Methoden Self-Play und Liga-Training in der MicroRTS-Umgebung}}\\[2cm]
+        {\Huge\textbf{Implementation and evaluation of the reinforcement learning methods Self-Play and League Training in the MicroRTS environment}}\\[2cm]
 
         {\Large\textbf{{Name!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}}}\\[2cm]
 
@@ -54,7 +54,7 @@
             Degree: \> B.Sc. Computer Science \\
             Supervisor: \> Professor Dr. Paul Swoboda \\
             Co-Supervisor: \> Dr. Peter Arndt \\
-            Faculty: \> Mathematisch-Naturwissenschaftliche Fakultät \\
+            Faculty: \> Faculty of Mathematics and Natural Sciences \\
         \end{tabbing}
 
         \vfill % Vertical space
@@ -66,14 +66,18 @@
 %%%%%%%%% ABSTRACT
 \begin{abstract}
     % (???) Wir oder ich?
-    This thesis improves an existing agent for the real-time strategy game (RTS) MicroRTS.
+    This thesis improves an existing agent for the real-time strategy (RTS) game MicroRTS.
     RTS games are considered a challenging domain for Deep Reinforcement Learning (DRL), since agents must deal with large combinatorial action spaces, simultaneous decisions, as well as delayed and often sparse rewards.
     As a baseline method, we use Proximal Policy Optimization (PPO).
-    In many DRL training setups, such as pure PPO, one reaches a point at which the agent cannot be trained further efficiently using PPO alone, because there are not enough strong opponents to train against or because the available opponents are not diverse enough to develop a robust policy.
+    In many DRL training setups, such as pure PPO, the agent reaches a point where it cannot be trained further efficiently by using PPO alone, because there are not enough strong opponents to train against or because the available opponents are not diverse enough to develop a robust policy.
     An obvious and simple countermeasure is Self-Play (SP) however, in practice it can be unstable and lead to overfitting or cyclical strategies, which can reduce performance against external opponents.
 
 
-    League Training (LT) stabilizes SP by building a population of agents across different training stages and roles. The training agent is then deliberately matched against diverse opponents. Among others, against specialized agents that were trained to exploit weaknesses of the current policy. We evaluate the resulting agents in matches against various opponent types and compare LT with pure SP as well as with our initial agent. Our results show that LT increases the robustness and generalization capability of the agent against different opponents.
+    League Training (LT) stabilizes SP by building a population of agents across different training stages and roles.
+    The training agent is deliberately matched against diverse opponents.
+    Among others, against specialized agents that were trained to exploit weaknesses of the current policy.
+    We evaluate the resulting agents in matches against various opponent types and compare LT with pure SP as well as with our initial agent.
+    Our results show, that LT increases the robustness and generalization capability of the agent against different opponents.
 
 \end{abstract}
 
@@ -86,24 +90,24 @@
 \label{sec:Introduction}
 
 Reinforcement Learning (RL) has established itself in recent years as a powerful approach for developing agents in complex environments. 
-Game environments such as RTS games pose a particular challenge in this regard, with large action spaces, long-term planning, and simultaneous decisions. However, they also provide clearly defined state spaces, reward structures, and repeatable experiments, which makes them an ideal and challenging test environment for researching RL methods.
+Game environments such as RTS games pose a particular challenge in this regard, with large action spaces, long-term planning and simultaneous decisions. However, they also provide clearly defined state spaces, reward structures and repeatable experiments, which makes them an ideal and challenging test environment for researching RL methods.
 
 \paragraph{MicroRTS}
 MicroRTS is a simplified version of RTS games that was developed specifically for research \cite{huang2021gym}. 
 It is discrete and reduces the visual and mechanical complexity of large commercial RTS games, such as StarCraft II. 
-At the same time, it retains the core difficulties, for example resource management, unit production, combat mechanics, and tactical positioning. 
+At the same time, it retains the core difficulties, for example resource management, unit production, combat mechanics and tactical positioning. 
 MicroRTS is therefore suitable for the systematic investigation of learning methods. MicroRTS also contains numerous training challenges, such as large combinatorial action spaces, delayed rewards, multi-agent interactions, and it also requires robust strategies against different opponents. 
 For example, the agent must decide early on whether it wants to play aggressively or defensively against the current opponent, which affects the overall game strategy and requires long-term planning.
 
 \paragraph{Self-Play-Based Approaches.}
 A central problem in RL is generalization across different opponents and strategies: agents often learn strategies that are strongly tailored to the training opponent or a specific game situation. 
 This leads to overfitting and limited robustness. 
-SP, Fictitious Self-Play (FSP), and LT are approaches that address this problem. 
+SP, Fictitious Self-Play (FSP) and LT are approaches that address this problem. 
 In SP, the agent trains by playing against itself, which leads to a continuous learning process that does not require additional diverse or strong opponents. 
 However, training is often unstable because of cyclical learning.
 % Ein Beispiel: Spielt der Agentzustand B gut gegen A, C gut gegen B und A gut gegen C, könnte der Agent in einem Zyklus gefangen sein, in dem er immer nur den Agentenzustand wieder erlernt, der gegen sich selbst gut ist, aber nicht gegen andere Gegner.
 
-\paragraph{league training (LT).}
+\paragraph{League Training (LT).}
 To reduce the instabilities of pure SP, the agent in FSP is not trained against the current agent but against previous versions of itself, which prevents cyclical learning \cite{heinrich2015fsp}. % and converges to the Nash equilibrium in two-player zero-sum games 
 LT extends FSP by training the agent against historical opponents from a league that consists of different agent types, for example policy snapshots from earlier training stages as well as specialized agents \cite{vinyals2019alphastar}.
 The goal is to stabilize the learning environment, in which agents compete against a broad spectrum of strategies and thereby become more robust.
@@ -120,7 +124,7 @@ These include:
 %\item assessing the actual generalization capability of the trained agents.
 \end{itemize}
 In addition, we will compare and evaluate the Results emperically. 
-In particular, we will analyze the learning curve, strategic diversity, and robustness for the different training approaches.
+In particular, we will analyze the learning curve, strategic diversity and robustness for the different training approaches.
 
 \paragraph{Training the Base Agent:}
 The base agent used in this project is trained in a three-stage procedure that combines BC and BC fine-tuning (BC-FT), followed by fine-tuning with PPO:
@@ -136,17 +140,17 @@ This two-stage approach, in which a policy pre-trained with BC is refined by a D
 \section{Related Work}
 \label{sec:related-work}
 \subsubsection{Game Playing Agents in MicroRTS}
-The (unpublished) bachelor’s thesis by M. Huft that underlies this work develops a competitive agent for MicroRTS and evaluates the hybrid training pipeline consisting of BC, BC-FT, and PPO for the base agent from the introduction \cite{huft2023microrts}.
+The (unpublished) bachelor’s thesis by M. Huft that underlies this work develops a competitive agent for MicroRTS and evaluates the hybrid training pipeline consisting of BC, BC-FT and PPO for the base agent from the introduction \cite{huft2023microrts}.
 
 \paragraph{Results and Limitations.}
 The results show a clear performance increase across all three training phases (Table~\ref{tab:win rates_all}): BC mainly learns basic game mechanics, while BC-FT improves generalization against multiple bots. Finally, PPO achieves high win rates against many of the built-in bots \cite{huft2023microrts}.
 There still are agents in the results against which the base agent does not perform well. 
 The thesis also identifies limitations, in particular the focus on a single map and the limited opponent diversity, and proposes extensions using self-play or league mechanisms. 
 Exactly this proposal is taken up by the present work by extending the existing base agent and the initial code with SP and LT. 
-The opponents against which the evaluation is conducted include the MicroRTS built-in bots (RandomBiasedAI, WorkerRushAI, LightRushAI, and CoacAI).
+The opponents against which the evaluation is conducted include the MicroRTS built-in bots (RandomBiasedAI, WorkerRushAI, LightRushAI and CoacAI).
 \begin{table}[ht]
 \centering
-\caption{Winrates (\%) for BC, BC-FT, and PPO reported in \cite{huft2023microrts}.}
+\caption{Winrates (\%) for BC, BC-FT and PPO reported in \cite{huft2023microrts}.}
 \label{tab:win rates_all}
 \begin{tabular}{lccc}
 \hline
@@ -175,7 +179,7 @@ naiveMCTS        & 0 & 5& 3 \\
 Huang et al. provide an efficient Gym-compatible interface for our environment MicroRTS \cite{Ontanon2013CombinatorialBandit} with \emph{Gym-$\mu$RTS} / \emph{MicroRTS-Py} \cite{huang2021gym}.
 MicroRTS-Py is an established and widely used DRL baseline that enables the investigation of DRL approaches in full real-time strategy game scenarios without requiring extensive technical infrastructure such as high-performance computing clusters \cite{huang2021gym}.
 
-\paragraph{Proximal Policy Optimization (PPO) training.}
+\paragraph{Proximal Policy Optimization (PPO) Training.}
 The \emph{openai/baselines} \cite{baselines} implementation of PPO was adapted in order to fit MicroRTS-Py. We use a large part of this implementation in LT \cite{huang2021gym}. 
 It was also previously used in the PPO training phases of the base agent \cite{huft2023microrts}.
 On top of openai/baselines, \emph{invalid action masking} and suitable action/observation representations (e.g., GridNet \cite{pmlr-v97-han19a}) as well as architectural choices (such as IMPALA-CNN-a deep convolutional neural network structure with residual blocks for processing grid-based state representations in RL) \cite{espeholt2018impala} were added \cite{huang2021gym}. 
@@ -185,13 +189,14 @@ In a modified form, these are still used in the LT code.
 Huang et al. considered using \emph{GridNet} or \emph{Unit Action Simulation} (UAS) instead of GridNet. 
 UAS iterates over all units at each step and returns the possible actions for each unit, which substantially reduces the action space. 
 GridNet, in contrast, predicts an action for each cell on the map. This means that GridNet executes its large action space in a single step, but this also simplefies the training \cite{huang2021gym, pmlr-v97-han19a}.
-Against the built-in bots of MicroRTS, which are based on heuristic rules, the PPO implementation with invalid action masking and IMPALA-CNN achieves an average win rate of 91\% with UAS and 84\% with GridNet. Ultimately, the decision was made to focus on GridNet, since its complexity is lower, and it facilitates compatibility with SP (and LT) \cite{huang2021gym}.
+Against the built-in bots of MicroRTS, which are based on heuristic rules, the PPO implementation with invalid action masking and IMPALA-CNN achieves an average win rate of 91\% with UAS and 84\% with GridNet. 
+Ultimately, the decision was made to focus on GridNet, since its lower complexity and its higher compatibility with SP (and LT) \cite{huang2021gym}.
 SP was also evaluated in the work. However, there was a bug in the code that likely strongly affected the results for SP \cite{goodfriend2024raisocketai}.
 \vspace{10pt}
 
 \subsubsection{RAISocketAI}
 In 2023 RAISocketAI was the first DRL agent which won the IEEE MicroRTS Competition. RAISocketAI includes a re-implementation of MicroRTS-Py, which is used in our code. 
-Among other things, data generation via replays is an important basis for BC \cite{huft2023microrts}, and a bug in the old implementation was fixed that marked non-owned resources as owned resources when the agent is player 2. 
+Among other things, data generation via replays is an important basis for BC \cite{huft2023microrts} and a bug in the old implementation was fixed that marked non-owned resources as owned resources when the agent is player 2. 
 According to Goodfriend, this likely caused SP in the previous MicroRTS-Py implementation to yield no improvements, The RAISocketAI implementation of FSP achieved an average win rate of 91\% against the same MicroRTS built-in bots as in MicroRTS-Py, which is significantly higher than 84\% in the previous implementation. 
 However, FSP achieved only a 20\% win rate against CoacAI, whereas the best previous implementations were almost always able to defeat CoacAI. 
 With fine-tuning on CoacAI and Mayari, the average win rate against the built-in bots was increased to 98\% \cite{goodfriend2024raisocketai}.
@@ -209,12 +214,12 @@ The agent in AlphaStar was pre-trained with \emph{imitation learning} from human
 
 \paragraph{Pre-League Training.}
 In this thesis, we replace imitation learning with the BC phases and the PPO phase. 
-Similar to AlphaStar our agent was further trained in a league of different agent types (Main Agent, Main Exploiters, League Exploiters, and historical snapshots (\emph{historical agents})) to reduce overfitting and forgetting and to promote diversity. 
+Similar to AlphaStar our agent was further trained in a league of different agent types (Main Agent, Main Exploiters, League Exploiters and historical snapshots (\emph{historical agents})) to reduce overfitting and forgetting and to promote diversity. 
 
 \paragraph{League Composition and Training.}
 As in AlphaStar, in this thesis Main Exploiters are trained by training the base agent against all historical versions of the Main Agenten in the league, in order to identify and exploit weaknesses.
 At the same time, League Exploiters train against all historical agents.
-The Main Agent trains with \emph{Prioritized fictitious self-play} PFSP against historical versions of itself, Main Exploiters, and League Exploiters.
+The Main Agent trains with \emph{Prioritized fictitious self-play} PFSP against historical versions of itself, Main Exploiters and League Exploiters.
 The prioritization of the historical opponents is computed based on the Main Agent’s win rate against the respective historical agents.
 In this thesis, the prioritization formula was adjusted to better fit the MicroRTS environment.
 An exploiter is added to the league as a historical agent only when it shows a high win rate against all opponents or when a predefined step limit is reached \cite{vinyals2019alphastar}. 
@@ -232,7 +237,7 @@ In addition, AlphaStar uses TD($\lambda$) \cite{suttonbarto1998rl} for value est
 \subsection{MicroRTS-environment}
 \label{sec:MicroRTS-environment}
 MicroRTS is a two-player zero-sum game that is played on a two-dimensional grid (the map).
-Different units can be located on each cell of this map, and players can execute actions to move/train/attack units and to collect resources.
+Different units can be located on each cell of this map and players can execute actions to move/train/attack units and to collect resources.
 The different units are:
 
 \newcommand{\uniticon}[2][1.6em]{%
@@ -244,19 +249,19 @@ The different units are:
 \item \textbf{Base:} \uniticon{images/Base.png} The Base can store resources and train Workers. It is very important, since it is the only way to store resources. (Cost (in resources): 10, hit points (hp): 10)
 \item \textbf{Resources:} \uniticon{images/Resource.png} There is only one type of resource. It can be stored by Workers in the Base. (Number of resources in a cell: depends on the map in our case 25)
 \item \textbf{Worker:} \uniticon{images/Worker.png} Workers can collect resources and build Barracks. (Cost: 1, hp: 1, attack strength (at): 1)
-\item \textbf{Barracks:} \uniticon{images/Barracks.png} Barracks can train Light, Heavy, and Ranged units. (Cost: 5, hp: 4)
-\item \textbf{Light:} \uniticon{images/Light.png} Light units can move quickly, are trained quickly, and cost little. (Cost: 2, hp: 4, at: 2)
+\item \textbf{Barracks:} \uniticon{images/Barracks.png} Barracks can train Light, Heavy and Ranged units. (Cost: 5, hp: 4)
+\item \textbf{Light:} \uniticon{images/Light.png} Light units can move quickly, are trained quickly and cost little. (Cost: 2, hp: 4, at: 2)
 \item \textbf{Heavy:} \uniticon{images/Heavy.png} Heavy units can move slowly are trained slowly and cost a lot, but have high at and hp. (Cost: 3, hp: 8, at: 4)
 \item \textbf{Ranged:} \uniticon{images/Ranged.png} Ranged units have an attack range of 3 cells. (Cost: 2, hp: 1, at: 1)
 \end{itemize}
-Worker, Light, Heavy, and Ranged units can move one cell in one of four directions.
+Worker, Light, Heavy and Ranged units can move one cell in one of four directions.
 Units of player 1 are displayed with a blue outline, whereas units of player 2 are outlined in red.
-Movement is visualized with a gray line, attacking with a red line, and gathering with a green line.
+Movement is visualized with a gray line, attacking with a red line and gathering with a green line.
 
 \paragraph{Game Setup.}
 Most games are decided within 2000 steps. Therefore, the maximum number of steps is set to 2000.
 The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in figure~\ref{Figure 1}.
-This symmetric map starts each player with one Base, five resources, two Workers, and 50 resources near the Base. \textbf{\cite{goodfriend2024raisocketai}}
+This symmetric map starts each player with one Base, five resources, two Workers and 50 resources near the Base. \textbf{\cite{goodfriend2024raisocketai}}
 
 \begin{figure}[H]
     \centering
@@ -286,16 +291,16 @@ The position is implicitly encoded by the linear grid indexing of the GridNet ou
 Given a map of size $h \times w$, the action space has shape $h \times w \times 78$.
 For our $16 \times 16$ map, the action space per environment in the GridNet representation would therefore contain $16 \times 16 \times 78 = 19968$ actions. However, many of them can be invalid and are masked by invalid action masking \cite{huang2021gym}.
 Afterward the position is incorporated before masking the actions, otherwise the masking would remove the structure of the Action-Space, which would remove the implicit encoding for the position.
-Depending on the action type, only parts of the action vector are relevant (e.g., if the action type is \texttt{Move}, then only the components \texttt{pos}, \texttt{type}, and \texttt{$d_{\text{move}}$} are relevant (the other components are ignored)).
+Depending on the action type, only parts of the action vector are relevant (e.g., if the action type is \texttt{Move}, then only the components \texttt{pos}, \texttt{type} and \texttt{$d_{\text{move}}$} are relevant (the other components are ignored)).
 
 
 \paragraph{Observation Space.}
-Observations are represented as a grid of shape $h \times w \times c$ per environment, where $h$ and $w$ are the height and width of the map, and $c$ is the number of encoded features of each cell in the game state (e.g., unit types, hit points, move direction, etc.) \cite{huang2021gym}.
+Observations are represented as a grid of shape $h \times w \times c$ per environment, where $h$ and $w$ are the height and width of the map and $c$ is the number of encoded features of each cell in the game state (e.g., unit types, hit points, move direction, etc.) \cite{huang2021gym}.
 The screenshot of the map basesWorkers16x16A \ref{Figure 1} visualizes the observation space, without any additional information.
 
 
 \subsection{Training Pipeline}
-The training pipeline extended in this thesis consists of four phases: BC, BC-FT, PPO, and LT (or FSP/SP).
+The training pipeline extended in this thesis consists of four phases: BC, BC-FT, PPO and LT (or FSP/SP).
 The first three phases were already implemented in the previous work \cite{huft2023microrts} and are only briefly described here.
 In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and Mayari) are used to train an initial policy to learn basic game mechanics/strategies \cite{huft2023microrts}.
 \begin{itemize}
@@ -316,7 +321,7 @@ In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and May
     SP/FSP/LT address both problems by providing numerous opponents that continue to evolve over the course of training and achieve a high win rate against historical versions of the current agent.
 \end{itemize}
 
-\subsection{self-play (SP)}
+\subsection{Self-Play (SP)}
 In SP, the agent trains against its own current version, which leads to a continuous learning process with a co-evolving opponent \cite{doi:10.1126/science.aar6404}.
 
 \paragraph{Implementation.} 
@@ -327,7 +332,7 @@ In this Thesis, the same approach with some adustments is used to implement SP, 
 \paragraph{Problems:}
 \begin{itemize}
     \item The training is often unstable because of cyclical learning.
-    For \textbf{example},  if policy B performs well against A, C performs well against B, and A performs well against C, the agent may be trapped in a cycle in which it repeatedly relearns only the policy that performs well against itself, but not against other opponents \cite{vinyals2019alphastar}.
+    For \textbf{example},  if policy B performs well against A, C performs well against B and A performs well against C, the agent may be trapped in a cycle in which it repeatedly relearns only the policy that performs well against itself, but not against other opponents \cite{vinyals2019alphastar}.
     \item A big problem in the SP training setup is that the agent has to learn to play as player 2 as well as player 1, which complicates the training and can lead to a slow learning process \cite{huang2021gym}.
     The biggest difference between player 1 and player 2 is that player 1 starts at the top left of the map, whereas player 2 starts at the bottom right.
     This means that the agent has to learn to start play in two different areas of the map, which can be difficult and time-consuming.
@@ -352,7 +357,7 @@ The same rotation used for the observations is also applied to the invalid actio
 After masking, the selected actions (including a position component, that is added before masking, since masking removes the implicit positional structure of the GridNet action space) are transformed back to fit the MicroRTS-Py environment.
 
 
-\subsection{fictitious self-play (FSP)}
+\subsection{Fictitious Self-Play (FSP)}
 To address the instabilities of pure SP, in FSP the agent is trained not exclusively against the current policy, but against a uniformly sampled pool of the agent’s historical policies. 
 This results in the learning agent learning a good response to the averaged opponent strategy, which reduces cyclical learning.
 Under standard assumptions, FSP can converge towards an approximate Nash equilibrium in two-player zero-sum games (with respect to the average strategies).
@@ -361,7 +366,7 @@ Heinrich et al. also demonstrate this empirically in poker experiments \cite{hei
 \paragraph{Implementation.} 
 The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of historical agents (snapshots of the Main Agent at different training stages).
 
-\paragraph{Problem with the implementation.} 
+\paragraph{Problem with the Implementation.} 
 If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e.g., when both players want to move to the same cell).
 This gives player 2 a disadvantage, although it has only a minor effect on the results. 
 The actual problem is that the agent can exploit this prioritization in FSP if it learns that optimizing the training objective can be achieved primarily by improving player 1, while deliberately performing poorly as player 2.
@@ -392,11 +397,11 @@ However, this does not help in this case, because even before the conflict arise
 To solve this problem, the learning agents in the parallel games are alternated between playing as player 1 and player 2.
 This does not prevent the prioritization of player 1. 
 However, it can be shown empirically that the prioritization of player 1 has no major impact on the results, by evaluating an agent against itself.
-Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws, and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
+Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
 This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
-\subsection{prioritized fictitious self-play (PFSP)}
+\subsection{Prioritized Fictitious Self-Play (PFSP)}
 LT uses an extended variant of FSP called PFSP \cite{vinyals2019alphastar}.
 PFSP extends FSP by selecting opponents against which the agent can train efficiently, rather than selecting opponents uniformly.
 The selection probability is based on the win rate of the learning agent against the potential opponent \cite{vinyals2019alphastar}. 
@@ -427,27 +432,27 @@ In this thesis PFSP was modified so that all agents have a non-zero probability 
 
 % Bild einfügen?
 
-\subsection{league training (LT)}
+\subsection{League Training (LT)}
 \label{sec:LT}
 LT combines and extends SP and PFSP to further stabilize training.
 It also promotes robustness by training against opponents sampled from a \emph{league}, including Main Exploiters and League Exploiters and Historical Agents \cite{vinyals2019alphastar}.
 
-\paragraph{League composition and roles.} 
+\paragraph{League Composition and Roles.} 
 Learning Agents of the league were trained in parallel.
 Similar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis consists of the following agent types:
 \begin{itemize}
-    \item \textbf{Main Agent (MA):} The primary policy that is optimized and evaluated.
-    \item \textbf{Historical Agents:} Frozen snapshots of earlier MA or exploiter agent policies. 
+    \item \textbf{Main Agent:} The primary policy that is optimized and evaluated.
+    \item \textbf{Historical Agents:} Frozen snapshots of earlier Main Agents or exploiter agent policies. 
     They stabilize training by providing a distribution of past strategies and mitigate catastrophic forgetting.
-    \item \textbf{Main Exploiters (ME):} Agents trained only against Historical Main Agents, which encourages them to identify and exploit weaknesses in the Main Agent.
-    \item \textbf{League Exploiters (LE):} Agents trained against all Historical Agents, which further promotes diversity by identifying systemic weaknesses of the league.
+    \item \textbf{Main Exploiters:} Agents trained only against Historical Main Agents, which encourages them to identify and exploit weaknesses in the Main Agent.
+    \item \textbf{League Exploiters:} Agents trained against all Historical Agents, which further promotes diversity by identifying systemic weaknesses of the league.
 \end{itemize}
 Historical Agents are the only agent type that is not a learning agent.
 The main differences between the roles are the opponent-sampling distribution and the hyperparameters.
 All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but are trained with role-specific hyperparameters (e.g., learning rate and PFSP prioritization function).
 
 
-\paragraph{Training loop and snapshot management.}
+\paragraph{Training Loop and Snapshot Management.}
 LT iterates through cycles consisting of the following phases:
 \begin{enumerate}
     \item \textbf{Select opponent:} Sample an opponent from the league.
@@ -456,10 +461,10 @@ LT iterates through cycles consisting of the following phases:
     \item \textbf{Update statistics:} Periodically evaluate against a subset of league members to update win rate estimates used by PFSP.
     \item \textbf{Add snapshots:} At predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new Historical Agent.
 \end{enumerate}
-A phase of the training loop is considered completed only after every agent type (MA, ME, LE) has completed the phase.
+A phase of the training loop is considered completed only after every agent type (Main Agent, Main Exploiters, League Exploiters) has completed the phase.
 For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have completed the current phase.
 
-\paragraph{Bot environments.} 
+\paragraph{Bot Environments.} 
 Bot environments are added to the league to stabilize training by continuing the PPO training against the built-in MicroRTS bots CoacAI and Mayari, which the base agent was trained against.
 Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with identifying and exploiting weaknesses in the Main Agent or the league, which is the main purpose of the exploiters (e.g., if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against).
 In MicroRTS-Py the environments for built-in bots and for SP are not interchangeable, since the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT directly. 
@@ -469,9 +474,9 @@ To retain that improvement we want the number of bot environments to be dynamic.
 Therefore, the number of bot environments is adjusted dynamically by reinitializing a MicroRTS instance, which is only used for training against the built-in bots and not for SP/FSP/LT (because reinitialization also means resetting the environments in the MicroRTS instance).
 The MicroRTS instance for built-in bots executes its step function at the same time as the SP/FSP/LT instance.
 
-\paragraph{number of parallel bot environment instances.}
+\paragraph{Number of Parallel Bot Environment Instances.}
 Two hyperparameters define the maximum number of parallel bot environment instances and the minimum number of parallel bot environment instances.
-Among other things, references to the observation, action, and invalid action mask buffers must be adjusted to the correct size and partially reset whenever the number of parallel bot environment instances is changed.
+Among other things, references to the observation, action and invalid action mask buffers must be adjusted to the correct size and partially reset whenever the number of parallel bot environment instances is changed.
 % TODO: alle "invalid action mask" zu "invalid-action-mask"?
 
 
@@ -513,11 +518,11 @@ In addition to the modifications made to adapt the pseudocode to the MicroRTS en
 
 
 
-\subsection{Additional modifications for diversity}
+\subsection{Additional Modifications for Diversity}
 The biggest problem with the training setup is the lack of opponent diversity.
-To make exploiters more diverse, exploration can be increased with hyperparameters such as the learning rate, the entropy coefficient, and the KL regularization coefficient.
+To make exploiters more diverse, exploration can be increased with hyperparameters such as the learning rate, the entropy coefficient and the KL regularization coefficient.
 
-\paragraph{Problems with overall increased exploration.}
+\paragraph{Problems with Overall Increased Exploration.}
 Excessively increasing exploration for exploiters can lead to worse performance and longer training times.
 We hypothesize that is because the starting point (the Base Agent) is already very strong and effective strategies differ substantially between unit types, so that the agent must unlearn a very large portion of the current strategy before it can learn new strategies for other unit types.
 In between the unlearning and learning phases, the agent performs very poorly, which leads us to believe that there are very distant clusters (corresponding to different unit types) of local maxima in the reward landscape.
@@ -532,7 +537,7 @@ The Agent only receives a positive reward if all of this happens in the same gam
 The second strategy in the example is simmilar to a built-in bot strategy of MicroRTS called WorkerRushAI.
 
 \paragraph{Production Exploration Bonus.}
-To further increase exploration without increasing training time too much, an exploration bonus targeting the production of Workers, Ranged, Heavy, and Light Units can be added to the reward.
+To further increase exploration without increasing training time too much, an exploration bonus targeting the production of Workers, Ranged, Heavy and Light Units can be added to the reward.
 By targeting the production of different unit types, the agent is encouraged to explore different strategies for different unit types, which can lead to more diverse exploiters.
 This was achieved by using a mask that gives Barracks and Bases (units whose only function is to produce other units) an entropy bonus, which encourages more diverse production decisions and thereby increases exploration across different unit types, by making the agent interact with them.
 While this helped to increase exploration of a broader range of unit types, as reflected by the fact that the agent uses a wider variety of units, it was not enough to make the agent explore strategies for different unit types.
@@ -573,11 +578,11 @@ The new initial agents were not trained long enough to be as strong as the Base 
 
 \subsection{Delta Score.}
 To better guide the agent in the sparse reward landscape of MicroRTS, we added the change in the MicroRTS score between two consecutive time steps to the reward \cite{huang2021gym, Ontanon2013CombinatorialBandit}.
-The score for each environment instance is calculated based on the current game state, which includes the number and type of units, their hit points, and the resources of both players.
+The score for each environment instance is calculated based on the current game state, which includes the number and type of units, their hit points and the resources of both players.
 The Delta Score is the difference between the score at the current time step and the score at the previous time step, which makes it a usefull immediate learning signal for the agent.
 The score does not always accurately predict how well an agent is playing, which is why a coefficient is used to scale the Delta Score, so that the accumulated weighted Delta Score over a game is much smaller than the win/loss reward.
 In the prior work by M. Huft \cite{huft2023microrts}, the agent we now use as the Base Agent was trained with an attack bonus, which is a reward for attacking the opponent’s units.
-The attack bonus was removed for our training, and we adjusted the per-step Delta Score in the early stages of training to be approximately as large as the per-step attack bonus used in earlier training runs.
+The attack bonus was removed for our training and we adjusted the per-step Delta Score in the early stages of training to be approximately as large as the per-step attack bonus used in earlier training runs.
 
 
 
@@ -590,14 +595,14 @@ The attack bonus was removed for our training, and we adjusted the per-step Delt
 We use the Base Agent from the prior work of M. Huft \cite{huft2023microrts}, which was trained using a combination of BC and PPO, as the initial agent in this thesis unless otherwise specified.
 The map used is \texttt{basesWorkers16x16A}, a symmetrical map also used in related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
 The Base Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for (???) steps.
-% TODO: Füge Bild von winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_with_draw hinzu
-The Main Agent played (???) games against the built-in bots CoacAI and Mayari,
-In Figure~\ref{...} the win rate against both bots over the global training steps is shown.
+% TODO: Füge Bild von winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_with_draw hinzu ("In Figure~\ref{...}")
+The Main Agent played (???) games against the built-in bots CoacAI and Mayari.
+The win rates against both bots over the global training steps were monitored during training.
 The bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
 This results a total of (???)160 parallel environments for LT when all bot environments are active.
 This requires a lot of computational resources, especially since the observations are not purely boolean and therefore required more memory.
 The peak memory usage increases by approximately 2500 MiB for an agent with 25 parallel environments.
-However, it is important to keep the number of environments per agent above a certain threshold, because the number of environments affects the rollout size, and a too small rollout can lead to unstable training.
+However, it is important to keep the number of environments per agent above a certain threshold, because the number of environments affects the rollout size and a too small rollout can lead to unstable training.
 
 \subsection{Hyperparameters}
 Notable hyperparameters for the Main Agent include a higher learning rate of $5e\text{-}5$ than the Base Agent, namely $2.5e\text{-}5$, as well as higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters.
@@ -614,12 +619,13 @@ All hyperparameters used are listed in Table~\ref{tab:league_hyperparameter}.
 \subsection{Evaluation}
 We evaluated the Main Agent against other agents, including the built-in bots and the Base Agent, across at least 100 games per opponent.
 Table~\ref{tab:base_agent_evaluation} lists the evaluation results of the Base Agent for comparison.
-The results vary from those reported in the thesis of M. Huft \cite{huft2023microrts} because the original Base Agent from the prior work could not be found, and therefore a different version of the Base Agent provided by M. Huft, but trained using the same procedure, was used.
+The results vary from those reported in the thesis of M. Huft \cite{huft2023microrts} because the original Base Agent from the prior work could not be found,
+Therefore a different version of the Base Agent provided by M. Huft, but trained using the same procedure, was used.
 Table~\ref{tab:main_agent_evaluation} presents the evaluation results of the Main Agent.
 
 % TODO: auch eine Range geben? (z.B.: von 50% bis 100%)
 \paragraph{Checkpoint and Reset Statistics.}
-There were (???) checkpoints for the Main Agent, (???) checkpoints for the Main Exploiters, and (???) checkpoints for the League Exploiter.
+There were (???) checkpoints for the Main Agent, (???) checkpoints for the Main Exploiters and (???) checkpoints for the League Exploiter.
 Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for each agent type and the win rate of the checkpointed agent against the Main Agent, averaged over the last 200 games and then averaged over all resets.
 Checkpoints without resets are not included in the win rates.
 
@@ -636,10 +642,11 @@ The win rate against RandomBiasedAI is another major improvement from 79\% to 97
 The agents in the section "Other Bots" are considerably stronger against the Base Agent than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against most of these opponents.
 Highlights include the win rate against Rojo, which improved from 81\% to 100\%, while the win rate against MixedBot also increased from 43\% to 57\%.
 The win rate against Izanagi fell from 72\% to 70\%, however the loss rate improved from 16\% to 7\%, suggesting that the Main Agent now defends the Base more effectively while attacking.
-WorkerRushAI is the only opponent against which the Main Agent performs worse than the Base Agent, and shows, that the Main Agent still has weaknesses that can be exploited.
+WorkerRushAI is the only opponent against which the Main Agent performs worse than the Base Agent.
+It shows, that the Main Agent still has weaknesses that can be exploited.
 
-\paragraph{Main Agent Without Unit Focus Evaluation.}
-Table~\ref{tab:main_agent_no_unit_focus_evaluation} presents the evaluation results for a Main Agent trained without new initial agents for exploiter diversity.
+\paragraph{Main Agent without Unit Focus Evaluation.}
+Table~\ref{tab:main_agent_evaluation_no_worker_focus} presents an example evaluation for a Main Agent trained without unit focus.
 
 
 
@@ -650,7 +657,7 @@ Table~\ref{tab:main_agent_no_unit_focus_evaluation} presents the evaluation resu
 % TODO: replace all (???)
 
 \subsection{Discussion}
-LT improved the Main Agent’s win, draw, and loss rates against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalized to other bots that were not used in training.
+LT improved the Main Agent’s win, draw and loss rates against a wide range of opponents, including the built-in bots and the Base Agent used during training and generalized to other bots that were not used in training.
 This can improve the Main Agent’s performance further than PPO could by itself, without the agent overfitting to the opponents used in training, even after many different training sessions and further PPO training \cite{huft2023microrts}.
 The possible interpretation is that pure PPO does not search for well-generalizing policies. 
 Instead, the training optimizes performance against the limited set of training opponents. 
@@ -674,24 +681,24 @@ However we did not find any exploiters with strategies focused on different unit
 
 Despite the improved the diversity and general performance of the Main Agent, there are still some limitations with the training approach:
 \begin{itemize}
-    \item \textbf{limitations: Exploiter Diversity.}
+    \item \textbf{Limitations: Exploiter Diversity.}
     The results show that the exploiters are able to exploit the Main Agent while staying within their respective unit type focus.
     This suggests that exploiter diversity is sufficient to identify and exploit weaknesses within the set of strategies for the respective unit type favored by the Base Agent.
     A weakness of the training approach is that exploiters would need a very long time to discover strategies centered on different unit types, because transitions between such strategies often involve long reward-free phases.
     This is why the new initial agents, with a focus on different unit types, were implemented, allowing the exploiters to find exploits related to different unit types without having to first unlearn the strategy for the unit type favored by the Base Agent.
     However, it is not proven that the weaknesses for other unit types are the only weaknesses of the Main Agent that require hard-to-reach exploiter states, which are unlikely to be represented by a historical exploiter after training.
     % For example, strategies with mixed unit types, which are likely to be more difficult to find than strategies for a single unit type, may not be represented by any historical exploiter after the training, which can limit the performance of the Main Agent against opponents using such strategies.
-    At the same time, the final unit composition in Figure~(???) for each potential initial agent shows that at least some mixed strategies can be achieved with this training setup.
-    For example, the agent focused on worker units learned to also frequently use Ranged units, even though it was not initially trained with them. % TODO: https://wandb.ai/glaspaul244-hhu/league_training/groups/league_training/runs/8536rmu6?nw=nwuserglaspaul244 reset 1
+    At the same time, the final unit composition in Figure~\ref{fig:number-units-after-game} for the worker focused initial agent shows that at least some mixed strategies can be achieved with this training setup.
+    For example, the agent focused on worker units learned to also frequently use Ranged units, even though it was not initially trained with them.
     With this, we have initial agents for each unit type for the exploiters, as well as examples of effective exploits within the set of strategies for the focused unit types.
     % TODO: multiple other examples of capability to explore strategies with mixed unit types?
     On top of that, we also have multiple other examples in different runs, that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
     This suggests that the exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Main Agent, even many against other agents not included in the training or evaluation.
-    \item \textbf{limitations: Computational Resources.}
+    \item \textbf{Limitations: Computational Resources.}
     LT also requires a lot of computational resources.
     Our setup has a maximum of 160 parallel environments, while pure PPO only uses 24 parallel environments \cite{huft2023microrts}.
-    This causes a much higher memory usage, and long training times.
-    \item \textbf{limitations: Map constraints.} 
+    This causes a much higher memory usage and long training times.
+    \item \textbf{Limitations: Map Constraints.} 
     This thesis, just like the thesis for the Base Agent \cite{huft2023microrts}, only uses one map (basesWorkers16x16A), with full observability of all units and resources, which is a very specific setting.
 \end{itemize}
 
@@ -701,11 +708,11 @@ Despite the improved the diversity and general performance of the Main Agent, th
 
 
 
-\paragraph{Exploiter Diversity In AlphaStar.} \cite{vinyals2019alphastar}
+\paragraph{Exploiter Diversity in AlphaStar.} \cite{vinyals2019alphastar}
 LT mitigated the SP problem of cyclic training, however, a related limitation remains in the diversity of the exploiters.
 Complex environments such as MicroRTS contain many more weaknesses that can be exploited by only slightly different strategies, than there are historical exploiters that can be created during training.
 As a result, the exploiters will most likely cover only those weaknesses that are exploitable from strategies similar to their initial agents policies.
-We therefore hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters, and possibly more important than the initial agents' strength, because the initial policies strongly influence which regions of the strategy space are likely to be reached during training.
+We therefore hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters and possibly more important than the initial agents' strength, because the initial policies strongly influence which regions of the strategy space are likely to be reached during training.
 It is likely that this was less problematic in AlphaStar, because its initial policy was pre-trained by imitation learning on human replay data, which covered a much broader range of strategies.
 As a consequence, the initial policy was likely competent across a broader range of strategic situations than the Base Agent used in this thesis, which was trained with BC and PPO against only two built-in bots and was therefore biased towards a comparatively narrow strategy set.
 This broader initialization presumably made it easier for exploiters to reach and exploit a more diverse set of strategies.
@@ -733,12 +740,12 @@ The learning agent trained on those maps could then be used as a diverse initial
 
 \section{Conclusion}
 \label{sec:conclusion}
-In this thesis, we implemented the League Training (LT) method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters, to improving the Main Agent's win, draw and loss rate against various opponents.
+In this thesis, we implemented the LT method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters, to improving the Main Agent's win, draw and loss rate against various opponents.
 We also hoped to mitigate the need for many different bot agents to achive diversity, by using exploiters to create a diverse set of opponents for the Main Agent. 
 As shown in the results, LT improves the Main Agent's performance against a wide range of opponents, including the built-in bots and the Base Agent used during training, and generalizes to other bots that were not used in training.
 This suggests the viability of the LT and PPO kombination for improving the performance of an Base Agent trained on BC and PPO in MicroRTS.
 However the diversity of the exploiters initial agents seems to be a crucial factor% TODO: , that we were able to mitigate by introducing new initial agents with different unit type focuses.
-This solution has its own limitations, such as: not guaranteeing that all relevant clusters in the reward landscape are covered by the initial agents, and complicating the training process by requiring the training of multiple initial agents.
+This solution has its own limitations, such as: not guaranteeing that all relevant clusters in the reward landscape are covered by the initial agents and complicating the training process by requiring the training of multiple initial agents.
 Further more this saddly means that for this approach, diverse bot agents for BA and PPO training are still just as or even more important for the performance of the Main Agent.
 While exploiters can provide some diversity and mitigate the need for a lot of bot agents with different but similar strategies, they cannot fully replace the need for diverse bot agents in this training approach, because more diverse strategies are likely to be more difficult to find for the exploiters, and therefore may not be represented.
 However we presume that, replacing our current BC and PPO approach with an approach focusing on learning diverse strategies from the start, with the Map Diversity method mentioned in the Future Work section, could further increase the Main Agent's performance, especially its generalization and robustness to a wider range of opponents, while also reducing the need for many different bot agents for training.
@@ -751,11 +758,58 @@ Human imitation learning, as used in AlphaStar, seems to be a difficult approach
 % sehr kurze Zusammenfassung der Ergebnisse, Methoden (LT)
 
 
+\begin{figure*}[t]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/numberWorkersAfterGame.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/numberHeavyAfterGame.png}
+    \end{minipage}
+
+    \vspace{0.5em}
+
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/numberRangedAfterGame.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/numberLightAfterGame.png}
+    \end{minipage}
+    \caption[]{Number of units after each game for the agents initialized with Worker focused (shown are 2 full reset cycles).}
+    \label{fig:number-units-after-game}
+\end{figure*}
 
 % TODO: erkläre anfangs, dass der Base Agent fast "HeavyRush" ist?
 
 
 % \section{Reproducibility and Codebase}
+
+
+
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.01\linewidth]{images/numberHeavyAfterGame.png}
+%     \label{fig:heavy_after_game}
+% \end{figure}
+% 
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.01\linewidth]{images/numberLightAfterGame.png}
+%     \label{fig:light_after_game}
+% \end{figure}
+% 
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.01\linewidth]{images/numberRangedAfterGame.png}
+%     \label{fig:ranged_after_game}
+% \end{figure}
 
 
 \begin{table*}[t]
@@ -866,47 +920,11 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{table*}
 
 
-% TODO: vergleiche den Run mit dem alten Run ohne neue initiale Agenten? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
-% \begin{table*}[t]
-% \centering
-% \caption{Differance in evaluation results between the Main Agent and the Base Agent}
-% \label{tab:diff_main_agent_evaluation}
-% \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
-% \toprule
-% Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
-% \midrule
-% \multicolumn{8}{l}{\textit{bots used in training}} \\
-% \csvreader[
-%     late after line=\\,
-%     filter test=\ifnumless{\thecsvinputline}{4}
-% ]{images/diff.csv}{}{
-%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
-% }
-% \midrule
-% \multicolumn{8}{l}{\textit{Built-in bots}} \\
-% \csvreader[
-%     late after line=\\,
-%     filter ifthen=\value{csvinputline}>3 \and \value{csvinputline}<9
-% ]{images/diff.csv}{}{
-%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
-% }
-% \midrule
-% \multicolumn{8}{l}{\textit{Other bots}} \\
-% \csvreader[
-%     late after line=\\,
-%     filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<17
-% ]{images/diff.csv}{}{
-%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
-% }
-% \bottomrule
-% \end{tabular*}
-% \end{table*}
-
 
 \begin{table*}[t]
 \centering
-\caption{Example for Main Agent without unit focus evaluation}
-\label{tab:main_agent_no_unit_focus_evaluation}
+\caption{Difference in evaluation results between the Main Agent and the Base Agent}
+\label{tab:diff_main_agent_evaluation}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
 Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
@@ -914,31 +932,24 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \multicolumn{8}{l}{\textit{bots used in training}} \\
 \csvreader[
     late after line=\\,
-    filter test=\ifnumless{\thecsvinputline}{5}
-]{images/Main_Agent_evaluation_old.csv}{}{
+    filter test=\ifnumless{\thecsvinputline}{4}
+]{images/diff.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \multicolumn{8}{l}{\textit{Built-in bots}} \\
 \csvreader[
     late after line=\\,
-    filter ifthen=\value{csvinputline}>4 \and \value{csvinputline}<10
-]{images/Main_Agent_evaluation_old.csv}{}{
+    filter ifthen=\value{csvinputline}>3 \and \value{csvinputline}<9
+]{images/diff.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \multicolumn{8}{l}{\textit{Other bots}} \\
 \csvreader[
     late after line=\\,
-    filter ifthen=\value{csvinputline}>9 \and \value{csvinputline}<17
-]{images/Main_Agent_evaluation_old.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
-}
-\midrule
-\csvreader[
-    late after line=\\,
-    filter test=\ifnumequal{\thecsvinputline}{17}
-]{images/Main_Agent_evaluation_old.csv}{}{
+    filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<17
+]{images/diff.csv}{}{
     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \bottomrule
@@ -946,10 +957,54 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{table*}
 
 
+% TODO: vergleiche den Run mit dem alten Run ohne neue initiale Agenten? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
+% \begin{table*}[t]
+% \centering
+% \caption{Main Agent evaluation (no new initial agents)}
+% \label{tab:main_agent_no_unit_focus_evaluation}
+% \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
+% \toprule
+% Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+% \midrule
+% \multicolumn{8}{l}{\textit{bots used in training}} \\
+% \csvreader[
+%     late after line=\\,
+%     filter test=\ifnumless{\thecsvinputline}{5}
+% ]{images/Main_Agent_evaluation_old.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \midrule
+% \multicolumn{8}{l}{\textit{Built-in bots}} \\
+% \csvreader[
+%     late after line=\\,
+%     filter ifthen=\value{csvinputline}>4 \and \value{csvinputline}<10
+% ]{images/Main_Agent_evaluation_old.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \midrule
+% \multicolumn{8}{l}{\textit{Other bots}} \\
+% \csvreader[
+%     late after line=\\,
+%     filter ifthen=\value{csvinputline}>9 \and \value{csvinputline}<17
+% ]{images/Main_Agent_evaluation_old.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \midrule
+% \csvreader[
+%     late after line=\\,
+%     filter test=\ifnumequal{\thecsvinputline}{17}
+% ]{images/Main_Agent_evaluation_old.csv}{}{
+%     \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+% }
+% \bottomrule
+% \end{tabular*}
+% \end{table*}
+
+
 
 \begin{table*}[t]
 \centering
-\caption{Main Agent evaluation (no new initial agents)}
+\caption{Example for Main Agent without unit focus evaluation}
 \label{tab:main_agent_evaluation_no_worker_focus}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
@@ -1162,7 +1217,7 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 % \toprule
 % \textbf{Category} & \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
 % \midrule
-% \multicolumn{4}{@{}l}{\textbf{Self-Play, Checkpoints, and Opponent Selection}} \\
+% \multicolumn{4}{@{}l}{\textbf{Self-Play, Checkpoints and Opponent Selection}} \\
 % \midrule
 % Self-Play & \texttt{main\_exploiter\_ready\_use\_historicals} & true & Historical agents are used for Main Exploiters. \\
 % TODO: Self-Play & \texttt{main\_exploiter\_no\_draw\_winrate\_threshold} & 0{,}65 & win rate threshold excluding draws. \\
@@ -1211,12 +1266,6 @@ GAE parameter $\lambda$ & 0.95 \\
 \label{tab:training_params}
 \end{table} 
 
-% \subsection{Results}
-
-
-
-
-% \subsection{Discussion}
 
 
 
@@ -1238,34 +1287,6 @@ GAE parameter $\lambda$ & 0.95 \\
 \end{center}
 \clearpage
 
-\begin{center}
-    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberWorkersAfterGame.png}
-    \captionof{figure}{Number of Worker units after the game.}
-    \label{fig:numberWorkersAfterGame}
-\end{center}
-\clearpage
-
-\begin{center}
-    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberLightAfterGame.png}
-    \captionof{figure}{Number of Light units after the game.}
-    \label{fig:numberLightAfterGame}
-\end{center}
-\clearpage
-
-\begin{center}
-    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberHeavyAfterGame.png}
-    \captionof{figure}{Number of Heavy units after the game.}
-    \label{fig:numberHeavyAfterGame}
-\end{center}
-\clearpage
-
-\begin{center}
-    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/numberRangedAfterGame.png}
-    \captionof{figure}{Number of Ranged units after the game.}
-    \label{fig:numberRangedAfterGame}
-\end{center}
-\clearpage
-
 %%%%%%%%% Erkl\"arung
 \noindent
 \textbf{\LARGE Erkl\"arung}
@@ -1273,8 +1294,9 @@ GAE parameter $\lambda$ & 0.95 \\
 
 \bigskip\bigskip
 \noindent 
+(???)
 GPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Hiermit versichere ich, dass ich die   Bachelorarbeit selbst\"andig verfasst und keine
+Hiermit versichere ich, dass ich die   Bachelor-Arbeit selbstst\"andig verfasst und keine
 anderen als die angegebenen Quellen und Hilfsmittel benutzt habe.
 
 \bigskip
