@@ -2,7 +2,7 @@ defaults:
   - league_training_4
 
 ExperimentConfig:
-  model_path: models/used_models/BC_workerRush_train_epoch_8_agent.pt
+  model_path: models/finished_PPO_Basis_thesis.pt
   BC_model_path: models/BCagent.pt
   other_historicals_paths:
     - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_0.pt
@@ -24,6 +24,10 @@ ExperimentConfig:
   resume: true
   starting_historical: false
 
+
+  main_ent_coef_min: 0.0075
+  main_ent_coef_max: 0.0175
+  main_anneal_ent: true
 
 
 

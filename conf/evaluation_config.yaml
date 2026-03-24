@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_3__1_BC_focus_3_update_2388.pt",
+                          "saved_models/23_03_2026__PPO_finetuning/Main_agent_backups/agent_update_620.pt",
                           # "league_models/19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP/MainExploiter/MainExploiter_0_update_300.pt"
                           ]
   names: [
-          "18_03_2026__finished_PPO_Basis_thesis__league_training_3__1_BC_focus_3_update_2388",
+          "23_03_2026__PPO_finetuning_update_620_2",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: 18_03_2026__finished_PPO_Basis_thesis__league_training_3__1_BC_focus_3_update_2388
+  exp_name: 23_03_2026__PPO_finetuning_update_620_2
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
@@ -21,8 +21,8 @@ ExperimentConfig:
   seed:
   exact_seed: true
 
-  capture_video: false
-  render: false
+  capture_video: true
+  render: true
   render_all: false
 
   num_eval_episodes: 100

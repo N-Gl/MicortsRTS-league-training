@@ -49,21 +49,21 @@
 \backcite {goodfriend2024raisocketai}{{6}{3.3}{section*.18}}
 \backcite {vinyals2019alphastar}{{6}{3.3}{section*.19}}
 \backcite {huang2021gym}{{6}{3.3}{section*.19}}
-\backcite {heinrich2015fsp}{{7}{3.4}{subsection.3.4}}
-\backcite {vinyals2019alphastar}{{8}{3.5}{subsection.3.5}}
-\backcite {vinyals2019alphastar}{{8}{3.5}{subsection.3.5}}
-\backcite {vinyals2019alphastar}{{9}{3.6}{subsection.3.6}}
-\backcite {vinyals2019alphastar}{{9}{3.6}{section*.29}}
-\backcite {vinyals2019alphastar}{{10}{3.6}{section*.34}}
-\backcite {vinyals2019alphastar}{{10}{3.6}{section*.35}}
+\backcite {heinrich2015fsp}{{6}{3.4}{subsection.3.4}}
+\backcite {vinyals2019alphastar}{{7}{3.5}{subsection.3.5}}
+\backcite {vinyals2019alphastar}{{7}{3.5}{subsection.3.5}}
+\backcite {vinyals2019alphastar}{{8}{3.6}{subsection.3.6}}
+\backcite {vinyals2019alphastar}{{8}{3.6}{section*.29}}
+\backcite {vinyals2019alphastar}{{9}{3.6}{section*.34}}
+\backcite {vinyals2019alphastar}{{9}{3.6}{section*.35}}
 \backcite {huang2021gym, Ontanon2013CombinatorialBandit}{{11}{3.8}{subsection.3.8}}
 \backcite {huft2023microrts}{{11}{3.8}{subsection.3.8}}
-\backcite {huft2023microrts}{{12}{4}{section.4}}
-\backcite {huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{12}{4}{section.4}}
-\backcite {huft2023microrts}{{12}{4.2}{subsection.4.2}}
-\backcite {huft2023microrts}{{12}{4.3}{subsection.4.3}}
-\backcite {huft2023microrts}{{13}{4.4}{subsection.4.4}}
+\backcite {huft2023microrts}{{11}{4}{section.4}}
+\backcite {huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{11}{4}{section.4}}
+\backcite {huft2023microrts}{{11}{4.2}{subsection.4.2}}
+\backcite {huft2023microrts}{{11}{4.3}{subsection.4.3}}
+\backcite {huft2023microrts}{{12}{4.4}{subsection.4.4}}
 \backcite {huft2023microrts}{{13}{4.4}{section*.44}}
 \backcite {huft2023microrts}{{13}{4.4}{section*.44}}
-\backcite {vinyals2019alphastar}{{14}{4.4}{section*.45}}
-\backcite {vinyals2019alphastar}{{14}{5}{section.5}}
+\backcite {vinyals2019alphastar}{{13}{4.4}{section*.45}}
+\backcite {vinyals2019alphastar}{{13}{5}{section.5}}

@@ -285,8 +285,7 @@ The unit action space is defined as an 8-dimensional vector per cell:
 The components of the unit-action vector are defined as follows:
 \begin{itemize}
 \item \textbf{pos:} linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space (e. g. for a $16\times 16$ grid: range: [0, 255])),
-% TODO: sollte das Nop heißen?
-\item \textbf{type:} action type (range: [0, 5], 0: Nop, 1: Move, 2: Harvest, 3: Return, 4: Produce, 5: Attack),
+\item \textbf{type:} action type (range: [0, 5], 0: NOOP, 1: Move, 2: Harvest, 3: Return, 4: Produce, 5: Attack),
 \item \textbf{$d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}$:} directions (range: [0, 3], 0: North, 1: East, 2: South, 3: West) for the respective actions,
 \item \textbf{pType:} type of the unit to be produced (range: [0, 6], 0: resource, 1: base, 2: barracks, 3: worker, 4: light, 5: heavy, 6: ranged),
 \item \textbf{relPos:} relative attack position (range: [0, 48]).
@@ -296,8 +295,8 @@ The position is implicitly encoded by the linear grid indexing of the GridNet ou
 Given a map of size $h \times w$, the action space has shape $h \times w \times 78$.
 For our $16 \times 16$ map, the action space per environment in the GridNet representation would therefore contain $16 \times 16 \times 78 = 19968$ actions.
 However, many of them can be invalid and are masked by invalid action masking \cite{huang2021gym}.
-% TODO: vielleicht nochmal genauer erklären, wie position in GridNet hinzugefügt wird.
-Afterward the position is incorporated before masking the actions, otherwise the masking would remove the structure of the action space, which would remove the implicit encoding for the position.
+Before applying the invalid action mask, the position is added to each action as a fixed position index.
+Otherwise, masking would remove the grid structure of the action space, resulting in the removal of the implicit encoding for the position.
 Depending on the action type, only parts of the action vector are relevant (e. g. if the action type is \texttt{Move}, only the components \texttt{pos}, \texttt{type} and \texttt{$d_{\text{move}}$} are relevant).
 The other components are ignored.
 
@@ -322,7 +321,6 @@ In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and May
     % In der Implementierung wird die Loss funktion, die aus der negativen PPO-Zielfunktion besteht mit einem Gradientenabstieg minimiert, was äquivalent zur Maximierung der PPO-Zielfunktion ist \cite{schulman2017ppo}.
     % Die PPO-Zielfunktion besteht aus drei zentralen Termen: einem Policy-Term, der die erwartete Belohnung unter der Begrenzung der Policy-Updates durch die Clipping-Funktion maximiert, einem Value-Term für die Minimierung des Fehlers in der Value-Schätzung und einen Entropie-Term, der durch Maximierung der Aktionsentropie die Exploration fördert \cite{schulman2017ppo}. 
     
-    % TODO: vielleicht nur LT ansprechen, wenn ich nicht mehr genug Zeit habe, um FSP zu evaluieren.
     \item Using LT, we aim to further generalize the Base Agent by training PPO not only against the built-in bots of MicroRTS (against which the Base Agent already achieves a high win rate), but also against opponents of equal strength or stronger.
     However, many opponents at this level of performance are not suitable for training, since they are very slow and thus slow down the collection of rollouts for PPO.
     In addition, the agent’s generalization capability improves only to a limited extent when training against only a few new opponents, if the training environment does not provide sufficient opponent diversity.
@@ -355,15 +353,6 @@ FSP/PFSP (\ref{sec:PFSP}) are used to stabilize training and reduce cyclical lea
 To address the second problem, the observations for player 2 are transformed by rotating them along by 180 degrees.
 From the agent’s perspective, player 2 also starts at the top-left of the map.
 This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained Base Agent possible, even though the Base Agent was exclusively trained as player 1 (Figure~\ref{fig:adjust_obs}).
-% TODO: In Grafik alle groß schreiben, from aus (env from player löschen), "Player Observations Representation", "Flip Observations"
-% TODO: Grafik nach hunten verschieben
-\begin{center}
-    \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/adjust_obs.pdf}
-    \captionof{figure}{Observation adjustment for player 2 in SP.
-    To rotate the observations, the GridNet representation was flipped for each player-2 environment.
-    Afterwards, the unit actions in the observation were flipped individually.}
-    \label{fig:adjust_obs}
-\end{center}
 Actions are transformed accordingly, as a result the environment still executes the intended actions for player 2.
 Masks must be transformed as well, since they are based on the environment’s observations.
 The same rotation used for the observations is also applied to the invalid action masks.
@@ -420,31 +409,34 @@ This prevents the exploitation of the prioritization by the learning agent, sinc
 \label{sec:PFSP}
 LT uses an extended variant of FSP called PFSP \cite{vinyals2019alphastar}.
 PFSP extends FSP by selecting opponents against which the agent can train efficiently, rather than selecting opponents uniformly.
-The selection probability is based on the win rate of the learning agent against the potential opponent \cite{vinyals2019alphastar}. 
+The selection probability is based on the win rate of the learning agent against the potential opponent \cite{vinyals2019alphastar}.
+As in AlphaStar, the PFSP win rate in this thesis is calculated by considering a draw to be 50\% of a win for the learning agent.
+Win rates outside of PFSP are calculated without considering draws.
 
-% TODO: neue winrate mit draw wird benutzt --> überarbeiten
 \paragraph{Prioritization Function.} 
 The exact prioritization function can differ for different agent types.
-In AlphaStar, for the Main Agent opponents of medium difficulty (win rate close to 50\%) are prioritized.
-While exploiters prioritize the strongest opponent (against which the win rate is closest to 0\%).
-Adapted prioritization functions tailored to our training setup are used in this thesis,  which deviate from those used in AlphaStar.
-An important difference is, that training with an opponent against which the Base Agent has a win rate close to 0\% yields little informative gradient or learning signal.
-% und dass eine win rate von 0.5 meist heißt, dass keiner von beiden gewinnt/verliert. 
+In AlphaStar, for the Main Agent opponents of medium difficulty (PFSP win rate close to 50\%) are prioritized.
+While exploiters prioritize the strongest opponent (against which the PFSP win rate is closest to 0\%).
+Adapted prioritization functions tailored to our training setup are used in this thesis, which deviate from those used in AlphaStar.
+An important difference is that training with an opponent against which the Main Agent has a win rate (without draws) close to 0\% yields little informative gradient or learning signal.
+% und dass eine PFSP win rate von 0.5 meist heißt, dass keiner von beiden gewinnt/verliert. 
 % Stattdessen hieß das meistens, dass beide Spieler sich gegenseitig ignorieren, die Basis des Gegners angreifen und dann für den Rest des Spieles sich nicht mehr bewegen.
-% Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
+% Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer PFSP win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
 
 \paragraph{Implemented Prioritization Function.} 
-To avoid opponents resulting in little learning signals, the following prioritization functions was used for the exploiters:
+To avoid prioritizing opponents that provide little learning signal, the following prioritization functions was used for the exploiters:
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
     \captionof{figure}{Prioritization function for the exploiters in PFSP.}
     \label{fig:focused_strong_boosted_with_draws}
 \end{center}
-% TODO: neue winrate mit draw wird benutzt --> überarbeiten
-As can be seen in the figure~\ref{fig:focused_strong_boosted_with_draws}, we prioritize opponents with a low win rate not close to 0\%.
-Furthermore, opponents with a win rate of 0\% are prioritized over those with a win rate of 100\%, since there is substantial learning potential for an opponent with a win rate of 0\%, whereas a win rate of 100\% usually means that the agent already defeats the opponent reliably.
+As can be seen in the figure~\ref{fig:focused_strong_boosted_with_draws}, we prioritize opponents with a PFSP win rate around 50\%.
+That is because most of our matchups are very draw-heavy. 
+Therefore, it is likely that the win rate (without draws) is close to 0\%, when the PFSP win rate is below 50\%.
+As a result, such opponents would otherwise be selected more frequently despite providing only a very weak learning signal.
+Furthermore, opponents with a PFSP win rate of 0\% are prioritized over those with a PFSP win rate of 100\%, since there is substantial learning potential for an opponent with a PFSP win rate of 0\%, whereas a PFSP win rate of 100\% usually means that the agent already defeats the opponent reliably.
 In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.
-This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% win rate for the learning agent), since these initial results may have been outliers.
+This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% PFSP win rate for the learning agent), since these initial results may have been outliers.
 
 
 % Das wurde so umgesetzt: probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
@@ -1267,33 +1259,22 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 
 
 
+\clearpage
+\onecolumn
+\begin{center}
+    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/Matchmaking.pdf}
+    \captionof{figure}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}
+    \label{fig:Matchmaking}
+\end{center}
 
-% \subsection{Setup}
-\begin{table}[h]
-\centering
-\caption{Training parameters for PPO training.}
-\begin{tabular}{l c}
-\hline
-\textbf{Parameter} & \textbf{Value} \\
-\hline
-Initial learning rate (Adam) & $2.5 \times 10^{-5}$ \\
-Rollout steps per environment & 512 \\
-Minibatch Size & 3072\\
-Max episode length & 2,000 timesteps \\
-Discount factor $\gamma$ &  1 \\
-Value function coefficient $\beta$ & 0.01 \\
-Entropy coefficient $\eta$ & 0.005 \\
-Gradient norm threshold $\omega$ &0.5 \\
-KL regularization coefficient $\lambda_{\text{KL}}$ & 0.4 \\
-GAE parameter $\lambda$ & 0.95 \\
-\hline
-\end{tabular}
-\label{tab:training_params}
-\end{table} 
-
-
-
-
+\onecolumn
+\begin{center}
+    \includegraphics[width=\linewidth,height=0.9\textheight,keepaspectratio]{images/adjust_obs.pdf}
+    \captionof{figure}{Observation adjustment for player 2 in SP.
+    To rotate the observations, the GridNet representation was flipped for each player-2 environment.
+    Afterwards, the unit actions in the observation were flipped individually.}
+    \label{fig:adjust_obs}
+\end{center}
 
 
 
@@ -1303,14 +1284,6 @@ GAE parameter $\lambda$ & 0.95 \\
 \bibliography{references}
 }
 
-\clearpage
-\onecolumn
-\begin{center}
-    \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/Matchmaking.pdf}
-    \captionof{figure}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}
-    \label{fig:Matchmaking}
-\end{center}
-\clearpage
 
 %%%%%%%%% Erkl\"arung
 \noindent

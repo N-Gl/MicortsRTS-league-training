@@ -140,6 +140,7 @@
 \citation{goodfriend2024raisocketai}
 \citation{vinyals2019alphastar}
 \citation{huang2021gym}
+\citation{heinrich2015fsp}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}\hskip -1em.~Self-Play (SP)}{6}{subsection.3.3}\protected@file@percent }
 \@writefile{brf}{\backcite{doi:10.1126/science.aar6404}{{6}{3.3}{subsection.3.3}}}
 \@writefile{toc}{\contentsline {paragraph}{Implementation.}{6}{section*.18}\protected@file@percent }
@@ -149,122 +150,102 @@
 \@writefile{brf}{\backcite{vinyals2019alphastar}{{6}{3.3}{section*.19}}}
 \@writefile{brf}{\backcite{huang2021gym}{{6}{3.3}{section*.19}}}
 \@writefile{toc}{\contentsline {paragraph}{Solutions.}{6}{section*.20}\protected@file@percent }
-\citation{heinrich2015fsp}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Observation adjustment for player 2 in SP. To rotate the observations, the GridNet representation was flipped for each player-2 environment. Afterwards, the unit actions in the observation were flipped individually.}}{7}{figure.2}\protected@file@percent }
-\newlabel{fig:adjust_obs}{{2}{7}{Observation adjustment for player 2 in SP. To rotate the observations, the GridNet representation was flipped for each player-2 environment. Afterwards, the unit actions in the observation were flipped individually}{figure.2}{}}
-\newlabel{fig:adjust_obs@cref}{{[figure][2][]2}{[1][7][]7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}\hskip -1em.~Fictitious Self-Play (FSP)}{7}{subsection.3.4}\protected@file@percent }
-\@writefile{brf}{\backcite{heinrich2015fsp}{{7}{3.4}{subsection.3.4}}}
-\@writefile{toc}{\contentsline {paragraph}{Implementation.}{7}{section*.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Problem with the Implementation.}{7}{section*.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}\hskip -1em.~Fictitious Self-Play (FSP)}{6}{subsection.3.4}\protected@file@percent }
+\@writefile{brf}{\backcite{heinrich2015fsp}{{6}{3.4}{subsection.3.4}}}
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{6}{section*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Problem with the Implementation.}{6}{section*.22}\protected@file@percent }
+\citation{vinyals2019alphastar}
+\citation{vinyals2019alphastar}
 \@writefile{toc}{\contentsline {paragraph}{Example.}{7}{section*.23}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Relevance for LT.}{7}{section*.24}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Screenshot showing an action conflict in the game. Both heavy units of both players wanted to move to the same cell, as the opponent’s heavy units.}}{7}{figure.caption.25}\protected@file@percent }
+\newlabel{Figure 3}{{2}{7}{Screenshot showing an action conflict in the game. Both heavy units of both players wanted to move to the same cell, as the opponent’s heavy units}{figure.caption.25}{}}
+\newlabel{Figure 3@cref}{{[figure][2][]2}{[1][7][]7}}
+\@writefile{toc}{\contentsline {paragraph}{Solutions.}{7}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}\hskip -1em.~Prioritized Fictitious Self-Play (PFSP)}{7}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:PFSP}{{3.5}{7}{\hskip -1em.~Prioritized Fictitious Self-Play (PFSP)}{subsection.3.5}{}}
+\newlabel{sec:PFSP@cref}{{[subsection][5][3]3.5}{[1][7][]7}}
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{7}{3.5}{subsection.3.5}}}
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{7}{3.5}{subsection.3.5}}}
+\@writefile{toc}{\contentsline {paragraph}{Prioritization Function.}{7}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implemented Prioritization Function.}{7}{section*.28}\protected@file@percent }
 \citation{vinyals2019alphastar}
 \citation{vinyals2019alphastar}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Screenshot showing an action conflict in the game. Both heavy units of both players wanted to move to the same cell, as the opponent’s heavy units.}}{8}{figure.caption.25}\protected@file@percent }
-\newlabel{Figure 3}{{3}{8}{Screenshot showing an action conflict in the game. Both heavy units of both players wanted to move to the same cell, as the opponent’s heavy units}{figure.caption.25}{}}
-\newlabel{Figure 3@cref}{{[figure][3][]3}{[1][7][]8}}
-\@writefile{toc}{\contentsline {paragraph}{Solutions.}{8}{section*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}\hskip -1em.~Prioritized Fictitious Self-Play (PFSP)}{8}{subsection.3.5}\protected@file@percent }
-\newlabel{sec:PFSP}{{3.5}{8}{\hskip -1em.~Prioritized Fictitious Self-Play (PFSP)}{subsection.3.5}{}}
-\newlabel{sec:PFSP@cref}{{[subsection][5][3]3.5}{[1][8][]8}}
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{8}{3.5}{subsection.3.5}}}
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{8}{3.5}{subsection.3.5}}}
-\@writefile{toc}{\contentsline {paragraph}{Prioritization Function.}{8}{section*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Implemented Prioritization Function.}{8}{section*.28}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Prioritization function for the exploiters in PFSP.}}{8}{figure.4}\protected@file@percent }
-\newlabel{fig:focused_strong_boosted_with_draws}{{4}{8}{Prioritization function for the exploiters in PFSP}{figure.4}{}}
-\newlabel{fig:focused_strong_boosted_with_draws@cref}{{[figure][4][]4}{[1][8][]8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Prioritization function for the exploiters in PFSP.}}{8}{figure.3}\protected@file@percent }
+\newlabel{fig:focused_strong_boosted_with_draws}{{3}{8}{Prioritization function for the exploiters in PFSP}{figure.3}{}}
+\newlabel{fig:focused_strong_boosted_with_draws@cref}{{[figure][3][]3}{[1][8][]8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}\hskip -1em.~League Training (LT)}{8}{subsection.3.6}\protected@file@percent }
+\newlabel{sec:LT}{{3.6}{8}{\hskip -1em.~League Training (LT)}{subsection.3.6}{}}
+\newlabel{sec:LT@cref}{{[subsection][6][3]3.6}{[1][8][]8}}
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{8}{3.6}{subsection.3.6}}}
+\@writefile{toc}{\contentsline {paragraph}{League Composition and Roles.}{8}{section*.29}\protected@file@percent }
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{8}{3.6}{section*.29}}}
+\@writefile{toc}{\contentsline {paragraph}{Training Loop and Snapshot Management.}{8}{section*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Bot Environments.}{8}{section*.31}\protected@file@percent }
 \citation{vinyals2019alphastar}
 \citation{vinyals2019alphastar}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}\hskip -1em.~League Training (LT)}{9}{subsection.3.6}\protected@file@percent }
-\newlabel{sec:LT}{{3.6}{9}{\hskip -1em.~League Training (LT)}{subsection.3.6}{}}
-\newlabel{sec:LT@cref}{{[subsection][6][3]3.6}{[1][9][]9}}
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{9}{3.6}{subsection.3.6}}}
-\@writefile{toc}{\contentsline {paragraph}{League Composition and Roles.}{9}{section*.29}\protected@file@percent }
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{9}{3.6}{section*.29}}}
-\@writefile{toc}{\contentsline {paragraph}{Training Loop and Snapshot Management.}{9}{section*.30}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Bot Environments.}{9}{section*.31}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Number of Parallel Bot Environment Instances.}{9}{section*.32}\protected@file@percent }
-\citation{vinyals2019alphastar}
-\citation{vinyals2019alphastar}
-\@writefile{toc}{\contentsline {paragraph}{Summary: Opponent Selection.}{10}{section*.33}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Resetting Exploiters.}{10}{section*.34}\protected@file@percent }
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{10}{3.6}{section*.34}}}
-\@writefile{toc}{\contentsline {paragraph}{AlphaStar LT Pseudocode.}{10}{section*.35}\protected@file@percent }
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{10}{3.6}{section*.35}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}\hskip -1em.~Additional Modifications for Diversity}{10}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary: Opponent Selection.}{9}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Resetting Exploiters.}{9}{section*.34}\protected@file@percent }
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{9}{3.6}{section*.34}}}
+\@writefile{toc}{\contentsline {paragraph}{AlphaStar LT Pseudocode.}{9}{section*.35}\protected@file@percent }
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{9}{3.6}{section*.35}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}\hskip -1em.~Additional Modifications for Diversity}{9}{subsection.3.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Problems with Overall Increased Exploration.}{10}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Production Exploration Bonus.}{10}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Unit Bonus.}{10}{section*.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Unit Bonus Distribution.}{10}{section*.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Annealed Entropy Coefficient.}{10}{section*.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{New Initial Agents.}{10}{section*.41}\protected@file@percent }
 \citation{huang2021gym,Ontanon2013CombinatorialBandit}
 \citation{huft2023microrts}
-\@writefile{toc}{\contentsline {paragraph}{Production Exploration Bonus.}{11}{section*.37}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Unit Bonus.}{11}{section*.38}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Unit Bonus Distribution.}{11}{section*.39}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Annealed Entropy Coefficient.}{11}{section*.40}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{New Initial Agents.}{11}{section*.41}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}\protected@file@percent }
-\@writefile{brf}{\backcite{huang2021gym, Ontanon2013CombinatorialBandit}{{11}{3.8}{subsection.3.8}}}
-\@writefile{brf}{\backcite{huft2023microrts}{{11}{3.8}{subsection.3.8}}}
 \citation{huft2023microrts}
 \citation{huang2021gym,huft2023microrts,goodfriend2024raisocketai}
 \citation{huft2023microrts}
 \citation{huft2023microrts}
-\@writefile{toc}{\contentsline {section}{\numberline {4}\hskip -1em.~Experiments}{12}{section.4}\protected@file@percent }
-\newlabel{sec:experimente}{{4}{12}{\hskip -1em.~Experiments}{section.4}{}}
-\newlabel{sec:experimente@cref}{{[section][4][]4}{[1][12][]12}}
-\@writefile{brf}{\backcite{huft2023microrts}{{12}{4}{section.4}}}
-\@writefile{brf}{\backcite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{12}{4}{section.4}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}\hskip -1em.~Hyperparameters}{12}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}\hskip -1em.~Evaluation}{12}{subsection.4.2}\protected@file@percent }
-\@writefile{brf}{\backcite{huft2023microrts}{{12}{4.2}{subsection.4.2}}}
-\@writefile{toc}{\contentsline {paragraph}{Checkpoint and Reset Statistics.}{12}{section*.42}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results}{12}{subsection.4.3}\protected@file@percent }
-\@writefile{brf}{\backcite{huft2023microrts}{{12}{4.3}{subsection.4.3}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}\hskip -1em.~Delta Score.}{11}{subsection.3.8}\protected@file@percent }
+\@writefile{brf}{\backcite{huang2021gym, Ontanon2013CombinatorialBandit}{{11}{3.8}{subsection.3.8}}}
+\@writefile{brf}{\backcite{huft2023microrts}{{11}{3.8}{subsection.3.8}}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}\hskip -1em.~Experiments}{11}{section.4}\protected@file@percent }
+\newlabel{sec:experimente}{{4}{11}{\hskip -1em.~Experiments}{section.4}{}}
+\newlabel{sec:experimente@cref}{{[section][4][]4}{[1][11][]11}}
+\@writefile{brf}{\backcite{huft2023microrts}{{11}{4}{section.4}}}
+\@writefile{brf}{\backcite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{11}{4}{section.4}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}\hskip -1em.~Hyperparameters}{11}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}\hskip -1em.~Evaluation}{11}{subsection.4.2}\protected@file@percent }
+\@writefile{brf}{\backcite{huft2023microrts}{{11}{4.2}{subsection.4.2}}}
+\@writefile{toc}{\contentsline {paragraph}{Checkpoint and Reset Statistics.}{11}{section*.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results}{11}{subsection.4.3}\protected@file@percent }
+\@writefile{brf}{\backcite{huft2023microrts}{{11}{4.3}{subsection.4.3}}}
+\citation{huft2023microrts}
 \@writefile{toc}{\contentsline {paragraph}{Main Agent without Unit Focus Evaluation.}{12}{section*.43}\protected@file@percent }
-\citation{huft2023microrts}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{12}{subsection.4.4}\protected@file@percent }
+\@writefile{brf}{\backcite{huft2023microrts}{{12}{4.4}{subsection.4.4}}}
+\@writefile{toc}{\contentsline {paragraph}{Exploration: Effects of New Initial Agents.}{12}{section*.44}\protected@file@percent }
 \citation{huft2023microrts}
 \citation{huft2023microrts}
 \citation{vinyals2019alphastar}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{13}{subsection.4.4}\protected@file@percent }
-\@writefile{brf}{\backcite{huft2023microrts}{{13}{4.4}{subsection.4.4}}}
-\@writefile{toc}{\contentsline {paragraph}{Exploration: Effects of New Initial Agents.}{13}{section*.44}\protected@file@percent }
-\@writefile{brf}{\backcite{huft2023microrts}{{13}{4.4}{section*.44}}}
-\@writefile{brf}{\backcite{huft2023microrts}{{13}{4.4}{section*.44}}}
 \citation{vinyals2019alphastar}
-\bibstyle{apalike}
-\bibdata{references}
-\bibcite{baselines}{Dhariwal et~al., 2017}
-\bibcite{espeholt2018impala}{Espeholt et~al., 2018}
-\@writefile{toc}{\contentsline {paragraph}{Exploiter Diversity in AlphaStar.}{14}{section*.45}\protected@file@percent }
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{14}{4.4}{section*.45}}}
-\@writefile{toc}{\contentsline {paragraph}{Future Work: Map Diversity.}{14}{section*.46}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{14}{section.5}\protected@file@percent }
-\newlabel{sec:conclusion}{{5}{14}{\hskip -1em.~Conclusion}{section.5}{}}
-\newlabel{sec:conclusion@cref}{{[section][5][]5}{[1][14][]14}}
-\@writefile{brf}{\backcite{vinyals2019alphastar}{{14}{5}{section.5}}}
-\bibcite{goodfriend2024raisocketai}{Goodfriend, 2024}
-\bibcite{pmlr-v97-han19a}{Han et~al., 2019}
-\bibcite{heinrich2015fsp}{Heinrich et~al., 2015}
-\bibcite{huang2021gym}{Huang et~al., 2021}
-\bibcite{huft2023microrts}{Huft, 2025}
-\bibcite{martin2021beclone}{Martin and Jhala, 2021}
-\bibcite{Ontanon2013CombinatorialBandit}{Onta{\~n}{\'o}n, 2013}
-\bibcite{schulman2017ppo}{Schulman et~al., 2017}
-\bibcite{doi:10.1126/science.aar6404}{Silver et~al., 2018}
-\newlabel{fig:number-units-after-game}{{5}{15}{}{figure.caption.47}{}}
-\newlabel{fig:number-units-after-game@cref}{{[figure][5][]5}{[1][14][]15}}
+\@writefile{brf}{\backcite{huft2023microrts}{{13}{4.4}{section*.44}}}
+\@writefile{brf}{\backcite{huft2023microrts}{{13}{4.4}{section*.44}}}
+\@writefile{toc}{\contentsline {paragraph}{Exploiter Diversity in AlphaStar.}{13}{section*.45}\protected@file@percent }
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{13}{4.4}{section*.45}}}
+\@writefile{toc}{\contentsline {paragraph}{Future Work: Map Diversity.}{13}{section*.46}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{13}{section.5}\protected@file@percent }
+\newlabel{sec:conclusion}{{5}{13}{\hskip -1em.~Conclusion}{section.5}{}}
+\newlabel{sec:conclusion@cref}{{[section][5][]5}{[1][13][]13}}
+\@writefile{brf}{\backcite{vinyals2019alphastar}{{13}{5}{section.5}}}
+\newlabel{fig:number-units-after-game}{{4}{15}{}{figure.caption.47}{}}
+\newlabel{fig:number-units-after-game@cref}{{[figure][4][]4}{[1][14][]15}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces checkpoint amount per initial agent type, league agent type and averaged win rate against the Main Agent over 200 games per initial agent type}}{15}{table.caption.48}\protected@file@percent }
 \newlabel{tab:checkpoint_statistics}{{2}{15}{checkpoint amount per initial agent type, league agent type and averaged win rate against the Main Agent over 200 games per initial agent type}{table.caption.48}{}}
 \newlabel{tab:checkpoint_statistics@cref}{{[table][2][]2}{[1][14][]15}}
-\bibcite{suttonbarto1998rl}{Sutton and Barto, 1998}
-\bibcite{torabi2018behavioral}{Torabi et~al., 2018}
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Base Agent evaluation}}{16}{table.caption.49}\protected@file@percent }
 \newlabel{tab:base_agent_evaluation}{{3}{16}{Base Agent evaluation}{table.caption.49}{}}
 \newlabel{tab:base_agent_evaluation@cref}{{[table][3][]3}{[1][14][]16}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Main Agent evaluation}}{16}{table.caption.50}\protected@file@percent }
 \newlabel{tab:main_agent_evaluation}{{4}{16}{Main Agent evaluation}{table.caption.50}{}}
 \newlabel{tab:main_agent_evaluation@cref}{{[table][4][]4}{[1][14][]16}}
-\bibcite{vinyals2019alphastar}{Vinyals et~al., 2019}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Difference in evaluation results between the Main Agent and the Base Agent}}{17}{table.caption.51}\protected@file@percent }
 \newlabel{tab:diff_main_agent_evaluation}{{5}{17}{Difference in evaluation results between the Main Agent and the Base Agent}{table.caption.51}{}}
 \newlabel{tab:diff_main_agent_evaluation@cref}{{[table][5][]5}{[1][14][]17}}
@@ -274,11 +255,27 @@
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Hyperparameters used for the League Training setups}}{18}{table.caption.53}\protected@file@percent }
 \newlabel{tab:league_hyperparameter}{{7}{18}{Hyperparameters used for the League Training setups}{table.caption.53}{}}
 \newlabel{tab:league_hyperparameter@cref}{{[table][7][]7}{[1][14][]18}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Training parameters for PPO training.}}{19}{table.caption.55}\protected@file@percent }
-\newlabel{tab:training_params}{{8}{19}{Training parameters for PPO training}{table.caption.55}{}}
-\newlabel{tab:training_params@cref}{{[table][8][]8}{[1][14][]19}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}}{20}{figure.6}\protected@file@percent }
-\newlabel{fig:Matchmaking}{{6}{20}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}{figure.6}{}}
-\newlabel{fig:Matchmaking@cref}{{[figure][6][]6}{[1][20][]20}}
-\@writefile{toc}{\contentsline {section}{Erkl\"arung}{21}{figure.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}}{19}{figure.5}\protected@file@percent }
+\newlabel{fig:Matchmaking}{{5}{19}{Matchmaking process for the league. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate}{figure.5}{}}
+\newlabel{fig:Matchmaking@cref}{{[figure][5][]5}{[1][19][]19}}
+\bibstyle{apalike}
+\bibdata{references}
+\bibcite{baselines}{Dhariwal et~al., 2017}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Observation adjustment for player 2 in SP. To rotate the observations, the GridNet representation was flipped for each player-2 environment. Afterwards, the unit actions in the observation were flipped individually.}}{20}{figure.6}\protected@file@percent }
+\newlabel{fig:adjust_obs}{{6}{20}{Observation adjustment for player 2 in SP. To rotate the observations, the GridNet representation was flipped for each player-2 environment. Afterwards, the unit actions in the observation were flipped individually}{figure.6}{}}
+\newlabel{fig:adjust_obs@cref}{{[figure][6][]6}{[1][20][]20}}
+\bibcite{espeholt2018impala}{Espeholt et~al., 2018}
+\bibcite{goodfriend2024raisocketai}{Goodfriend, 2024}
+\bibcite{pmlr-v97-han19a}{Han et~al., 2019}
+\bibcite{heinrich2015fsp}{Heinrich et~al., 2015}
+\bibcite{huang2021gym}{Huang et~al., 2021}
+\bibcite{huft2023microrts}{Huft, 2025}
+\bibcite{martin2021beclone}{Martin and Jhala, 2021}
+\bibcite{Ontanon2013CombinatorialBandit}{Onta{\~n}{\'o}n, 2013}
+\bibcite{schulman2017ppo}{Schulman et~al., 2017}
+\bibcite{doi:10.1126/science.aar6404}{Silver et~al., 2018}
+\bibcite{suttonbarto1998rl}{Sutton and Barto, 1998}
+\bibcite{torabi2018behavioral}{Torabi et~al., 2018}
+\bibcite{vinyals2019alphastar}{Vinyals et~al., 2019}
+\@writefile{toc}{\contentsline {section}{Erkl\"arung}{21}{section*.55}\protected@file@percent }
 \gdef \@abspage@last{22}
