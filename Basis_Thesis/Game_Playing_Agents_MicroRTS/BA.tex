@@ -588,7 +588,7 @@ If that happens, the Annealed Entropy Coefficient is reinitialized to half of it
 \paragraph{New Initial Agents.}
 To mitigate the insufficient opponent diversity, we created new initial agents that focused on different unit types and can be used as alternative initial agents for the Main Exploiters in LT.
 This enables the exploiters to exploit weaknesses related to different unit types without having to first unlearn the strategy for the unit type favored by the Base Agent, which can lead to more diverse exploiters in fewer training steps.
-We didn not created new initial agents for the Main Agent because we prioritize further training the already strong Base Agent.
+We did not created new initial agents for the Main Agent because we prioritize further training the already strong Base Agent.
 The new initial agents were not trained long enough to be as strong as the Base Agent, but they are strong enough to identify weaknesses in the Main Agent from a previous run that did not use the new initial agents and thereby contribute to improved generalization.
 
 
@@ -670,6 +670,7 @@ Table~\ref{tab:main_agent_evaluation_no_worker_focus} presents an example evalua
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
 % TODO: Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
+% Vergleiche mit SP aus RAISocketAI?
 
 % TODO: replace all (???)
 
@@ -745,7 +746,7 @@ The diversity of our Base Agent is further constrained by the fact that, during 
 
 
 
-% TODO: Tabele mit differenzen zwischen LT und Base Agent
+% TODO: Tabele mit differenzen zwischen LT und Base Agent erklären
 
 \paragraph{Future Work: Map Diversity.}
 Changing maps is already possible in MicroRTS-Py.
@@ -773,6 +774,14 @@ Human imitation learning, as used in AlphaStar, seems to be a difficult approach
 % --> lieber human imitation learning, wie in AlphaStar (wenn überhaupt möglich), um die vielfältigkeit der initailen Agenten zu erhöhen
 % oder von anfang an auf diversität abzielen, statt ein Agenten zu benutzen, der hohe Winrates erreichen soll. --> ohne neue initiale Agenten?
 % sehr kurze Zusammenfassung der Ergebnisse, Methoden (LT)
+
+
+
+% TODO: (Durch rotieren der Observations, Actions, Masks), wechseln der Seiten der lernenden Agenten (um Priorität zu umgehen) funktioniert SP und damit LT
+% TODO: weiter verbessert durch Delta Score, der die Belohnungssignale weniger spärlich macht.
+% TODO: weiter verbessert durch neue initiale Agenten, anneal Entropie die die Vielfalt der Exploiters erhöhen
+% TODO: weiter verbessert durch neuen PFSP priorisierungs funktionen, die spezialisiert auf die MicroRTS Umgebung sind, um gute Gegner zu finden.
+% TODO: weiter verbessert durch Bot agenten, die das training stabilisieren (vorallem die Zeit zeischen den ersten Exploitern, inder nur mit SP und FSP trainiert wird). (auch oben hin schreiben) (deshalb auch dynamisch)
 
 
 \begin{figure*}[t]
@@ -1062,7 +1071,7 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{table*}
 
 
-
+% TODO: neue Hyperparameter einfügen
 \begin{table*}[t]
 \centering
 \caption{Hyperparameters used for the League Training setups}
