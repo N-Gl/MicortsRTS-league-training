@@ -249,22 +249,23 @@ The different units types are:
 }
 
 \begin{itemize}
-\item \textbf{Base:} \uniticon{images/Base.png} The Base can store resources and train Workers. It is very important, since it is the only way to store resources. (Cost (in resources): 10, hit points (hp): 10)
-\item \textbf{Resources:} \uniticon{images/Resource.png} There is only one type of resource. It can be stored by Workers in the Base. (Number of resources in a cell: depends on the map in our case 25)
-\item \textbf{Worker:} \uniticon{images/Worker.png} Workers can collect resources and build Barracks. (Cost: 1, hp: 1, attack strength (at): 1)
-\item \textbf{Barracks:} \uniticon{images/Barracks.png} Barracks can train Light, Heavy and Ranged units. (Cost: 5, hp: 4)
-\item \textbf{Light:} \uniticon{images/Light.png} Light units can move quickly, are trained quickly and cost little. (Cost: 2, hp: 4, at: 2)
-\item \textbf{Heavy:} \uniticon{images/Heavy.png} Heavy units can move slowly are trained slowly and cost a lot, but have high at and hp. (Cost: 3, hp: 8, at: 4)
-\item \textbf{Ranged:} \uniticon{images/Ranged.png} Ranged units have an attack range of 3 cells. (Cost: 2, hp: 1, at: 1)
+\item \textbf{Base:} \uniticon{images/Base.png} The base can store resources and train workers. It is very important, since it is the only way to store resources. (cost (in resources): 10, hit points (hp): 10)
+\item \textbf{Resources:} \uniticon{images/Resource.png} There is only one type of resource. It can be stored by workers in the base (Number of resources in a cell: depends on the map in our case 25).
+\item \textbf{Worker:} \uniticon{images/Worker.png} workers can collect resources and build barracks (cost: 1, hp: 1, attack strength (at): 1).
+\item \textbf{Barracks:} \uniticon{images/Barracks.png} barracks can train light, heavy and ranged units (cost: 5, hp: 4).
+\item \textbf{Light:} \uniticon{images/Light.png} light units can move quickly, are trained quickly and cost little (cost: 2, hp: 4, at: 2).
+\item \textbf{Heavy:} \uniticon{images/Heavy.png} heavy units can move slowly are trained slowly and cost a lot, but have high at and hp (cost: 3, hp: 8, at: 4).
+\item \textbf{Ranged:} \uniticon{images/Ranged.png} ranged units have an attack range of 3 cells (cost: 2, hp: 1, at: 1).
 \end{itemize}
-Worker, Light, Heavy and Ranged units can move one cell in one of four directions.
+Units of type worker, light, heavy and ranged can move one cell in one of four directions.
 Units of player 1 are displayed with a blue outline, whereas units of player 2 are outlined in red.
 Movement is visualized with a gray line, attacking with a red line and gathering with a green line.
 
 \paragraph{Game Setup.}
-Most games are decided within 2000 steps. Therefore, the maximum number of steps is set to 2000.
+Most games are decided within 2000 steps.
+Therefore, the maximum number of steps is set to 2000.
 The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in figure~\ref{Figure 1}.
-This symmetric map starts each player with one Base, five resources, two Workers and 50 resources near the Base. \textbf{\cite{goodfriend2024raisocketai}}
+This symmetric map starts each player with one base, five resources, two workers and 50 resources located near the base \cite{goodfriend2024raisocketai}.
 
 \begin{figure}[H]
     \centering
@@ -275,31 +276,35 @@ This symmetric map starts each player with one Base, five resources, two Workers
 
 \paragraph{Action Space.}
 The action space used in this thesis is implemented using the combination of GridNet and invalid action masking \cite{huang2021gym}.
-GridNet produces a unit action (an action for one specific cell) for each cell of the map, regardless of whether a unit is located on the cell and whether the action is valid \cite{pmlr-v97-han19a}.
-Building on this, invalid action masking is used to mask invalid actions, thereby also masking actions empty cells \cite{huang2021gym}.
+GridNet produces a unit action (an action for one specific cell) for each cell of the map, regardless of whether a unit is located on the cell or whether the action is valid \cite{pmlr-v97-han19a}.
+Building on this, invalid action masking is used, thereby also masking actions of empty cells \cite{huang2021gym}.
 The unit action space is defined as an 8-dimensional vector per cell:
 \[
 (\text{pos}, \text{type}, d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}, \text{pType}, \text{relPos})
 \]
 The components of the unit-action vector are defined as follows:
 \begin{itemize}
-\item \textbf{pos:} Linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space (e. g. for a $16\times 16$ grid: range: [0, 255])).
-\item \textbf{type:} Action type (range: [0, 5], 0: Nop, 1: Move, 2 Harvest, 3: Return, 4: Produce, 5: Attack).
-\item \textbf{$d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}$:} Directions (range: [0, 3], 0: North, 1: East, 2: South, 3: West) for the respective actions.
-\item \textbf{pType:} Type of the unit to be produced. (range: [0, 6], 0: Resource, 1: Base, 2: Barracks, 3: Worker, 4: Light, 5: Heavy, 6: Ranged).
-\item \textbf{relPos:} Relative attack position. (range: [0, 48]).
+\item \textbf{pos:} linearized index of the cell in the grid (i.e., the grid represented in a one-dimensional space (e. g. for a $16\times 16$ grid: range: [0, 255])),
+% TODO: sollte das Nop heißen?
+\item \textbf{type:} action type (range: [0, 5], 0: Nop, 1: Move, 2: Harvest, 3: Return, 4: Produce, 5: Attack),
+\item \textbf{$d_{\text{move}}, d_{\text{harvest}}, d_{\text{return}}, d_{\text{produce}}$:} directions (range: [0, 3], 0: North, 1: East, 2: South, 3: West) for the respective actions,
+\item \textbf{pType:} type of the unit to be produced (range: [0, 6], 0: resource, 1: base, 2: barracks, 3: worker, 4: light, 5: heavy, 6: ranged),
+\item \textbf{relPos:} relative attack position (range: [0, 48]).
 \end{itemize}
 For our agent, the unit action space (without the position dimension) is linearized and represented using one-hot encoding.
 The position is implicitly encoded by the linear grid indexing of the GridNet output \cite{huang2021gym}.
 Given a map of size $h \times w$, the action space has shape $h \times w \times 78$.
-For our $16 \times 16$ map, the action space per environment in the GridNet representation would therefore contain $16 \times 16 \times 78 = 19968$ actions. However, many of them can be invalid and are masked by invalid action masking \cite{huang2021gym}.
-Afterward the position is incorporated before masking the actions, otherwise the masking would remove the structure of the Action-Space, which would remove the implicit encoding for the position.
-Depending on the action type, only parts of the action vector are relevant (e. g. if the action type is \texttt{Move}, then only the components \texttt{pos}, \texttt{type} and \texttt{$d_{\text{move}}$} are relevant (the other components are ignored)).
+For our $16 \times 16$ map, the action space per environment in the GridNet representation would therefore contain $16 \times 16 \times 78 = 19968$ actions.
+However, many of them can be invalid and are masked by invalid action masking \cite{huang2021gym}.
+% TODO: vielleicht nochmal genauer erklären, wie position in GridNet hinzugefügt wird.
+Afterward the position is incorporated before masking the actions, otherwise the masking would remove the structure of the action space, which would remove the implicit encoding for the position.
+Depending on the action type, only parts of the action vector are relevant (e. g. if the action type is \texttt{Move}, only the components \texttt{pos}, \texttt{type} and \texttt{$d_{\text{move}}$} are relevant).
+The other components are ignored.
 
 
 \paragraph{Observation Space.}
 Observations are represented as a grid of shape $h \times w \times c$ per environment, where $h$ and $w$ are the height and width of the map and $c$ is the number of encoded features of each cell in the game state (e. g. unit types, hit points, move direction, etc.) \cite{huang2021gym}.
-The screenshot of the map basesWorkers16x16A \ref{Figure 1} visualizes the observation space, without any additional information.
+The screenshot of the map \texttt{basesWorkers16x16A} \ref{Figure 1} visualizes the observation space without any additional information.
 
 
 \subsection{Training Pipeline}
@@ -310,7 +315,7 @@ In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and May
     \item The BC phases reduces the initial, often inefficient exploration in DRL methods such as PPO, which can be very time-consuming when trained from scratch \cite{torabi2018behavioral, martin2021beclone}.
     % Insbesondere in MicroRTS, wo die Belohnungen anfänglich besonders spärlich und verzögert sein können, durch die hohe kompetenz der Gegner, die der Agent zu Beginn des Trainings hat, und durch die Komplexität der Umgebung, kann ein reines DRL-Training ohne Vortraining sehr ineffizient sein \cite{martin2021beclone}.
     \item The third phase improves the generalization and performance of the agent through additional exploration beyond expert demonstrations \cite{martin2021beclone}.
-    PPO is an on-policy policy optimization method that constrains the size of policy updates in order to achieve stable training \cite{schulman2017ppo}.
+    PPO constrains the size of policy updates in order to achieve stable training \cite{schulman2017ppo}.
     % Typischerweise wird PPO als Actor-Critic-Verfahren dargestellt, in dem der Actor die Policy repräsentiert und der Critic die Value-Funktion schätzt \cite{schulman2017ppo}.
     % Aus den Trajectories, die in einem Rollout gesammelt wurden werden Advantage-Schätzungen berechnet.
     % Diese werden als Signal für die Policy-Updates verwendet.
@@ -377,7 +382,7 @@ After sufficient training, the agent will learn a strategy that is based on play
 Training then stagnates, since the agent already has a hight win rate against itself without develping a robust strategy against other opponents.
 
 \paragraph{Example.} 
-The agent could learn to block an opponent in front of the Base by issuing a simultaneous move to the same target cell.
+The agent could learn to block an opponent in front of the base by issuing a simultaneous move to the same target cell.
 In FSP, player 2 would then be blocked, while player 1 would not, allowing the agent to achieve a win rate close to 100\% against itself.
 
 \paragraph{Relevance for LT.} 
@@ -390,7 +395,7 @@ As a result the agent no longer has to plan as far ahead in order to exploit thi
     \centering
     \includegraphics[width=1\linewidth]{images/action_konflikt.png}
     \caption{Screenshot showing an action conflict in the game.
-    Both Heavy units of both players wanted to move to the same cell, as the opponent’s Heavy units.}
+    Both heavy units of both players wanted to move to the same cell, as the opponent’s heavy units.}
     \label{Figure 3}
 \end{figure}
 
@@ -531,24 +536,24 @@ We hypothesize that is because the starting point (the Base Agent) is already ve
 In between the unlearning and learning phases, the agent performs very poorly, which leads us to believe that there are very distant clusters (corresponding to different unit types) of local maxima in the reward landscape.
 This could explain why finding different maxima with the same unit type is possible, but changing to a strategy for different unit types is very difficult and time-consuming. 
 Furthermore, the same problem occurs for every exploiter, which compounds the problem.
-What makes diversity even more difficult is that, in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses that can be exploited by an exploiter using Heavy Units (the unit type strongly favored by the Base Agent).
+What makes diversity even more difficult is that, in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses that can be exploited by an exploiter using heavy units (the unit type strongly favored by the Base Agent).
 This suggests that, even after training, there will remain weaknesses that are easier to exploit than those that require shifting the focus to a different unit type.
 % TODO: Beispiel behalten?
-For example, if the Base Agent, which favors Heavy Units, is to exploit a weakness that occurs when the Main Agent is attacked by many Worker units, then throughout the episode, every Worker on the field must refrain from building Barracks, since this would waste too many resources for the strategy to work.
-Instead of using only two Workers, the Agent has to produce as many as possible, while every unit but two rushes the opponent.
+For example, if the Base Agent, which favors heavy units, is to exploit a weakness that occurs when the Main Agent is attacked by many worker units, then throughout the episode, every worker on the field must refrain from building barracks, since this would waste too many resources for the strategy to work.
+Instead of using only two workers, the Agent has to produce as many as possible, while every unit but two rushes the opponent.
 The Agent only receives a positive reward if all of this happens in the same game, making this behavior unlikely to occur.
 The second strategy in the example is simmilar to a built-in bot strategy of MicroRTS called WorkerRushAI.
 
 \paragraph{Production Exploration Bonus.}
-To further increase exploration without increasing training time too much, an exploration bonus targeting the production of Workers, Ranged, Heavy and Light Units can be added to the reward.
+To further increase exploration without increasing training time too much, an exploration bonus targeting the production of workers, ranged, heavy and light units can be added to the reward.
 By targeting the production of different unit types, the agent is encouraged to explore different strategies for different unit types, which can lead to more diverse exploiters.
-This was achieved by using a mask that gives Barracks and Bases (units whose only function is to produce other units) an entropy bonus, which encourages more diverse production decisions and thereby increases exploration across different unit types, by making the agent interact with them.
+This was achieved by using a mask that gives barracks and bases (units whose only function is to produce other units) an entropy bonus, which encourages more diverse production decisions and thereby increases exploration across different unit types, by making the agent interact with them.
 While this helped to increase exploration of a broader range of unit types, as reflected by the fact that the agent uses a wider variety of units, it was not enough to make the agent explore strategies for different unit types.
 % TODO: Bild von Unit Count nach Spiel ende mit und ohne Bonus?
 
 % TODO: nächsten 2 subsections lieber in Experiments?
 \paragraph{Unit Bonus.}
-To address the problem of insufficient diversity, a clipped unit bonus can be added to the reward, encouraging the agent to use different unit types (e. g. by giving the Base Agent a bonus every time it produces a Ranged Unit).
+To address the problem of insufficient diversity, a clipped unit bonus can be added to the reward, encouraging the agent to use different unit types (e. g. by giving the Base Agent a bonus every time it produces a ranged unit).
 The number of other units types increased when using the Unit Bonus.
 However, even with weaker agents such as the agent after the BC phase and over 20 million steps, the agent did not develop strategies centered on different unit types and instead produced the unit type with a bonus at the end of a round, when the result was already decided.
 
@@ -633,8 +638,8 @@ Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for eac
 Checkpoints without resets are not included in the win rates.
 
 \subsection{Results}
-The Agent learned to keep the Base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the Base undefended while attacking.
-% TODO: The Main Agent also learned to use a wider variety of units, including Ranged Units, which were mostly used in edge cases in which Ranged Units are so effective that even one Ranged Unit can make a difference (e. g. when the opponent has only Workers or when only a small number of units remain and avoid the Agent in order to force a draw).
+The Agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the base undefended while attacking.
+% TODO: The Main Agent also learned to use a wider variety of units, including ranged units, which were mostly used in edge cases in which ranged units are so effective that even one ranged unit can make a difference (e. g. when the opponent has only workers or when only a small number of units remain and avoid the Agent in order to force a draw).
 As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the Agent’s performance against almost all evaluated opponents.
 The difference between the rates are listed in Table~\ref{tab:diff_main_agent_evaluation}, for better comparison.
 The win rates against the bots used in training are now 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
@@ -644,7 +649,7 @@ The trained Main Agent also performs well against the Base Agent, against which 
 The win rate against RandomBiasedAI is another major improvement from 79\% to 97\%, showing that, in comparison to the Base Agent, the trained Agent performs substantially better against bots that try to draw the game instead of winning.
 The agents in the section "Other Bots" are considerably stronger against the Base Agent than the built-in bots, which is reflected in the lower win rates against them, but the Main Agent still shows improvements over the Base Agent against most of these opponents.
 Highlights include the win rate against Rojo, which improved from 81\% to 100\%, while the win rate against MixedBot also increased from 43\% to 57\%.
-The win rate against Izanagi fell from 72\% to 70\%, however the loss rate improved from 16\% to 7\%, suggesting that the Main Agent now defends the Base more effectively while attacking.
+The win rate against Izanagi fell from 72\% to 70\%, however the loss rate improved from 16\% to 7\%, suggesting that the Main Agent now defends the base more effectively while attacking.
 WorkerRushAI is the only opponent against which the Main Agent performs worse than the Base Agent.
 It shows, that the Main Agent still has weaknesses that can be exploited.
 
@@ -692,7 +697,7 @@ Despite the improved the diversity and general performance of the Main Agent, th
     However, it is not proven that the weaknesses for other unit types are the only weaknesses of the Main Agent that require hard-to-reach exploiter states, which are unlikely to be represented by a historical exploiter after training.
     % For example, strategies with mixed unit types, which are likely to be more difficult to find than strategies for a single unit type, may not be represented by any historical exploiter after the training, which can limit the performance of the Main Agent against opponents using such strategies.
     At the same time, the final unit composition in Figure~\ref{fig:number-units-after-game} for the worker focused initial agent shows that at least some mixed strategies can be achieved with this training setup.
-    For example, the agent focused on worker units learned to also frequently use Ranged units, even though it was not initially trained with them.
+    For example, the agent focused on worker units learned to also frequently use ranged units, even though it was not initially trained with them.
     With this, we have initial agents for each unit type for the exploiters, as well as examples of effective exploits within the set of strategies for the focused unit types.
     % TODO: multiple other examples of capability to explore strategies with mixed unit types?
     On top of that, we also have multiple other examples in different runs, that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
@@ -702,7 +707,7 @@ Despite the improved the diversity and general performance of the Main Agent, th
     Our setup has a maximum of 160 parallel environments, while pure PPO only uses 24 parallel environments \cite{huft2023microrts}.
     This causes a much higher memory usage and long training times.
     \item \textbf{Limitations: Map Constraints.} 
-    This thesis, just like the thesis for the Base Agent \cite{huft2023microrts}, only uses one map (basesWorkers16x16A), with full observability of all units and resources, which is a very specific setting.
+    This thesis, just like the thesis for the Base Agent \cite{huft2023microrts}, only uses one map (\texttt{basesWorkers16x16A}), with full observability of all units and resources, which is a very specific setting.
 \end{itemize}
 
 
@@ -784,7 +789,7 @@ Human imitation learning, as used in AlphaStar, seems to be a difficult approach
         \centering
         \includegraphics[width=\linewidth]{images/numberLightAfterGame.png}
     \end{minipage}
-    \caption[]{Number of units after each game for the agents initialized with Worker focused (shown are 2 full reset cycles).}
+    \caption[]{Number of units after each game for the agents initialized with worker focused (shown are 2 full reset cycles).}
     \label{fig:number-units-after-game}
 \end{figure*}
 
@@ -824,9 +829,9 @@ Human imitation learning, as used in AlphaStar, seems to be a difficult approach
 \textbf{Agent type} & \textbf{League Exploiter} & \textbf{Main Exploiter} & \textbf{avg. win rate} & \textbf{total games} & \textbf{times win rate $>$ 70\%} \\
 \hline
     Base Agent & (???) & (???) & (???) & (???) & (???) \\
-    Worker\_focused & 0 & (???) & (???) & (???) & (???) \\
-    Ranged\_focused & 0 & (???) & (???) & (???) & (???) \\
-    Light\_focused & 0 & (???) & (???) & (???) & (???) \\
+    worker\_focused & 0 & (???) & (???) & (???) & (???) \\
+    ranged\_focused & 0 & (???) & (???) & (???) & (???) \\
+    light\_focused & 0 & (???) & (???) & (???) & (???) \\
     Total & (???) & (???) & (???) & (???) & (???) \\
 \hline
 \end{tabular*}
@@ -1235,10 +1240,10 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 % \midrule
 % \multicolumn{4}{@{}l}{\textbf{Unit-Specific Bonus Parameters}} \\
 % \midrule
-% Unit Bonus & \texttt{unit\_bonus\_max\_worker} & 1{,}0 & Maximum bonus for Worker units. \\
-% Unit Bonus & \texttt{unit\_bonus\_max\_light} & 1{,}0 & Maximum bonus for Light units. \\
-% Unit Bonus & \texttt{unit\_bonus\_max\_heavy} & 1{,}0 & Maximum bonus for Heavy units. \\
-% Unit Bonus & \texttt{unit\_bonus\_max\_ranged} & 1{,}0 & Maximum bonus for Ranged units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_worker} & 1{,}0 & Maximum bonus for worker units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_light} & 1{,}0 & Maximum bonus for light units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_heavy} & 1{,}0 & Maximum bonus for heavy units. \\
+% Unit Bonus & \texttt{unit\_bonus\_max\_ranged} & 1{,}0 & Maximum bonus for ranged units. \\
 % \bottomrule
 % \end{tabularx}
 % \end{table*}
