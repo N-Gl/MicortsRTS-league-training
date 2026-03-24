@@ -21,8 +21,8 @@ ExperimentConfig:
   seed:
   exact_seed: true
 
-  capture_video: true
-  render: true
+  capture_video: false
+  render: false
   render_all: false
 
   num_eval_episodes: 100
