@@ -308,7 +308,7 @@ The screenshot of the map \texttt{basesWorkers16x16A} \ref{Figure 1} visualizes 
 
 
 \subsection{Training Pipeline}
-The training pipeline extended in this thesis consists of four phases: BC, BC-FT, PPO and LT (or FSP/SP).
+The training pipeline extended in this thesis consists of four phases: BC, BC-FT, PPO and LT (or SP/FSP).
 The first three phases were already implemented in the previous work \cite{huft2023microrts} and are only briefly described here.
 In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and Mayari) are used to train an initial policy to learn basic game mechanics/strategies \cite{huft2023microrts}.
 \begin{itemize}
@@ -323,10 +323,10 @@ In BC/BC-FT, demonstrations from experts (here, the built-in bots CoacAI and May
     % Die PPO-Zielfunktion besteht aus drei zentralen Termen: einem Policy-Term, der die erwartete Belohnung unter der Begrenzung der Policy-Updates durch die Clipping-Funktion maximiert, einem Value-Term für die Minimierung des Fehlers in der Value-Schätzung und einen Entropie-Term, der durch Maximierung der Aktionsentropie die Exploration fördert \cite{schulman2017ppo}. 
     
     % TODO: vielleicht nur LT ansprechen, wenn ich nicht mehr genug Zeit habe, um FSP zu evaluieren.
-    \item Using SP/FSP/LT, we aim to further generalize the Base Agent by training PPO not only against the built-in bots of MicroRTS (against which the Base Agent already achieves a high win rate), but also against opponents of equal strength or stronger.
+    \item Using LT, we aim to further generalize the Base Agent by training PPO not only against the built-in bots of MicroRTS (against which the Base Agent already achieves a high win rate), but also against opponents of equal strength or stronger.
     However, many opponents at this level of performance are not suitable for training, since they are very slow and thus slow down the collection of rollouts for PPO.
     In addition, the agent’s generalization capability improves only to a limited extent when training against only a few new opponents, if the training environment does not provide sufficient opponent diversity.
-    SP/FSP/LT address both problems by providing numerous opponents that continue to evolve over the course of training and achieve a high win rate against historical versions of the current agent.
+    LT address both problems by providing numerous opponents that continue to evolve over the course of training and achieve a high win rate against historical versions of the current agent.
 \end{itemize}
 
 \subsection{Self-Play (SP)}
@@ -335,62 +335,69 @@ In SP, the agent trains against its own current version, which leads to a contin
 \paragraph{Implementation.} 
 To implement SP in the MicroRTS-Py reimplementation Huang et al. implemented the environment to output the observations (obs) and rewards for both players, which allows the agent to train against itself by simply using the same policy for both players \cite{huang2021gym}.
 In RAISocketAI, that approach was improved and fixed \cite{goodfriend2024raisocketai}.
-In this Thesis, the same approach with some adustments is used to implement SP, which is also used as a basis for FSP and LT.
+In this thesis, the same approach with some adustments is used to implement SP, which is also used as a basis for FSP and LT.
 
 \paragraph{Problems.}
 \begin{itemize}
     \item The training is often unstable because of cyclical learning.
-    For \textbf{example},  if policy B performs well against A, C performs well against B and A performs well against C, the agent may be trapped in a cycle in which it repeatedly relearns only the policy that performs well against itself, but not against other opponents \cite{vinyals2019alphastar}.
-    \item A big problem in the SP training setup is that the agent has to learn to play as player 2 as well as player 1, which complicates the training and can lead to a slow learning process \cite{huang2021gym}.
+    For example, if policy B performs well against A, C performs well against B and A performs well against C, the agent may be trapped in a cycle in which it repeatedly relearns only the policy that performs well against itself, but not against other opponents \cite{vinyals2019alphastar}.
+    \item A big problem in the SP training setup is that the agent has to learn to play as player 2 as well as player 1.
+    This complicates the training process and can lead to a slow learning process \cite{huang2021gym}.
     The biggest difference between player 1 and player 2 is that player 1 starts at the top left of the map, whereas player 2 starts at the bottom right.
     This means that the agent has to learn to start play in two different areas of the map, which can be difficult and time-consuming.
-    The problem is further exacerbated by the fact the training of this thesis does not start from scratch, but from a Base Agent that was only trained as player 1, which means that the agent would have to unlearn the bias towards starting at the top left of the map and learn to start at the bottom right as well.
+    The problem is further exacerbated by the fact that the training of this thesis does not start from scratch.
+    Rather it starts from a Base Agent that was only trained as player 1.
+    Therefore, the agent would need to unlearn its bias towards starting at the top left of the map and learn to start at the bottom right as well.
 \end{itemize}
 
-\paragraph{Solutions.} 
-FSP/PFSP are used to stabilize training and reduce cyclical learning.
+\paragraph{Solutions.}
+FSP/PFSP (\ref{sec:PFSP}) are used to stabilize training and reduce cyclical learning.
 To address the second problem, the observations for player 2 are transformed by rotating them along by 180 degrees.
-From the agent’s perspective, player 2 also starts at the top-left of the map. 
-This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained Base Agent possible, even though the Base Agent was exclusively trained as player 1.
+From the agent’s perspective, player 2 also starts at the top-left of the map.
+This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained Base Agent possible, even though the Base Agent was exclusively trained as player 1 (Figure~\ref{fig:adjust_obs}).
+% TODO: In Grafik alle groß schreiben, from aus (env from player löschen), "Player Observations Representation", "Flip Observations"
+% TODO: Grafik nach hunten verschieben
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/adjust_obs.pdf}
     \captionof{figure}{Observation adjustment for player 2 in SP.
     To rotate the observations, the GridNet representation was flipped for each player-2 environment.
-    The unit actions in the observation were then flipped individually.}
+    Afterwards, the unit actions in the observation were flipped individually.}
     \label{fig:adjust_obs}
 \end{center}
-Actions are transformed accordingly, so that the environment still executes the intended actions for player 2.
+Actions are transformed accordingly, as a result the environment still executes the intended actions for player 2.
 Masks must be transformed as well, since they are based on the environment’s observations.
-The same rotation used for the observations is also applied to the invalid action masks. 
-After masking, the selected actions (including a position component, that is added before masking, since masking removes the implicit positional structure of the GridNet action space) are transformed back to fit the MicroRTS-Py environment.
+The same rotation used for the observations is also applied to the invalid action masks.
+After masking, the selected actions are transformed back to fit the MicroRTS-Py environment.
+This includes a position component that is added before masking, since masking removes the implicit positional structure of the GridNet action space.
 
 
 \subsection{Fictitious Self-Play (FSP)}
 To address the instabilities of pure SP, in FSP the agent is trained not exclusively against the current policy, but against a uniformly sampled pool of the agent’s historical policies. 
-This results in the learning agent learning a good response to the averaged opponent strategy, which reduces cyclical learning.
+This results in the learning-agent learns an effective response to the averaged opponent strategy, reduciing cyclical learning.
 Under standard assumptions, FSP can converge towards an approximate Nash equilibrium in two-player zero-sum games (with respect to the average strategies).
 Heinrich et al. also demonstrate this empirically in poker experiments \cite{heinrich2015fsp}.
 
 \paragraph{Implementation.} 
-The implementation is similar to SP, but instead of Player 2 always using the current policy, Player 2 is sampled uniformly from a pool of Historical Agents (snapshots of the Main Agent at different training stages).
+The implementation is similar to SP, but instead of player 2 always using the current policy, player 2 is sampled uniformly from a pool of Historical Agents (i. e. snapshots of the Main Agent at different training stages).
 
 \paragraph{Problem with the Implementation.} 
-If we implement in the described way, a problem arises: player 1 has priority in conflict resolution (e. g. when both players want to move to the same cell).
+If we implement in the described way, a problem arises: Player 1 has priority in conflict resolution (e. g. when both players want to move to the same cell).
 This gives player 2 a disadvantage, although it has only a minor effect on the results. 
 The actual problem is that the agent can exploit this prioritization in FSP if it learns that optimizing the training objective can be achieved primarily by improving player 1, while deliberately performing poorly as player 2.
 After sufficient training, the agent will learn a strategy that is based on player 1 being prioritized.
-Training then stagnates, since the agent already has a hight win rate against itself without develping a robust strategy against other opponents.
+Training then stagnates, since the agent already has a high win rate against itself without developing a robust strategy against other opponents.
 
 \paragraph{Example.} 
 The agent could learn to block an opponent in front of the base by issuing a simultaneous move to the same target cell.
 In FSP, player 2 would then be blocked, while player 1 would not, allowing the agent to achieve a win rate close to 100\% against itself.
 
 \paragraph{Relevance for LT.} 
-In LT, the Result of the problem is not quite as problematic because there are exploiters that can be trained against, which remain adversarial to the Main Agent.
+In LT, the result of the player 1 priority is not quite as problematic, because there are exploiters that can be trained against, which remain adversarial to the Main Agent.
 However, a large portion of the training becomes ineffective and provides poor learning signals if the agent exploits the player 1 priority.
-On top of that the Problem is particularly relevant for LT, which combines SP and FSP, because only Historical Agents are available for training in FSP, making the feedback for player 2 very sparse, while in LT the Main Agent can directly train against the current Main Agent.
-This yieldes more immediate feedback on  the Main Agents performance as an opponent (player 2).
-As a result the agent no longer has to plan as far ahead in order to exploit this priority and minimize its own win rate as player 2.
+On top of that, this problem is particularly relevant for LT, which combines SP and FSP, because only Historical Agents are available for training in FSP, making the feedback for player 2 very sparse.
+In LT the Main Agent can directly train against the current Main Agent.
+This yields more immediate feedback on  the Main Agents performance as an opponent (player 2).
+As a result, the agent no longer has to plan as far ahead in order to exploit this priority and minimize its own win rate as player 2.
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{images/action_konflikt.png}
@@ -404,34 +411,40 @@ In the re-implementation of MicroRTS-Py, there is a mode that resolves conflicts
 However, this does not help in this case, because even before the conflict arises, invalid action masking masks out the action of player 2 since it is invalid.
 To solve this problem, the learning agents in the parallel games are alternated between playing as player 1 and player 2.
 This does not prevent the prioritization of player 1. 
-However, it can be shown empirically that the prioritization of player 1 has no major impact on the results, by evaluating an agent against itself.
+However, it can be shown empirically that the prioritization of player 1 has no major impact on the results by evaluating an agent against itself.
 Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
 This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
 \subsection{Prioritized Fictitious Self-Play (PFSP)}
+\label{sec:PFSP}
 LT uses an extended variant of FSP called PFSP \cite{vinyals2019alphastar}.
 PFSP extends FSP by selecting opponents against which the agent can train efficiently, rather than selecting opponents uniformly.
 The selection probability is based on the win rate of the learning agent against the potential opponent \cite{vinyals2019alphastar}. 
 
+% TODO: neue winrate mit draw wird benutzt --> überarbeiten
 \paragraph{Prioritization Function.} 
 The exact prioritization function can differ for different agent types.
-In AlphaStar, for the Main Agent, opponents of medium difficulty (win rate close to 50\%) are prioritized. While exploiters prioritize the strongest opponent (against which the win rate is closest to 0\%).
+In AlphaStar, for the Main Agent opponents of medium difficulty (win rate close to 50\%) are prioritized.
+While exploiters prioritize the strongest opponent (against which the win rate is closest to 0\%).
 Adapted prioritization functions tailored to our training setup are used in this thesis,  which deviate from those used in AlphaStar.
-An important difference is that training against an opponent against which the Base Agent has a win rate close to 0\% yields little informative gradient or learning signal.
+An important difference is, that training with an opponent against which the Base Agent has a win rate close to 0\% yields little informative gradient or learning signal.
 % und dass eine win rate von 0.5 meist heißt, dass keiner von beiden gewinnt/verliert. 
 % Stattdessen hieß das meistens, dass beide Spieler sich gegenseitig ignorieren, die Basis des Gegners angreifen und dann für den Rest des Spieles sich nicht mehr bewegen.
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
 
 \paragraph{Implemented Prioritization Function.} 
-To avoid opponents resulting in little learning signals, the following prioritization functions was used for the Exploiters:
+To avoid opponents resulting in little learning signals, the following prioritization functions was used for the exploiters:
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
-    \captionof{figure}{Prioritization function for the Exploiters in PFSP.}
+    \captionof{figure}{Prioritization function for the exploiters in PFSP.}
     \label{fig:focused_strong_boosted_with_draws}
 \end{center}
-As can be seen in the figure, we prioritize opponents with a low win rate not close to 0\%. Furthermore, opponents with a win rate of 0\% are prioritized over those with a win rate of 100\%, since there is substantial learning potential for an opponent with a win rate of 0\%, whereas a win rate of 100\% usually means that the agent already defeats the opponent reliably.
-In this thesis PFSP was modified so that all agents have a non-zero probability of being selected. This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% win rate for the learning agent), since these initial results may have been outliers.
+% TODO: neue winrate mit draw wird benutzt --> überarbeiten
+As can be seen in the figure~\ref{fig:focused_strong_boosted_with_draws}, we prioritize opponents with a low win rate not close to 0\%.
+Furthermore, opponents with a win rate of 0\% are prioritized over those with a win rate of 100\%, since there is substantial learning potential for an opponent with a win rate of 0\%, whereas a win rate of 100\% usually means that the agent already defeats the opponent reliably.
+In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.
+This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% win rate for the learning agent), since these initial results may have been outliers.
 
 
 % Das wurde so umgesetzt: probs = (1.0 - min_prob_factor) * probs + min_prob_factor * uniform
@@ -446,50 +459,50 @@ LT combines and extends SP and PFSP to further stabilize training.
 It also promotes robustness by training against opponents sampled from a league, including Main Exploiters and League Exploiters and Historical Agents \cite{vinyals2019alphastar}.
 
 \paragraph{League Composition and Roles.} 
-Learning Agents of the league were trained in parallel.
+Learning agents of the league were trained in parallel.
 Similar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis consists of the following agent types:
 \begin{itemize}
     \item \textbf{Main Agent:} The primary policy that is optimized and evaluated.
     \item \textbf{Historical Agents:} Frozen snapshots of earlier Main Agents or exploiter agent policies. 
     They stabilize training by providing a distribution of past strategies and mitigate catastrophic forgetting.
-    \item \textbf{Main Exploiters:} Agents trained only against Historical Main Agents, which encourages them to identify and exploit weaknesses in the Main Agent.
+    \item \textbf{Main Exploiters:} Agents trained only against historical Main Agents, which encourages them to identify and exploit weaknesses in the Main Agent.
     \item \textbf{League Exploiters:} Agents trained against all Historical Agents, which further promotes diversity by identifying systemic weaknesses of the league.
 \end{itemize}
 Historical Agents are the only agent type that is not a learning agent.
 The main differences between the roles are the opponent-sampling distribution and the hyperparameters.
-All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but are trained with role-specific hyperparameters (e. g. learning rate and PFSP prioritization function).
+All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but they are trained with role-specific hyperparameters (e. g. learning rate and PFSP prioritization function).
 
 
 \paragraph{Training Loop and Snapshot Management.}
 LT iterates through cycles consisting of the following phases:
-\begin{enumerate}
-    \item \textbf{Select opponent:} Sample an opponent from the league.
-    \item \textbf{Collect rollouts:} Run matches between the learning agent and the sampled opponent for a fixed number of steps. No agent is updated during this phase.
-    \item \textbf{Update policy:} Perform PPO updates using the collected trajectories against the sampled opponent.
-    \item \textbf{Update statistics:} Periodically evaluate against a subset of league members to update win rate estimates used by PFSP.
-    \item \textbf{Add snapshots:} At predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new Historical Agent.
-\end{enumerate}
+\begin{itemize}
+    \item \textbf{Select opponent:} sample an opponent from the league,
+    \item \textbf{Collect rollouts:} run matches between the learning agent and the sampled opponent for a fixed number of steps, no agent is updated during this phase,
+    \item \textbf{Update policy:} perform PPO updates using the collected trajectories against the sampled opponent,
+    \item \textbf{Update statistics:} periodically evaluate against a subset of league members to update win rate estimates used by PFSP,
+    \item \textbf{Add snapshots:} at predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new Historical Agent.
+\end{itemize}
 A phase of the training loop is considered completed only after every agent type (Main Agent, Main Exploiters, League Exploiters) has completed the phase.
 For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have completed the current phase.
 
 \paragraph{Bot Environments.} 
 Bot environments are added to the league to stabilize training by continuing the PPO training against the built-in MicroRTS bots CoacAI and Mayari, which the Base Agent was trained against.
 Only the Main Agent trains against the built-in bots, since learning signals from built-in bots could interfere with identifying and exploiting weaknesses in the Main Agent or the league, which is the main purpose of the exploiters (e. g. if the built-in bots are too strong against an exploit that the Main Agent has not yet trained against).
-In MicroRTS-Py the environments for built-in bots and for SP are not interchangeable, since the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT directly. 
+In MicroRTS-Py the environments for built-in bots and for SP are not interchangeable.
+This is because the built-in bots are not implemented as neural policies and therefore cannot be used in SP/FSP/LT directly. 
 The number of parallel environment instances and their built-in bot opponent (if any) have to be defined at initialization of the MicroRTS-Py environments, which means the number of environments for each built-in bot remains fixed.
 One of the main advantages of LT is that training against opponents with bad learning signals is reduced.
 To retain that improvement we want the number of bot environments to be dynamic.
 Therefore, the number of bot environments is adjusted dynamically by reinitializing a MicroRTS instance, which is only used for training against the built-in bots and not for SP/FSP/LT (because reinitialization also means resetting the environments in the MicroRTS instance).
-The MicroRTS instance for built-in bots executes its step function at the same time as the SP/FSP/LT instance.
+This MicroRTS instance for built-in bots executes its step function at the same time as the MicroRTS instance for SP/FSP/LT.
 
 \paragraph{Number of Parallel Bot Environment Instances.}
 Two hyperparameters define the maximum number of parallel bot environment instances and the minimum number of parallel bot environment instances.
 Among other things, references to the observation, action and invalid action mask buffers must be adjusted to the correct size and partially reset whenever the number of parallel bot environment instances is changed.
-% TODO: alle "invalid action mask" zu "invalid-action-mask"?
 
 
 \paragraph{Summary: Opponent Selection.}
-PFSP samples the next opponent from a given set of possible opponents, with probabilities based on the current learning agent’s win rates against the potential opponents, whereas SP always trains against the current learning Agent.
+PFSP samples the next opponent from a given set of possible opponents, with probabilities based on the current learning agent’s win rates against the potential opponents, whereas SP always trains against the current learning agent.
 The opponent selection for the League is illustrated in Figure \ref{fig:Matchmaking}.
 Depending on the agent role, opponents are either the current Main Agent or sampled from specific subsets of Historical Agents using PFSP. 
 The Main Agent also trains against additional bot environments, while Main Exploiters and League Exploiters are matched only against agents from the league.
@@ -499,27 +512,31 @@ The Main Agent also trains against additional bot environments, while Main Explo
 % TODO: unit bonus distribution im Text lassen?
 The AlphaStar paper \cite{vinyals2019alphastar} describes that exploiters reset their weights to the initial values (here: the Base Agent). 
 In our approach exploiter resets also reset the optimizers, game statistics (e. g. win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable) that is later explained in this thesis.
-Furthermore exploiters only reset after a game has ended. 
+Additionally, exploiters only reset after a game has ended.
 As a result, an exploiter can reset during a rollout.
-If that happens, then the rollout contains trajectories from the old policy and therefore cannot be used for the on-policy training in our PPO implementation.
-To keep the training as simple as possible, the entire PPO update for that rollout after an exploiter reset is skipped.
+If that happens, the rollout contains trajectories from the old policy and therefore cannot be used for the on-policy training in our PPO implementation.
+To keep the training as simple as possible, the entire PPO update for the rollout after an exploiter reset is skipped.
 
 
 
-\paragraph{AlphaStar Pseudocode.}
-In addition to the modifications made to adapt the pseudocode to the MicroRTS environment the following corrections to the AlphaStar pseudocode in the original paper \cite{vinyals2019alphastar} were made:
+\paragraph{AlphaStar LT Pseudocode.}
+In addition to the modifications made to adapt the LT pseudocode to the MicroRTS environment the following corrections to the AlphaStar pseudocode \cite{vinyals2019alphastar} were made:
 \begin{itemize}
-    \item When resetting Exploiters, the pseudocode first resets the weights and only then saved the snapshot for the Historical Agent.
-    In our implementation, this order is reversed so that the snapshot is not taken from the reset Exploiter.
+    \item When resetting exploiters, the pseudocode first resets the weights and only then saved the snapshot for the Historical Agent.
+    In our implementation, this order is reversed so that the snapshot is not taken from the reset exploiter.
     \item Main Exploiters were only trained against the current Main Agent, if they had a high win rate against the Main Agent from the very beginning.
     As soon as this win rate dropped, the Main Exploiter stopped training against the Main Agent for the remainder of this reset cycle.
-    However, in the pseudocode, Main Exploiters were only reset/checkpointed (creating a Historical Main Exploiter) if the win rate against the Main Agent was high.
+    However, in the pseudocode Main Exploiters were only reset/checkpointed (creating a historical Main Exploiter) if they had a sufficiently high win rate against the Main Agent.
     This means that a Main Exploiter would never reset if it initially had a low win rate against the Main Agent.
     Since the current Main Exploiter has already trained against the Base Agent, it is very likely that it will never checkpoint before the maximum number of steps is reached, even if it has a high win rate against all historical Main Agents.
-    To solve this problem, the win rate against the Main Agent is replaced by the maximum of the minimum win rate against all historical Main Agents and the win rate against the Main Agent.
-    This ensures that the Main Exploiter is reset and checkpointed as soon as it achieves sufficiently high win rates against the available historical Main Agents (making high win rate against the Main Agent likely) and no longer has much to learn from the available opponents.
-    \item Another change to the pseudocode is that win rates are initialized to 0.5 for the initial games.
-    This makes it less likely that the agent will ignore opponents it has not yet played against because of outlier results with very high or very low win rates, including the Main-Exploiter, Main-Agent matchup.
+    To solve this problem, the win rate used for resetting or checkpointing a Main Exploiter is defined as
+    \[
+        w_{\text{reset}} = \max\!\left(\min_i w_{\text{hist},i},\; w_{\text{main}}\right),
+    \]
+    where $w_{\text{hist},i}$ denotes the win rate against historical Main Agent $i$ and $w_{\text{main}}$ the win rate against the current Main Agent.
+    This ensures that the Main Exploiter resets and checkpoints as soon as it achieves sufficiently high win rates against the available historical Main Agents (making high win rate against the Main Agent likely) and no longer has much to learn from the available opponents.
+    \item Another change to the pseudocode is that win rates are set to 0.5 for the initial games.
+    This makes it less likely that the agent will ignore opponents it has not yet played against because of outlier results with very high or very low win rates, including the Main Exploiter, Main Agent matchup.
 \end{itemize}
 
 
@@ -1135,20 +1152,20 @@ PPO Main Agent & \texttt{norm\_adv} & true & Advantages are normalized. \\
 PPO Main Agent & \texttt{anneal\_lr} & true & Learning-rate annealing is enabled. \\
 PPO Main Agent & \texttt{clip\_vloss} & true & Value-loss clipping is enabled. \\
 \midrule
-\multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters) (only differences to Main Agent hyperparameters)}} \\
+\multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (exploiters) (only differences to Main Agent hyperparameters)}} \\
 \midrule
 % PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
-% PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
-% PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the Exploiters. \\
-PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the Exploiters. \\
-% PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
-% PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
-% PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the exploiters. \\
+PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the exploiters. \\
+PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the exploiters. \\
 % PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
 % PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
 % PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
-% PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the exploiters. \\
 % PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
 % PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
 % PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\
@@ -1193,20 +1210,20 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 % PPO Main Agent & \texttt{anneal\_lr} & true & Learning-rate annealing is enabled. \\
 % PPO Main Agent & \texttt{clip\_vloss} & true & Value-loss clipping is enabled. \\
 % \midrule
-% \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (Exploiters) (only differences to Main Agent)}} \\
+% \multicolumn{4}{@{}l}{\textbf{PPO Hyperparameters (exploiters) (only differences to Main Agent)}} \\
 % \midrule
 % % PPO Exploiter & \texttt{exploiter\_PPO\_learning\_rate} & $5 \cdot 10^{-5}$ & Learning rate of the Exploiter agents. \\
-% % PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the Exploiters. \\
-% % PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the Exploiters. \\
-% PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the Exploiters. \\
-% PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the Exploiters. \\
-% % PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the Exploiters. \\
-% % PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the Exploiters. \\
-% % PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_gamma} & 1{,}0 & Discount factor of the exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_gae\_lambda} & 0{,}95 & GAE parameter of the exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_ent\_coef} & 0{,}015 & Entropy regularization coefficient of the exploiters. \\
+% PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss for the exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_max\_grad\_norm} & 0{,}5 & Gradient clipping threshold of the exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_clip\_coef} & 0{,}15 & PPO clipping coefficient of the exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_update\_epochs} & 4 & Number of update epochs for the exploiters. \\
 % % PPO Exploiter & \texttt{exploiter\_kle\_stop} & true & Early stopping when the KL threshold is exceeded. \\
 % % PPO Exploiter & \texttt{exploiter\_kle\_rollback} & false & No rollback when the KL threshold is exceeded. \\
 % % PPO Exploiter & \texttt{exploiter\_target\_kl} & 0{,}01 & Target KL-divergence value. \\
-% % PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the Exploiters. \\
+% % PPO Exploiter & \texttt{exploiter\_kl\_coeff} & 0{,}3 & KL-penalty coefficient of the exploiters. \\
 % % PPO Exploiter & \texttt{exploiter\_norm\_adv} & true & Advantages are normalized. \\
 % % PPO Exploiter & \texttt{exploiter\_anneal\_lr} & true & Learning-rate annealing is enabled. \\
 % % PPO Exploiter & \texttt{exploiter\_clip\_vloss} & true & Value-loss clipping is enabled. \\

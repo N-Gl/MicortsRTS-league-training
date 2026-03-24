@@ -40,9 +40,9 @@
 \contentsline {paragraph}{Training Loop and Snapshot Management.}{9}{section*.30}%
 \contentsline {paragraph}{Bot Environments.}{9}{section*.31}%
 \contentsline {paragraph}{Number of Parallel Bot Environment Instances.}{9}{section*.32}%
-\contentsline {paragraph}{Summary: Opponent Selection.}{9}{section*.33}%
+\contentsline {paragraph}{Summary: Opponent Selection.}{10}{section*.33}%
 \contentsline {paragraph}{Resetting Exploiters.}{10}{section*.34}%
-\contentsline {paragraph}{AlphaStar Pseudocode.}{10}{section*.35}%
+\contentsline {paragraph}{AlphaStar LT Pseudocode.}{10}{section*.35}%
 \contentsline {subsection}{\numberline {3.7}\hskip -1em.~Additional Modifications for Diversity}{10}{subsection.3.7}%
 \contentsline {paragraph}{Problems with Overall Increased Exploration.}{10}{section*.36}%
 \contentsline {paragraph}{Production Exploration Bonus.}{11}{section*.37}%
