@@ -10,14 +10,14 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_2_update_1455.pt",
+                          "models/used_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_2_update_1455",
+          "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_2_update_1455"
+  exp_name: "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670_2"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
