@@ -150,7 +150,17 @@ def main(cfg: ExperimentConfig):
         args.num_bot_envs = args.num_parallel_eval_envs
 
     else:
-        if args.all_passiveAi:
+        if args.workerbots:
+            opponents = []
+            for i in range(args.num_bot_envs):
+                if i % 3 == 0:
+                    opponents.append(microrts_ai.workerRushAI)
+                elif i % 3 == 1:
+                    opponents.append(microrts_ai.coacAI)
+                else:
+                    opponents.append(microrts_ai.mayari)
+
+        elif args.all_passiveAi:
             opponents = [microrts_ai.passiveAI for _ in range(args.num_bot_envs)]
         elif args.even_opponent_split:
             opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
@@ -161,6 +171,7 @@ def main(cfg: ExperimentConfig):
                 opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2+2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2-2)]
             else:
                 opponents = [microrts_ai.coacAI for _ in range((args.num_bot_envs+1)//2)] + [microrts_ai.mayari for _ in range((args.num_bot_envs)//2)]
+            
             
 
         print(f"opponents: \n{opponents}")

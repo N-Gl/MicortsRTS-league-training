@@ -134,6 +134,7 @@ ExperimentConfig:
   checkpoint_end_buffer_steps: 0
   main_exploiter_ready_use_historicals: true  # Historical: Zyklen und "Schere-Stein-Papier"-Dynamiken zu verhindern
   even_opponent_split: false
+  workerbots: false
   all_passiveAi: false
   main_exploiter_no_draw_winrate_threshold: 0.1  # in Article: 0.2
   pfsp_min_prob_factor: 0.25

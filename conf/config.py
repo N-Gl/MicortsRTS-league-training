@@ -30,6 +30,7 @@ class ExperimentConfig:
     max_num_bot_envs: int
     min_num_bot_envs: int
     all_passiveAi: bool
+    workerbots: bool
     max_bot_winrate: float
     num_league_exploiters: int
     num_main_exploiters: int
