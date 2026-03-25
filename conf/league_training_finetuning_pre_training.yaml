@@ -4,8 +4,8 @@ defaults:
 ExperimentConfig:
   model_path: models/finished_PPO_Basis_thesis.pt
   BC_model_path: models/BCagent.pt
-  other_historicals_paths: # TODO: add Historical Agent from PPO_finetuning_2.yaml or LT
-  exp_name: 23_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_11_SP_exploiter_ent_coef_max_0.0175
+  other_historicals_paths: ["saved_models/23_03_2026__PPO_finetuning_update_640.pt"]
+  exp_name: 25_03_26__league_training_finetuning_pre_training
   wandb_group_name: SP
   main_exploiters_paths: []
   exploiter_reset_path_probs: {}
@@ -20,14 +20,20 @@ ExperimentConfig:
     - maps/16x16/endgame_map_new.xml
 
 
-  PPO_learning_rate: 1.5e-6
-  exploiter_PPO_learning_rate: 1.5e-6
+  PPO_learning_rate: 1.5e-5
+  exploiter_PPO_learning_rate: 1.5e-5
   main_ent_coef_min: 0.004
-  main_ent_coef_max: 0.006
+  main_ent_coef_max: 0.02
   main_anneal_ent: true
   exploiter_ent_coef_min: 0.0075
-  exploiter_ent_coef_max: 0.0175
+  exploiter_ent_coef_max: 0.02
   exploiter_anneal_ent: true
+
+
+  selfplay_ready_save_interval: 100000000
+  main_selfplay_save_interval: 100000000
+  main_exploiter_selfplay_save_interval: 100000000
+  league_exploiter_selfplay_save_interval: 100000000
 
   num_bot_envs: 1
   dyn_num_bot_envs: true
