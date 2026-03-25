@@ -10,14 +10,14 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "models/used_models/league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670.pt",
+                          "models/used_models/BC_workerRush_train_epoch_8_agent.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670",
+          "BC_workerRush_train_epoch_8_agent_2",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_main_worker_focus_vs_finished_PPO_Basis_thesis_update_1670_2"
+  exp_name: "BC_workerRush_train_epoch_8_agent_2"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
