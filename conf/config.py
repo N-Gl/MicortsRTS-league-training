@@ -110,6 +110,7 @@ class ExperimentConfig:
     log_unweighted_losses: bool
     value_warmup_updates: int
     endgame_maps: bool
+    map_paths: Optional[list[str]]
     Bot_as_player_1: bool
     dbg_all_player_1: bool
     lower_selfplay_winrate_offset: float

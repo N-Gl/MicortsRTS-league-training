@@ -501,9 +501,8 @@ The Main Agent also trains against additional bot environments, while Main Explo
 
 
 \paragraph{Resetting Exploiters.}
-% TODO: unit bonus distribution im Text lassen?
 The AlphaStar paper \cite{vinyals2019alphastar} describes that exploiters reset their weights to the initial values (here: the Base Agent). 
-In our approach exploiter resets also reset the optimizers, game statistics (e. g. win rates so that PFSP does not use outdated information) and the unit bonus distribution (if applicable) that is later explained in this thesis.
+In our approach exploiter resets also reset the optimizers, game statistics (e. g. win rates so that PFSP does not use outdated information) and the unit bonus distribution \ref{par:unit_bonus_distribution} (if applicable) that is later explained in this thesis.
 Additionally, exploiters only reset after a game has ended.
 As a result, an exploiter can reset during a rollout.
 If that happens, the rollout contains trajectories from the old policy and therefore cannot be used for the on-policy training in our PPO implementation.
@@ -548,7 +547,6 @@ But changing to a strategy for different unit types is very difficult and time-c
 Furthermore, the same problem occurs for every exploiter, which compounds the problem.
 What makes diversity even more difficult is that, in a complex environment such as MicroRTS, league training will most likely not cover all possible Main Agent weaknesses that can be exploited by an exploiter using heavy units (the unit type strongly favored by the Base Agent).
 This suggests that, even after training, there will remain weaknesses that are easier to exploit than those that require shifting the focus to a different unit type.
-% TODO: Beispiel behalten?
 For example, if the Base Agent, which favors heavy units, is to exploit a weakness that occurs when the Main Agent is attacked by many worker units, then throughout the episode, every worker on the field must refrain from building barracks, since this would waste too many resources for the strategy to work.
 Instead of using only two workers, the agent has to produce as many as possible, while every unit except two rushes the opponent.
 The agent only receives a positive reward if all of this happens in the same game, making this behavior unlikely to occur.
@@ -568,11 +566,11 @@ The number of other units types increased when using the unit bonus.
 However, even with weaker agents such as the agent after the BC phase and over 20 million steps, the agent did not develop strategies centered on different unit types and instead produced the unit type with a bonus at the end of a round, when the result was already decided.
 
 \paragraph{Unit Bonus Distribution.}
+\label{par:unit_bonus_distribution}
 Unit bonus distribution is an improved method for increasing the diversity of exploiters based on the unit bonus.
 The idea is to continue training the agent with a new feature that receives the unit bonus sampled from a distribution that is updated every game.
 The trained agent can be used as an exploiter with a static bonus or a distribution-based bonus, resulting in an exploiter with definable tendencies toward different unit types.
 This also allows the retraining of the BC and PPO phases with the unit bonus, because only one agent needs to be trained instead of multiple agents with different fixed unit bonuses, which would be very time-consuming.
-% TODO: entfernen? Bild? Run?
 Retraining the agent from scratch with the unit bonus distribution showed promising results.
 However, the training was not continued long enough to evaluate the effect of the unit bonus distribution on the diversity of the exploiters, since training with the unit bonus distribution is very time-consuming because the BC phase did not work with the unit bonus distribution method and therefore had to be skipped.
 Continuing the training with the Base Agent showed the same problem as training with the unit bonus.
@@ -614,20 +612,36 @@ The attack bonus was removed for our training and we adjusted the per-step delta
 We use the Base Agent from the prior work of M. Huft \cite{huft2023microrts}, which was trained by using a combination of BC and PPO, as the initial agent in this thesis unless otherwise specified.
 The map used is \texttt{basesWorkers16x16A}, a symmetrical map also used in related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
 The Base Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for (???) steps.
-% TODO: Füge Bild von winrate_per_opp_MainPlayer/Historical_(MainPlayer)_0_with_draw hinzu ("In Figure~\ref{...}")
 The Main Agent played (???) games against the built-in bots CoacAI and Mayari.
-The win rates against both bots over the global training steps were monitored during training.
+The win rates against both bots over the global training steps were monitored during training and shown in Figure~\ref{fig:bot_Winrate_with_draw_0_5}.
 The bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
+The number of bot environments throughout training is shown in Figure~\ref{fig:num_bot_envs}.
 This results a total of (???)160 parallel environments for LT when all bot environments are active.
 It requires a lot of computational resources, especially since the observations are not purely boolean and therefore required more memory.
 The peak memory usage increases by approximately 2500 MiB for an agent with 25 parallel environments.
 However, it is important to keep the number of environments per agent above a certain threshold, because the number of environments affects the rollout size and a too small rollout can lead to unstable training.
 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/bot_win_rates_no_draw.png}
+    \caption{Win rates of CoacAI and Mayari against the Main Agent over the course of training.}
+    \label{fig:bot_Winrate_with_draw_0_5}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/num_parallel_bot_envs.png}
+    \caption{Number of parallel bot environments over the course of training.}
+    \label{fig:num_bot_envs}
+\end{figure}
+
+
+
 \subsection{Hyperparameters}
 Notable hyperparameters for the Main Agent include a higher learning rate of $5e\text{-}5$ than the Base Agent, namely $2.5e\text{-}5$, as well as higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters.
-% TODO: starten beide an der selben stelle --> Satz verbessern
-% TODO: An annealed entropy coefficient is used, starting at (???)0.025 for the exploiters and 0.025 for the Main Agent, with both ending at 0.0075.
-% TODO: After sufficient steps, the entropy coefficient for exploiters remaies high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
+An annealed entropy coefficient is used, starting at 0.025 and ending at 0.0075.
+After sufficient steps, the entropy coefficient for exploiters remaies high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
 % TODO: The Main Agent’s entropy coefficient starts lower to keep the Agent closer to the already strong Base Agent, but is annealed to further improve the Main Agent’s performance in the later stages of training.
 The entropy coefficient is very high in comparison to that of the Base Agent, which uses a constant coefficient of 0.005.
 This was mostly done to overcome the strong preferences of the Base Agent, which can make it more difficult for the agent to change its strategy and explore.
@@ -649,23 +663,23 @@ Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for eac
 Checkpoints without resets are not included in the win rates.
 
 \subsection{Results}
-% TODO: Zeitformen prüfen
-The agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often left the base undefended while attacking.
+The agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often leaves the base undefended while attacking.
 % TODO: The Main Agent also learned to use a wider variety of units, including ranged units, which were mostly used in edge cases in which ranged units are so effective that even one ranged unit can make a difference (e. g. when the opponent has only workers or when only a small number of units remain and avoid the Agent in order to force a draw).
-As seen in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improved the agent’s performance against almost all evaluated opponents.
-The difference between the rates are listed in Table~\ref{tab:diff_main_agent_evaluation} for better comparison.
-The win rates against the bots used in training are now 100\%, which is a major improvement over the Base Agent, which had a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
+As shown in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improves the agent’s performance against almost all evaluated opponents.
+The differences between the win rates are listed in Table~\ref{tab:diff_main_agent_evaluation} for better comparison.
+The win rates against the bots used in training reach 100\%, which is a major improvement over the Base Agent, which achieves a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
 The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
-However, the Main Agent still shows improvement over the results reported in that thesis, which had a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
-The trained Main Agent also performs well against the Base Agent against which it was trained with a win rate of 89\%.
-The win rate against RandomBiasedAI is another major improvement from 79\% to 97\%.
-It shows that, in comparison to the Base Agent, the trained Agent performs substantially better against bots that try to draw the game instead of win the game.
+However, the Main Agent still shows improvement over the results reported in that thesis, which report a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
+The trained Main Agent also performs well against the Base Agent against which it was trained, achieving a win rate of 89\%.
+The win rate against RandomBiasedAI is another major improvement, increasing from 79\% to 97\%.
+This indicates that, in comparison to the Base Agent, the trained Agent performs substantially better against bots that try to draw the game instead of win the game.
 The agents in the section "Other Bots" are considerably stronger against the Base Agent than the built-in bots, which is reflected in the lower win rates against them.
-But the Main Agent still shows improvements over the Base Agent against most of these opponents.
-Highlights include the win rate against Rojo, which improved from 81\% to 100\%, while the win rate against MixedBot also increased from 43\% to 57\%.
-The win rate against Izanagi fell from 72\% to 70\%, however the loss rate improved from 16\% to 7\%, suggesting that the Main Agent now defends the base more effectively while attacking.
+However, the Main Agent still shows improvements over the Base Agent against most of these opponents.
+Highlights include the win rate against Rojo, which improves from 81\% to 100\%, while the win rate against MixedBot also increases from 43\% to 57\%.
+The win rate against Izanagi falls from 72\% to 70\%, however the loss rate improves from 16\% to 7\%, suggesting that the Main Agent defends the base more effectively while attacking.
+% TODO: stimmt das noch?
 WorkerRushAI is the only opponent against which the Main Agent performs worse than the Base Agent.
-It shows, that the Main Agent still has weaknesses that can be exploited.
+This shows that the Main Agent still has weaknesses that can be exploited.
 
 \paragraph{Main Agent without Unit Focus Evaluation.}
 Table~\ref{tab:main_agent_evaluation_no_worker_focus} presents an example evaluation for a Main Agent trained without unit focus.
@@ -675,7 +689,6 @@ Table~\ref{tab:main_agent_evaluation_no_worker_focus} presents an example evalua
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
 % TODO: Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
-% Vergleiche mit SP aus RAISocketAI?
 
 % TODO: replace all (???)
 
@@ -690,9 +703,7 @@ In contrast, LT changes the training opponent distribution such that robust perf
 This makes it more likely that training explores and retains a broader range of policies with good generalization.
 The results show that LT was able to discover policies that generalize well while also outperforming the Base Agent even against its original training opponents despite being trained against a larger set of opponents.
 
-% TODO: ab hier überarbeiten
 % Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
-% TODO: <-- Verbesserung überträgt sich auch zu anderen besseren ähnlichen Agenten?
 \paragraph{Exploration: Effects of New Initial Agents.}
 It was more difficult than expected to generate diverse exploiters because of the long transitions without reward between strategies for different unit types, which is why the introduction of new initial agents was particularly important.
 The new initial agents contributed to generalization across diverse opponents.
@@ -754,8 +765,6 @@ The diversity of our Base Agent is further constrained by the fact that, during 
 % Alphastar nutzte human imitation learning --> Base Agent ist diverser --> diversere Exploiters --> bessere Main Agent Performance, evaluation gegen Menschen besser als gegen Bots, da Menschen diversesität gegen bots nur funktioniert, indem man nicht gegen ihn trainiert.
 
 
-
-% TODO: Tabele mit differenzen zwischen LT und Base Agent erklären
 
 \paragraph{Future Work: Map Diversity.}
 Changing maps is already possible in MicroRTS-Py.
@@ -964,32 +973,32 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \centering
 \caption{Difference in evaluation results between the Main Agent and the Base Agent}
 \label{tab:diff_main_agent_evaluation}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c@{}}
 \toprule
-Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+Opponent & Win rate & Draw rate & Loss rate \\
 \midrule
-\multicolumn{8}{l}{\textit{bots used in training}} \\
+\multicolumn{4}{l}{\textit{bots used in training}} \\
 \csvreader[
     late after line=\\,
     filter test=\ifnumless{\thecsvinputline}{4}
 ]{images/diff.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv
 }
 \midrule
-\multicolumn{8}{l}{\textit{Built-in bots}} \\
+\multicolumn{4}{l}{\textit{Built-in bots}} \\
 \csvreader[
     late after line=\\,
     filter ifthen=\value{csvinputline}>3 \and \value{csvinputline}<9
 ]{images/diff.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv
 }
 \midrule
-\multicolumn{8}{l}{\textit{Other bots}} \\
+\multicolumn{4}{l}{\textit{Other bots}} \\
 \csvreader[
     late after line=\\,
     filter ifthen=\value{csvinputline}>8 \and \value{csvinputline}<17
 ]{images/diff.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv
 }
 \bottomrule
 \end{tabular*}

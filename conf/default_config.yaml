@@ -83,6 +83,7 @@ ExperimentConfig:
   rewardscore: 0.0  # score = tanh(1.5 * rewardscore * Delta-Micro-RTS-score)
 
   endgame_maps: false
+  map_paths:
 
   num_steps: 512                # new (BA Parameter) (Rollout steps per environment = 512)
   gamma: 1.0                    # new (BA Parameter) Discount factor γ = 1 (no discounting)
@@ -135,6 +136,7 @@ ExperimentConfig:
   main_exploiter_ready_use_historicals: true  # Historical: Zyklen und "Schere-Stein-Papier"-Dynamiken zu verhindern
   even_opponent_split: false
   workerbots: false
+  half_worker_envs: false
   all_passiveAi: false
   main_exploiter_no_draw_winrate_threshold: 0.1  # in Article: 0.2
   pfsp_min_prob_factor: 0.25
