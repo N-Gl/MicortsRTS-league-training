@@ -150,7 +150,17 @@ def main(cfg: ExperimentConfig):
         args.num_bot_envs = args.num_parallel_eval_envs
 
     else:
-        if args.workerbots:
+        if args.half_worker_envs:
+            opponents = []
+            for i in range(args.num_bot_envs):
+                if i < args.num_bot_envs * 0.5:
+                    opponents.append(microrts_ai.workerRushAI)
+                elif i % 2 == 0:
+                    opponents.append(microrts_ai.coacAI)
+                else:
+                    opponents.append(microrts_ai.mayari)
+
+        elif args.workerbots:
             opponents = []
             for i in range(args.num_bot_envs):
                 if i % 3 == 0:
@@ -176,7 +186,9 @@ def main(cfg: ExperimentConfig):
 
         print(f"opponents: \n{opponents}")
 
-        if args.endgame_maps:
+        if args.map_paths:
+            map_list = list(args.map_paths)
+        elif args.endgame_maps:
             map_list = [
                 # "maps/16x16/endgame_map.xml"
                 "maps/16x16/endgame_map_2.xml"
@@ -186,6 +198,7 @@ def main(cfg: ExperimentConfig):
             map_list = [
                 "maps/16x16/basesWorkers16x16A.xml"
             ]
+        args.map_paths = map_list
 
 
         if args.num_bot_envs > 0:

@@ -925,7 +925,7 @@ class SelfPlayTrainer:
             # [microrts_ai.droplet for _ in range(4)] +
             # [microrts_ai.tiamat for _ in range(3)] +
             # [microrts_ai.workerRushAI for _ in range(3)],
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+            map_paths=args.map_paths,
             reward_weight=reward_weight,
         )
         envsT = MicroRTSSpaceTransform(envs)

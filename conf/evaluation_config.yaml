@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/23_03_2026__PPO_finetuning/Main_agent_backups/agent_update_620.pt",
+                          "league_models/25_03_2026__PPO_finetuning/Main_agent_backups/agent_update_240.pt",
                           # "league_models/19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP/MainExploiter/MainExploiter_0_update_300.pt"
                           ]
   names: [
-          "23_03_2026__PPO_finetuning_update_620_2",
+          "25_03_2026__PPO_finetuning_update_240",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: 23_03_2026__PPO_finetuning_update_620_2
+  exp_name: 25_03_2026__PPO_finetuning_update_240
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp

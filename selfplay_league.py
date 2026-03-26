@@ -324,6 +324,15 @@ class LeagueTrainer:
         exploiter.ent_anneal_start_update = start_update
         exploiter.ent_anneal_start_frac = float(np.clip(start_frac, 0.0, 1.0))
 
+    def _get_exploiter_ent_anneal_steps(self, exploiter) -> float:
+        if isinstance(exploiter, league.MainExploiter):
+            anneal_steps = self.args.main_exploiter_selfplay_save_interval
+        elif isinstance(exploiter, league.LeagueExploiter):
+            anneal_steps = self.args.league_exploiter_selfplay_save_interval
+        else:
+            anneal_steps = self.args.total_timesteps
+        return max(float(anneal_steps), 1.0)
+
     def _get_exploiter_ent_coef(self, exploiter, update: int, num_updates: int) -> float:
         if not self.args.exploiter_anneal_ent:
             return float(self.args.exploiter_ent_coef)
@@ -334,13 +343,12 @@ class LeagueTrainer:
         if not hasattr(exploiter, "last_seen_checkpoint_step"):
             exploiter.last_seen_checkpoint_step = getattr(exploiter.agent, "checkpoint_step", 0)
 
-        start_update = exploiter.ent_anneal_start_update
         start_frac = exploiter.ent_anneal_start_frac
-        if num_updates <= 0:
-            frac = 0.0
-        else:
-            progress = (update - start_update) / num_updates
-            frac = max(start_frac * (1.0 - progress), 0.0)
+        checkpoint_step = getattr(exploiter.agent, "checkpoint_step", 0)
+        steps_since_checkpoint = max(float(exploiter.agent.get_steps() - checkpoint_step), 0.0)
+        anneal_steps = self._get_exploiter_ent_anneal_steps(exploiter)
+        progress = steps_since_checkpoint / anneal_steps
+        frac = max(start_frac * (1.0 - progress), 0.0)
         return ent_min + (ent_max - ent_min) * frac
 
 
@@ -1545,7 +1553,7 @@ class LeagueTrainer:
             # [microrts_ai.droplet for _ in range(4)] +
             # [microrts_ai.tiamat for _ in range(3)] +
             # [microrts_ai.workerRushAI for _ in range(3)],
-            map_paths=["maps/16x16/basesWorkers16x16A.xml"], # new (BA Parameter) (All evaluations were conducted on the basesWorkers16x16A map)
+            map_paths=args.map_paths,
             reward_weight=reward_weight,
         )
         envsT = MicroRTSSpaceTransform(envs)
