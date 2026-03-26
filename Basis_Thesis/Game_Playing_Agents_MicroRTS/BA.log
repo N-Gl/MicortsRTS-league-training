@@ -404,8 +404,7 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count314
 \l__pdf_internal_box=\box61
-)
-No file BA.aux.
+) (./BA.aux)
 \openout1 = `BA.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
@@ -431,7 +430,7 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: threeparttable package is loaded.
 Package caption Info: End \AtBeginDocument code.
-ABD: EveryShipout initializing macros (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+ ABD: EveryShipout initializing macros (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
  (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
@@ -832,4 +831,4 @@ Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 62
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images
+<images/num
