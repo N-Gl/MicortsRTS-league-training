@@ -119,7 +119,7 @@ ExperimentConfig:
   exploiter_anneal_lr: true
   exploiter_clip_vloss: true
   exploiter_ent_coef_min: 0.009
-  exploiter_ent_coef_max: 0.025
+  exploiter_ent_coef_max: 0.03
   exploiter_anneal_ent: true
   
   main_exploiter_no_draw_winrate_threshold: 0.65   # in Article: 0.2
