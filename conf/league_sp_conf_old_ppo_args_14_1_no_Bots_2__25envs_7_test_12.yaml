@@ -26,11 +26,11 @@ ExperimentConfig:
 
 
   main_ent_coef_min: 0.0075
-  main_ent_coef_max: 0.0175
+  main_ent_coef_max: 0.025
   main_anneal_ent: true
 
   exploiter_ent_coef_min: 0.009
-  exploiter_ent_coef_max: 0.0175
+  exploiter_ent_coef_max: 0.025
   exploiter_anneal_ent: true
 
 

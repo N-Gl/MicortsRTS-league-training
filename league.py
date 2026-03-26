@@ -130,19 +130,19 @@ class Payoff:
     def __init__(self):
         # jeder Spieler (auch Historical (inaktive Spieler))
         self._players = []
-        self._no_decay_games = collections.defaultdict(lambda: 0)
+        self._no_decay_games = collections.defaultdict(lambda: 1)
         self._no_decay_wins = collections.defaultdict(lambda: 0)
-        self._no_decay_draws = collections.defaultdict(lambda: 0)
+        self._no_decay_draws = collections.defaultdict(lambda: 1)
         self._no_decay_losses = collections.defaultdict(lambda: 0)
-        self._games = collections.defaultdict(lambda: 0)
+        self._games = collections.defaultdict(lambda: 1)
         self._wins = collections.defaultdict(lambda: 0)
-        self._draws = collections.defaultdict(lambda: 0)
+        self._draws = collections.defaultdict(lambda: 1)
         self._losses = collections.defaultdict(lambda: 0)
-        self._games = collections.defaultdict(lambda: 0)
+        # self._games = collections.defaultdict(lambda: 0)
         self._decay = 0.99
 
     def _win_rate(self, _home, _away):
-        if self._games[_home, _away] == 0:
+        if self._games[_home, _away] < 4:
           return 0.5
     
         return (self._wins[_home, _away] +
@@ -228,14 +228,14 @@ class Payoff:
     
     def reset(self, player=None):
         if player is None:
-            self._no_decay_games = collections.defaultdict(lambda: 0)
+            self._no_decay_games = collections.defaultdict(lambda: 1)
             self._no_decay_wins = collections.defaultdict(lambda: 0)
-            self._no_decay_draws = collections.defaultdict(lambda: 0)
+            self._no_decay_draws = collections.defaultdict(lambda: 1)
             self._no_decay_losses = collections.defaultdict(lambda: 0)
+            self._games = collections.defaultdict(lambda: 1)
             self._wins = collections.defaultdict(lambda: 0)
-            self._draws = collections.defaultdict(lambda: 0)
+            self._draws = collections.defaultdict(lambda: 1)
             self._losses = collections.defaultdict(lambda: 0)
-            self._games = collections.defaultdict(lambda: 0)
             return
 
         stats = (
@@ -321,7 +321,7 @@ class MainPlayer(Player):
                 win_rates,
                 weighting=self.args.main_pfsp_weighting,
                 enabled=self.args.pfsp,
-                min_prob_factor=self.args.pfsp_min_prob_factor,
+                min_prob_factor=0.0,
             ),
         ), True
 
@@ -340,7 +340,7 @@ class MainPlayer(Player):
         ]
         win_rates = payoff_win_rates(self._payoff, self, historical, self.args.use_no_draw_winrates)
         return np.random.choice(
-            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=self.args.pfsp_min_prob_factor)), True
+            historical, p=pfsp(win_rates, weighting="variance", enabled=self.args.pfsp, min_prob_factor=0.0)), True
 
     def _verification_branch(self, opponent):
         '''sucht einen neuen exploiter gegner für selfplay, wenn min einer der Exploiter self oft self schlägt (winrate gegen ihn < 0.3) (jetzt: 0,35). -> Es wird checkpoint eines Exploiters aus der vergangenheit als gegner gewählt mit pfsp Verteilung.
@@ -362,7 +362,7 @@ class MainPlayer(Player):
                     win_rates,
                     weighting=self.args.main_pfsp_weighting,
                     enabled=self.args.pfsp,
-                    min_prob_factor=self.args.pfsp_min_prob_factor,
+                    min_prob_factor=0.0,
                 ),
             ), True
         
@@ -380,7 +380,7 @@ class MainPlayer(Player):
                     win_rates,
                     weighting=self.args.main_pfsp_weighting,
                     enabled=self.args.pfsp,
-                    min_prob_factor=self.args.pfsp_min_prob_factor,
+                    min_prob_factor=0.0,
                 ),
             ), True
 
@@ -536,7 +536,7 @@ class MainExploiter(Player):
             win_rates,
             weighting=self.args.main_exploiter_pfsp_weighting,
             enabled=self.args.pfsp,
-            min_prob_factor=self.args.pfsp_min_prob_factor,
+            min_prob_factor=0.0,
         )
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
@@ -679,7 +679,7 @@ class LeagueExploiter(Player):
             win_rates,
             weighting=self.args.league_exploiter_pfsp_weighting,
             enabled=self.args.pfsp,
-            min_prob_factor=self.args.pfsp_min_prob_factor,
+            min_prob_factor=0.0,
         )
         print(f"mit Wahrscheinlichkeiten: \n{p}")
         return np.random.choice(historical, p=p), True
@@ -974,7 +974,7 @@ class League:
                     pfsp_win_rates,
                     weighting=pfsp_weighting,
                     enabled=args.pfsp,
-                    min_prob_factor=args.pfsp_min_prob_factor,
+                    min_prob_factor=0.0,
                 )
                 pfsp_probs_by_player = {
                     player: prob for player, prob in zip(pfsp_candidates, pfsp_probs)
