@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  26 MAR 2026 15:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  26 MAR 2026 17:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -404,7 +404,8 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count314
 \l__pdf_internal_box=\box61
-) (./BA.aux)
+)
+No file BA.aux.
 \openout1 = `BA.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
@@ -430,7 +431,7 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: threeparttable package is loaded.
 Package caption Info: End \AtBeginDocument code.
- ABD: EveryShipout initializing macros (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+ABD: EveryShipout initializing macros (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
  (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
@@ -474,11 +475,10 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package hyperref Info: Link coloring ON on input line 36.
- (./BA.out) (./BA.out)
 \@outlinefile=\write4
 \openout4 = `BA.out'.
 
-<hhu_logo.png, id=96, 346.29375pt x 86.57344pt>
+<hhu_logo.png, id=4, 346.29375pt x 86.57344pt>
 File: hhu_logo.png Graphic file (type png)
 <use hhu_logo.png>
 Package pdftex.def Info: hhu_logo.png  used on input line 41.
@@ -486,24 +486,26 @@ Package pdftex.def Info: hhu_logo.png  used on input line 41.
  [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>] (./BA.toc
-LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>]
+No file BA.toc.
 \tf@toc=\write5
 \openout5 = `BA.toc'.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 1 undefined on input line 96.
+
+
+LaTeX Warning: Citation `heinrich2015fsp' on page 1 undefined on input line 111.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 1 undefined on input line 112.
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.86 \newpage
-              [1
+l.118 \begin{itemize}
+                      [1
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 120.
@@ -511,41 +513,155 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 12
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 130.
+
+
+LaTeX Warning: Citation `torabi2018behavioral' on page 2 undefined on input line 131.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 132.
+
+
+LaTeX Warning: Citation `torabi2018behavioral' on page 2 undefined on input line 133.
+
+
+LaTeX Warning: Citation `schulman2017ppo' on page 2 undefined on input line 134.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 135.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 136.
+
+
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
 (hyperref)                than one, level fixed on input line 142.
 
-[2] [3]
-<images/Base.png, id=208, 31.61812pt x 31.61812pt>
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 143.
+
+
+LaTeX Warning: Reference `tab:win rates_all' on page 2 undefined on input line 146.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 146.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 153.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 153.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 155.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 155.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+
+LaTeX Warning: Citation `Ontanon2013CombinatorialBandit' on page 2 undefined on input line 179.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 179.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 180.
+
+
+LaTeX Warning: Citation `baselines' on page 2 undefined on input line 183.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 183.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 184.
+
+
+LaTeX Warning: Citation `pmlr-v97-han19a' on page 2 undefined on input line 185.
+
+
+LaTeX Warning: Citation `espeholt2018impala' on page 2 undefined on input line 185.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 185.
+
+[2]
+
+LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 192.
+
+
+LaTeX Warning: Citation `pmlr-v97-han19a' on page 3 undefined on input line 192.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 194.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 3 undefined on input line 196.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 3 undefined on input line 202.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 3 undefined on input line 206.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 3 undefined on input line 211.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 215.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 229.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 232.
+
+
+LaTeX Warning: Citation `espeholt2018impala' on page 3 undefined on input line 233.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 233.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 235.
+
+
+LaTeX Warning: Citation `suttonbarto1998rl' on page 3 undefined on input line 236.
+
+[3]
+<images/Base.png, id=49, 31.61812pt x 31.61812pt>
 File: images/Base.png Graphic file (type png)
 <use images/Base.png>
 Package pdftex.def Info: images/Base.png  used on input line 252.
 (pdftex.def)             Requested size: 16.00006pt x 16.00006pt.
-<images/Resource.png, id=209, 28.60687pt x 29.35968pt>
+<images/Resource.png, id=50, 28.60687pt x 29.35968pt>
 File: images/Resource.png Graphic file (type png)
 <use images/Resource.png>
 Package pdftex.def Info: images/Resource.png  used on input line 253.
 (pdftex.def)             Requested size: 15.58977pt x 16.00006pt.
-<images/Worker.png, id=210, 27.85406pt x 29.35968pt>
+<images/Worker.png, id=51, 27.85406pt x 29.35968pt>
 File: images/Worker.png Graphic file (type png)
 <use images/Worker.png>
 Package pdftex.def Info: images/Worker.png  used on input line 254.
 (pdftex.def)             Requested size: 15.1795pt x 16.00006pt.
-<images/Barracks.png, id=211, 31.61812pt x 33.12375pt>
+<images/Barracks.png, id=52, 31.61812pt x 33.12375pt>
 File: images/Barracks.png Graphic file (type png)
 <use images/Barracks.png>
 Package pdftex.def Info: images/Barracks.png  used on input line 255.
 (pdftex.def)             Requested size: 15.273pt x 16.00006pt.
-<images/Light.png, id=212, 26.34843pt x 27.10126pt>
+<images/Light.png, id=53, 26.34843pt x 27.10126pt>
 File: images/Light.png Graphic file (type png)
 <use images/Light.png>
 Package pdftex.def Info: images/Light.png  used on input line 256.
 (pdftex.def)             Requested size: 15.55629pt x 16.00006pt.
-<images/Heavy.png, id=213, 34.62938pt x 34.62938pt>
+<images/Heavy.png, id=54, 34.62938pt x 34.62938pt>
 File: images/Heavy.png Graphic file (type png)
 <use images/Heavy.png>
 Package pdftex.def Info: images/Heavy.png  used on input line 257.
 (pdftex.def)             Requested size: 15.99997pt x 16.00006pt.
-<images/Ranged.png, id=214, 30.1125pt x 30.86531pt>
+<images/Ranged.png, id=55, 30.1125pt x 30.86531pt>
 File: images/Ranged.png Graphic file (type png)
 <use images/Ranged.png>
 Package pdftex.def Info: images/Ranged.png  used on input line 258.
@@ -554,118 +670,166 @@ LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 26
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-<images/16x16.png, id=217, 550.055pt x 548.0475pt>
+
+LaTeX Warning: Reference `Figure 1' on page 4 undefined on input line 267.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 4 undefined on input line 268.
+
+<images/16x16.png, id=56, 550.055pt x 548.0475pt>
 File: images/16x16.png Graphic file (type png)
 <use images/16x16.png>
 Package pdftex.def Info: images/16x16.png  used on input line 272.
 (pdftex.def)             Requested size: 237.13594pt x 236.2663pt.
- [4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/Barracks.png> <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png>] [5 <./images/16x16.png>] [6]
-<images/action_konflikt.png, id=288, 1042.6152pt x 1034.9064pt>
+
+LaTeX Warning: Citation `huft2023microrts' on page 4 undefined on input line 273.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 4 undefined on input line 273.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 278.
+
+
+LaTeX Warning: Citation `pmlr-v97-han19a' on page 4 undefined on input line 279.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 280.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 294.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 297.
+
+[4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/Barracks.png> <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png> <./images/16x16.png>]
+
+LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 305.
+
+
+LaTeX Warning: Reference `Figure 1' on page 5 undefined on input line 306.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 5 undefined on input line 311.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 5 undefined on input line 312.
+
+
+LaTeX Warning: Citation `torabi2018behavioral' on page 5 undefined on input line 314.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 5 undefined on input line 314.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 5 undefined on input line 316.
+
+
+LaTeX Warning: Citation `schulman2017ppo' on page 5 undefined on input line 317.
+
+
+LaTeX Warning: Citation `doi:10.1126/science.aar6404' on page 5 undefined on input line 331.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 334.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 5 undefined on input line 335.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 5 undefined on input line 341.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 343.
+
+
+LaTeX Warning: Reference `sec:PFSP' on page 5 undefined on input line 352.
+
+
+LaTeX Warning: Reference `fig:adjust_obs' on page 5 undefined on input line 355.
+
+[5]
+
+LaTeX Warning: Citation `heinrich2015fsp' on page 6 undefined on input line 367.
+
+<images/action_konflikt.png, id=85, 1042.6152pt x 1034.9064pt>
 File: images/action_konflikt.png Graphic file (type png)
 <use images/action_konflikt.png>
 Package pdftex.def Info: images/action_konflikt.png  used on input line 392.
 (pdftex.def)             Requested size: 237.13594pt x 235.37051pt.
-<images/focused_strong_with_draws.pdf, id=291, 344.16379pt x 211.46603pt>
-File: images/focused_strong_with_draws.pdf Graphic file (type pdf)
-<use images/focused_strong_with_draws.pdf>
-Package pdftex.def Info: images/focused_strong_with_draws.pdf  used on input line 430.
-(pdftex.def)             Requested size: 237.13716pt x 145.7052pt.
+[6 <./images/action_konflikt.png>]
 
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 410.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 412.
+
+<images/focused_strong_boosted_with_draws.pdf, id=99, 344.16379pt x 211.48009pt>
+File: images/focused_strong_boosted_with_draws.pdf Graphic file (type pdf)
+<use images/focused_strong_boosted_with_draws.pdf>
+Package pdftex.def Info: images/focused_strong_boosted_with_draws.pdf  used on input line 429.
+(pdftex.def)             Requested size: 237.13716pt x 145.71489pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 431.
+(caption)                particular \caption on input line 430.
 See the caption package documentation for explanation.
 
-[7 <./images/action_konflikt.png>] [8 <./images/focused_strong_with_draws.pdf>] [9] [10]
-<images/bot_win_rates_no_draw.png, id=364, 752.8125pt x 395.22656pt>
+
+LaTeX Warning: Reference `fig:focused_strong_boosted_with_draws' on page 7 undefined on input line 433.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 452.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 456.
+
+[7 <./images/focused_strong_boosted_with_draws.pdf>]
+
+LaTeX Warning: Reference `fig:Matchmaking' on page 8 undefined on input line 499.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 8 undefined on input line 505.
+
+
+LaTeX Warning: Reference `par:unit_bonus_distribution' on page 8 undefined on input line 506.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 8 undefined on input line 515.
+
+[8] [9]
+
+LaTeX Warning: Citation `huang2021gym' on page 10 undefined on input line 599.
+
+
+LaTeX Warning: Citation `Ontanon2013CombinatorialBandit' on page 10 undefined on input line 599.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 603.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 614.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 10 undefined on input line 615.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 615.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 10 undefined on input line 615.
+
+
+LaTeX Warning: Reference `fig:bot_Winrate_with_draw_0_5' on page 10 undefined on input line 618.
+
+
+LaTeX Warning: Reference `fig:num_bot_envs' on page 10 undefined on input line 620.
+
+<images/bot_win_rates_no_draw.png, id=144, 752.8125pt x 395.22656pt>
 File: images/bot_win_rates_no_draw.png Graphic file (type png)
 <use images/bot_win_rates_no_draw.png>
-Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 630.
+Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 629.
 (pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
-<images/num_parallel_bot_envs.png, id=365, 752.8125pt x 395.22656pt>
-File: images/num_parallel_bot_envs.png Graphic file (type png)
-<use images/num_parallel_bot_envs.png>
-Package pdftex.def Info: images/num_parallel_bot_envs.png  used on input line 637.
-(pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
- [11 <./images/bot_win_rates_no_draw.png> <./images/num_parallel_bot_envs.png>] [12] [13]
-<images/numberWorkersAfterGame.png, id=418, 864.98157pt x 454.69875pt>
-File: images/numberWorkersAfterGame.png Graphic file (type png)
-<use images/numberWorkersAfterGame.png>
-Package pdftex.def Info: images/numberWorkersAfterGame.png  used on input line 833.
-(pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
-<images/numberHeavyAfterGame.png, id=419, 576.65437pt x 302.63063pt>
-File: images/numberHeavyAfterGame.png Graphic file (type png)
-<use images/numberHeavyAfterGame.png>
-Package pdftex.def Info: images/numberHeavyAfterGame.png  used on input line 838.
-(pdftex.def)             Requested size: 238.48886pt x 125.15991pt.
-<images/numberRangedAfterGame.png, id=420, 864.98157pt x 454.69875pt>
-File: images/numberRangedAfterGame.png Graphic file (type png)
-<use images/numberRangedAfterGame.png>
-Package pdftex.def Info: images/numberRangedAfterGame.png  used on input line 845.
-(pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
-<images/numberLightAfterGame.png, id=421, 864.98157pt x 454.69875pt>
-File: images/numberLightAfterGame.png Graphic file (type png)
-<use images/numberLightAfterGame.png>
-Package pdftex.def Info: images/numberLightAfterGame.png  used on input line 850.
-(pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
- [14] [15 <./images/numberWorkersAfterGame.png> <./images/numberHeavyAfterGame.png> <./images/numberRangedAfterGame.png> <./images/numberLightAfterGame.png>] [16] [17] [18] [19]
 
-pdfTeX warning: pdflatex (file ./images/Matchmaking.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/Matchmaking.pdf, id=457, 975.645pt x 650.43pt>
-File: images/Matchmaking.pdf Graphic file (type pdf)
-<use images/Matchmaking.pdf>
-Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1361.
-(pdftex.def)             Requested size: 496.85779pt x 331.23853pt.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1362.
-See the caption package documentation for explanation.
-
-[20
-
-
- <./images/Matchmaking.pdf>]
-
-pdfTeX warning: pdflatex (file ./images/adjust_obs.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/adjust_obs.pdf, id=480, 505.89pt x 1228.59pt>
-File: images/adjust_obs.pdf Graphic file (type pdf)
-<use images/adjust_obs.pdf>
-Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1368.
-(pdftex.def)             Requested size: 237.69113pt x 577.24992pt.
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1371.
-See the caption package documentation for explanation.
-
-(./BA.bbl (./BA.brf)
-\tf@brf=\write6
-\openout6 = `BA.brf'.
-
- [21
-
- <./images/adjust_obs.pdf>]) [22] (./BA.aux)
- ***********
-LaTeX2e <2023-11-01> patch level 1
-L3 programming layer <2024-01-22>
- ***********
-Package rerunfilecheck Info: File `BA.out' has not changed.
-(rerunfilecheck)             Checksum: 7D0C4541135D682B9756A0F8941D5CE8;3459.
-Package rerunfilecheck Info: File `BA.brf' has not changed.
-(rerunfilecheck)             Checksum: 603BA78486400C7ABCD7B0A4C53EA0BC;3960.
- ) 
-Here is how much of TeX's memory you used:
- 15798 strings out of 476129
- 275423 string characters out of 5793187
- 2007975 words of memory out of 5000000
- 37432 multiletter control sequences out of 15000+600000
- 595191 words of font info for 107 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
- 90i,14n,93p,688b,664s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on BA.pdf (23 pages, 3201198 bytes).
-PDF statistics:
- 632 PDF objects out of 1000 (max. 8388607)
- 528 compressed objects within 6 object streams
- 121 named destinations out of 1000 (max. 500000)
- 280 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+<images

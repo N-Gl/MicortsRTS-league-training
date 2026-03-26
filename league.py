@@ -307,6 +307,7 @@ class MainPlayer(Player):
         self.unit_bonus_distr = torch.zeros(4, device=agent.device) if args.zero_unit_bonus_for_main and args.unit_exploiters else None
         self.name = name
         self.current_model = "Base_Agent"
+        self.rand = None
 
     def _pfsp_branch(self):
         '''sucht einen neuen gegner für selfplay mit pfsp verteilung'''
@@ -326,7 +327,8 @@ class MainPlayer(Player):
         ), True
 
     def _selfplay_branch(self, opponent):
-        '''sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
+        '''Depricated!!!
+        sucht einen neuen gegner für selfplay, wenn der gegner zu stark ist (winrate gegen ihn < 0.3). Es wird
         ein checkpoint aus der vergangenheit als gegner gewählt mit pfsp Verteilung'''
         # Play self-play match
         if payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > 0.3:
@@ -486,6 +488,8 @@ class MainExploiter(Player):
         '''wählt  main agenten als gegner, wenn die winrate gegen diesen gegner über main_exploiter_no_draw_winrate_threshold liegt. 
         Wenn die min winrate gegen historische Mainagenten > 0.8 ist, wird in 50% der Fälle der Mainagent gewählt.
         Sonst wird ein historischer checkpoint dieses Gegners gewählt mit pfsp verteilung.'''
+
+        self.rand = np.random.random()
         
         main_agents = [
             player for player in self._payoff.players
@@ -493,7 +497,7 @@ class MainExploiter(Player):
         ]
         opponent = np.random.choice(main_agents)
 
-        if (payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 10)  and not self.args.sp:
+        if (payoff_win_rates(self._payoff, self, opponent, self.args.use_no_draw_winrates) > self.args.main_exploiter_no_draw_winrate_threshold or self._payoff._games[self, opponent] < 100) and self.rand < 0.5 and not self.args.sp:
             return opponent, True
 
         # if self._payoff[self, opponent] > self.args.main_exploiter_no_draw_winrate_threshold and not self.args.sp:
@@ -620,7 +624,7 @@ class MainExploiter(Player):
             self._initial_weights = torch.load(model_path, map_location=self.agent.device, weights_only=True)
             self.current_model = model_name
 
-
+        self.rand = None
         self.agent.checkpoint_step = self.agent.get_steps()
         self.agent.set_weights(self._initial_weights)
         self.optimizer = None

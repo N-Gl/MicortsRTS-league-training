@@ -415,28 +415,27 @@ Win rates outside of PFSP are calculated without considering draws.
 
 \paragraph{Prioritization Function.} 
 The exact prioritization function can differ for different agent types.
-In AlphaStar, for the Main Agent opponents of medium difficulty (PFSP win rate close to 50\%) are prioritized.
-While exploiters prioritize the strongest opponent (against which the PFSP win rate is closest to 0\%).
+In AlphaStar, for the Main Exploiters PFSP prioritizes opponents of medium difficulty (PFSP win rate close to 50\%).
+While the Main Agent prioritize the strongest opponent (against which the PFSP win rate is closest to 0\%).
 Adapted prioritization functions tailored to our training setup are used in this thesis, which deviate from those used in AlphaStar.
 An important difference is that training with an opponent against which the Main Agent has a win rate (without draws) close to 0\% yields little informative gradient or learning signal.
 % und dass eine PFSP win rate von 0.5 meist heißt, dass keiner von beiden gewinnt/verliert. 
 % Stattdessen hieß das meistens, dass beide Spieler sich gegenseitig ignorieren, die Basis des Gegners angreifen und dann für den Rest des Spieles sich nicht mehr bewegen.
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer PFSP win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
 
-\paragraph{Implemented Prioritization Function.} 
-In the final LT setup, the Main Agent uses \texttt{focused\_strong\_boosted\_with\_draws}, while Main Exploiters and League Exploiters use \texttt{focused\_strong\_with\_draws}.
-To avoid prioritizing opponents that provide little learning signal, the following prioritization functions was used for the exploiters:
+\paragraph{Implemented Prioritization Function.}
+To avoid prioritizing opponents that provide little learning signal, the following prioritization functions was used for exploiters:
 \begin{center}
-    \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_with_draws.pdf}
-    \captionof{figure}{Prioritization function for the exploiters in PFSP.}
-    \label{fig:focused_strong_with_draws}
+    \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
+    \captionof{figure}{Prioritization function for the Main Agent in PFSP.}
+    \label{fig:focused_strong_boosted_with_draws}
 \end{center}
-As can be seen in the figure~\ref{fig:focused_strong_with_draws}, we prioritize opponents with a PFSP win rate around 50\%.
+As can be seen in the figure~\ref{fig:focused_strong_boosted_with_draws}, we prioritize opponents with a PFSP win rate around 50\%.
 That is because most of our matchups are very draw-heavy. 
 Therefore, it is likely that the win rate (without draws) is close to 0\%, when the PFSP win rate is below 50\%.
 As a result, such opponents would otherwise be selected more frequently despite providing only a very weak learning signal.
 Furthermore, opponents with a PFSP win rate of 0\% are prioritized over those with a PFSP win rate of 100\%, since there is substantial learning potential for an opponent with a PFSP win rate of 0\%, whereas a PFSP win rate of 100\% usually means that the agent already defeats the opponent reliably.
-In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.% (für letzten Run (26_03)) (TODO): , by initializing every Agent with an Draw for everyy opponent.
+In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.% (für letzten Run (26_03)) (TODO): , by initializing every Agent with an Draw for every opponent.
 % (TODO): This means, that the win rate is never exactly 100\%, ensuring that every opponent has a non-zero probability of being selected.
 This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% PFSP win rate for the learning agent), since these initial results may have been outliers.
 
@@ -1359,9 +1358,21 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 \onecolumn
 \begin{center}
     \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/Matchmaking.pdf}
-    \captionof{figure}{Matchmaking process for LT. Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities. The PFSP curve gives the weighting for the opponent win rate.}
+    \captionof{figure}{Matchmaking process for LT.
+    Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities.
+    The PFSP curve gives the weighting for the opponent win rate.
+    We define w_main_hist as the set of win rates of the Main Agent against all historical Main Exploiters.}
     \label{fig:Matchmaking}
 \end{center}
+
+% (TODO): \begin{center}
+% (TODO):     \includegraphics[width=1\textwidth, height=1\textheight,keepaspectratio]{images/Matchmaking_new.pdf}
+% (TODO):     \captionof{figure}{Matchmaking process for LT.
+% (TODO):     Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities.
+% (TODO):     The PFSP curve gives the weighting for the opponent win rate.
+% (TODO):     We define w_main_hist as the set of win rates of the Main Agent against all historical Main Exploiters.}
+% (TODO):     \label{fig:Matchmaking}
+% (TODO): \end{center}
 
 \onecolumn
 \begin{center}
