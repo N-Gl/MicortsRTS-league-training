@@ -1,0 +1,54 @@
+defaults:
+  - league_training_8
+
+ExperimentConfig:
+  model_path: models/finished_PPO_Basis_thesis.pt
+  BC_model_path: models/BCagent.pt
+  other_historicals_paths:
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_0.pt
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_2.pt
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_3.pt
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_4.pt
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_5.pt
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_11.pt
+    - saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_MainPlayers/Historical_(MainPlayer)_12.pt
+  exp_name: 23_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_11_SP_exploiter_ent_coef_max_0.0175
+  wandb_group_name: SP
+  main_exploiters_paths: []
+  exploiter_reset_path_probs: {}
+
+  
+  render: true
+  unit_bonus: false
+  sp_rand: true
+  resume: true
+  starting_historical: false
+
+
+  main_ent_coef_min: 0.0075
+  main_ent_coef_max: 0.0175
+  main_anneal_ent: true
+
+  exploiter_ent_coef_min: 0.009
+  exploiter_ent_coef_max: 0.0175
+  exploiter_anneal_ent: true
+
+  num_bot_envs: 1
+  dyn_num_bot_envs: true
+  min_num_bot_envs: 1
+  max_num_bot_envs: 1
+  training_on_bot_envs: false
+
+
+  num_main_exploiters: 1
+  num_league_exploiters: 0
+  num_envs_per_main_exploiters: 25
+
+  sp: false
+  dbg_no_main_agent_ppo_update: true
+
+  log_exploiter_tables: true
+  log_exploiter_winrates: true
+  log_unweighted_losses: true 
+
+  num_main_envs: 1
