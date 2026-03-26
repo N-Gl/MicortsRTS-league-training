@@ -2,8 +2,8 @@ opponent,games,wins,draws,losses,win_rate,draw_rate,loss_rate
 BaseAgent,100,89,9,2,0.89,0.09,0.02
 coacAI,100,100,0,0,1,0,0
 mayari,100,100,0,0,1,0,0
-passiveAI,100,100,0,0,1,0,0
 workerRushAI,100,35,10,55,0.35,0.1,0.55
+passiveAI,100,100,0,0,1,0,0
 lightRushAI,100,100,0,0,1,0,0
 randomAI,100,100,0,0,1,0,0
 randomBiasedAI,100,97,3,0,0.97,0.03,0

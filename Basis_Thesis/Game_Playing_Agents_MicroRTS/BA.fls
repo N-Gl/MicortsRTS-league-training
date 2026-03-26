@@ -320,11 +320,11 @@ INPUT ./images/action_konflikt.png
 INPUT ./images/action_konflikt.png
 INPUT ./images/action_konflikt.png
 INPUT ./images/action_konflikt.png
-INPUT ./images/focused_strong_boosted_with_draws.pdf
-INPUT ./images/focused_strong_boosted_with_draws.pdf
-INPUT ./images/focused_strong_boosted_with_draws.pdf
-INPUT ./images/focused_strong_boosted_with_draws.pdf
-INPUT ./images/focused_strong_boosted_with_draws.pdf
+INPUT ./images/focused_strong_with_draws.pdf
+INPUT ./images/focused_strong_with_draws.pdf
+INPUT ./images/focused_strong_with_draws.pdf
+INPUT ./images/focused_strong_with_draws.pdf
+INPUT ./images/focused_strong_with_draws.pdf
 INPUT ./images/bot_win_rates_no_draw.png
 INPUT ./images/bot_win_rates_no_draw.png
 INPUT ./images/bot_win_rates_no_draw.png
@@ -370,6 +370,10 @@ INPUT images/main_Agent_evaluation_no_worker_focus.csv
 INPUT images/main_Agent_evaluation_no_worker_focus.csv
 INPUT images/main_Agent_evaluation_no_worker_focus.csv
 INPUT images/main_Agent_evaluation_no_worker_focus.csv
+INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
+INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
+INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
+INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr6.tfm

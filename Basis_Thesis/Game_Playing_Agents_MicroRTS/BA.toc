@@ -57,9 +57,10 @@
 \contentsline {paragraph}{Checkpoint and Reset Statistics.}{12}{section*.44}%
 \contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results}{12}{subsection.4.3}%
 \contentsline {paragraph}{Main Agent without Unit Focus Evaluation.}{12}{section*.45}%
+\contentsline {paragraph}{PPO Finetuning.}{12}{section*.46}%
 \contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{12}{subsection.4.4}%
-\contentsline {paragraph}{Exploration: Effects of New Initial Agents.}{12}{section*.46}%
-\contentsline {paragraph}{Exploiter Diversity in AlphaStar.}{13}{section*.47}%
-\contentsline {paragraph}{Future Work: Map Diversity.}{13}{section*.48}%
+\contentsline {paragraph}{Exploration: Effects of New Initial Agents.}{13}{section*.47}%
+\contentsline {paragraph}{Exploiter Diversity in AlphaStar.}{13}{section*.48}%
+\contentsline {paragraph}{Future Work: Map Diversity.}{14}{section*.49}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{14}{section.5}%
-\contentsline {section}{Erkl\"arung}{21}{section*.57}%
+\contentsline {section}{Erkl\"arung}{22}{section*.59}%

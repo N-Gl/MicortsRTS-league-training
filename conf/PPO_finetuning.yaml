@@ -19,7 +19,6 @@ ExperimentConfig:
 
 
   workerbots: true
-  worker_envs: 0.5
   PPO_learning_rate: 1.5e-6
 
 
@@ -94,7 +93,7 @@ ExperimentConfig:
   gamma: 1 # (im basis ppo: 0.99)
   gae_lambda: 0.95
   ent_coef: 0.005 # TODO: 0.01
-  vf_coef: 0.09 # ammended after run
+  vf_coef: 0.09
   max_grad_norm: 0.5
   clip_coef: 0.1 # changed 0.15
   update_epochs: 4

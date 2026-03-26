@@ -424,18 +424,19 @@ An important difference is that training with an opponent against which the Main
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer PFSP win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
 
 \paragraph{Implemented Prioritization Function.} 
+In the final LT setup, the Main Agent uses \texttt{focused\_strong\_boosted\_with\_draws}, while Main Exploiters and League Exploiters use \texttt{focused\_strong\_with\_draws}.
 To avoid prioritizing opponents that provide little learning signal, the following prioritization functions was used for the exploiters:
 \begin{center}
-    \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
+    \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_with_draws.pdf}
     \captionof{figure}{Prioritization function for the exploiters in PFSP.}
-    \label{fig:focused_strong_boosted_with_draws}
+    \label{fig:focused_strong_with_draws}
 \end{center}
-As can be seen in the figure~\ref{fig:focused_strong_boosted_with_draws}, we prioritize opponents with a PFSP win rate around 50\%.
+As can be seen in the figure~\ref{fig:focused_strong_with_draws}, we prioritize opponents with a PFSP win rate around 50\%.
 That is because most of our matchups are very draw-heavy. 
 Therefore, it is likely that the win rate (without draws) is close to 0\%, when the PFSP win rate is below 50\%.
 As a result, such opponents would otherwise be selected more frequently despite providing only a very weak learning signal.
 Furthermore, opponents with a PFSP win rate of 0\% are prioritized over those with a PFSP win rate of 100\%, since there is substantial learning potential for an opponent with a PFSP win rate of 0\%, whereas a PFSP win rate of 100\% usually means that the agent already defeats the opponent reliably.
-In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.%(TODO): , by initializing every Agent with an Draw for everyy opponent.
+In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.% (für letzten Run (26_03)) (TODO): , by initializing every Agent with an Draw for everyy opponent.
 % (TODO): This means, that the win rate is never exactly 100\%, ensuring that every opponent has a non-zero probability of being selected.
 This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% PFSP win rate for the learning agent), since these initial results may have been outliers.
 
@@ -686,10 +687,24 @@ This shows that the Main Agent still has weaknesses that were not found.
 
 \paragraph{Main Agent without Unit Focus Evaluation.}
 Table~\ref{tab:main_agent_evaluation_no_worker_focus} presents an example evaluation for a Main Agent trained without unit focus.
+As can be seen in the table, the Main Agent with unit focus performs better in all matchups.
+The biggest differences are the win rates against Droplet, which improve with the unit focus from 45\% to 62\% and GuidedRojoA3N, which improves from 64\% to 87\%.
+
+
+% ppo_finetuning (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/pnrtw3ui?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/league_training/groups/PPO_finetuning/runs/cr1dcfyo?nw=nwuserglaspaul244)
+% TODO: ist run zwischen Update 620 und 1200 besser? (droplet hoch und randBaisedAI, worker hoch?) (z.B.: Update 810 oder 730)
+\paragraph{PPO Finetuning.}
+After the LT training, the Main Agent was further trained with PPO for approximately (???)15 million steps.
+The 25 environments were evenly split between CoacAI, Mayari and WorkerRushAI.
+The learning rate was set to 1.5e-6, the entropy coefficient was set to 0.005 and no exploiters were used during this finetuning phase.
+The results are presented in Table~\ref{tab:ppo_finetuning_evaluation}.
+After finetuning, the win rate against workerRushAI is now 100\% and most other win rates also improved.
+The averaged win rate against all evaluation opponents excluding the Base Agent is 77\% for the Base Agent.
+After LT and PPO finetuning, this averaged win rate increases to 84\%, which is a substantial improvement of 7\%.
+If we also exclude the built-in bots, which already have a win rate of approximately 100\% for the Base Agent, the averaged win rate against the remaining opponents increases from 72.6\% to 82.5\%, which is an even bigger improvement of almost 10\%.
 
 
 
-% TODO: ppo_finetuning
 
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
@@ -715,9 +730,9 @@ The new initial agents contributed to generalization across diverse opponents.
 Table~\ref{tab:main_agent_evaluation_no_worker_focus} shows that performance improved against a wider range of opponents compared to the previous evaluation that did not use the new initial agents.
 The most notable difference is that, during the training without the new initial agents, no opponents similar to WorkerRushAI developed, resulting in a very low win rate against WorkerRushAI, while the new Main Agent as well as the Base Agent have no difficulty defeating WorkerRushAI.
 This lack of opponent diversity is also seen in the win rates against Droplet, which also has a different strategy than the Base Agent.
-This example is an extreme case showing what can happen when opponent diversity is insufficient.
-There also were many other training sessions, after which the Main Agent had less problems defeating any of the built-in bots, than the Base Agent.
-However we did not find any exploiters with strategies focused on different unit types than the Base Agent in those training sessions.
+% (TODO): This example is an extreme case showing what can happen when opponent diversity is insufficient.
+% (TODO): There also were many other training sessions, after which the Main Agent had less problems defeating any of the built-in bots, than the Base Agent.
+% (TODO): However we did not find any exploiters with strategies focused on different unit types than the Base Agent in those training sessions.
 
 Despite the improved diversity and general performance of the Main Agent, there are still some limitations of the training approach:
 \begin{itemize}
@@ -1098,6 +1113,51 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{table*}
 
 
+\begin{table*}[t]
+\centering
+\caption{Evaluation after PPO finetuning}
+\label{tab:ppo_finetuning_evaluation}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
+\toprule
+Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+\midrule
+\multicolumn{8}{l}{\textit{bots used in training}} \\
+\csvreader[
+    late after line=\\,
+    filter test=\ifnumless{\thecsvinputline}{6}
+]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\multicolumn{8}{l}{\textit{Built-in bots}} \\
+\csvreader[
+    late after line=\\,
+    filter ifthen=\value{csvinputline}>5 \and \value{csvinputline}<10
+]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\multicolumn{8}{l}{\textit{Other bots}} \\
+\csvreader[
+    late after line=\\,
+    filter ifthen=\value{csvinputline}>9 \and \value{csvinputline}<17
+]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\midrule
+\csvreader[
+    late after line=\\,
+    filter test=\ifnumequal{\thecsvinputline}{17}
+]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+}
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+
+
+
 % TODO: neue Hyperparameter einfügen
 \begin{table*}[t]
 \centering
@@ -1279,9 +1339,9 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 % \midrule
 % \multicolumn{4}{@{}l}{\textbf{PFSP Weighting and Sampling}} \\
 % \midrule
-%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_pfsp\_weighting} & \texttt{focused\_strong\_with\_draws} & PFSP Weighting scheme for the Main Agent. \\
-%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for Main Exploiters. \\
-%  TODO: in ergebnissen schreiben: PFSP & \texttt{league\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for League Exploiters. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_pfsp\_weighting} & \texttt{focused\_strong\_boosted\_with\_draws} & PFSP Weighting scheme for the Main Agent. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{main\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_with\_draws} & PFSP Weighting scheme for Main Exploiters. \\
+%  TODO: in ergebnissen schreiben: PFSP & \texttt{league\_exploiter\_pfsp\_weighting} & \texttt{focused\_strong\_with\_draws} & PFSP Weighting scheme for League Exploiters. \\
 % \midrule
 % \multicolumn{4}{@{}l}{\textbf{Unit-Specific Bonus Parameters}} \\
 % \midrule
