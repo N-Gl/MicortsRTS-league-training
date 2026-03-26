@@ -8,7 +8,7 @@
 \backcite {martin2021beclone}{{2}{1}{section*.6}}
 \backcite {martin2021beclone}{{2}{1}{section*.6}}
 \backcite {huft2023microrts}{{2}{2.0.1}{subsubsection.2.0.1}}
-\backcite {huft2023microrts}{{3}{2.0.1}{section*.7}}
+\backcite {huft2023microrts}{{2}{2.0.1}{section*.7}}
 \backcite {huft2023microrts}{{3}{1}{table.caption.8}}
 \backcite {Ontanon2013CombinatorialBandit}{{3}{2.0.2}{subsubsection.2.0.2}}
 \backcite {huang2021gym}{{3}{2.0.2}{subsubsection.2.0.2}}
@@ -24,14 +24,14 @@
 \backcite {goodfriend2024raisocketai}{{3}{2.0.2}{section*.10}}
 \backcite {huft2023microrts}{{3}{2.0.3}{subsubsection.2.0.3}}
 \backcite {goodfriend2024raisocketai}{{3}{2.0.3}{subsubsection.2.0.3}}
-\backcite {martin2021beclone}{{4}{2.0.4}{subsubsection.2.0.4}}
-\backcite {vinyals2019alphastar}{{4}{2.0.5}{subsubsection.2.0.5}}
+\backcite {martin2021beclone}{{3}{2.0.4}{subsubsection.2.0.4}}
+\backcite {vinyals2019alphastar}{{3}{2.0.5}{subsubsection.2.0.5}}
 \backcite {vinyals2019alphastar}{{4}{2.0.5}{section*.12}}
 \backcite {vinyals2019alphastar}{{4}{2.0.5}{section*.13}}
 \backcite {espeholt2018impala, vinyals2019alphastar}{{4}{2.0.5}{section*.13}}
 \backcite {vinyals2019alphastar}{{4}{2.0.5}{section*.13}}
 \backcite {suttonbarto1998rl}{{4}{2.0.5}{section*.13}}
-\backcite {goodfriend2024raisocketai}{{5}{3.1}{section*.14}}
+\backcite {goodfriend2024raisocketai}{{4}{3.1}{section*.14}}
 \backcite {huft2023microrts}{{5}{1}{figure.caption.15}}
 \backcite {huang2021gym}{{5}{3.1}{section*.16}}
 \backcite {pmlr-v97-han19a}{{5}{3.1}{section*.16}}
@@ -56,14 +56,14 @@
 \backcite {vinyals2019alphastar}{{8}{3.6}{section*.29}}
 \backcite {vinyals2019alphastar}{{9}{3.6}{section*.34}}
 \backcite {vinyals2019alphastar}{{9}{3.6}{section*.35}}
-\backcite {huang2021gym, Ontanon2013CombinatorialBandit}{{11}{3.8}{subsection.3.8}}
+\backcite {huang2021gym, Ontanon2013CombinatorialBandit}{{10}{3.8}{subsection.3.8}}
 \backcite {huft2023microrts}{{11}{3.8}{subsection.3.8}}
 \backcite {huft2023microrts}{{11}{4}{section.4}}
 \backcite {huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{11}{4}{section.4}}
-\backcite {huft2023microrts}{{12}{4.2}{subsection.4.2}}
+\backcite {huft2023microrts}{{11}{4.2}{subsection.4.2}}
 \backcite {huft2023microrts}{{12}{4.3}{subsection.4.3}}
 \backcite {huft2023microrts}{{12}{4.4}{subsection.4.4}}
 \backcite {huft2023microrts}{{13}{4.4}{section*.46}}
 \backcite {huft2023microrts}{{13}{4.4}{section*.46}}
 \backcite {vinyals2019alphastar}{{13}{4.4}{section*.47}}
-\backcite {vinyals2019alphastar}{{14}{5}{section.5}}
+\backcite {vinyals2019alphastar}{{13}{5}{section.5}}
