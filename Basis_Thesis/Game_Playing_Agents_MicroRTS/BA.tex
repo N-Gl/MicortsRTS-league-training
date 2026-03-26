@@ -127,10 +127,10 @@ In addition, we will compare and evaluate the results emperically.
 In particular, we will analyze the learning curve, strategic diversity and robustness for the different training approaches.
 
 \paragraph{Training of the Base Agent.}
-The Base Agent used in this project is trained in a three-stage procedure that combines Behavioral Cloning (BC) and BC fine-tuning (BC-FT), followed by fine-tuning with PPO:
-The two BC phases enable the agent to quickly learn a competent base strategy by imitating expert behavior \cite{torabi2018behavioral}. 
-This training approach reduces the initial, often inefficient exploration in DRL \cite{torabi2018behavioral}. 
-Learning from scratch with DRL methods such as PPO can be very time-consuming \cite{martin2021beclone}. 
+The Base Agent used in this project is trained in a three-stage procedure that combines Behavioral Cloning (BC) and BC fine-tuning (BC-FT), followed by fine-tuning with PPO \cite{huft2023microrts}:
+The two BC phases enable the agent to quickly learn a competent base strategy by imitating expert behavior \cite{torabi2018behavioral}.
+Learning from scratch with DRL methods such as PPO can be very time-consuming \cite{martin2021beclone}.
+However this training approach reduces this initial, often inefficient exploration in DRL \cite{torabi2018behavioral}. 
 PPO is a well-known on-policy policy optimization method that clips the policy update size to stabilize policy updates \cite{schulman2017ppo}.
 PPO further improves the performance of the BC agent through exploration and adaptation to the environment, allowing the agent to adapt and generalize beyond the expert strategies \cite{martin2021beclone}. 
 This two-stage approach, in which a policy pre-trained with BC is refined by a DRL algorithm, has proven effective in reducing training time and improving overall performance compared to a pure DRL approach \cite{martin2021beclone}.
@@ -150,7 +150,7 @@ Exactly this proposal is taken up by the present work by extending the existing 
 The opponents against which the evaluation is conducted include the MicroRTS built-in bots (RandomBiasedAI, WorkerRushAI, LightRushAI and CoacAI).
 \begin{table}[ht]
 \centering
-\caption{Winrates (\%) for BC, BC-FT and PPO reported in \cite{huft2023microrts}.}
+\caption{Winrates (\%) for BC, BC-FT and PPO reported in \cite{huft2023microrts}. The Base Agent in this thesis is trained using the same training pipeline, however these results are of a different Version of the Base Agent.}
 \label{tab:win rates_all}
 \begin{tabular}{lccc}
 \hline
@@ -576,6 +576,7 @@ However, the training was not continued long enough to evaluate the effect of th
 Continuing the training with the Base Agent showed the same problem as training with the unit bonus.
 
 \paragraph{Annealed Entropy Coefficient.}
+\label{par:annealed_entropy_coefficient}
 The annealed entropy coefficient decreases the weight of the entropy bonus in the loss function and thereby decreases the exploration of the agent over the course of training.
 This was implemented for the exploiters to further increase exploration during the early training steps, while retaining a more deterministic policy in the later stages of training.
 This coefficient resets when the corresponding exploiter resets.
@@ -611,8 +612,8 @@ The attack bonus was removed for our training and we adjusted the per-step delta
 \label{sec:experimente}
 We use the Base Agent from the prior work of M. Huft \cite{huft2023microrts}, which was trained by using a combination of BC and PPO, as the initial agent in this thesis unless otherwise specified.
 The map used is \texttt{basesWorkers16x16A}, a symmetrical map also used in related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
-The Base Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for (???) steps.
-The Main Agent played (???) games against the built-in bots CoacAI and Mayari.
+The Base Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for approximately (???)130000000 steps.
+The Main Agent played around (???)4500 games against the built-in bots CoacAI and Mayari.
 The win rates against both bots over the global training steps were monitored during training and shown in Figure~\ref{fig:bot_Winrate_with_draw_0_5}.
 The bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
 The number of bot environments throughout training is shown in Figure~\ref{fig:num_bot_envs}.
@@ -640,7 +641,8 @@ However, it is important to keep the number of environments per agent above a ce
 
 \subsection{Hyperparameters}
 Notable hyperparameters for the Main Agent include a higher learning rate of $5e\text{-}5$ than the Base Agent, namely $2.5e\text{-}5$, as well as higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters.
-An annealed entropy coefficient is used, starting at 0.025 and ending at 0.0075.
+An annealed entropy coefficient is used, starting at 0.025 and ending at 0.0075 for the Main Agent and 0.02 for exploiters.
+The annealed entropy coefficient for exploiters is often reset in the exploiter resets, as explained in \ref{par:annealed_entropy_coefficient}.
 After sufficient steps, the entropy coefficient for exploiters remaies high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
 % TODO: The Main Agent’s entropy coefficient starts lower to keep the Agent closer to the already strong Base Agent, but is annealed to further improve the Main Agent’s performance in the later stages of training.
 The entropy coefficient is very high in comparison to that of the Base Agent, which uses a constant coefficient of 0.005.
@@ -658,9 +660,8 @@ Table~\ref{tab:main_agent_evaluation} presents the evaluation results of the Mai
 
 % TODO: auch eine Range geben? (z.B.: von 50% bis 100%)
 \paragraph{Checkpoint and Reset Statistics.}
-There were (???) checkpoints for the Main Agent, (???) checkpoints for the Main Exploiters and (???) checkpoints for the League Exploiter.
-Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for each agent type and the win rate of the checkpointed agent against the Main Agent, averaged over the last 200 games and then averaged over all resets.
-Checkpoints without resets are not included in the win rates.
+There were (???)7 checkpoints for the Main Agent, (???)9 checkpoints for the Main Exploiters and (???)2 checkpoints for the League Exploiter.
+Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for each agent type and the approximate total games that exploiters trained with them.
 
 \subsection{Results}
 The agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often leaves the base undefended while attacking.
@@ -678,13 +679,16 @@ However, the Main Agent still shows improvements over the Base Agent against mos
 Highlights include the win rate against Rojo, which improves from 81\% to 100\%, while the win rate against MixedBot also increases from 43\% to 57\%.
 The win rate against Izanagi falls from 72\% to 70\%, however the loss rate improves from 16\% to 7\%, suggesting that the Main Agent defends the base more effectively while attacking.
 % TODO: stimmt das noch?
-WorkerRushAI is the only opponent against which the Main Agent performs worse than the Base Agent.
-This shows that the Main Agent still has weaknesses that can be exploited.
+WorkerRushAI is the only opponent against which the Main Agent performs notably worse than the Base Agent.
+This shows that the Main Agent still has weaknesses that were not found.
+
 
 \paragraph{Main Agent without Unit Focus Evaluation.}
 Table~\ref{tab:main_agent_evaluation_no_worker_focus} presents an example evaluation for a Main Agent trained without unit focus.
 
 
+
+% TODO: ppo_finetuning
 
 % TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
@@ -862,17 +866,17 @@ Human imitation learning, as used in AlphaStar, seems to be a difficult approach
 
 \begin{table*}[t]
 \centering
-\caption{Checkpoint amount per initial agent type, league agent type and averaged win rate against the Main Agent over 200 games per initial agent type} 
+\caption{Checkpoint amount per initial agent type and the approximate total games that exploiters trained with them.} 
 % TODO: an alle alleine stehenden agent types league oder initial dazu schreiben
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c@{}}
 \hline
-\textbf{Agent type} & \textbf{League Exploiter} & \textbf{Main Exploiter} & \textbf{avg. win rate} & \textbf{total games} & \textbf{times win rate $>$ 70\%} \\
+\textbf{Agent type} & \textbf{League Exploiter} & \textbf{Main Exploiter} & \textbf{avg. win rate} & \textbf{total exploiter games} \\
 \hline
-    Base Agent & (???) & (???) & (???) & (???) & (???) \\
-    worker\_focused & 0 & (???) & (???) & (???) & (???) \\
-    ranged\_focused & 0 & (???) & (???) & (???) & (???) \\
-    light\_focused & 0 & (???) & (???) & (???) & (???) \\
-    Total & (???) & (???) & (???) & (???) & (???) \\
+    Base Agent & 7 & 2 & 4 & 50000 \\
+    worker\_focused & 0 & 0 & 2 & 11000 \\
+    ranged\_focused & 0 & 0 & 1 & 387 \\
+    light\_focused & 0 & 0 & 2 & 14000 \\
+    Total & 7 & 2 & 9 & 75387 \\
 \hline
 \end{tabular*}
 \label{tab:checkpoint_statistics}
