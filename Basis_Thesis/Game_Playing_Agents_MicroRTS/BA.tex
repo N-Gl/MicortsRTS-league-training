@@ -435,7 +435,8 @@ That is because most of our matchups are very draw-heavy.
 Therefore, it is likely that the win rate (without draws) is close to 0\%, when the PFSP win rate is below 50\%.
 As a result, such opponents would otherwise be selected more frequently despite providing only a very weak learning signal.
 Furthermore, opponents with a PFSP win rate of 0\% are prioritized over those with a PFSP win rate of 100\%, since there is substantial learning potential for an opponent with a PFSP win rate of 0\%, whereas a PFSP win rate of 100\% usually means that the agent already defeats the opponent reliably.
-In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.
+In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.%(TODO): , by initializing every Agent with an Draw for everyy opponent.
+% (TODO): This means, that the win rate is never exactly 100\%, ensuring that every opponent has a non-zero probability of being selected.
 This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% PFSP win rate for the learning agent), since these initial results may have been outliers.
 
 
