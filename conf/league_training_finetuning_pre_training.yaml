@@ -16,6 +16,8 @@ ExperimentConfig:
   sp_rand: true
   resume: true
   starting_historical: false
+
+  endgame_maps: true
   map_paths:
     - maps/16x16/endgame_map_new.xml
 

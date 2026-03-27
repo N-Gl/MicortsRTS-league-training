@@ -1,0 +1,72 @@
+\begin{thebibliography}{}
+
+\bibitem[Dhariwal et~al., 2017]{baselines}
+Dhariwal, P., Hesse, C., Klimov, O., Nichol, A., Plappert, M., Radford, A., Schulman, J., Sidor, S., Wu, Y., and Zhokhov, P. (2017).
+\newblock Openai baselines.
+\newblock \url{https://github.com/openai/baselines}.
+
+\bibitem[Espeholt et~al., 2018]{espeholt2018impala}
+Espeholt, L., Soyer, H., Munos, R., Simonyan, K., Mnih, V., Ward, T., Doron, Y., Firoiu, V., Harley, T., Dunning, I., Legg, S., and Kavukcuoglu, K. (2018).
+\newblock Impala: scalable distributed deep-rl with importance weighted actor-learner architectures.
+\newblock In {\em Proceedings of the 35th International Conference on Machine Learning (ICML)}, volume~80 of {\em Proceedings of Machine Learning Research}, pages 1406--1415.
+
+\bibitem[Goodfriend, 2024]{goodfriend2024raisocketai}
+Goodfriend, S. (2024).
+\newblock Raisocketai: The first deep reinforcement learning agent to win the ieee microrts competition.
+\newblock In {\em 2024 IEEE Conference on Games (CoG)}, pages 1--8.
+
+\bibitem[Han et~al., 2019]{pmlr-v97-han19a}
+Han, L., Sun, P., Du, Y., Xiong, J., Wang, Q., Sun, X., Liu, H., and Zhang, T. (2019).
+\newblock Grid-wise control for multi-agent reinforcement learning in video game {AI}.
+\newblock In Chaudhuri, K. and Salakhutdinov, R., editors, {\em Proceedings of the 36th International Conference on Machine Learning}, volume~97 of {\em Proceedings of Machine Learning Research}, pages 2576--2585. PMLR.
+
+\bibitem[Heinrich et~al., 2015]{heinrich2015fsp}
+Heinrich, J., Lanctot, M., and Silver, D. (2015).
+\newblock Fictitious self-play in extensive-form games.
+\newblock In Bach, F. and Blei, D., editors, {\em Proceedings of the 32nd International Conference on Machine Learning}, volume~37 of {\em Proceedings of Machine Learning Research}, pages 805--813.
+
+\bibitem[Huang et~al., 2021]{huang2021gym}
+Huang, S., Ontan{\'o}n, S., Bamford, C., and Grela, L. (2021).
+\newblock Gym-microrts: Toward affordable full game real-time strategy games research with deep reinforcement learning.
+\newblock {\em CoRR}, abs/2105.13807.
+
+\bibitem[Huft, 2025]{huft2023microrts}
+Huft, M. (2025).
+\newblock Game playing agents in microrts.
+
+\bibitem[Martin and Jhala, 2021]{martin2021beclone}
+Martin, D. and Jhala, A. (2021).
+\newblock Beclone: Behavior cloning with inference for real-time strategy games.
+\newblock In {\em Joint Proceedings of the AIIDE 2021 Workshops}.
+
+\bibitem[Onta{\~n}{\'o}n, 2013]{Ontanon2013CombinatorialBandit}
+Onta{\~n}{\'o}n, S. (2013).
+\newblock The combinatorial multi-armed bandit problem and its application to real-time strategy games.
+\newblock In {\em Proceedings of the Ninth Conference on Artificial Intelligence and Interactive Digital Entertainment (AIIDE)}, volume~9, pages 58--64. AAAI.
+
+\bibitem[Schulman et~al., 2017]{schulman2017ppo}
+Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and Klimov, O. (2017).
+\newblock Proximal policy optimization algorithms.
+\newblock {\em CoRR}, abs/1707.06347.
+
+\bibitem[Silver et~al., 2018]{doi:10.1126/science.aar6404}
+Silver, D., Hubert, T., Schrittwieser, J., Antonoglou, I., Lai, M., Guez, A., Lanctot, M., Sifre, L., Kumaran, D., Graepel, T., Lillicrap, T., Simonyan, K., and Hassabis, D. (2018).
+\newblock A general reinforcement learning algorithm that masters chess, shogi, and go through self-play.
+\newblock {\em Science}, 362:1140--1144.
+
+\bibitem[Sutton and Barto, 1998]{suttonbarto1998rl}
+Sutton, R.~S. and Barto, A.~G. (1998).
+\newblock {\em Reinforcement Learning: An Introduction}.
+\newblock The MIT Press.
+
+\bibitem[Torabi et~al., 2018]{torabi2018behavioral}
+Torabi, F., Warnell, G., and Stone, P. (2018).
+\newblock Behavioral cloning from observation.
+\newblock {\em arXiv preprint arXiv:1805.01954}.
+
+\bibitem[Vinyals et~al., 2019]{vinyals2019alphastar}
+Vinyals, O., Babuschkin, I., Czarnecki, W.~M., Mathieu, M., Dudzik, A., Chung, J., Choi, D.~H., Powell, R., Ewalds, T., Georgiev, P., Oh, J., Horgan, D., Kroiss, M., Danihelka, I., Huang, A., Sifre, L., Cai, T., Agapiou, J.~P., Jaderberg, M., Vezhnevets, A.~S., Leblond, R., Pohlen, T., Dalibard, V., Budden, D., Sulsky, Y., Molloy, J., Paine, T.~L., Gulcehre, C., Wang, Z., Pfaff, T., Wu, Y., Ring, R., Yogatama, D., W{\"u}nsch, D., McKinney, K., Smith, O., Schaul, T., Lillicrap, T., Kavukcuoglu, K., Hassabis, D., Apps, C., and Silver, D. (2019).
+\newblock Grandmaster level in starcraft ii using multi-agent reinforcement learning.
+\newblock {\em Nature}, 575(7782):350--354.
+
+\end{thebibliography}

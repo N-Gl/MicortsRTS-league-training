@@ -186,14 +186,16 @@ def main(cfg: ExperimentConfig):
 
         print(f"opponents: \n{opponents}")
 
-        if args.map_paths:
-            map_list = list(args.map_paths)
-        elif args.endgame_maps:
-            map_list = [
-                # "maps/16x16/endgame_map.xml"
-                "maps/16x16/endgame_map_2.xml"
-                # "maps/16x16/endgame_map_3.xml"
-            ] # + ["maps/16x16/basesWorkers16x16A.xml" for _ in range(50)]
+        
+        if args.endgame_maps:
+            if args.map_paths == None and len(args.map_paths) > 0:
+                map_list = list(args.map_paths)
+            else:
+                map_list = [
+                    # "maps/16x16/endgame_map.xml"
+                    "maps/16x16/endgame_map_2.xml"
+                    # "maps/16x16/endgame_map_3.xml"
+                ] # + ["maps/16x16/basesWorkers16x16A.xml" for _ in range(50)]
         else:
             map_list = [
                 "maps/16x16/basesWorkers16x16A.xml"

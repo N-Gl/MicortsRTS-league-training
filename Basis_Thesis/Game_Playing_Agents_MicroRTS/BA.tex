@@ -510,7 +510,7 @@ If that happens, the rollout contains trajectories from the old policy and there
 To keep the training as simple as possible, the entire PPO update for the rollout after an exploiter reset is skipped.
 
 
-
+% TODO: gibt es eine andere Quelle für den Pseudocode?
 \paragraph{AlphaStar LT Pseudocode.}
 In addition to the modifications made to adapt the LT pseudocode to the MicroRTS environment the following corrections to the AlphaStar pseudocode \cite{vinyals2019alphastar} were made:
 \begin{itemize}
@@ -705,7 +705,7 @@ If we also exclude the built-in bots, which already have a win rate of approxima
 
 
 
-% TODO: zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
+% (TODO): zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
 
 % TODO: Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
 
@@ -745,9 +745,9 @@ Despite the improved diversity and general performance of the Main Agent, there 
     At the same time, the final unit composition in Figure~\ref{fig:number-units-after-game} for the worker focused initial agent shows that at least some mixed strategies can be achieved with this training setup.
     For example, the agent focused on worker units learned to also frequently use ranged units, even though it was not initially trained with them.
     With this, we have initial agents for each unit type for the exploiters, as well as examples of effective exploits within the set of strategies for the focused unit types.
-    % TODO: multiple other examples of capability to explore strategies with mixed unit types?
-    On top of that, we also have multiple other examples in different runs, that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
+    On top of that, we have examples, that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
     This suggests that the exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Main Agent, even against many other agents that were not included in the training or evaluation.
+    However, the result against WorkerRushAI suggests that more diverse exploiters could further improve the Main Agent's performance. 
     \item \textbf{Limitations: Computational Resources.}
     LT also requires a lot of computational resources.
     Our setup has a maximum of 160 parallel environments, while pure PPO only uses 24 parallel environments \cite{huft2023microrts}.
@@ -1361,7 +1361,7 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
     \captionof{figure}{Matchmaking process for LT.
     Dashed boxes are candidate opponent sets, while the percentages on the arrows are fixed sampling probabilities.
     The PFSP curve gives the weighting for the opponent win rate.
-    We define w_main_hist as the set of win rates of the Main Agent against all historical Main Exploiters.}
+    We define \texttt{w\_main\_hist} as the set of win rates of the Main Agent against all historical Main Exploiters.}
     \label{fig:Matchmaking}
 \end{center}
 
