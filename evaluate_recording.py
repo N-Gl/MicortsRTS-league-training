@@ -11,10 +11,12 @@ from evaluate import (
     _build_table_row,
     _dispose_big_render_window,
     _force_close_java_windows,
+    _log_endgame_unit_counts,
     _log_local_results,
     _make_eval_env,
     _render_eval_env,
     _resolve_checkpoint_path,
+    _sanitize_metric_component,
 )
 from selfplay_evaluate_recording import _SelfplayEvaluationRecorder, _sanitize_path_component
 
@@ -26,6 +28,8 @@ def bot_evaluate_agent(
     get_scalar_features,
     reward_weight: np.ndarray,
     vecstats_monitor_cls,
+    writer=None,
+    evaluated_agent_name: Optional[str] = None,
 ) -> None:
     opponents = evaluation_opponents
     checkpoint_path = _resolve_checkpoint_path(args.model_path)
@@ -35,11 +39,13 @@ def bot_evaluate_agent(
     aggregate_stats = {"win": 0, "draw": 0, "loss": 0}
     aggregate_episode_rewards: List[float] = []
     opponent_table_rows: List[Tuple] = []
+    agent_metric_name = evaluated_agent_name or Path(checkpoint_path).stem
 
     if args.render_all:
         from ppo import Rendering
 
     for opponent_index, (opponent_name, opponent_ai) in enumerate(opponents):
+        opponent_metric_name = _sanitize_metric_component(opponent_name)
         eval_env = _make_eval_env(opponent_ai, args, reward_weight, vecstats_monitor_cls)
         recorder = _make_bot_eval_recorder(args, checkpoint_path, opponent_name, opponent_index)
         mapsize = 16 * 16
@@ -130,6 +136,15 @@ def bot_evaluate_agent(
                             local_stats["draw"] += 1
 
                         if "episode" in info:
+                            if writer is not None:
+                                _log_endgame_unit_counts(
+                                    writer=writer,
+                                    agent_name=agent_metric_name,
+                                    scalar_features_step=scalar_features,
+                                    done_idx=env_index,
+                                    game_index=completed,
+                                    game_type=f"bot_game_{opponent_metric_name}",
+                                )
                             winloss_weight = winloss_weight * (-0.00013 * info["episode"]["l"] + 1.16)
                             local_episode_rewards.append(
                                 info["microrts_stats"]["RAIWinLossRewardFunction"] * winloss_weight

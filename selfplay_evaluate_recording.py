@@ -14,6 +14,7 @@ from microrts_space_transform import MicroRTSSpaceTransform
 import agent_model
 import selfplay_league
 import selfplay_only
+from evaluate import _log_endgame_unit_counts, _sanitize_metric_component
 from log_aggregate_result_table import Logger
 
 
@@ -25,13 +26,16 @@ def evaluate_agent(
     device: torch.device,
     get_scalar_features,
     reward_weight: np.ndarray,
-    vecstats_monitor_cls
+    vecstats_monitor_cls,
+    writer=None,
+    evaluated_agent_name: Optional[str] = None,
 ):
     opponents = default_opponent_paths
 
     checkpoint_path = _resolve_checkpoint_path(args.model_path)
     global_step = 0
     start_time = time.time()
+    agent_metric_name = evaluated_agent_name or Path(checkpoint_path).stem
 
     target_episodes = args.num_eval_episodes
     mapsize = 16 * 16
@@ -51,6 +55,7 @@ def evaluate_agent(
         from ppo import Rendering
 
     for idx, (opponent_name, opponent_ai, opponent_path,  league_agent, opp_unit_exploiter) in enumerate(opponents):
+        opponent_metric_name = _sanitize_metric_component(opponent_name)
         eval_env = _make_selfplay_eval_env(args, reward_weight, vecstats_monitor_cls)
         active_league_agents = []
         recorder = _make_selfplay_eval_recorder(args, checkpoint_path, opponent_name, idx)
@@ -178,6 +183,15 @@ def evaluate_agent(
                                 local_stats["draw"] += 1
 
                             if "episode" in info:
+                                if writer is not None:
+                                    _log_endgame_unit_counts(
+                                        writer=writer,
+                                        agent_name=agent_metric_name,
+                                        scalar_features_step=scalar_features,
+                                        done_idx=done_idx,
+                                        game_index=completed,
+                                        game_type=f"selfplay_eval_{opponent_metric_name}",
+                                    )
                                 winloss_weight = winloss_weight * (-0.00013 * info["episode"]["l"] + 1.16)
                                 local_episode_rewards.append(
                                     info["microrts_stats"]["RAIWinLossRewardFunction"] * winloss_weight

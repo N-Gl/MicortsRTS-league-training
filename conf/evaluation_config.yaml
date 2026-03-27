@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "league_models/23_03_2026__PPO_finetuning/Main_agent_backups/agent_update_730.pt",
+                          "models/BCagent.pt",
                           # "league_models/19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP/MainExploiter/MainExploiter_0_update_300.pt"
                           ]
   names: [
-          "23_03_2026__PPO_finetuning_update_730",
+          "BCagent_unit",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: 23_03_2026__PPO_finetuning_update_730
+  exp_name: BCagent_unit
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
@@ -25,9 +25,9 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 100
-  num_parallel_eval_envs: 100
-  num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
+  num_eval_episodes: 200
+  num_parallel_eval_envs: 200
+  num_parallel_selfplay_eval_games: 50        # Number of parallel environments 1 == 2 Selfplay envs
 
 
 

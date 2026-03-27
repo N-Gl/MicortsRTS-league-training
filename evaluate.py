@@ -18,6 +18,8 @@ def bot_evaluate_agent(
     get_scalar_features,
     reward_weight: np.ndarray,
     vecstats_monitor_cls,
+    writer=None,
+    evaluated_agent_name: Optional[str] = None,
 ) -> None:
     opponents = evaluation_opponents
     checkpoint_path = _resolve_checkpoint_path(args.model_path)
@@ -28,11 +30,13 @@ def bot_evaluate_agent(
     aggregate_stats = {"win": 0, "draw": 0, "loss": 0}
     aggregate_episode_rewards: List[float] = []
     opponent_table_rows: List[Tuple] = []
+    agent_metric_name = evaluated_agent_name or os.path.splitext(os.path.basename(checkpoint_path))[0]
 
     if args.render_all:
         from ppo import Rendering
 
     for opponent_name, opponent_ai in opponents:
+        opponent_metric_name = _sanitize_metric_component(opponent_name)
         eval_env = _make_eval_env(opponent_ai, args, reward_weight, vecstats_monitor_cls)
         mapsize = 16 * 16
         position_indices = (
@@ -113,6 +117,15 @@ def bot_evaluate_agent(
                             local_stats["draw"] += 1
 
                         if "episode" in info:
+                            if writer is not None:
+                                _log_endgame_unit_counts(
+                                    writer=writer,
+                                    agent_name=agent_metric_name,
+                                    scalar_features_step=scalar_features,
+                                    done_idx=env_index,
+                                    game_index=completed,
+                                    game_type=f"bot_game_{opponent_metric_name}",
+                                )
                             winloss_weight = winloss_weight * (-0.00013 * info["episode"]["l"] + 1.16)
                             local_episode_rewards.append(
                                 info["microrts_stats"]["RAIWinLossRewardFunction"] * winloss_weight
@@ -214,6 +227,25 @@ def _build_java_actions(valid_actions: np.ndarray, valid_counts: np.ndarray):
             valid_index += 1
         java_valid_actions.append(JArray(JArray(JInt))(java_env_action))
     return JArray(JArray(JArray(JInt)))(java_valid_actions)
+
+
+def _log_endgame_unit_counts(
+    writer,
+    agent_name: str,
+    scalar_features_step: torch.Tensor,
+    done_idx: int,
+    game_index: int,
+    game_type: str,
+) -> None:
+    unit_counts = scalar_features_step[done_idx, 3:7].detach()
+    unit_names = ("worker", "light", "heavy", "ranged")
+
+    for unit_name, count in zip(unit_names, unit_counts):
+        writer.add_scalar(f"{agent_name}_endgame_units/{game_type}_{unit_name}", count.item(), game_index)
+
+
+def _sanitize_metric_component(value: str) -> str:
+    return "".join(char if char.isalnum() or char in ("_", "-") else "_" for char in value)
 
 
 def _log_local_results(
