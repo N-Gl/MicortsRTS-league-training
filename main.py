@@ -188,7 +188,7 @@ def main(cfg: ExperimentConfig):
 
         
         if args.endgame_maps:
-            if args.map_paths == None and len(args.map_paths) > 0:
+            if args.map_paths != None and len(args.map_paths) > 0:
                 map_list = list(args.map_paths)
             else:
                 map_list = [
