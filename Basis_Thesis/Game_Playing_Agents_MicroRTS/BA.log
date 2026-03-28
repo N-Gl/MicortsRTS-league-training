@@ -474,11 +474,10 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package hyperref Info: Link coloring ON on input line 36.
- (./BA.out) (./BA.out)
 \@outlinefile=\write4
 \openout4 = `BA.out'.
 
-<hhu_logo.png, id=108, 346.29375pt x 86.57344pt>
+<hhu_logo.png, id=4, 346.29375pt x 86.57344pt>
 File: hhu_logo.png Graphic file (type png)
 <use hhu_logo.png>
 Package pdftex.def Info: hhu_logo.png  used on input line 41.
@@ -486,24 +485,26 @@ Package pdftex.def Info: hhu_logo.png  used on input line 41.
  [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>] (./BA.toc
-LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>]
+No file BA.toc.
 \tf@toc=\write5
 \openout5 = `BA.toc'.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 1 undefined on input line 95.
+
+
+LaTeX Warning: Citation `heinrich2015fsp' on page 1 undefined on input line 110.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 1 undefined on input line 111.
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.85 \newpage
-              [1
+l.117 \begin{itemize}
+                      [1
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 119.
@@ -511,41 +512,155 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 11
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 129.
+
+
+LaTeX Warning: Citation `torabi2018behavioral' on page 2 undefined on input line 130.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 131.
+
+
+LaTeX Warning: Citation `torabi2018behavioral' on page 2 undefined on input line 132.
+
+
+LaTeX Warning: Citation `schulman2017ppo' on page 2 undefined on input line 133.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 134.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 135.
+
+
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
 (hyperref)                than one, level fixed on input line 141.
 
-[2] [3]
-<images/Base.png, id=223, 31.61812pt x 31.61812pt>
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 142.
+
+
+LaTeX Warning: Reference `tab:win rates_all' on page 2 undefined on input line 146.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 147.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 158.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 158.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 160.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 160.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+
+LaTeX Warning: Citation `Ontanon2013CombinatorialBandit' on page 2 undefined on input line 184.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 184.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 185.
+
+
+LaTeX Warning: Citation `baselines' on page 2 undefined on input line 188.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 188.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 189.
+
+
+LaTeX Warning: Citation `pmlr-v97-han19a' on page 2 undefined on input line 190.
+
+
+LaTeX Warning: Citation `espeholt2018impala' on page 2 undefined on input line 190.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 190.
+
+[2]
+
+LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 197.
+
+
+LaTeX Warning: Citation `pmlr-v97-han19a' on page 3 undefined on input line 197.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 199.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 3 undefined on input line 201.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 3 undefined on input line 207.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 3 undefined on input line 211.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 3 undefined on input line 216.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 220.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 234.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 237.
+
+
+LaTeX Warning: Citation `espeholt2018impala' on page 3 undefined on input line 238.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 238.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 3 undefined on input line 240.
+
+
+LaTeX Warning: Citation `suttonbarto1998rl' on page 3 undefined on input line 241.
+
+[3]
+<images/Base.png, id=47, 31.61812pt x 31.61812pt>
 File: images/Base.png Graphic file (type png)
 <use images/Base.png>
 Package pdftex.def Info: images/Base.png  used on input line 257.
 (pdftex.def)             Requested size: 16.00006pt x 16.00006pt.
-<images/Resource.png, id=224, 28.60687pt x 29.35968pt>
+<images/Resource.png, id=48, 28.60687pt x 29.35968pt>
 File: images/Resource.png Graphic file (type png)
 <use images/Resource.png>
 Package pdftex.def Info: images/Resource.png  used on input line 258.
 (pdftex.def)             Requested size: 15.58977pt x 16.00006pt.
-<images/Worker.png, id=225, 27.85406pt x 29.35968pt>
+<images/Worker.png, id=49, 27.85406pt x 29.35968pt>
 File: images/Worker.png Graphic file (type png)
 <use images/Worker.png>
 Package pdftex.def Info: images/Worker.png  used on input line 259.
 (pdftex.def)             Requested size: 15.1795pt x 16.00006pt.
-<images/Barracks.png, id=226, 31.61812pt x 33.12375pt>
+<images/Barracks.png, id=50, 31.61812pt x 33.12375pt>
 File: images/Barracks.png Graphic file (type png)
 <use images/Barracks.png>
 Package pdftex.def Info: images/Barracks.png  used on input line 260.
 (pdftex.def)             Requested size: 15.273pt x 16.00006pt.
-<images/Light.png, id=227, 26.34843pt x 27.10126pt>
+<images/Light.png, id=51, 26.34843pt x 27.10126pt>
 File: images/Light.png Graphic file (type png)
 <use images/Light.png>
 Package pdftex.def Info: images/Light.png  used on input line 261.
 (pdftex.def)             Requested size: 15.55629pt x 16.00006pt.
-<images/Heavy.png, id=228, 34.62938pt x 34.62938pt>
+<images/Heavy.png, id=52, 34.62938pt x 34.62938pt>
 File: images/Heavy.png Graphic file (type png)
 <use images/Heavy.png>
 Package pdftex.def Info: images/Heavy.png  used on input line 262.
 (pdftex.def)             Requested size: 15.99997pt x 16.00006pt.
-<images/Ranged.png, id=229, 30.1125pt x 30.86531pt>
+<images/Ranged.png, id=53, 30.1125pt x 30.86531pt>
 File: images/Ranged.png Graphic file (type png)
 <use images/Ranged.png>
 Package pdftex.def Info: images/Ranged.png  used on input line 263.
@@ -553,11 +668,167 @@ Package pdftex.def Info: images/Ranged.png  used on input line 263.
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 272.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-) [4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/Barracks.png> <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png>]
-<images/16x16.png, id=252, 550.055pt x 548.0475pt>
+)
+
+LaTeX Warning: Reference `Figure 1' on page 4 undefined on input line 272.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 4 undefined on input line 273.
+
+<images/16x16.png, id=54, 550.055pt x 548.0475pt>
 File: images/16x16.png Graphic file (type png)
 <use images/16x16.png>
 Package pdftex.def Info: images/16x16.png  used on input line 277.
 (pdftex.def)             Requested size: 237.13594pt x 236.2663pt.
- [5 <./images/16x16.png>] [6]
-<images/action_konflikt.png, id=302, 1042.6152pt x 1034.9064pt>
+
+LaTeX Warning: Citation `huft2023microrts' on page 4 undefined on input line 278.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 4 undefined on input line 278.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 283.
+
+
+LaTeX Warning: Citation `pmlr-v97-han19a' on page 4 undefined on input line 284.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 285.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 299.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 4 undefined on input line 302.
+
+[4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/Barracks.png> <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png> <./images/16x16.png>]
+
+LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 310.
+
+
+LaTeX Warning: Reference `Figure 1' on page 5 undefined on input line 311.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 5 undefined on input line 328.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 5 undefined on input line 329.
+
+
+LaTeX Warning: Citation `torabi2018behavioral' on page 5 undefined on input line 331.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 5 undefined on input line 331.
+
+
+LaTeX Warning: Citation `martin2021beclone' on page 5 undefined on input line 333.
+
+
+LaTeX Warning: Citation `schulman2017ppo' on page 5 undefined on input line 334.
+
+
+LaTeX Warning: Citation `doi:10.1126/science.aar6404' on page 5 undefined on input line 348.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 351.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 5 undefined on input line 352.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 5 undefined on input line 358.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 360.
+
+[5]
+
+LaTeX Warning: Reference `sec:PFSP' on page 6 undefined on input line 369.
+
+
+LaTeX Warning: Reference `fig:adjust_obs' on page 6 undefined on input line 372.
+
+
+LaTeX Warning: Citation `heinrich2015fsp' on page 6 undefined on input line 384.
+
+<images/action_konflikt.png, id=86, 1042.6152pt x 1034.9064pt>
+File: images/action_konflikt.png Graphic file (type png)
+<use images/action_konflikt.png>
+Package pdftex.def Info: images/action_konflikt.png  used on input line 409.
+(pdftex.def)             Requested size: 237.13594pt x 235.37051pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[6]
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 427.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 429.
+
+<images/focused_strong_boosted_with_draws.pdf, id=99, 344.16379pt x 211.48009pt>
+File: images/focused_strong_boosted_with_draws.pdf Graphic file (type pdf)
+<use images/focused_strong_boosted_with_draws.pdf>
+Package pdftex.def Info: images/focused_strong_boosted_with_draws.pdf  used on input line 446.
+(pdftex.def)             Requested size: 237.13716pt x 145.71489pt.
+
+Package caption Warning: The option `hypcap=true' will be ignored for this
+(caption)                particular \caption on input line 447.
+See the caption package documentation for explanation.
+
+
+LaTeX Warning: Reference `fig:focused_strong_boosted_with_draws' on page 7 undefined on input line 450.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 469.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input line 473.
+
+[7 <./images/action_konflikt.png> <./images/focused_strong_boosted_with_draws.pdf>]
+
+LaTeX Warning: Reference `fig:Matchmaking' on page 8 undefined on input line 516.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 8 undefined on input line 522.
+
+
+LaTeX Warning: Reference `par:unit_bonus_distribution' on page 8 undefined on input line 523.
+
+
+LaTeX Warning: Citation `vinyals2019alphastar' on page 8 undefined on input line 532.
+
+[8] [9]
+
+LaTeX Warning: Citation `huang2021gym' on page 10 undefined on input line 596.
+
+
+LaTeX Warning: Citation `Ontanon2013CombinatorialBandit' on page 10 undefined on input line 596.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 600.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 611.
+
+
+LaTeX Warning: Citation `huang2021gym' on page 10 undefined on input line 612.
+
+
+LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 612.
+
+
+LaTeX Warning: Citation `goodfriend2024raisocketai' on page 10 undefined on input line 612.
+
+
+LaTeX Warning: Reference `fig:bot_Winrate_with_draw_0_5' on page 10 undefined on input line 615.
+
+
+LaTeX Warning: Reference `fig:num_bot_envs' on page 10 undefined on input line 617.
+
+<images/bot_win_rates_no_draw.png, id=147, 752.8125pt x 395.22656pt>
+File: images/bot_win_rates_no_draw.png Graphic file (type png)
+<use images/bot_win_rates_no_draw.png>
+Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 626.
+(pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
+<images/num
