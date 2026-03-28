@@ -12,7 +12,12 @@ from microrts_space_transform import MicroRTSSpaceTransform
 import agent_model
 import selfplay_league
 import selfplay_only
-from evaluate import _log_endgame_unit_counts, _sanitize_metric_component
+from evaluate import (
+    _extract_owned_unit_counts,
+    _log_endgame_unit_counts,
+    _log_used_unit_counts,
+    _sanitize_metric_component,
+)
 from log_aggregate_result_table import Logger
 
 
@@ -101,6 +106,8 @@ def evaluate_agent(
             obs_np, _, res = eval_env.reset()
             obs = torch.as_tensor(obs_np, device=device)
             selfplay_league.adjust_obs_selfplay(args, obs, True)
+            initial_scalar_features = get_scalar_features(obs, res, args.num_parallel_selfplay_eval_games).to(device)
+            initial_unit_counts = _extract_owned_unit_counts(initial_scalar_features)
             z_features = torch.zeros((args.num_parallel_selfplay_eval_games, 8), dtype=torch.long, device=device)
             attack_weight = 0.05
             winloss_weight = 10.0
@@ -150,6 +157,7 @@ def evaluate_agent(
                     next_obs_np = eval_env._from_microrts_obs(next_obs_np)
                     obs = torch.as_tensor(next_obs_np, device=device)
                     selfplay_league.adjust_obs_selfplay(args, obs, False)
+                    next_scalar_features = get_scalar_features(obs, res, args.num_parallel_selfplay_eval_games).to(device)
 
                     global_step += args.num_parallel_selfplay_eval_games
 
@@ -158,6 +166,11 @@ def evaluate_agent(
                         where_done = np.where(ds)
 
                         for done_idx in where_done[0]:
+                            finished_initial_unit_counts = None
+                            if "episode" in infos[done_idx]:
+                                finished_initial_unit_counts = initial_unit_counts[done_idx].clone()
+                                initial_unit_counts[done_idx] = _extract_owned_unit_counts(next_scalar_features, done_idx)
+
                             if done_idx % 2 == 1:
                                     continue
                                     
@@ -182,6 +195,14 @@ def evaluate_agent(
                                         agent_name=agent_metric_name,
                                         scalar_features_step=scalar_features,
                                         done_idx=done_idx,
+                                        game_index=completed,
+                                        game_type=f"selfplay_eval_{opponent_metric_name}",
+                                    )
+                                    _log_used_unit_counts(
+                                        writer=writer,
+                                        agent_name=agent_metric_name,
+                                        initial_unit_counts=finished_initial_unit_counts,
+                                        stats_entry=stats_entry,
                                         game_index=completed,
                                         game_type=f"selfplay_eval_{opponent_metric_name}",
                                     )

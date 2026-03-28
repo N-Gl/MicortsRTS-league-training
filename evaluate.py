@@ -10,6 +10,14 @@ from jpype.types import JArray, JInt
 import agent_model
 from microrts_space_transform import MicroRTSSpaceTransform
 
+UNIT_NAMES = ("worker", "light", "heavy", "ranged")
+PRODUCED_UNIT_STAT_KEYS = (
+    "ProduceWorkerRewardFunction",
+    "ProduceLightUnitRewardFunction",
+    "ProduceHeavyUnitRewardFunction",
+    "ProduceRangedUnitRewardFunction",
+)
+
 
 def bot_evaluate_agent(
     args,
@@ -59,6 +67,8 @@ def bot_evaluate_agent(
         try:
             obs_np, _, res = eval_env.reset()
             obs = torch.as_tensor(obs_np, device=device)
+            initial_scalar_features = get_scalar_features(obs.cpu(), res, args.num_envs).to(device)
+            initial_unit_counts = _extract_owned_unit_counts(initial_scalar_features)
             z_features = torch.zeros((args.num_envs, 8), dtype=torch.long, device=device)
             attack_weight = 0.05
             winloss_weight = 10.0
@@ -97,10 +107,16 @@ def bot_evaluate_agent(
                     next_obs_np, _, _, _, _, _, infos, res = eval_env.step(java_valid_actions)
                     next_obs_np = eval_env._from_microrts_obs(next_obs_np)
                     obs = torch.as_tensor(next_obs_np, device=device)
+                    next_scalar_features = get_scalar_features(obs.cpu(), res, args.num_envs).to(device)
 
                     global_step += args.num_envs
 
                     for env_index, info in enumerate(infos):
+                        finished_initial_unit_counts = None
+                        if "episode" in info:
+                            finished_initial_unit_counts = initial_unit_counts[env_index].clone()
+                            initial_unit_counts[env_index] = _extract_owned_unit_counts(next_scalar_features, env_index)
+
                         if env_done_in_round[env_index]:
                             continue
 
@@ -123,6 +139,14 @@ def bot_evaluate_agent(
                                     agent_name=agent_metric_name,
                                     scalar_features_step=scalar_features,
                                     done_idx=env_index,
+                                    game_index=completed,
+                                    game_type=f"bot_game_{opponent_metric_name}",
+                                )
+                                _log_used_unit_counts(
+                                    writer=writer,
+                                    agent_name=agent_metric_name,
+                                    initial_unit_counts=finished_initial_unit_counts,
+                                    stats_entry=stats_entry,
                                     game_index=completed,
                                     game_type=f"bot_game_{opponent_metric_name}",
                                 )
@@ -238,10 +262,32 @@ def _log_endgame_unit_counts(
     game_type: str,
 ) -> None:
     unit_counts = scalar_features_step[done_idx, 3:7].detach()
-    unit_names = ("worker", "light", "heavy", "ranged")
 
-    for unit_name, count in zip(unit_names, unit_counts):
+    for unit_name, count in zip(UNIT_NAMES, unit_counts):
         writer.add_scalar(f"{agent_name}_endgame_units/{game_type}_{unit_name}", count.item(), game_index)
+
+
+def _log_used_unit_counts(
+    writer,
+    agent_name: str,
+    initial_unit_counts: torch.Tensor,
+    stats_entry: dict,
+    game_index: int,
+    game_type: str,
+) -> None:
+    produced_unit_counts = initial_unit_counts.new_tensor(
+        [stats_entry.get(stat_key, 0.0) for stat_key in PRODUCED_UNIT_STAT_KEYS]
+    )
+    total_unit_counts = initial_unit_counts.detach() + produced_unit_counts
+
+    for unit_name, count in zip(UNIT_NAMES, total_unit_counts):
+        writer.add_scalar(f"{agent_name}_used_units/{game_type}_{unit_name}", count.item(), game_index)
+
+
+def _extract_owned_unit_counts(scalar_features_step: torch.Tensor, env_index: Optional[int] = None) -> torch.Tensor:
+    if env_index is None:
+        return scalar_features_step[:, 3:7].detach().clone()
+    return scalar_features_step[env_index, 3:7].detach().clone()
 
 
 def _sanitize_metric_component(value: str) -> str:

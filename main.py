@@ -583,20 +583,20 @@ def main(cfg: ExperimentConfig):
 
 
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
-            # ("coacAI", microrts_ai.coacAI),
-            # ("mayari", microrts_ai.mayari),
-            # ("passiveAI", microrts_ai.passiveAI),
-            # ("workerRushAI", microrts_ai.workerRushAI),
-            # ("lightRushAI", microrts_ai.lightRushAI),
-            # ("randomAI", microrts_ai.randomAI),
-            # ("randomBiasedAI", microrts_ai.randomBiasedAI),
-            # ("rojo", microrts_ai.rojo),
-            # ("mixedBot", microrts_ai.mixedBot),
-            # ("izanagi", microrts_ai.izanagi), 
-            # ("tiamat", microrts_ai.tiamat),
-            # ("droplet", microrts_ai.droplet),
-            # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("coacAI", microrts_ai.coacAI),
+            ("mayari", microrts_ai.mayari),
+            ("passiveAI", microrts_ai.passiveAI),
+            ("workerRushAI", microrts_ai.workerRushAI),
+            ("lightRushAI", microrts_ai.lightRushAI),
+            ("randomAI", microrts_ai.randomAI),
+            ("randomBiasedAI", microrts_ai.randomBiasedAI),
+            ("rojo", microrts_ai.rojo),
+            ("mixedBot", microrts_ai.mixedBot),
+            ("izanagi", microrts_ai.izanagi), 
+            ("tiamat", microrts_ai.tiamat),
+            ("droplet", microrts_ai.droplet),
+            ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
+            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:

@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "models/BCagent.pt",
+                          "saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_6__BC_focus_workerbots_update_1449.pt",
                           # "league_models/19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP/MainExploiter/MainExploiter_0_update_300.pt"
                           ]
   names: [
-          "BCagent_unit",
+          "18_03_2026__finished_PPO_Basis_thesis__league_training_6__BC_focus_workerbots_update_1449",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: BCagent_unit
+  exp_name: 18_03_2026__finished_PPO_Basis_thesis__league_training_6__BC_focus_workerbots_update_1449
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
@@ -25,20 +25,17 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 200
-  num_parallel_eval_envs: 200
-  num_parallel_selfplay_eval_games: 50        # Number of parallel environments 1 == 2 Selfplay envs
+  num_eval_episodes: 100
+  num_parallel_eval_envs: 100
+  num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs
 
 
 
 
-# Evaluation vs mixedBot over 100 games | win: 52 (52.00%), draw: 24 (24.00%), loss: 24 (24.00%)
-# SPS: 332
-# RAIGridnetClient: Not disposing frame. Resource Leak!
-# Evaluation vs izanagi over 100 games | win: 68 (68.00%), draw: 23 (23.00%), loss: 9 (9.00%)
-# SPS: 177
-# RAIGridnetClient: Not disposing frame. Resource Leak!
-# Evaluation vs tiamat over 100 games | win: 100 (100.00%), draw: 0 (0.00%), loss: 0 (0.00%)
-# SPS: 154
-# RAIGridnetClient: Not disposing frame. Resource Leak!
-# Evaluation vs droplet over 100 games | win: 58 (58.00%), draw: 33 (33.00%), loss: 9 (9.00%)
+
+
+
+
+
+
+

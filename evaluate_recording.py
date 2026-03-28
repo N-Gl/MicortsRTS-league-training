@@ -10,9 +10,11 @@ from evaluate import (
     _build_java_actions,
     _build_table_row,
     _dispose_big_render_window,
+    _extract_owned_unit_counts,
     _force_close_java_windows,
     _log_endgame_unit_counts,
     _log_local_results,
+    _log_used_unit_counts,
     _make_eval_env,
     _render_eval_env,
     _resolve_checkpoint_path,
@@ -71,6 +73,8 @@ def bot_evaluate_agent(
             if recorder is not None:
                 recorder.capture(eval_env)
             obs = torch.as_tensor(obs_np, device=device)
+            initial_scalar_features = get_scalar_features(obs.cpu(), res, args.num_envs).to(device)
+            initial_unit_counts = _extract_owned_unit_counts(initial_scalar_features)
             z_features = torch.zeros((args.num_envs, 8), dtype=torch.long, device=device)
             attack_weight = 0.05
             winloss_weight = 10.0
@@ -116,10 +120,16 @@ def bot_evaluate_agent(
                         recorder.capture(eval_env)
                     next_obs_np = eval_env._from_microrts_obs(next_obs_np)
                     obs = torch.as_tensor(next_obs_np, device=device)
+                    next_scalar_features = get_scalar_features(obs.cpu(), res, args.num_envs).to(device)
 
                     global_step += args.num_envs
 
                     for env_index, info in enumerate(infos):
+                        finished_initial_unit_counts = None
+                        if "episode" in info:
+                            finished_initial_unit_counts = initial_unit_counts[env_index].clone()
+                            initial_unit_counts[env_index] = _extract_owned_unit_counts(next_scalar_features, env_index)
+
                         if env_done_in_round[env_index]:
                             continue
 
@@ -142,6 +152,14 @@ def bot_evaluate_agent(
                                     agent_name=agent_metric_name,
                                     scalar_features_step=scalar_features,
                                     done_idx=env_index,
+                                    game_index=completed,
+                                    game_type=f"bot_game_{opponent_metric_name}",
+                                )
+                                _log_used_unit_counts(
+                                    writer=writer,
+                                    agent_name=agent_metric_name,
+                                    initial_unit_counts=finished_initial_unit_counts,
+                                    stats_entry=stats_entry,
                                     game_index=completed,
                                     game_type=f"bot_game_{opponent_metric_name}",
                                 )

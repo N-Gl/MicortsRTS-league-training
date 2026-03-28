@@ -40,25 +40,25 @@
 \backcite {huang2021gym}{{5}{3.1}{section*.16}}
 \backcite {huang2021gym}{{5}{3.1}{section*.16}}
 \backcite {huang2021gym}{{5}{3.1}{section*.17}}
-\backcite {huft2023microrts}{{6}{3.3}{subsection.3.3}}
-\backcite {huft2023microrts}{{6}{3.3}{subsection.3.3}}
-\backcite {torabi2018behavioral, martin2021beclone}{{6}{3.3}{subsection.3.3}}
-\backcite {martin2021beclone}{{6}{3.3}{subsection.3.3}}
-\backcite {schulman2017ppo}{{6}{3.3}{subsection.3.3}}
-\backcite {doi:10.1126/science.aar6404}{{6}{3.4}{subsection.3.4}}
-\backcite {huang2021gym}{{6}{3.4}{section*.18}}
-\backcite {goodfriend2024raisocketai}{{6}{3.4}{section*.18}}
-\backcite {vinyals2019alphastar}{{6}{3.4}{section*.19}}
-\backcite {huang2021gym}{{6}{3.4}{section*.19}}
-\backcite {heinrich2015fsp}{{7}{3.5}{subsection.3.5}}
-\backcite {vinyals2019alphastar}{{7}{3.6}{subsection.3.6}}
-\backcite {vinyals2019alphastar}{{7}{3.6}{subsection.3.6}}
-\backcite {vinyals2019alphastar}{{8}{3.7}{subsection.3.7}}
-\backcite {vinyals2019alphastar}{{8}{3.7}{section*.29}}
-\backcite {vinyals2019alphastar}{{9}{3.7}{section*.34}}
-\backcite {vinyals2019alphastar}{{9}{3.7}{section*.35}}
-\backcite {huang2021gym, Ontanon2013CombinatorialBandit}{{11}{3.9}{subsection.3.9}}
-\backcite {huft2023microrts}{{11}{3.9}{subsection.3.9}}
+\backcite {huft2023microrts}{{6}{3.4}{subsection.3.4}}
+\backcite {huft2023microrts}{{6}{3.4}{subsection.3.4}}
+\backcite {torabi2018behavioral, martin2021beclone}{{6}{3.4}{subsection.3.4}}
+\backcite {martin2021beclone}{{6}{3.4}{subsection.3.4}}
+\backcite {schulman2017ppo}{{6}{3.4}{subsection.3.4}}
+\backcite {doi:10.1126/science.aar6404}{{6}{3.5}{subsection.3.5}}
+\backcite {huang2021gym}{{6}{3.5}{section*.18}}
+\backcite {goodfriend2024raisocketai}{{6}{3.5}{section*.18}}
+\backcite {vinyals2019alphastar}{{6}{3.5}{section*.19}}
+\backcite {huang2021gym}{{6}{3.5}{section*.19}}
+\backcite {heinrich2015fsp}{{7}{3.6}{subsection.3.6}}
+\backcite {vinyals2019alphastar}{{7}{3.7}{subsection.3.7}}
+\backcite {vinyals2019alphastar}{{7}{3.7}{subsection.3.7}}
+\backcite {vinyals2019alphastar}{{8}{3.8}{subsection.3.8}}
+\backcite {vinyals2019alphastar}{{8}{3.8}{section*.29}}
+\backcite {vinyals2019alphastar}{{9}{3.8}{section*.34}}
+\backcite {vinyals2019alphastar}{{9}{3.8}{section*.35}}
+\backcite {huang2021gym, Ontanon2013CombinatorialBandit}{{11}{3.10}{subsection.3.10}}
+\backcite {huft2023microrts}{{11}{3.10}{subsection.3.10}}
 \backcite {huft2023microrts}{{11}{4}{section.4}}
 \backcite {huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{11}{4}{section.4}}
 \backcite {huft2023microrts}{{12}{4.2}{subsection.4.2}}
@@ -66,5 +66,5 @@
 \backcite {huft2023microrts}{{13}{4.4}{subsection.4.4}}
 \backcite {huft2023microrts}{{13}{4.4}{section*.47}}
 \backcite {huft2023microrts}{{13}{4.4}{section*.47}}
-\backcite {vinyals2019alphastar}{{14}{4.4}{section*.49}}
+\backcite {vinyals2019alphastar}{{14}{4.4}{section*.50}}
 \backcite {vinyals2019alphastar}{{15}{5}{section.5}}
