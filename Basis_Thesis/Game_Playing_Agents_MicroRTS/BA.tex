@@ -145,7 +145,7 @@ These include
     \item ensuring opponent diversity through sufficient exploration and preventing overfitting to specific opponents or strategies
 %\item assessing the actual generalization capability of the trained agents.
 \end{itemize}
-In addition, we will compare and evaluate the results emperically. 
+In addition, we will compare and evaluate the results empirically. 
 In particular, we will analyze the learning curve, strategic diversity and robustness for the different training approaches.
 
 \paragraph{Training of the Base Agent.}
@@ -610,7 +610,7 @@ We did not create new initial agents for the Main Agent because we prioritized f
 \subsection{Delta Score.}
 To better guide the agent in the sparse reward landscape of MicroRTS, we added the change in the MicroRTS score between two consecutive time steps to the reward \cite{huang2021gym, Ontanon2013CombinatorialBandit}.
 The score for each environment instance is calculated based on the current game state, which includes the number and type of units, their hit points and the resources of both players.
-The delta score is the difference between the score at the current time step and the score at the previous time step, which makes it a usefull immediate learning signal for the agent.
+The delta score is the difference between the score at the current time step and the score at the previous time step, which makes it a useful immediate learning signal for the agent.
 The score does not always accurately predict how well an agent is playing, which is why a coefficient is used to scale the delta score, so that the accumulated weighted delta score over a game is much smaller than the win/loss reward.
 In the prior work by M. Huft \cite{huft2023microrts}, the agent we now use as the Base Agent was trained with an attack bonus, which is a reward for attacking the opponent’s units.
 The attack bonus was removed for our training and we adjusted the per-step delta score in the early stages of training to be approximately as large as the per-step attack bonus used in earlier training runs.
@@ -625,10 +625,11 @@ The attack bonus was removed for our training and we adjusted the per-step delta
 \label{sec:experimente}
 We use the Base Agent from the prior work of M. Huft \cite{huft2023microrts}, which was trained by using a combination of BC and PPO, as the initial agent in this thesis unless otherwise specified.
 The map used is \texttt{basesWorkers16x16A}, a symmetrical map also used in related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
-The Base Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for approximately (???)130000000 steps, (???)1600 updates over 100 hours.
+We evaluate a version of the Main Agent, which was not trained for the full amount of total steps.
+Our Main Agent is trained in LT with (???)4 Main Exploiters, (???)1 League Exploiter, with (???)25 environments each, for approximately (???)130000000 total steps, (???)1600 updates over 100 hours.
 The Main Agent played around (???)4500 games against the bots CoacAI and Mayari.
-The win rates against both bots over the global training steps were monitored during training and shown in Figure~\ref{fig:bot_Winrate_with_draw_0_5}.
-The bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
+During the training, win rates against both bots over the global training steps were monitored and shown in Figure~\ref{fig:bot_Winrate_with_draw_0_5}.
+In the training, the bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
 The number of bot environments throughout training is shown in Figure~\ref{fig:num_bot_envs}.
 This results a total of (???)160 parallel environments for LT when all bot environments are active.
 It requires a lot of computational resources, especially since the observations are not purely boolean and therefore required more memory.
@@ -656,7 +657,7 @@ However, it is important to keep the number of environments per agent above a ce
 Notable hyperparameters for the Main Agent include a higher learning rate of $5e\text{-}5$ than the Base Agent, namely $2.5e\text{-}5$, as well as higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters.
 An annealed entropy coefficient is used, starting at 0.025 and ending at 0.0075 for the Main Agent and 0.02 for exploiters.
 The annealed entropy coefficient for exploiters is often reset in the exploiter resets, as explained in \ref{par:annealed_entropy_coefficient}.
-After sufficient steps, the entropy coefficient for exploiters remaies high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
+After sufficient steps, the entropy coefficient for exploiters remains high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
 % (TODO): The Main Agent’s entropy coefficient starts lower to keep the Agent closer to the already strong Base Agent, but is annealed to further improve the Main Agent’s performance in the later stages of training.
 The entropy coefficient is very high in comparison to that of the Base Agent, which uses a constant coefficient of 0.005.
 This was mostly done to overcome the strong preferences of the Base Agent, which can make it more difficult for the agent to change its strategy and explore.
@@ -737,15 +738,15 @@ The results show that LT was able to discover policies that generalize well whil
 
 \paragraph{PPO Finetuning.}
 After LT, additional PPO finetuning further improved the Main Agent’s performance, especially when training against WorkerRushAI.
-WorkerRushAI presumably exploited a weakness of the Main Agent that was not found during LT.
-That is also the reason for the win rate against the oher opponents improving after finetuning, since the agent learned to defend against that exploit.
-These improvements also show that the finetuning did not overfit to the training opponents, but also generalize to other opponents.
+WorkerRushAI probably exploited a weakness of the Main Agent that was not found during LT.
+That is presumably the reason for the win rate against the other opponents improving after finetuning, since the agent learned to defend against this exploit.
+These improvements also show that the finetuning did not overfit to the training opponents, and instead generalize to other opponents.
 
 
 \paragraph{Player 1 Priority.}
 Alternating the learning agents between playing as player 1 and player 2 does not prevent the prioritization of player 1.
-However, it can be shown empirically that the prioritization of player 1 has no major impact on the results by evaluating an agent against itself.
-Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
+However, it can be shown empirically that the prioritization of player 1 may have no major impact on the results by evaluating an agent against itself.
+Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws and 34\% wins for player 2 over 200 evaluation games, which suggests that player 1 did not have a substantial advantage.
 At the same time, alternating the player side prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 \paragraph{Base Agent Diversity.}
@@ -760,9 +761,9 @@ However, the Base Agent itself is not diverse in the sense defined above in \ref
 \paragraph{Exploiter Diversity as the Main Limitation.}
 The exploiters are therefore less likely to cover those weaknesses that are exploitable from strategies different from their initial agents' policies.
 As shown in the evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus}, the trained agent is already strong against bots that use heavy units.
-We can also see that the exploiters used only very few other units.
+We can also see that the exploiters only used very few other units.
 The agents are mostly trained against other agents that are initialized from the same Base Agent.
-The Base Agents limited diversity is why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
+We presume the limited diversity of the Base Agents to be the reason why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
 This suggests, a main limitation of the training approach is that, because of the limited diversity of the Base Agent (\ref{par:limited_base_agent_diversity}), the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
 Some weaknesses of the Main Agent that can be exploited by strategies for different unit types are therefore very difficult to represent with historical Main Exploiters.
 Such strategies are difficult to discover through LT alone, because they are far from the Base Agent's default heavy-rush behavior and often require first unlearning fundamental parts of the initial strategy before a substantially different strategy can be learned.
@@ -847,7 +848,7 @@ That is why the number of bot environments is dynamic over the course of trainin
 \subsection{Future Work.}
 Future work could focus on multiple different maps and on fog of war.
 Another possibility is to improve the diversity of the exploiters, which is a crucial factor for the performance of the Main Agent.
-This can be done by increasing diversity in eather the initial agents, the Base Agents, or in the training itself.
+This can be done by increasing diversity in either the initial agents, the Base Agents, or in the training itself.
 
 
 \paragraph{Map Diversity.}
@@ -862,8 +863,8 @@ Such a map generation approach could also be beneficial in LT.
 
 \paragraph{Initial Agents.}
 The current initial agents for the exploiters are trained mainly with BC with different experts, because of time constraints.
-Improving these initial agents to a simmilar level as the Base Agent, while focusing on generalization and diversity, could further improve the effectiveness of the LT method.
-Alternatively, a new strong Base Agent could be trained from scratch with a focus on diverse strategies, without using for example the PPO phase as implemented in this thesis, wich resulted in a strong agent, that mostly favors one strategy for one unit type.
+Improving these initial agents to a similar level as the Base Agent, while focusing on generalization and diversity, could further improve the effectiveness of the LT method.
+Alternatively, a new strong Base Agent could be trained from scratch with a focus on diverse strategies, without using for example the PPO phase as implemented in this thesis, which resulted in a strong agent, that mostly favors one strategy for one unit type.
 
 
 \paragraph{Unit Bonus Distribution.}
