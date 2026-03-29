@@ -719,24 +719,30 @@ In contrast, LT changes the training opponent distribution such that robust perf
 This makes it more likely that training explores and retains a broader range of policies with good generalization.
 The results show that LT was able to discover policies that generalize well while also outperforming the Base Agent even against its original training opponents despite being trained against a larger set of opponents.
 
+
+\paragraph{Focus on Unit Types.}
+The exploiters will less likely cover those weaknesses that are exploitable from strategies different from their initial agents' policies.
+As shown in the evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus}, the trained agent is already strong against bots, that use heavy units.
+We can also see, that the exploiters used only very few other units.
+Excessively increasing exploration alone is not sufficient to solve this problem and can instead lead to worse performance and longer training times.
+In between the switching over to a unit type, the agent performs very poorly, which suggests that there are distant clusters of local maxima in the reward landscape corresponding to different unit types.
+
+
 % Vergleiche Ergebnisse mit Agent der schlecht gegen WorkerRushAI ist (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/ffsdxfdw?nw=nwuserglaspaul244)
 \paragraph{Exploration: Effects of New Initial Agents.}
 It was more difficult than expected to generate diverse exploiters because of the long transitions without reward between strategies for different unit types, which is why the introduction of new initial agents was particularly important.
 The new initial agents contributed to generalization across diverse opponents.
 Table~\ref{tab:main_agent_evaluation_no_worker_focus} shows that performance improved against a wider range of opponents compared to the previous evaluation that did not use the new initial agents.
-The most notable difference is that, during the training without the new initial agents, no opponents similar to WorkerRushAI developed, resulting in a very low win rate against WorkerRushAI, while the new Main Agent as well as the Base Agent have no difficulty defeating WorkerRushAI.
-This lack of opponent diversity is also seen in the win rates against Droplet, which also has a different strategy than the Base Agent.
+The biggest improvements are visible against the bots in the "Other Bots" section, which use different strategies than the Base Agent.
+One Example is the win rate against Droplet, which improves from 45\% to (???)62\%, while the win rate against GuidedRojoA3N improves from 64\% to (???)87\%.
 % (TODO): This example is an extreme case showing what can happen when opponent diversity is insufficient.
 % (TODO): There also were many other training sessions, after which the Main Agent had less problems defeating any of the built-in bots, than the Base Agent.
 % (TODO): However we did not find any exploiters with strategies focused on different unit types than the Base Agent in those training sessions.
-
-
-
 Despite the improved diversity and general performance of the Main Agent, there are still some limitations of the training approach:
 \begin{itemize}
     \item \textbf{Limitations: Exploiter Diversity.}
     The two hypothesis regarding the importance of diverse exploiters and for their limited diversity is discussed in the paragraphs below.
-    \item \textbf{Limitations: Computational Resources.}
+    The following paragraphs explain why the new initial agents improved LT and why increased exploration alone was not sufficient to obtain a diverse set of exploiters, and why exploiter diversity remains a limitation even after introducing the new initial agents.
     LT also requires a lot of computational resources.
     Our setup has a maximum of 160 parallel environments, while pure PPO only uses 24 parallel environments \cite{huft2023microrts}.
     This causes a much higher memory usage and long training times.
@@ -749,62 +755,36 @@ Despite the improved diversity and general performance of the Main Agent, there 
 
 % TODO: überarbeiten:
 \paragraph{Limited Base Agent Diversity.}
+\label{par:limited_base_agent_diversity}
 The Base Agent strongly favors a single strategy focused on heavy units, as described in \ref{par:results_and_limitations}.
-In LT without new initial agents, the Main Agent is therefore trained mainly against variants of the Base Agent.
-Moreover, much of the Base Agent's strategic variation is reactive (e. g. the Base Agent uses ranged units when the opponent rushes with workers), so its play against similar variants shows even less variation.
+Moreover, much of the Base Agent's strategic variation is reactive (e. g. the Base Agent uses ranged units when the opponent rushes with workers), so its play against similar variants shows even less strategic variation.
 In most games, the Base Agent's default strategy is a heavy rush, and its response to an opponent attacking with heavy units is usually also a heavy rush.
 The Base Agent is able to perform well against a broad set of opponents and can use different unit types if needed.
-However, the Base Agent itself is not diverse in the sense defined above in \ref{sec:diverse_agent}, which makes it more difficult for the exploiters to discover a broad set of weaknesses to exploit as described in \ref{tex:exploiter_diversity}.
-
+However, the Base Agent itself is not diverse in the sense defined above in \ref{sec:diverse_agent}.
 
 % Das Problem, was ich habe ist, dass der Base Agent, mit dem ich die Main Agenten, Main Exploiter und League Exploiter initialisiere, nur sehr wenige Strategien kann. Dazu benutzt der Agent teile der Strategien nur, wenn der Gegner etwas bestimmtes macht. Z.B.: benutzt er ranged Units, wenn der Gegner mit Worker units rushed. Allerdings spielt in League Training jeweils 2 abweichende aber ähnliche versionen von dem Base Agent gegeneinander und benutzen immer die selbe strategie, weil default benutzt der Base Agent die Strategie Heavy Rush und die reaktion auf Heavy Rush  ist auch Heavy Rush.
 % TODO: (in discussion): Ich möchte nachher mit der Definition von Diverse Agents ausdrücken, dass es sehr lange dauert und schwer ist in League Training so einen Agenten beizubringen andere Strategien strategien zu verwenden. 
 
 
 % TODO: ist hier jetzt das meiste über die Diversität?
-\paragraph{Exploiter Diversity.}
-\label{tex:exploiter_diversity}
-The following paragraphs discuss two questions.
-\begin{itemize}
-    \item They explain why the new initial agents improved LT and why increased exploration alone was not sufficient to obtain a diverse set of exploiters.
-    \item They explain why exploiter diversity remains a limitation even after introducing the new initial agents.
-\end{itemize}
-
-
 \paragraph{Reason for New Initial Agents.}
 The results show that the exploiters are able to exploit the Main Agent while staying within their respective unit type focus.
 This suggests that exploiters are capable of identifying and exploiting weaknesses within the set of strategies for the respective unit type favored by the Base Agent.
-At the same time, a main limitation of the training approach is that, because of the limited diversity of the Base Agent, the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
-This is important for LT, since the agents are mostly trained against other agents that are initialized from the same Base Agent.
+At the same time, a main limitation of the training approach is that, because of the limited diversity of the Base Agent (\ref{par:limited_base_agent_diversity}), the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
+The Diversity of the Base Agent is important for LT, since the agents are mostly trained against other agents that are initialized from the same Base Agent.
 As a result, the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
+
 
 \paragraph{Limits of Exploration.}
 Some weaknesses of the Main Agent that can be exploited by strategies for different unit types are therefore very difficult to represent with historical Main Exploiters.
 Such strategies are difficult to discover through LT alone, because they are far from the Base Agent's default heavy-rush behavior and often require first unlearning fundamental parts of the initial strategy before a substantially different strategy can be learned.
-These transitions often contain long phases with little or no reward, making such strategies difficult and time-consuming to discover.
+These transitions often contain long phases with little or no reward, making such strategies difficult.
 
-
-\paragraph{Focus on Unit Types.}
-The exploiters will most likely cover only those weaknesses that are exploitable from strategies similar to their initial agents' policies.
-As shown in the evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus}, the trained agent is already strong against bots, that use heavy units.
-We can also see, that the exploiters used only very few other units.
-Excessively increasing exploration alone is not sufficient to solve this problem and can instead lead to worse performance and longer training times.
-In between the switching over to a unit type, the agent performs very poorly, which suggests that there are distant clusters of local maxima in the reward landscape corresponding to different unit types.
-To find strategies for different unit types effectively, the new initial agents focus on different unit types.
-
-\paragraph{Exploration-Based Modifications.}
-This interpretation is consistent with the other exploration-based modifications.
-The production exploration bonus increased the variety of produced unit types, but it was not sufficient to make the agent explore strategies centered on different unit types.
-The unit bonus likewise increased the number of off-focus unit types, but even with weaker agents such as the agent after the BC phase and over 20 million steps, the agent did not develop strategies centered on different unit types.
-Instead it often produced the bonus unit type only at the end of a round, when the result was already decided.
-In a complex environment such as MicroRTS, there are likely many more weaknesses that can be exploited by only slightly different strategies than there are historical exploiters that can be created during training.
-For example, if a weakness of the Main Agent can best be exploited by a worker-focused strategy similar to WorkerRushAI, the learning agent must coordinate many workers over an entire episode and receives a positive reward only if the full strategy succeeds within the same game.
 
 \paragraph{Importance of Initial Agent Diversity.}
 We hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters and possibly more important than the initial agents' win rate.
 This is why the new initial agents, with a focus on different unit types, were implemented, allowing the exploiters to find exploits related to different unit types without first having to unlearn the strategy for the unit type favored by the Base Agent.
 This also suggests that pure LT is likely to work efficiently only if the Base Agent is already diverse in the sense defined above.
-% TODO: (in discussion): Meine Überlegung ist, dass das reine League Training nur wirklich gut und effizient funktioniert, wenn ein "Diverse Agent" als Basis Agent vorliegt.
 
 
 % TODO: überarbeiten:
@@ -817,6 +797,13 @@ With this, we have initial agents for each unit type for the exploiters, as well
 On top of that, we have examples, that show the exploiters' capability to explore strategies with mixed unit types, which seems like the strategy type most likely to be similarly hard-to-reach.
 This suggests that the historical exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Main Agent, even against many other agents that were not included in the training or evaluation.
 However, the result against WorkerRushAI suggests that more diverse exploiters could further improve the Main Agent's performance. 
+
+
+\paragraph{Why different strategies are harder to find.}
+In a complex environment such as MicroRTS, there are likely many more weaknesses that can be exploited by only slightly different strategies than there are historical exploiters that can be created during training.
+For example, if a weakness of the Main Agent can best be exploited by a worker-focused strategy similar to WorkerRushAI, the learning agent must start only building workers, stop building barracks and stop building heavy units, then rush the opponent with the workers efficiently, while keeping the base defended.
+The exploiter onbly receives a positive reward if the full strategy succeeds within the same game.
+In comparison, if the exploiter can find a weakness that does not require almost entirely stopping its current strategy, for example because it uses the same units, it can receive a positive reward for exploiting this weakness and gradually change its strategy even if it does not fully succeed in exploiting the Main Agent, which makes it easier to find such weaknesses.
 
 
 \paragraph{Exploiter Diversity in AlphaStar.} \cite{vinyals2019alphastar}
@@ -837,6 +824,12 @@ The PPO phase further reinforces the strategy bias of the Base Agent, wich can b
 % das ist wahrscheinlich auch ein Grund, weshalb in AlphaStar der initiale Agent mit imitation learning trainiert wurde, da viele verschiedene Strategien durch den menschlichen Spieler abgedeckt werden, was die Vielfalt der Exploiters erhöht und damit die Leistung des Main Agent verbessert.
 % Wärenddessen, muss man in BC extra strategien weglassen, um die Evaluation zu verbessern, was die Leistung des Main Agent einschränkt, da er nicht von diesen Strategien lernen kann und viele weitere Agenten sind zu langsam, um sie mit BC zu trainieren, was die Vielfalt der Exploiters weiter einschränkt.
 % Alphastar nutzte human imitation learning --> Base Agent ist diverser --> diversere Exploiters --> bessere Main Agent Performance, evaluation gegen Menschen besser als gegen Bots, da Menschen diversesität gegen bots nur funktioniert, indem man nicht gegen ihn trainiert.
+
+\paragraph{Exploration-Based Modifications.}
+We also tried other modifications to increase exploration.
+The production exploration bonus increased the variety of produced unit types, but it was not sufficient to make the agent explore strategies centered on different unit types.
+The unit bonus likewise increased the number of off-focus unit types, but even with weaker agents such as the agent after the BC phase and over 20 million steps, the agent did not develop strategies centered on different unit types.
+Instead it often produced the bonus unit type only at the end of a round, when the result was already decided.
 
 
 \paragraph{Bot Environments.} 

@@ -5,14 +5,14 @@ ExperimentConfig:
   evaluate: true
   model_path: 
   evaluation_model_paths: [
-                          "saved_models/18_03_2026__finished_PPO_Basis_thesis__league_training_6__BC_focus_workerbots_update_1449.pt",
+                          "saved_models/27_03_2026__finished_PPO_Basis_thesis__league_training_9__finetuning_update_1128.pt",
                           # "league_models/19_03_26__league_sp_conf_old_ppo_args_14_1_no_Bots_2__25envs_7_test_8_SP/MainExploiter/MainExploiter_0_update_300.pt"
                           ]
   names: [
-          "18_03_2026__finished_PPO_Basis_thesis__league_training_6__BC_focus_workerbots_update_1449",
+          "27_03_2026__finished_PPO_Basis_thesis__league_training_9__finetuning_update_1128",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: 18_03_2026__finished_PPO_Basis_thesis__league_training_6__BC_focus_workerbots_update_1449
+  exp_name: 27_03_2026__finished_PPO_Basis_thesis__league_training_9__finetuning_update_1128
   wandb_project_name: new_Evaluation
   wandb_group_name: test_evaluation
   # wandb_group_name: temp
