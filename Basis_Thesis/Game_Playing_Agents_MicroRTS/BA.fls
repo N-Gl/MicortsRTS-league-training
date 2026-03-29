@@ -335,6 +335,7 @@ INPUT ./images/num_parallel_bot_envs.png
 INPUT ./images/num_parallel_bot_envs.png
 INPUT ./images/num_parallel_bot_envs.png
 INPUT ./images/num_parallel_bot_envs.png
+INPUT images/23_03_2026__PPO_finetuning_update_730.csv
 INPUT ./images/numberWorkersAfterGame.png
 INPUT ./images/numberWorkersAfterGame.png
 INPUT ./images/numberWorkersAfterGame.png
@@ -370,10 +371,10 @@ INPUT images/main_Agent_evaluation_no_worker_focus.csv
 INPUT images/main_Agent_evaluation_no_worker_focus.csv
 INPUT images/main_Agent_evaluation_no_worker_focus.csv
 INPUT images/main_Agent_evaluation_no_worker_focus.csv
-INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
-INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
-INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
-INPUT images/23_03_2026__PPO_finetuning_update_1200.csv
+INPUT images/23_03_2026__PPO_finetuning_update_730.csv
+INPUT images/23_03_2026__PPO_finetuning_update_730.csv
+INPUT images/23_03_2026__PPO_finetuning_update_730.csv
+INPUT images/23_03_2026__PPO_finetuning_update_730.csv
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr6.tfm

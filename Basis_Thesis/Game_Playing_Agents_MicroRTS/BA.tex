@@ -32,6 +32,29 @@
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
+% CSV helpers for referencing evaluation results in the text.
+\newcommand{\MainAgentEvalCsv}{\detokenize{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}}
+\newcommand{\PPOFinetuningCsv}{\detokenize{images/23_03_2026__PPO_finetuning_update_730.csv}}
+\newcommand{\CsvTextCell}[1]{\texttt{\expandafter\detokenize\expandafter{#1}}}
+\newcommand{\CsvValueByOpponent}[3]{%
+  \def\csvresult{}%
+  \csvreader[
+    filter strcmp={\csvcoli}{#2}
+  ]{#1}{}{%
+    \ifcase#3\relax
+    \or \xdef\csvresult{\csvcoli}%
+    \or \xdef\csvresult{\csvcolii}%
+    \or \xdef\csvresult{\csvcoliii}%
+    \or \xdef\csvresult{\csvcoliv}%
+    \or \xdef\csvresult{\csvcolv}%
+    \or \xdef\csvresult{\csvcolvi}%
+    \or \xdef\csvresult{\csvcolvii}%
+    \or \xdef\csvresult{\csvcolviii}%
+    \fi
+  }%
+  \csvresult%
+}
+
 
 \begin{document}
 
@@ -565,16 +588,12 @@ This was achieved by using a mask that gives barracks and bases (units whose onl
 This is a clipped unit bonus that can be added to the reward, encouraging the agent to use different unit types (e. g. by giving the Base Agent a bonus every time it produces a ranged unit).
 The number of other unit types increased when using the unit bonus.
 
-% TODO: nach Future Work verschieben?
+
 \paragraph{Unit Bonus Distribution.}
 \label{par:unit_bonus_distribution}
 Unit bonus distribution is an improved method for increasing the diversity of exploiters based on the unit bonus.
 The idea is to continue training the agent with a new feature that receives the unit bonus sampled from a distribution that is updated every game.
-The trained agent can be used as an exploiter with a static bonus or a distribution-based bonus, resulting in an exploiter with definable tendencies toward different unit types.
-This also allows the retraining of the BC and PPO phases with the unit bonus, because only one agent needs to be trained instead of multiple agents with different fixed unit bonuses, which would be very time-consuming.
-Retraining the agent from scratch with the unit bonus distribution showed promising results.
-However, the training was not continued long enough to evaluate the effect of the unit bonus distribution on the diversity of the exploiters, since training with the unit bonus distribution is very time-consuming because the BC phase did not work with the unit bonus distribution method and therefore had to be skipped.
-Continuing the training with the Base Agent showed the same problem as training with the unit bonus.
+
 
 \paragraph{Annealed Entropy Coefficient.}
 \label{par:annealed_entropy_coefficient}
@@ -690,15 +709,15 @@ The biggest differences are the win rates against Droplet, which improve with th
 % ppo_finetuning (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/pnrtw3ui?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/league_training/groups/PPO_finetuning/runs/cr1dcfyo?nw=nwuserglaspaul244)
 % TODO: better run? ((Aggregate evaluation over 1400 games | win: 1205 (86.07%), draw: 163 (11.64%), loss: 32 (2.29%)??) https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/801rfw7g?nw=nwuserglaspaul244)
 \paragraph{PPO Finetuning.}
-After the LT training, the Main Agent was further trained with PPO for approximately (???)15 million steps.
+After the LT training, the Main Agent was further trained with PPO for approximately (???)9 million steps.
 The 25 environments were evenly split between CoacAI, Mayari and WorkerRushAI.
 The learning rate was set to 1.5e-6, the entropy coefficient was set to 0.005 and no exploiters were used during this finetuning phase.
 The results are presented in Table~\ref{tab:ppo_finetuning_evaluation}.
-After finetuning, the win rate against workerRushAI is now 100\% and most other win rates also improved.
+After finetuning, the win rate against workerRushAI is now \CsvValueByOpponent{\PPOFinetuningCsv}{workerRushAI}{3}\% and most other win rates also improved.
 The averaged win rate against all evaluation opponents excluding the Base Agent is 77\% for the Base Agent.
-After LT and PPO finetuning, this averaged win rate increases to 84\%, which is a substantial improvement of 7\%.
-If we also exclude the bots workerRushAI and passiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 72.6\% to 82.5\%, which is an improvement of almost 10\%.
-
+After LT and PPO finetuning, this averaged win rate increases to (???)86\%, which is a substantial improvement of (???)9\%.
+If we also exclude the bots workerRushAI and passiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 73\% to (???)84\%, which is an improvement of almost 11\%.
+The total loss rate against all opponents excluding the Base Agent is decreased from 8\% to (???)2\% again not only showing an improvement at attacking, but also at defending the base.
 
 
 
@@ -718,6 +737,9 @@ As a result, within a single run, the PPO may only traverse a limited subset of 
 In contrast, LT changes the training opponent distribution such that robust performance against diverse opponents becomes part of the optimization target itself.
 This makes it more likely that training explores and retains a broader range of policies with good generalization.
 The results show that LT was able to discover policies that generalize well while also outperforming the Base Agent even against its original training opponents despite being trained against a larger set of opponents.
+
+
+\paragraph{PPO Finetuning.}
 
 
 \paragraph{Focus on Unit Types.}
@@ -766,7 +788,6 @@ However, the Base Agent itself is not diverse in the sense defined above in \ref
 % TODO: (in discussion): Ich möchte nachher mit der Definition von Diverse Agents ausdrücken, dass es sehr lange dauert und schwer ist in League Training so einen Agenten beizubringen andere Strategien strategien zu verwenden. 
 
 
-% TODO: ist hier jetzt das meiste über die Diversität?
 \paragraph{Reason for New Initial Agents.}
 The results show that the exploiters are able to exploit the Main Agent while staying within their respective unit type focus.
 This suggests that exploiters are capable of identifying and exploiting weaknesses within the set of strategies for the respective unit type favored by the Base Agent.
@@ -840,6 +861,13 @@ The bots provide additional opponents that are not based on the Main Agent’s c
 After this initial LT phase, the bot environments are less important.
 That is why the number of bot environments is dynamic over the course of training, and often relatively low as shown in Figure~\ref{fig:num_bot_envs}.
 
+\paragraph{Unit Bonus Distribution.}
+The trained agent can be used as an exploiter with a static bonus or a distribution-based bonus, resulting in an exploiter with definable tendencies toward different unit types.
+This also allows the retraining of the BC and PPO phases with the unit bonus, because only one agent needs to be trained instead of multiple agents with different fixed unit bonuses, which would be very time-consuming.
+Retraining the agent from scratch with the unit bonus distribution showed promising results.
+However, the training was not continued long enough to evaluate the effect of the unit bonus distribution on the diversity of the exploiters, since training with the unit bonus distribution is very time-consuming because the BC phase did not work with the unit bonus distribution method and therefore had to be skipped.
+Starting the LT with the Base Agent and the unit bonus distribution instead showed the same problem as training with the unit bonus.
+
 
 \subsection{Future Work.}
 Future work could focus on multiple different maps and on fog of war.
@@ -862,25 +890,30 @@ The current initial agents for the exploiters are trained mainly with BC with di
 Improving these initial agents to a simmilar level as the Base Agent, while focusing on generalization and diversity, could further improve the effectiveness of the LT method.
 Alternatively, a new strong Base Agent could be trained from scratch with a focus on diverse strategies, without using for example the PPO phase as implemented in this thesis, wich resulted in a strong agent, that mostly favors one strategy for one unit type.
 
+
+\paragraph{Unit Bonus Distribution.}
+A promising direction for future work is a full integration and evaluation of the unit bonus distribution method.
+This method is potentially a more efficient way to increase the diversity of the exploiters, than the new initial agents.
+
+
 \section{Conclusion}
 \label{sec:conclusion}
 In this thesis, we implemented a modified LT method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters, to improve the Main Agent's win, draw and loss rate against various opponents.
 By rotating the observations, actions and masks, as well as switching the sides of the learning agents to circumvent priority, we were able to implement SP with a Base Agent only trained as player 1, which is a requirement for the LT method.
-We also expected to mitigate the need for many different bot agents to achieve diversity, by using exploiters to create a diverse set of opponents for the Main Agent.
+We also expected to mitigate the need for many different bot agents to achieve a generalized performance, by using exploiters to create a diverse set of opponents for the Main Agent.
 \break\break
 As shown in the results, LT improves the Main Agent's performance against a wide range of opponents, including most of the MicroRTS bots and the Base Agent.
 Furthermore, the LT method allows the Main Agent to generalize to other bots that were not used in training, while improving the win rates against the bots used in the original training for the Base Agent.
 This suggests the viability of the LT and PPO combination for improving the performance of an Base Agent trained on BC and PPO in MicroRTS.
-However, the diversity of the exploiters initial agents seems to be a crucial factor, that we were able to mitigate by introducing new initial agents with different unit type focuses.
+Finetuning the Main Agent with PPO after LT further improved the Main Agent's performance, espacially when training against WorkerRushAI, which exploited significant weakness of the Base Agent.
+In LT he Main Agent improved not only its win rate, but also its loss rate, which suggests that the Main Agent learned to defend the base more effectively while attacking, which also can be seen, when viewing a replay of the evaluation.
+However, the diversity of the exploiters initial agents seem to be a crucial factor, that we were able to mitigate by introducing new initial agents with different unit type focuses.
 This solution has its own limitations, such as not guaranteeing that all relevant clusters in the reward landscape are covered by the initial agents and complicating the training process by requiring the training of multiple initial agents.
 Further more this means that for this approach, diverse bot agents for BC and PPO training are still just as important or even more important for the performance of the Main Agent.
 While exploiters can provide some diversity and mitigate the need for many variations of bot agents with different but similar strategies, they cannot fully replace the need for diverse bot agents in this training approach.
 This is because more diverse strategies are likely to be more difficult to find for the exploiters and therefore may not be represented.
 However, we presume that replacing our current BC and PPO approach with an approach focusing on learning diverse strategies from the start, could further increase the Main Agent's performance, especially its generalization and robustness to a wider range of opponents.
-It would also reduce the need for many different bot agents for training.
-The map diversity method mentioned in the future work section could be a promising approach to this issue.
-Human imitation learning, as used in AlphaStar, seems to be a difficult approach for MicroRTS, because of the data availability and quality.
-Another possibility would be to start with a new agent, however the training would be very time-consuming.
+This would also reduce the need for many different bot agents for training.
 \break\break
 We also adjusted the PFSP priorisierungs funktionen, to better fit the MicroRTS environment, because our training is very draw heavy.
 Lastly, we added environments for the Main Agent against two bots, which stabelizes the training espacially in the early stages, in which the exploiters have not yet created many opponents for the Main Agent to train against.
@@ -1188,31 +1221,31 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \csvreader[
     late after line=\\,
     filter test=\ifnumless{\thecsvinputline}{6}
-]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+]{\PPOFinetuningCsv}{}{
+    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \multicolumn{8}{l}{\textit{Other built-in bots}} \\
 \csvreader[
     late after line=\\,
     filter ifthen=\value{csvinputline}>5 \and \value{csvinputline}<10
-]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+]{\PPOFinetuningCsv}{}{
+    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \multicolumn{8}{l}{\textit{Other bots}} \\
 \csvreader[
     late after line=\\,
     filter ifthen=\value{csvinputline}>9 \and \value{csvinputline}<17
-]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+]{\PPOFinetuningCsv}{}{
+    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \csvreader[
     late after line=\\,
     filter test=\ifnumequal{\thecsvinputline}{17}
-]{images/23_03_2026__PPO_finetuning_update_1200.csv}{}{
-    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+]{\PPOFinetuningCsv}{}{
+    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \bottomrule
 \end{tabular*}
