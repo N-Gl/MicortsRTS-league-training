@@ -439,11 +439,6 @@ As a result, the agent no longer has to plan as far ahead in order to exploit th
 In the re-implementation of MicroRTS-Py, there is a mode that resolves conflicts in a randomized manner.
 However, this does not help in this case, because even before the conflict arises, invalid action masking masks out the action of player 2 since it is invalid.
 To solve this problem, the learning agents in the parallel games are alternated between playing as player 1 and player 2.
-% TODO: in Discussion verschieben:
-This does not prevent the prioritization of player 1. 
-However, it can be shown empirically that the prioritization of player 1 has no major impact on the results by evaluating an agent against itself.
-Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
-This prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
 
 
 \subsection{Prioritized Fictitious Self-Play (PFSP)}
@@ -747,19 +742,28 @@ That is also the reason for the win rate against the oher opponents improving af
 These improvements also show that the finetuning did not overfit to the training opponents, but also generalize to other opponents.
 
 
-\paragraph{Exploiter Diversity as the Main Limitation.}
+\paragraph{Player 1 Priority.}
+Alternating the learning agents between playing as player 1 and player 2 does not prevent the prioritization of player 1.
+However, it can be shown empirically that the prioritization of player 1 has no major impact on the results by evaluating an agent against itself.
+Many evaluations were conducted in which the agent played against itself, for example one of the evaluations resulted in a win rate of 38\% for player 1, 28\% draws and 34\% wins for player 2 over 200 evaluation games, which shows that player 1 did not have a substantial advantage.
+At the same time, alternating the player side prevents the exploitation of the prioritization by the learning agent, since it can now also be player 2 and therefore a strategy that is only effective for player 1 is no longer beneficial.
+
+\paragraph{Base Agent Diversity.}
 \label{par:limited_base_agent_diversity}
-The exploiters are less likely to cover those weaknesses that are exploitable from strategies different from their initial agents' policies.
-As shown in the evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus}, the trained agent is already strong against bots that use heavy units
-We can also see that the exploiters used only very few other units.
 The Base Agent strongly favors a single strategy focused on heavy units, as described in \ref{par:results_and_limitations}.
 Moreover, much of the Base Agent's strategic variation is reactive (e. g. the Base Agent uses ranged units when the opponent rushes with workers), so its play against similar variants shows even less strategic variation.
 In most games, the Base Agent's default strategy is a heavy rush, and its response to an opponent attacking with heavy units is usually also a heavy rush.
 The Base Agent is able to perform well against a broad set of opponents and can use different unit types if needed.
 However, the Base Agent itself is not diverse in the sense defined above in \ref{sec:diverse_agent}.
+
+
+\paragraph{Exploiter Diversity as the Main Limitation.}
+The exploiters are therefore less likely to cover those weaknesses that are exploitable from strategies different from their initial agents' policies.
+As shown in the evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus}, the trained agent is already strong against bots that use heavy units.
+We can also see that the exploiters used only very few other units.
 The agents are mostly trained against other agents that are initialized from the same Base Agent.
-That is why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
-This means, a main limitation of the training approach is that, because of the limited diversity of the Base Agent (\ref{par:limited_base_agent_diversity}), the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
+The Base Agents limited diversity is why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
+This suggests, a main limitation of the training approach is that, because of the limited diversity of the Base Agent (\ref{par:limited_base_agent_diversity}), the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
 Some weaknesses of the Main Agent that can be exploited by strategies for different unit types are therefore very difficult to represent with historical Main Exploiters.
 Such strategies are difficult to discover through LT alone, because they are far from the Base Agent's default heavy-rush behavior and often require first unlearning fundamental parts of the initial strategy before a substantially different strategy can be learned.
 In between the switching over to a unit type, the agent performs very poorly, which suggests that there are distant clusters of local maxima in the reward landscape corresponding to different unit types.
