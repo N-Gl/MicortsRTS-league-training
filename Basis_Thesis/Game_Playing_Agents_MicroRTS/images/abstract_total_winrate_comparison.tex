@@ -1,0 +1,37 @@
+\documentclass[tikz,border=6pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=13.2cm,
+    height=7.7cm,
+    ymin=0,
+    ymax=100,
+    bar width=22pt,
+    enlarge x limits=0.28,
+    symbolic x coords={Base Agent,Main Agent (LT),Main Agent + Finetuning},
+    xtick={Base Agent,Main Agent (LT),Main Agent + Finetuning},
+    axis x line*=bottom,
+    axis y line*=left,
+    ylabel={Total win rate (\%)},
+    ymajorgrids=true,
+    grid style={draw=gray!20},
+    tick label style={font=\small},
+    label style={font=\small},
+    xticklabel style={align=center, text width=3.6cm},
+    nodes near coords,
+    every node near coord/.append style={font=\bfseries\small, yshift=4pt, text=black},
+    nodes near coords={\pgfmathprintnumber[fixed,precision=1]{\pgfplotspointmeta}\%},
+    title={Total Win Rate Comparison},
+    title style={font=\bfseries\normalsize, yshift=2pt},
+]
+\addplot+[ybar, bar shift=0pt, draw=none, fill={rgb,255:red,142;green,108;blue,136}] coordinates {(Base Agent,76.50)};
+\addplot+[ybar, bar shift=0pt, draw=none, fill={rgb,255:red,62;green,124;blue,177}] coordinates {(Main Agent (LT),79.90)};
+\addplot+[ybar, bar shift=0pt, draw=none, fill={rgb,255:red,76;green,154;blue,106}] coordinates {(Main Agent + Finetuning,86.13)};
+\end{axis}
+\end{tikzpicture}
+\end{document}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  30 MAR 2026 12:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  30 MAR 2026 18:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -478,7 +478,7 @@ Package hyperref Info: Link coloring ON on input line 59.
 \@outlinefile=\write4
 \openout4 = `BA.out'.
 
-<hhu_logo.png, id=108, 346.29375pt x 86.57344pt>
+<hhu_logo.png, id=100, 346.29375pt x 86.57344pt>
 File: hhu_logo.png Graphic file (type png)
 <use hhu_logo.png>
 Package pdftex.def Info: hhu_logo.png  used on input line 64.
@@ -486,7 +486,13 @@ Package pdftex.def Info: hhu_logo.png  used on input line 64.
  [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>] (./BA.toc
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>]
+<images/abstract_total_winrate_comparison.pdf, id=110, 379.37733pt x 239.87617pt>
+File: images/abstract_total_winrate_comparison.pdf Graphic file (type pdf)
+<use images/abstract_total_winrate_comparison.pdf>
+Package pdftex.def Info: images/abstract_total_winrate_comparison.pdf  used on input line 108.
+(pdftex.def)             Requested size: 237.13594pt x 149.93687pt.
+ (./BA.toc
 LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -502,182 +508,206 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.108 \newpage
-               [1
+l.124 
+       [1
 
-]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 142.
+ <./images/abstract_total_winrate_comparison.pdf>]
+<images/initial_pos_basesWorkers16x16A.png, id=207, 235.88126pt x 235.37938pt>
+File: images/initial_pos_basesWorkers16x16A.png Graphic file (type png)
+<use images/initial_pos_basesWorkers16x16A.png>
+Package pdftex.def Info: images/initial_pos_basesWorkers16x16A.png  used on input line 134.
+(pdftex.def)             Requested size: 237.13594pt x 236.63585pt.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 135.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 162.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 164.
+(hyperref)                than one, level fixed on input line 175.
 
-[2] [3]
-<images/Base.png, id=223, 31.61812pt x 31.61812pt>
+[2 <./images/initial_pos_basesWorkers16x16A.png>] [3]
+<images/Base.png, id=278, 31.61812pt x 31.61812pt>
 File: images/Base.png Graphic file (type png)
 <use images/Base.png>
-Package pdftex.def Info: images/Base.png  used on input line 280.
+Package pdftex.def Info: images/Base.png  used on input line 305.
 (pdftex.def)             Requested size: 16.00006pt x 16.00006pt.
-<images/Resource.png, id=224, 28.60687pt x 29.35968pt>
+<images/Resource.png, id=279, 28.60687pt x 29.35968pt>
 File: images/Resource.png Graphic file (type png)
 <use images/Resource.png>
-Package pdftex.def Info: images/Resource.png  used on input line 281.
+Package pdftex.def Info: images/Resource.png  used on input line 306.
 (pdftex.def)             Requested size: 15.58977pt x 16.00006pt.
-<images/Worker.png, id=225, 27.85406pt x 29.35968pt>
+<images/Worker.png, id=280, 27.85406pt x 29.35968pt>
 File: images/Worker.png Graphic file (type png)
 <use images/Worker.png>
-Package pdftex.def Info: images/Worker.png  used on input line 282.
+Package pdftex.def Info: images/Worker.png  used on input line 307.
 (pdftex.def)             Requested size: 15.1795pt x 16.00006pt.
-<images/Barracks.png, id=226, 31.61812pt x 33.12375pt>
+<images/Barracks.png, id=281, 31.61812pt x 33.12375pt>
 File: images/Barracks.png Graphic file (type png)
 <use images/Barracks.png>
-Package pdftex.def Info: images/Barracks.png  used on input line 283.
+Package pdftex.def Info: images/Barracks.png  used on input line 308.
 (pdftex.def)             Requested size: 15.273pt x 16.00006pt.
-<images/Light.png, id=227, 26.34843pt x 27.10126pt>
+<images/Light.png, id=282, 26.34843pt x 27.10126pt>
 File: images/Light.png Graphic file (type png)
 <use images/Light.png>
-Package pdftex.def Info: images/Light.png  used on input line 284.
+Package pdftex.def Info: images/Light.png  used on input line 309.
 (pdftex.def)             Requested size: 15.55629pt x 16.00006pt.
-<images/Heavy.png, id=228, 34.62938pt x 34.62938pt>
+ [4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/Barracks.png>]
+<images/Heavy.png, id=300, 34.62938pt x 34.62938pt>
 File: images/Heavy.png Graphic file (type png)
 <use images/Heavy.png>
-Package pdftex.def Info: images/Heavy.png  used on input line 285.
+Package pdftex.def Info: images/Heavy.png  used on input line 310.
 (pdftex.def)             Requested size: 15.99997pt x 16.00006pt.
-<images/Ranged.png, id=229, 30.1125pt x 30.86531pt>
+<images/Ranged.png, id=301, 30.1125pt x 30.86531pt>
 File: images/Ranged.png Graphic file (type png)
 <use images/Ranged.png>
-Package pdftex.def Info: images/Ranged.png  used on input line 286.
+Package pdftex.def Info: images/Ranged.png  used on input line 311.
 (pdftex.def)             Requested size: 15.6108pt x 16.00006pt.
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 295.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-) [4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/Barracks.png> <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png>]
-<images/16x16.png, id=252, 550.055pt x 548.0475pt>
+<images/16x16.png, id=304, 550.055pt x 548.0475pt>
 File: images/16x16.png Graphic file (type png)
 <use images/16x16.png>
-Package pdftex.def Info: images/16x16.png  used on input line 300.
+Package pdftex.def Info: images/16x16.png  used on input line 325.
 (pdftex.def)             Requested size: 237.13594pt x 236.2663pt.
- [5 <./images/16x16.png>] [6]
-<images/action_konflikt.png, id=302, 1042.6152pt x 1034.9064pt>
+ [5 <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png> <./images/16x16.png>] [6]
+<images/action_konflikt.png, id=349, 1042.6152pt x 1034.9064pt>
 File: images/action_konflikt.png Graphic file (type png)
 <use images/action_konflikt.png>
-Package pdftex.def Info: images/action_konflikt.png  used on input line 432.
+Package pdftex.def Info: images/action_konflikt.png  used on input line 442.
 (pdftex.def)             Requested size: 237.13594pt x 235.37051pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [7 <./images/action_konflikt.png>]
-<images/focused_strong_boosted_with_draws.pdf, id=318, 344.16379pt x 211.48009pt>
+<images/focused_strong_boosted_with_draws.pdf, id=366, 344.16379pt x 211.48009pt>
 File: images/focused_strong_boosted_with_draws.pdf Graphic file (type pdf)
 <use images/focused_strong_boosted_with_draws.pdf>
-Package pdftex.def Info: images/focused_strong_boosted_with_draws.pdf  used on input line 465.
+Package pdftex.def Info: images/focused_strong_boosted_with_draws.pdf  used on input line 475.
 (pdftex.def)             Requested size: 237.13716pt x 145.71489pt.
 
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 466.
+(caption)                particular \caption on input line 476.
 See the caption package documentation for explanation.
 
-[8 <./images/focused_strong_boosted_with_draws.pdf>] [9]
-<images/bot_win_rates_no_draw.png, id=370, 752.8125pt x 395.22656pt>
+[8 <./images/focused_strong_boosted_with_draws.pdf>]
+
+pdfTeX warning: pdflatex (file ./images/exploiter_reset.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<images/exploiter_reset.pdf, id=394, 542.025pt x 325.215pt>
+File: images/exploiter_reset.pdf Graphic file (type pdf)
+<use images/exploiter_reset.pdf>
+Package pdftex.def Info: images/exploiter_reset.pdf  used on input line 552.
+(pdftex.def)             Requested size: 248.42474pt x 149.05486pt.
+
+Package caption Warning: The option `hypcap=true' will be ignored for this
+(caption)                particular \caption on input line 553.
+See the caption package documentation for explanation.
+
+
+Overfull \hbox (11.2888pt too wide) in paragraph at lines 552--553
+ [] 
+ []
+
+[9 <./images/exploiter_reset.pdf>] [10]
+<images/bot_win_rates_no_draw.png, id=444, 752.8125pt x 395.22656pt>
 File: images/bot_win_rates_no_draw.png Graphic file (type png)
 <use images/bot_win_rates_no_draw.png>
-Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 642.
+Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 681.
 (pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/num_parallel_bot_envs.png, id=371, 752.8125pt x 395.22656pt>
+<images/num_parallel_bot_envs.png, id=445, 752.8125pt x 395.22656pt>
 File: images/num_parallel_bot_envs.png Graphic file (type png)
 <use images/num_parallel_bot_envs.png>
-Package pdftex.def Info: images/num_parallel_bot_envs.png  used on input line 649.
+Package pdftex.def Info: images/num_parallel_bot_envs.png  used on input line 688.
 (pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[10] [11 <./images/bot_win_rates_no_draw.png> <./images/num_parallel_bot_envs.png>] [12] [13] [14]
-<images/numberWorkersAfterGame.png, id=454, 864.98157pt x 454.69875pt>
+[11 <./images/bot_win_rates_no_draw.png> <./images/num_parallel_bot_envs.png>] [12] [13] [14] [15]
+<images/numberWorkersAfterGame.png, id=529, 864.98157pt x 454.69875pt>
 File: images/numberWorkersAfterGame.png Graphic file (type png)
 <use images/numberWorkersAfterGame.png>
-Package pdftex.def Info: images/numberWorkersAfterGame.png  used on input line 914.
+Package pdftex.def Info: images/numberWorkersAfterGame.png  used on input line 977.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
-<images/numberHeavyAfterGame.png, id=455, 576.65437pt x 302.63063pt>
+<images/numberHeavyAfterGame.png, id=530, 576.65437pt x 302.63063pt>
 File: images/numberHeavyAfterGame.png Graphic file (type png)
 <use images/numberHeavyAfterGame.png>
-Package pdftex.def Info: images/numberHeavyAfterGame.png  used on input line 919.
+Package pdftex.def Info: images/numberHeavyAfterGame.png  used on input line 982.
 (pdftex.def)             Requested size: 238.48886pt x 125.15991pt.
-<images/numberRangedAfterGame.png, id=456, 864.98157pt x 454.69875pt>
+<images/numberRangedAfterGame.png, id=531, 864.98157pt x 454.69875pt>
 File: images/numberRangedAfterGame.png Graphic file (type png)
 <use images/numberRangedAfterGame.png>
-Package pdftex.def Info: images/numberRangedAfterGame.png  used on input line 926.
+Package pdftex.def Info: images/numberRangedAfterGame.png  used on input line 989.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
-<images/numberLightAfterGame.png, id=457, 864.98157pt x 454.69875pt>
+<images/numberLightAfterGame.png, id=532, 864.98157pt x 454.69875pt>
 File: images/numberLightAfterGame.png Graphic file (type png)
 <use images/numberLightAfterGame.png>
-Package pdftex.def Info: images/numberLightAfterGame.png  used on input line 931.
+Package pdftex.def Info: images/numberLightAfterGame.png  used on input line 994.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
- [15] [16 <./images/numberWorkersAfterGame.png> <./images/numberHeavyAfterGame.png> <./images/numberRangedAfterGame.png> <./images/numberLightAfterGame.png>] [17] [18] [19] [20]
+ [16] [17 <./images/numberWorkersAfterGame.png> <./images/numberHeavyAfterGame.png> <./images/numberRangedAfterGame.png> <./images/numberLightAfterGame.png>] [18] [19] [20] [21]
 
 pdfTeX warning: pdflatex (file ./images/Matchmaking.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/Matchmaking.pdf, id=492, 975.645pt x 650.43pt>
+<images/Matchmaking.pdf, id=567, 975.645pt x 650.43pt>
 File: images/Matchmaking.pdf Graphic file (type pdf)
 <use images/Matchmaking.pdf>
-Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1439.
+Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1502.
 (pdftex.def)             Requested size: 496.85779pt x 331.23853pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1443.
+(caption)                particular \caption on input line 1506.
 See the caption package documentation for explanation.
 
-[21
+[22
 
 
  <./images/Matchmaking.pdf>]
 
 pdfTeX warning: pdflatex (file ./images/adjust_obs.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<images/adjust_obs.pdf, id=515, 505.89pt x 1228.59pt>
+<images/adjust_obs.pdf, id=591, 505.89pt x 1228.59pt>
 File: images/adjust_obs.pdf Graphic file (type pdf)
 <use images/adjust_obs.pdf>
-Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1458.
+Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1521.
 (pdftex.def)             Requested size: 237.69113pt x 577.24992pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1461.
+(caption)                particular \caption on input line 1524.
 See the caption package documentation for explanation.
 
 (./BA.bbl (./BA.brf)
 \tf@brf=\write6
 \openout6 = `BA.brf'.
 
- [22
+ [23
 
- <./images/adjust_obs.pdf>]) [23] (./BA.aux)
+ <./images/adjust_obs.pdf>]) [24] (./BA.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `BA.out' has not changed.
-(rerunfilecheck)             Checksum: 0AC9FCECA4DACF4551A3AACD0111E555;3905.
+(rerunfilecheck)             Checksum: 09DE3DEFCF89B19DE3A678075D1CA072;3623.
 Package rerunfilecheck Info: File `BA.brf' has not changed.
-(rerunfilecheck)             Checksum: 2D2DDE8E1136F134EB79640B4DD7C9A2;3964.
+(rerunfilecheck)             Checksum: C5BB085C51D4229C21EC8D7E487FC772;4014.
  ) 
 Here is how much of TeX's memory you used:
- 15828 strings out of 476129
- 275975 string characters out of 5793187
+ 15858 strings out of 476129
+ 277197 string characters out of 5793187
  2007975 words of memory out of 5000000
- 37447 multiletter control sequences out of 15000+600000
+ 37472 multiletter control sequences out of 15000+600000
  595191 words of font info for 107 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  90i,14n,93p,688b,645s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on BA.pdf (24 pages, 3210605 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on BA.pdf (25 pages, 3265278 bytes).
 PDF statistics:
- 672 PDF objects out of 1000 (max. 8388607)
- 567 compressed objects within 6 object streams
- 136 named destinations out of 1000 (max. 500000)
- 304 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 751 PDF objects out of 1000 (max. 8388607)
+ 597 compressed objects within 6 object streams
+ 141 named destinations out of 1000 (max. 500000)
+ 303 words of extra memory for PDF output out of 10000 (max. 10000000)
 
