@@ -34,7 +34,7 @@
 
 % CSV helpers for referencing evaluation results in the text.
 \newcommand{\MainAgentEvalCsv}{\detokenize{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}}
-\newcommand{\PPOFinetuningCsv}{\detokenize{images/23_03_2026__PPO_finetuning_update_730.csv}}
+\newcommand{\PPOFinetuningCsv}{\detokenize{images/23_03_2026__PPO_finetuning_update_730_200.csv}}
 \newcommand{\CsvTextCell}[1]{\texttt{\expandafter\detokenize\expandafter{#1}}}
 \newcommand{\CsvValueByOpponent}[3]{%
   \def\csvresult{}%
@@ -709,12 +709,12 @@ The biggest differences are the win rates against Droplet, which improve with th
 After the LT training, the Main Agent was further trained with PPO for approximately (???)9 million steps.
 The 25 environments were evenly split between CoacAI, Mayari and WorkerRushAI.
 The learning rate was set to 1.5e-6, the entropy coefficient was set to 0.005 and no exploiters were used during this finetuning phase.
-The results are presented in Table~\ref{tab:ppo_finetuning_evaluation}.
+The results over 200 evaluation games per opponent are presented in Table~\ref{tab:ppo_finetuning_evaluation}.
 After finetuning, the win rate against workerRushAI is now \CsvValueByOpponent{\PPOFinetuningCsv}{workerRushAI}{3}\% and most other win rates also improved.
 The averaged win rate against all evaluation opponents excluding the Base Agent is 77\% for the Base Agent.
 After LT and PPO finetuning, this averaged win rate increases to (???)86\%, which is a substantial improvement of (???)9\%.
-If we also exclude the bots workerRushAI and passiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 73\% to (???)84\%, which is an improvement of almost 11\%.
-The total loss rate against all opponents excluding the Base Agent is decreased from 8\% to (???)2\% again not only showing an improvement at attacking, but also at defending the base.
+If we also exclude the bots workerRushAI and passiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 73\% to (???)83\%, which is an improvement of almost 10\%.
+The total loss rate against all opponents excluding the Base Agent is decreased from 8\% to (???)3\%.
 
 
 
@@ -741,6 +741,7 @@ After LT, additional PPO finetuning further improved the Main Agent’s performa
 WorkerRushAI probably exploited a weakness of the Main Agent that was not found during LT.
 That is presumably the reason for the win rate against the other opponents improving after finetuning, since the agent learned to defend against this exploit.
 These improvements also show that the finetuning did not overfit to the training opponents, and instead generalize to other opponents.
+The lower loss rate suggests that the agent improved not only in attacking the opponent, but also at defending the base.
 
 
 \paragraph{Player 1 Priority.}
