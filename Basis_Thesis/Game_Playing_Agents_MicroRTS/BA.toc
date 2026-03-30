@@ -75,6 +75,6 @@
 \contentsline {subsection}{\numberline {4.5}\hskip -1em.~Future Work.}{14}{subsection.4.5}%
 \contentsline {paragraph}{Map Diversity.}{14}{section*.58}%
 \contentsline {paragraph}{Initial Agents.}{14}{section*.59}%
-\contentsline {paragraph}{Unit Bonus Distribution.}{15}{section*.60}%
+\contentsline {paragraph}{Unit Bonus Distribution.}{14}{section*.60}%
 \contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{15}{section.5}%
 \contentsline {section}{Erkl\"arung}{23}{section*.70}%

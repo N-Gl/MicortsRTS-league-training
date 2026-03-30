@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  29 MAR 2026 16:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  30 MAR 2026 12:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -479,540 +479,54 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__pdf_internal_box=\box61
 )
 (./BA_tmp.aux)
-\openout1 = `BA_tmp.aux'.
-
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-Package caption Info: Begin \AtBeginDocument code.
-Package caption Info: float package is loaded.
-Package caption Info: hyperref package is loaded.
-Package caption Info: threeparttable package is loaded.
-Package caption Info: End \AtBeginDocument code.
- ABD: EveryShipout initializing macros
-(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
-Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
-
-(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
-File: color.cfg 2016/01/02 v1.6 sample color configuration
-)
-Package color Info: Driver file: pdftex.def on input line 149.
-
-(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
-(/usr/share/texlive/texmf-dist/tex/latex/eepic/epic.sty
-Enhancements to Picture Environment. Version 1.2 - Released June 1, 1986
-\@@multicnt=\count315
-\d@lta=\count316
-\@delta=\dimen190
-\@@delta=\dimen191
-\@gridcnt=\count317
-\@joinkind=\count318
-\@dotgap=\dimen192
-\@ddotgap=\dimen193
-\@x@diff=\count319
-\@y@diff=\count320
-\x@diff=\dimen194
-\y@diff=\dimen195
-\@dotbox=\box62
-\num@segments=\count321
-\num@segmentsi=\count322
-\@datafile=\read3
-) (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count323
-\scratchdimen=\dimen196
-\scratchbox=\box63
-\nofMPsegments=\count324
-\nofMParguments=\count325
-\everyMPshowfont=\toks39
-\MPscratchCnt=\count326
-\MPscratchDim=\dimen197
-\MPnumerator=\count327
-\makeMPintoPDFobject=\count328
-\everyMPtoPDFconversion=\toks40
-) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
-Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
-85.
-
-(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
-e
-))
-Package hyperref Info: Link coloring ON on input line 59.
-
-(./BA_tmp.out) (./BA_tmp.out)
-\@outlinefile=\write4
-\openout4 = `BA_tmp.out'.
-
-<hhu_logo.png, id=108, 346.29375pt x 86.57344pt>
-File: hhu_logo.png Graphic file (type png)
-<use hhu_logo.png>
-Package pdftex.def Info: hhu_logo.png  used on input line 64.
-(pdftex.def)             Requested size: 149.05838pt x 37.26547pt.
- [1
-
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-di
-st/fonts/enc/dvips/base/8r.enc} <./hhu_logo.png>] (./BA_tmp.toc
-LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
-\tf@toc=\write5
-\openout5 = `BA_tmp.toc'.
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.108 \newpage
-               [1
-
-]
-
-LaTeX Warning: Citation `huang2021gym' on page 2 undefined on input line 118.
-
-
-LaTeX Warning: Citation `heinrich2015fsp' on page 2 undefined on input line 133
-.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 2 undefined on input lin
-e 134.
-
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
-42.
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
-
-LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 15
-2.
-
-
-LaTeX Warning: Citation `torabi2018behavioral' on page 2 undefined on input lin
-e 153.
-
-
-LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 1
-54.
-
-
-LaTeX Warning: Citation `torabi2018behavioral' on page 2 undefined on input lin
-e 155.
-
-
-LaTeX Warning: Citation `schulman2017ppo' on page 2 undefined on input line 156
-.
-
-
-LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 1
-57.
-
-
-LaTeX Warning: Citation `martin2021beclone' on page 2 undefined on input line 1
-58.
-
-
-Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 164.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 16
-5.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 17
-0.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 18
-1.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 2 undefined on input line 18
-1.
-
-[2]
-
-LaTeX Warning: Citation `Ontanon2013CombinatorialBandit' on page 3 undefined on
- input line 207.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 207.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 208.
-
-
-LaTeX Warning: Citation `baselines' on page 3 undefined on input line 211.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 211.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 3 undefined on input line 21
-2.
-
-
-LaTeX Warning: Citation `pmlr-v97-han19a' on page 3 undefined on input line 213
-.
-
-
-LaTeX Warning: Citation `espeholt2018impala' on page 3 undefined on input line 
-213.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 213.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 220.
-
-
-LaTeX Warning: Citation `pmlr-v97-han19a' on page 3 undefined on input line 220
-.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 3 undefined on input line 222.
-
-
-LaTeX Warning: Citation `goodfriend2024raisocketai' on page 3 undefined on inpu
-t line 224.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 3 undefined on input line 23
-0.
-
-
-LaTeX Warning: Citation `goodfriend2024raisocketai' on page 3 undefined on inpu
-t line 234.
-
-
-LaTeX Warning: Citation `martin2021beclone' on page 3 undefined on input line 2
-39.
-
-[3]
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 4 undefined on input lin
-e 243.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 4 undefined on input lin
-e 257.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 4 undefined on input lin
-e 260.
-
-
-LaTeX Warning: Citation `espeholt2018impala' on page 4 undefined on input line 
-261.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 4 undefined on input lin
-e 261.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 4 undefined on input lin
-e 263.
-
-
-LaTeX Warning: Citation `suttonbarto1998rl' on page 4 undefined on input line 2
-64.
-
-<images/Base.png, id=169, 31.61812pt x 31.61812pt>
-File: images/Base.png Graphic file (type png)
-<use images/Base.png>
-Package pdftex.def Info: images/Base.png  used on input line 280.
-(pdftex.def)             Requested size: 16.00006pt x 16.00006pt.
-<images/Resource.png, id=170, 28.60687pt x 29.35968pt>
-File: images/Resource.png Graphic file (type png)
-<use images/Resource.png>
-Package pdftex.def Info: images/Resource.png  used on input line 281.
-(pdftex.def)             Requested size: 15.58977pt x 16.00006pt.
-<images/Worker.png, id=171, 27.85406pt x 29.35968pt>
-File: images/Worker.png Graphic file (type png)
-<use images/Worker.png>
-Package pdftex.def Info: images/Worker.png  used on input line 282.
-(pdftex.def)             Requested size: 15.1795pt x 16.00006pt.
-<images/Barracks.png, id=172, 31.61812pt x 33.12375pt>
-File: images/Barracks.png Graphic file (type png)
-<use images/Barracks.png>
-Package pdftex.def Info: images/Barracks.png  used on input line 283.
-(pdftex.def)             Requested size: 15.273pt x 16.00006pt.
-<images/Light.png, id=173, 26.34843pt x 27.10126pt>
-File: images/Light.png Graphic file (type png)
-<use images/Light.png>
-Package pdftex.def Info: images/Light.png  used on input line 284.
-(pdftex.def)             Requested size: 15.55629pt x 16.00006pt.
-<images/Heavy.png, id=174, 34.62938pt x 34.62938pt>
-File: images/Heavy.png Graphic file (type png)
-<use images/Heavy.png>
-Package pdftex.def Info: images/Heavy.png  used on input line 285.
-(pdftex.def)             Requested size: 15.99997pt x 16.00006pt.
-<images/Ranged.png, id=175, 30.1125pt x 30.86531pt>
-File: images/Ranged.png Graphic file (type png)
-<use images/Ranged.png>
-Package pdftex.def Info: images/Ranged.png  used on input line 286.
-(pdftex.def)             Requested size: 15.6108pt x 16.00006pt.
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
-95.
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-
-LaTeX Warning: Citation `goodfriend2024raisocketai' on page 4 undefined on inpu
-t line 296.
-
-<images/16x16.png, id=177, 550.055pt x 548.0475pt>
-File: images/16x16.png Graphic file (type png)
-<use images/16x16.png>
-Package pdftex.def Info: images/16x16.png  used on input line 300.
-(pdftex.def)             Requested size: 237.13594pt x 236.2663pt.
-
-LaTeX Warning: Citation `huft2023microrts' on page 4 undefined on input line 30
-1.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 4 undefined on input line 30
-1.
-
-[4 <./images/Base.png> <./images/Resource.png> <./images/Worker.png> <./images/
-Barracks.png> <./images/Light.png> <./images/Heavy.png> <./images/Ranged.png>]
-
-LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 306.
-
-
-LaTeX Warning: Citation `pmlr-v97-han19a' on page 5 undefined on input line 307
-.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 308.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 322.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 325.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 5 undefined on input line 333.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 5 undefined on input line 35
-1.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 5 undefined on input line 35
-2.
-
-
-LaTeX Warning: Citation `torabi2018behavioral' on page 5 undefined on input lin
-e 354.
-
-
-LaTeX Warning: Citation `martin2021beclone' on page 5 undefined on input line 3
-54.
-
-[5 <./images/16x16.png>]
-
-LaTeX Warning: Citation `martin2021beclone' on page 6 undefined on input line 3
-56.
-
-
-LaTeX Warning: Citation `schulman2017ppo' on page 6 undefined on input line 357
-.
-
-
-LaTeX Warning: Citation `doi:10.1126/science.aar6404' on page 6 undefined on in
-put line 371.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 6 undefined on input line 374.
-
-
-LaTeX Warning: Citation `goodfriend2024raisocketai' on page 6 undefined on inpu
-t line 375.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 6 undefined on input lin
-e 381.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 6 undefined on input line 383.
-
-
-LaTeX Warning: Citation `heinrich2015fsp' on page 6 undefined on input line 407
-.
-
-[6]
-<images/action_konflikt.png, id=216, 1042.6152pt x 1034.9064pt>
-File: images/action_konflikt.png Graphic file (type png)
-<use images/action_konflikt.png>
-Package pdftex.def Info: images/action_konflikt.png  used on input line 432.
-(pdftex.def)             Requested size: 237.13594pt x 235.37051pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input lin
-e 446.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 7 undefined on input lin
-e 448.
-
-<images/focused_strong_boosted_with_draws.pdf, id=217, 344.16379pt x 211.48009p
-t>
-File: images/focused_strong_boosted_with_draws.pdf Graphic file (type pdf)
-<use images/focused_strong_boosted_with_draws.pdf>
-Package pdftex.def Info: images/focused_strong_boosted_with_draws.pdf  used on 
-input line 465.
-(pdftex.def)             Requested size: 237.13716pt x 145.71489pt.
-
-Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 466.
-See the caption package documentation for explanation.
-
-[7 <./images/action_konflikt.png>]
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 8 undefined on input lin
-e 488.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 8 undefined on input lin
-e 492.
-
-[8 <./images/focused_strong_boosted_with_draws.pdf>]
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 9 undefined on input lin
-e 541.
-
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 9 undefined on input lin
-e 551.
-
-[9]
-
-LaTeX Warning: Citation `huang2021gym' on page 10 undefined on input line 611.
-
-
-LaTeX Warning: Citation `Ontanon2013CombinatorialBandit' on page 10 undefined o
-n input line 611.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 6
-15.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 6
-26.
-
-
-LaTeX Warning: Citation `huang2021gym' on page 10 undefined on input line 627.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 10 undefined on input line 6
-27.
-
-
-LaTeX Warning: Citation `goodfriend2024raisocketai' on page 10 undefined on inp
-ut line 627.
-
-<images/bot_win_rates_no_draw.png, id=269, 752.8125pt x 395.22656pt>
-File: images/bot_win_rates_no_draw.png Graphic file (type png)
-<use images/bot_win_rates_no_draw.png>
-Package pdftex.def Info: images/bot_win_rates_no_draw.png  used on input line 6
-41.
-(pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
-<images/num_parallel_bot_envs.png, id=270, 752.8125pt x 395.22656pt>
-File: images/num_parallel_bot_envs.png Graphic file (type png)
-<use images/num_parallel_bot_envs.png>
-Package pdftex.def Info: images/num_parallel_bot_envs.png  used on input line 6
-48.
-(pdftex.def)             Requested size: 237.13594pt x 124.49701pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[10 <./images/bot_win_rates_no_draw.png>]
-
-LaTeX Warning: Citation `huft2023microrts' on page 11 undefined on input line 6
-70.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 11 undefined on input line 6
-85.
-
-[11 <./images/num_parallel_bot_envs.png>]
-
-LaTeX Warning: Citation `huft2023microrts' on page 12 undefined on input line 7
-28.
-
-[12]
-
-LaTeX Warning: Citation `vinyals2019alphastar' on page 13 undefined on input li
-ne 804.
-
-[13]
-
-LaTeX Warning: Citation `huft2023microrts' on page 14 undefined on input line 8
-32.
-
-
-LaTeX Warning: Citation `huft2023microrts' on page 14 undefined on input line 8
-35.
+Runaway argument?
+{\conte 
+! File ended while scanning use of \@writefile.
+<inserted text> 
+                \par 
+l.59 \begin{document}
+                      
+Here is how much of TeX's memory you used:
+ 13478 strings out of 476129
+ 223822 string characters out of 5793187
+ 1922975 words of memory out of 5000000
+ 35337 multiletter control sequences out of 15000+600000
+ 559774 words of font info for 39 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 90i,0n,93p,359b,95s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+!  ==> Fatal error occurred, no output PDF file produced!
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ndefined on input line 8
+36.
 
 
 LaTeX Warning: Citation `vinyals2019alphastar' on page 14 undefined on input li
-ne 877.
+ne 878.
 
 [14]
 <images/numberWorkersAfterGame.png, id=343, 864.98157pt x 454.69875pt>
 File: images/numberWorkersAfterGame.png Graphic file (type png)
 <use images/numberWorkersAfterGame.png>
 Package pdftex.def Info: images/numberWorkersAfterGame.png  used on input line 
-908.
+911.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
 <images/numberHeavyAfterGame.png, id=344, 576.65437pt x 302.63063pt>
 File: images/numberHeavyAfterGame.png Graphic file (type png)
 <use images/numberHeavyAfterGame.png>
 Package pdftex.def Info: images/numberHeavyAfterGame.png  used on input line 91
-3.
+6.
 (pdftex.def)             Requested size: 238.48886pt x 125.15991pt.
 <images/numberRangedAfterGame.png, id=345, 864.98157pt x 454.69875pt>
 File: images/numberRangedAfterGame.png Graphic file (type png)
 <use images/numberRangedAfterGame.png>
 Package pdftex.def Info: images/numberRangedAfterGame.png  used on input line 9
-20.
+23.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
 <images/numberLightAfterGame.png, id=346, 864.98157pt x 454.69875pt>
 File: images/numberLightAfterGame.png Graphic file (type png)
 <use images/numberLightAfterGame.png>
 Package pdftex.def Info: images/numberLightAfterGame.png  used on input line 92
-5.
+8.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
  [15] [16 <./images/numberWorkersAfterGame.png> <./images/numberHeavyAfterGame.
 png> <./images/numberRangedAfterGame.png> <./images/numberLightAfterGame.png>] 
@@ -1020,14 +534,14 @@ png> <./images/numberRangedAfterGame.png> <./images/numberLightAfterGame.png>]
 
 pdfTeX warning: pdflatex (file ./images/Matchmaking.pdf): PDF inclusion: found 
 PDF version <1.7>, but at most version <1.5> allowed
-<images/Matchmaking.pdf, id=383, 975.645pt x 650.43pt>
+<images/Matchmaking.pdf, id=381, 975.645pt x 650.43pt>
 File: images/Matchmaking.pdf Graphic file (type pdf)
 <use images/Matchmaking.pdf>
-Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1433.
+Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1436.
 (pdftex.def)             Requested size: 496.85779pt x 331.23853pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1437.
+(caption)                particular \caption on input line 1440.
 See the caption package documentation for explanation.
 
 [21
@@ -1037,14 +551,14 @@ See the caption package documentation for explanation.
 
 pdfTeX warning: pdflatex (file ./images/adjust_obs.pdf): PDF inclusion: found P
 DF version <1.7>, but at most version <1.5> allowed
-<images/adjust_obs.pdf, id=406, 505.89pt x 1228.59pt>
+<images/adjust_obs.pdf, id=404, 505.89pt x 1228.59pt>
 File: images/adjust_obs.pdf Graphic file (type pdf)
 <use images/adjust_obs.pdf>
-Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1452.
+Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1455.
 (pdftex.def)             Requested size: 237.69113pt x 577.24992pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1455.
+(caption)                particular \caption on input line 1458.
 See the caption package documentation for explanation.
 
 No file BA_tmp.bbl.
@@ -1059,44 +573,33 @@ L3 programming layer <2024-01-22>
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `BA_tmp.out' has not changed.
 (rerunfilecheck)             Checksum: 4DE16D16EA5AF8A26C5868442C8AAC16;3902.
  ) 
 Here is how much of TeX's memory you used:
- 15749 strings out of 476129
- 274245 string characters out of 5793187
+ 15748 strings out of 476129
+ 274224 string characters out of 5793187
  2007975 words of memory out of 5000000
- 37391 multiletter control sequences out of 15000+600000
+ 37392 multiletter control sequences out of 15000+600000
  593588 words of font info for 101 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 90i,14n,93p,460b,684s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{figure.caption.60} has been referenced but does not
- exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{table.caption.61} has been referenced but does not 
-exist, replaced by a fixed one
-
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on BA_tmp.pdf (24 pages, 3197561 bytes).
+ 90i,14n,93p,460b,668s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8
+a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on BA_tmp.pdf (24 pages, 3197800 bytes).
 PDF statistics:
- 516 PDF objects out of 1000 (max. 8388607)
- 414 compressed objects within 5 object streams
- 123 named destinations out of 1000 (max. 500000)
+ 514 PDF objects out of 1000 (max. 8388607)
+ 412 compressed objects within 5 object streams
+ 121 named destinations out of 1000 (max. 500000)
  304 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -335,7 +335,6 @@ INPUT ./images/num_parallel_bot_envs.png
 INPUT ./images/num_parallel_bot_envs.png
 INPUT ./images/num_parallel_bot_envs.png
 INPUT ./images/num_parallel_bot_envs.png
-INPUT images/23_03_2026__PPO_finetuning_update_730_200.csv
 INPUT ./images/numberWorkersAfterGame.png
 INPUT ./images/numberWorkersAfterGame.png
 INPUT ./images/numberWorkersAfterGame.png
