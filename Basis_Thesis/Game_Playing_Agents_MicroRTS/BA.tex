@@ -23,6 +23,8 @@
 \usepackage{tabularx}
 \usepackage{threeparttable}
 \usepackage{csvsimple}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 \usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
 \usepackage[none]{hyphenat}
 % Support for easy cross-referencing
@@ -135,26 +137,23 @@
 %%%%%%%%% ABSTRACT
 \begin{abstract}
     This thesis improves an existing agent for the real-time strategy (RTS) game MicroRTS.
-    RTS games are considered a challenging domain for Deep Reinforcement Learning (DRL), since agents must deal with large combinatorial action spaces, simultaneous decisions, as well as delayed and often sparse rewards.
-    As a baseline method, we use Proximal Policy Optimization (PPO).
-    In many DRL training setups, such as pure PPO, the agent reaches a point where it cannot be trained further efficiently by using PPO alone, because there are not enough strong opponents to train against or because the available opponents are not diverse enough to develop a robust policy.
-    An obvious and simple countermeasure is Self-Play (SP) however, in practice it can be unstable and lead to overfitting or cyclical strategies, which can reduce performance against external opponents.
+    RTS games are considered a challenging domain for Deep Reinforcement Learning (DRL), since agents must deal with large combinatorial action spaces, simultaneous decisions, and delayed and often sparse rewards.
+    We implement League Training (LT) in combination with Proximal Policy Optimization (PPO) to address a common problem in DRL training setups such as pure PPO:
+    after sufficient training, the agent reaches a point where it cannot be trained further efficiently with PPO alone, because there are not enough strong opponents to train against or because the available opponents are not diverse enough to develop a robust policy.
+    An obvious and simple countermeasure is Self-Play (SP).
+    However, in practice it can be unstable and lead to overfitting or cyclical strategies, which can reduce performance against external opponents.
     \break\break
-    % TODO: erst LT dann PPO hier erklären
-    League Training (LT) stabilizes SP by building a population of agents across different training stages and roles.
-    The training agent is deliberately matched against diverse opponents.
-    Among others, against specialized agents that were trained to exploit weaknesses of the current policy.
+    LT stabilizes SP by building a population of agents across different training stages and roles.
+    The training agent is deliberately matched against diverse opponents, including specialized agents that are trained to exploit weaknesses of the current policy.
     We evaluate the resulting agents in matches against various opponent types and compare LT with our initial agent.
-    Our results suggest that LT increases the robustness and generalization of the agent against different opponents, but its effectiveness depends strongly on the strategic diversity of the initial agents and training opponents.
+    Our results suggest that LT increases the robustness and generalization of the agent against different opponents, but that its effectiveness depends strongly on the strategic diversity of the initial agents and training opponents.
     They also suggest that using an agent pretrained with Behavioral Cloning (BC) as the starting point for LT may be suboptimal when the BC phase is based on only a small and strategically limited set of experts.
     \break\break
-    In total the evaluation against all our evaluation opponents show a significant increase improvement for LT over pure PPO.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=1\linewidth]{images/abstract_total_winrate_comparison.pdf}
-        \caption{Comparison of total win rates for the Base Agent, the Main Agent after LT and the Main Agent after finetuning against all our evaluation opponents.}
-        \label{fig:abstract_total_winrate_comparison}
-    \end{figure}
+    Overall, the evaluation against all opponents shows a substantial improvement of LT over pure PPO.
+    \begin{center}
+        \includegraphics[width=0.92\linewidth]{images/abstract_total_winrate_comparison.pdf}\\[0.2em]
+        {\footnotesize Comparison of total win rates for the Base Agent, the Main Agent after LT and the Main Agent after finetuning against all our evaluation opponents.}
+    \end{center}
 \end{abstract}
 
 
@@ -922,11 +921,12 @@ However, the Base Agent itself is not diverse in the sense defined above in \ref
 
 \paragraph{Exploiter Diversity as the Main Limitation.}
 The exploiters are therefore less likely to cover those weaknesses that are exploitable from strategies different from their initial agents' policies.
-This can be seen in the high win rates against e. g. Taimat, which is a bot using heavy units.
+This can be seen in the high win rates against e. g. Tiamat, which is a bot using heavy units.
 % As shown in the evaluation results in the Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison}, the trained agent is already strong against bots that use heavy units.
 % We can also see that the exploiters only used very few other units.
 The agents are mostly trained against other agents that are initialized from the same Base Agent.
 We presume the limited diversity of the Base Agents to be the reason why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
+Figure~\ref{fig:exploiter_diversity_schematic} summarizes this relation schematically.
 This suggests a main limitation of the training approach is that, because of the limited diversity of the Base Agent (\ref{par:limited_base_agent_diversity}), the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
 Some weaknesses of the Main Agent that can be exploited by strategies for different unit types are therefore very difficult to represent with historical Main Exploiters.
 Such strategies are difficult to discover through LT alone, because they are far from the Base Agent's default heavy-rush behavior and often require first unlearning fundamental parts of the initial strategy before a substantially different strategy can be learned.
@@ -937,6 +937,15 @@ In a complex environment such as MicroRTS, there are likely many more weaknesses
 % The exploiter only receives a positive reward if the full strategy succeeds within the same game.
 % In comparison, if the exploiter can find a weakness that does not require almost entirely stopping its current strategy, for example because it uses the same units, it can receive a positive reward for exploiting this weakness and gradually change its strategy even if it does not fully succeed in exploiting the Main Agent, which makes it easier to find such weaknesses.
 
+\begin{figure*}[t]
+    \centering
+    \resizebox{0.96\textwidth}{!}{\input{images/exploiter_diversity_schematic.tex}}
+    \caption{Illustration of our hypothesis about how the diversity of the Base Agent and initial agents affects exploiter diversity and the Main Agent's generalization during LT.}
+    \label{fig:exploiter_diversity_schematic}
+\end{figure*}
+
+
+\FloatBarrier
 \paragraph{Effects of New Initial Agents.}
 It was more difficult than expected to generate diverse exploiters because of the long transitions without reward between strategies for different unit types, which is why the introduction of new initial agents was particularly important.
 We hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters and possibly more important than the initial agents' win rate.
@@ -944,8 +953,8 @@ This is why the new initial agents, with a focus on different unit types, were i
 The new initial agents contributed to generalization across diverse opponents.
 Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} show that performance improved against a wider range of opponents compared to the previous evaluation that did not use the new initial agents.
 One example is the win rate against Droplet, which improves from 45\% to 62\%, while the win rate against GuidedRojoA3N improves from 64\% to 87\%.
-The results also show that the exploiters are able to exploit the Main Agent while staying within their respective unit type focus.
-This suggests that exploiters are capable of identifying and exploiting weaknesses within the set of strategies for the respective unit type favored by the Base Agent.
+\break\break
+The exploiters win rate and unit composition against the Main Agent suggest that exploiters are capable of identifying and exploiting weaknesses within the set of strategies for the respective unit type favored by the Base Agent.
 This also suggests that pure LT is likely to work efficiently only if the Base Agent is already diverse in the sense defined above.
 At the same time, Figure~\ref{fig:number-units-after-game} for the worker focused initial agent shows that at least some mixed strategies can be achieved with this training setup.
 This suggests that with the new initial agents focused on different unit types, the historical exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Main Agent, even against many other agents that were not included in the training or evaluation.
