@@ -41,7 +41,6 @@
 \newcommand{\MainAgentEvalCsv}{\detokenize{images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv}}
 \newcommand{\PPOFinetuningCsv}{\detokenize{images/23_03_2026__PPO_finetuning_update_730_200.csv}}
 \newcommand{\WinRateDiffCsv}{\detokenize{images/diff.csv}}
-\newcommand{\CsvTextCell}[1]{\texttt{\expandafter\detokenize\expandafter{#1}}}
 \newcommand{\CsvValueByOpponent}[3]{%
   \def\csvresult{}%
   \csvreader[
@@ -149,7 +148,7 @@
     Our results suggest that LT increases the robustness and generalization of the agent against different opponents, but that its effectiveness depends strongly on the strategic diversity of the initial agents and training opponents.
     They also suggest that using an agent pretrained with Behavioral Cloning (BC) as the starting point for LT may be suboptimal when the BC phase is based on only a small and strategically limited set of experts.
     \break\break
-    Overall, the evaluation against all opponents shows a substantial improvement of LT over the Base Agent with a BC and PPO based approach.
+    Overall, especially after finetuning the evaluation against all opponents shows a substantial improvement of LT over the Base Agent with a BC and PPO based approach.
     \begin{center}
         \includegraphics[width=0.92\linewidth]{images/abstract_total_winrate_comparison.pdf}\\[0.2em]
         {\footnotesize Comparison of total win rates for the Base Agent, the Main Agent after LT and the Main Agent after finetuning against all our evaluation opponents.}
@@ -183,7 +182,7 @@ For instance, the agent must decide early whether it wants to play aggressively 
 
 % !TODO: es gibt geskriptete Bots nicht das was man haben möchte --> ML ansetze, was wir machen
 \paragraph{Bots.}
-The built-in bots passiveAI, WorkerRushAI, LightRushAI, RandomAI and RandomBiasedAI, as well as CoacAI, are scripted opponents based on heuristic rules and are often used as opponents for training and evaluation in MicroRTS \cite{huang2021gym}.
+The built-in bots PassiveAI, WorkerRushAI, LightRushAI, RandomAI and RandomBiasedAI, as well as CoacAI, are scripted opponents based on heuristic rules and are often used as opponents for training and evaluation in MicroRTS \cite{huang2021gym}.
 Mayari is another strong competition bot used in this thesis.
 The other bots in our evaluation are MCTS-based bots, with a search-based approach to select actions \cite{huang2021gym}.
 Our aim is to train an agent that can achieve high win rates against these bots, without giving the agent a specific strategy to use against them.
@@ -320,7 +319,7 @@ Similar to AlphaStar our agent was further trained in a league of different type
 These agents are added to the league to reduce overfitting and forgetting and to promote diversity.
 
 \paragraph{League Composition and Training.}
-As in AlphaStar, in this thesis Main Exploiters are trained by training the Base Agent against all historical versions of the Main Agenten in the league, in order to identify and exploit weaknesses.
+As in AlphaStar, in this thesis Main Exploiters are trained by training the Base Agent against all historical versions of the Main Agents in the league, in order to identify and exploit weaknesses.
 At the same time, League Exploiters train against all Historical Agents.
 The Main Agent trains with Prioritized Fictitious Self-Play (PFSP) against historical versions of itself, Main Exploiters and League Exploiters.
 The prioritization of the historical opponents is computed based on the Main Agent’s win rate against the respective Historical Agents.
@@ -374,7 +373,7 @@ This symmetric map starts each player with one base, five resources, two workers
 \end{figure}
 \break\break
 \begin{itemize}
-    \item \textbf{PassiveAI:} \texttt{passiveAI} does not act.
+    \item \textbf{PassiveAI:} \texttt{PassiveAI} does not act.
     \item \textbf{WorkerRushAI and LightRushAI:} These bots build their corresponding units as quickly as possible and rush the opponent with them.
     WorkerRushAI is later used as a training opponent in the PPO finetuning phase after LT.
     \item \textbf{RandomAI and RandomBiasedAI:} \texttt{RandomAI} and \texttt{RandomBiasedAI} are stochastic bots.
@@ -386,7 +385,7 @@ This symmetric map starts each player with one base, five resources, two workers
     \item \textbf{Mayari:} \texttt{Mayari} is another strong scripted competition bot and is used together with \texttt{CoacAI} in Base-Agent training, LT bot environments and finetuning.
     This bot primarily uses heavy units, to rush the opponent.
 \item \textbf{Rojo:} \texttt{rojo} is a bot that tries to build many worker units and attack strategically with them.
-    \item \textbf{MixedBot, Izanagi, Tiamat, Droplet, GuidedRojoA3N and naiveMCTS:} These are additional stronger competition bots that are used for evaluation in order to test generalization for stronger bots.
+    \item \textbf{MixedBot, Izanagi, Tiamat, Droplet, GuidedRojoA3N and NaiveMCTS:} These are additional stronger competition bots that are used for evaluation in order to test generalization for stronger bots.
     These bots are too slow to be used for training.
 \end{itemize}
 
@@ -429,7 +428,7 @@ This does not require additional diverse or strong opponents.
 \paragraph{Implementation.}
 To implement SP in the MicroRTS-Py reimplementation Huang et~al.\ implemented the environment to output the observations (obs) and rewards for both players, which allows the agent to train against itself by simply using the same policy for both players \cite{huang2021gym}.
 In RAISocketAI, that approach was improved and fixed \cite{goodfriend2024raisocketai}.
-In this thesis, the same approach with some adustments is used to implement SP, which is also used as a basis for FSP and LT.
+In this thesis, the same approach with some adjustments is used to implement SP, which is also used as a basis for FSP and LT.
 
 \paragraph{Problems.}
 \begin{itemize}
@@ -734,7 +733,7 @@ All hyperparameters used are listed in Table~\ref{tab:league_hyperparameter}.
 
 \subsection{Evaluation}
 We evaluated the Main Agent against the MicroRTS bots and the Base Agent, across at least 100 games per opponent.
-The opponents against which the evaluation is conducted include the MicroRTS built-in bots consisting of passiveAI, WorkerRushAI, LightRushAI, RandomAI and RandomBiasedAI.
+The opponents against which the evaluation is conducted include the MicroRTS built-in bots consisting of PassiveAI, WorkerRushAI, LightRushAI, RandomAI and RandomBiasedAI.
 Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} below give a compact overview of the win rates and loss rates of the evaluated agents against all bot opponents.
 The detailed evaluation results of the Base Agent are listed below in Table~\ref{tab:base_agent_evaluation} for comparison.
 The results vary from those reported in the thesis of M. Huft \cite{huft2023microrts} because the original Base Agent from the prior work could not be found.
@@ -777,7 +776,7 @@ izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWi
 tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
 droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
 guidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
-naiveMCTSAI & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
+naiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
 \midrule
 overall & \WinRateCell{74.9} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
 \bottomrule
@@ -811,7 +810,7 @@ izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \Best
 tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
 droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
 guidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-naiveMCTSAI & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+naiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
 \midrule
 overall & \LossRateCell{9.3} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
 \bottomrule
@@ -857,7 +856,7 @@ After finetuning, the win rate against WorkerRushAI is now almost 100\% and most
 The averaged win rate against all evaluation opponents excluding the Base Agent is 77\% for the Base Agent.
 After LT and PPO finetuning, this averaged win rate increases to 86\%, which is a substantial improvement of 9\%.
 This averaged win rate for the reported results of the Base Agent in the thesis of M. Huft \cite{huft2023microrts} is 79\%, which means that the Main Agent after LT and PPO finetuning still shows an improvement of 7\% over the results reported in that thesis.
-If we also exclude the bots WorkerRushAI and passiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 73\% to 83\%, which is an improvement of almost 10\%.
+If we also exclude the bots WorkerRushAI and PassiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 73\% to 83\%, which is an improvement of almost 10\%.
 The total loss rate against all opponents excluding the Base Agent is decreased from 8\% to 3\%.
 
 
@@ -1372,7 +1371,7 @@ Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Los
     late after line=\\,
     filter test=\ifnumless{\thecsvinputline}{6}
 ]{\PPOFinetuningCsv}{}{
-    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \multicolumn{8}{l}{\textit{Other built-in bots}} \\
@@ -1380,7 +1379,7 @@ Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Los
     late after line=\\,
     filter ifthen=\value{csvinputline}>5 \and \value{csvinputline}<10
 ]{\PPOFinetuningCsv}{}{
-    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \multicolumn{8}{l}{\textit{Other bots}} \\
@@ -1388,14 +1387,14 @@ Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Los
     late after line=\\,
     filter ifthen=\value{csvinputline}>9 \and \value{csvinputline}<17
 ]{\PPOFinetuningCsv}{}{
-    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \midrule
 \csvreader[
     late after line=\\,
     filter test=\ifnumequal{\thecsvinputline}{17}
 ]{\PPOFinetuningCsv}{}{
-    \CsvTextCell{\csvcoli} & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
+    \csvcoli & \csvcolii & \csvcoliii & \csvcoliv & \csvcolv & \csvcolvi & \csvcolvii & \csvcolviii
 }
 \bottomrule
 \end{tabular*}
@@ -1450,7 +1449,7 @@ Environments & \texttt{num\_envs\_per\_main\_exploiters} & 25 & Number of enviro
 Environments & \texttt{num\_envs\_per\_league\_exploiters} & 25 & Number of environments per League Exploiter \\
 Training & \texttt{total\_timesteps} & 200\,000\,000 & Total number of training steps (the training evaluated stopped early at about 130000000 steps) \\
 % Training & \texttt{checkpoint\_frequency} & 3 & Frequency of regular checkpoints \\
-Training & \texttt{checkpoint\_end\_buffer\_steps} & $3 \cdot 10^6$ & Exploiters cannot checkpoint \texttt{checkpoint\_end\_buffer\_steps} steps bevor reaching \texttt{total\_timesteps} \\
+Training & \texttt{checkpoint\_end\_buffer\_steps} & $3 \cdot 10^6$ & Exploiters cannot checkpoint \texttt{checkpoint\_end\_buffer\_steps} steps before reaching \texttt{total\_timesteps} \\
 % Training & \texttt{early\_updates} & false & No early updates are used \\
 % Training & \texttt{seed} & not set & No explicit seed is specified \\
 \midrule
@@ -1646,7 +1645,7 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 \noindent
 Diese Bachelor-Arbeit wurde teilweise unter Verwendung von ChatGPT zur Unterstützung bei Formulierungen, Rechtschreibung, Grammatik und Übersetzungen benutzt.
 Für die Implementierung eigener Ideen wurde im Code teilweise ChatGPT benutzt.
-Diese Inhalte wurde eigenständig geprüft und überarbeitet.
+Diese Inhalte wurden eigenständig geprüft und überarbeitet.
 Hiermit versichere ich, dass ich die Bachelor-Arbeit selbstst\"andig verfasst und keine
 anderen als die angegebenen Quellen und Hilfsmittel benutzt habe.
 

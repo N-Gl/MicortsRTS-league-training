@@ -1,5 +1,5 @@
 opponent,games,wins,draws,losses,win_rate,draw_rate,loss_rate
-BaseAgent,100,89,9,2,0.89,0.09,0.02
+Base Agent,100,89,9,2,0.89,0.09,0.02
 coacAI,100,100,0,0,1,0,0
 mayari,100,100,0,0,1,0,0
 workerRushAI,100,35,10,55,0.35,0.1,0.55
@@ -13,5 +13,5 @@ izanagi,100,70,23,7,0.7,0.23,0.07
 tiamat,100,99,0,1,0.99,0,0.01
 droplet,100,62,16,22,0.62,0.16,0.22
 guidedRojoA3N,100,87,13,0,0.87,0.13,0
-naiveMCTSAI,100,2,98,0,0.02,0.98,0
+naiveMCTS,100,2,98,0,0.02,0.98,0
 overall,1500,1198,195,107,0.799,0.130,0.071
