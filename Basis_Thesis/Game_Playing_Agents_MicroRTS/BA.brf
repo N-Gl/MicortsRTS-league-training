@@ -1,11 +1,13 @@
 \backcite {huang2021gym}{{1}{1}{section*.2}}
+\backcite {huang2021gym}{{2}{1}{section*.4}}
+\backcite {huang2021gym}{{2}{1}{section*.4}}
 \backcite {vinyals2019alphastar}{{2}{1}{section*.6}}
 \backcite {huft2023microrts}{{2}{2.0.1}{subsubsection.2.0.1}}
 \backcite {martin2021beclone}{{2}{2.0.1}{subsubsection.2.0.1}}
 \backcite {torabi2018behavioral}{{2}{2.0.1}{subsubsection.2.0.1}}
 \backcite {schulman2017ppo}{{2}{2.0.1}{subsubsection.2.0.1}}
 \backcite {martin2021beclone}{{2}{2.0.1}{subsubsection.2.0.1}}
-\backcite {martin2021beclone}{{2}{2.0.1}{subsubsection.2.0.1}}
+\backcite {martin2021beclone}{{3}{2.0.1}{subsubsection.2.0.1}}
 \backcite {huft2023microrts}{{3}{2.0.1}{section*.8}}
 \backcite {huft2023microrts}{{3}{1}{table.caption.9}}
 \backcite {Ontanon2013CombinatorialBandit}{{3}{2.0.2}{subsubsection.2.0.2}}
@@ -22,7 +24,7 @@
 \backcite {goodfriend2024raisocketai}{{3}{2.0.2}{section*.11}}
 \backcite {huft2023microrts}{{3}{2.0.3}{subsubsection.2.0.3}}
 \backcite {goodfriend2024raisocketai}{{3}{2.0.3}{subsubsection.2.0.3}}
-\backcite {goodfriend2024raisocketai}{{3}{2.0.3}{subsubsection.2.0.3}}
+\backcite {goodfriend2024raisocketai}{{4}{2.0.3}{subsubsection.2.0.3}}
 \backcite {martin2021beclone}{{4}{2.0.4}{subsubsection.2.0.4}}
 \backcite {vinyals2019alphastar}{{4}{2.0.5}{subsubsection.2.0.5}}
 \backcite {vinyals2019alphastar}{{4}{2.0.5}{section*.13}}
