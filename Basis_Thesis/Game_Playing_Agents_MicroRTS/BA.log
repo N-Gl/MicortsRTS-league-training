@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  31 MAR 2026 20:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.9)  31 MAR 2026 21:06
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -812,22 +812,22 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <images/numberWorkersAfterGame.png, id=541, 864.98157pt x 454.69875pt>
 File: images/numberWorkersAfterGame.png Graphic file (type png)
 <use images/numberWorkersAfterGame.png>
-Package pdftex.def Info: images/numberWorkersAfterGame.png  used on input line 1070.
+Package pdftex.def Info: images/numberWorkersAfterGame.png  used on input line 1068.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
 <images/numberHeavyAfterGame.png, id=542, 576.65437pt x 302.63063pt>
 File: images/numberHeavyAfterGame.png Graphic file (type png)
 <use images/numberHeavyAfterGame.png>
-Package pdftex.def Info: images/numberHeavyAfterGame.png  used on input line 1075.
+Package pdftex.def Info: images/numberHeavyAfterGame.png  used on input line 1073.
 (pdftex.def)             Requested size: 238.48886pt x 125.15991pt.
 <images/numberRangedAfterGame.png, id=543, 864.98157pt x 454.69875pt>
 File: images/numberRangedAfterGame.png Graphic file (type png)
 <use images/numberRangedAfterGame.png>
-Package pdftex.def Info: images/numberRangedAfterGame.png  used on input line 1082.
+Package pdftex.def Info: images/numberRangedAfterGame.png  used on input line 1080.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
 <images/numberLightAfterGame.png, id=544, 864.98157pt x 454.69875pt>
 File: images/numberLightAfterGame.png Graphic file (type png)
 <use images/numberLightAfterGame.png>
-Package pdftex.def Info: images/numberLightAfterGame.png  used on input line 1087.
+Package pdftex.def Info: images/numberLightAfterGame.png  used on input line 1085.
 (pdftex.def)             Requested size: 238.48886pt x 125.36516pt.
  [17
 
@@ -837,11 +837,11 @@ pdfTeX warning: pdflatex (file ./images/Matchmaking.pdf): PDF inclusion: found P
 <images/Matchmaking.pdf, id=579, 975.645pt x 650.43pt>
 File: images/Matchmaking.pdf Graphic file (type pdf)
 <use images/Matchmaking.pdf>
-Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1592.
+Package pdftex.def Info: images/Matchmaking.pdf  used on input line 1590.
 (pdftex.def)             Requested size: 496.85779pt x 331.23853pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1596.
+(caption)                particular \caption on input line 1594.
 See the caption package documentation for explanation.
 
 [23
@@ -854,11 +854,11 @@ pdfTeX warning: pdflatex (file ./images/adjust_obs.pdf): PDF inclusion: found PD
 <images/adjust_obs.pdf, id=603, 505.89pt x 1228.59pt>
 File: images/adjust_obs.pdf Graphic file (type pdf)
 <use images/adjust_obs.pdf>
-Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1611.
+Package pdftex.def Info: images/adjust_obs.pdf  used on input line 1609.
 (pdftex.def)             Requested size: 237.69113pt x 577.24992pt.
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 1614.
+(caption)                particular \caption on input line 1612.
 See the caption package documentation for explanation.
 
 (./BA.bbl (./BA.brf)
@@ -886,7 +886,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  90i,15n,93p,688b,910s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on BA.pdf (26 pages, 3267052 bytes).
+Output written on BA.pdf (26 pages, 3266829 bytes).
 PDF statistics:
  764 PDF objects out of 1000 (max. 8388607)
  608 compressed objects within 7 object streams

@@ -58,7 +58,7 @@
 \contentsline {paragraph}{Player 1 Priority.}{13}{section*.46}%
 \contentsline {paragraph}{Diversity Definition.}{13}{section*.47}%
 \contentsline {paragraph}{Base Agent Strategy.}{13}{section*.48}%
-\contentsline {paragraph}{Base Agent Diversity.}{13}{section*.49}%
+\contentsline {paragraph}{Base Agent Diversity.}{14}{section*.49}%
 \contentsline {paragraph}{Exploiter Diversity as the Main Limitation.}{14}{section*.50}%
 \contentsline {paragraph}{Effects of New Initial Agents.}{14}{section*.51}%
 \contentsline {paragraph}{Comparison to AlphaStar.}{15}{section*.53}%

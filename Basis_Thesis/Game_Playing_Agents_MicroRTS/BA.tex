@@ -115,7 +115,7 @@
 
         {\Huge\textbf{Implementation and evaluation of the reinforcement learning methods Self-Play and League Training in the MicroRTS environment}}\\[2cm]
 
-        {\Large\textbf{{Name!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}}}\\[2cm]
+        {\Large\textbf{{Niklas Glaser}}}\\[2cm]
 
         \vfill
         % Details
@@ -307,7 +307,7 @@ The agent in AlphaStar was pre-trained with imitation learning from human replay
 
 \paragraph{Pre-League Training.}
 In this thesis, we replace imitation learning with the BC phases and the PPO phase. 
-Similar to AlphaStar our agent was further trained in a league of different types league agents:
+Similar to AlphaStar our agent was further trained in a league of different types of league agents:
 % !TODO: itemize verwenden:
 \begin{itemize}
     \item \textbf{Main Agent}
@@ -318,7 +318,7 @@ Similar to AlphaStar our agent was further trained in a league of different type
 These agents are added to the league to reduce overfitting and forgetting and to promote diversity.
 
 \paragraph{League Composition and Training.}
-As in AlphaStar, in this thesis Main Exploiters are trained by training the Base Agent against all historical versions of the Main Agents in the league, in order to identify and exploit weaknesses.
+As in AlphaStar, the Main Exploiters in this thesis are trained against historical versions of the Main Agent in the league in order to identify and exploit weaknesses.
 At the same time, League Exploiters train against all Historical Agents.
 The Main Agent trains with Prioritized Fictitious Self-Play (PFSP) against historical versions of itself, Main Exploiters and League Exploiters.
 The prioritization of the historical opponents is computed based on the Main Agent’s win rate against the respective Historical Agents.
@@ -339,7 +339,7 @@ In addition, AlphaStar uses TD($\lambda$) \cite{suttonbarto1998rl} for value-fun
 \label{sec:MicroRTS-environment}
 MicroRTS is a two-player zero-sum game that is played on a two-dimensional grid (the map).
 Different units can be located on each cell of this map and players can execute actions to move/train/attack units and to collect resources.
-The different units types are:
+The different unit types are:
 
 \newcommand{\uniticon}[2][1.6em]{%
   \raisebox{-0.25\height}{\includegraphics[height=#1]{#2}}%
@@ -351,7 +351,7 @@ The different units types are:
 \item \textbf{Worker:} \uniticon{images/Worker.png} workers can collect resources and build barracks (cost: 1, hp: 1, attack strength (at): 1).
 \item \textbf{Barracks:} \uniticon{images/Barracks.png} barracks can train light, heavy and ranged units (cost: 5, hp: 4).
 \item \textbf{Light:} \uniticon{images/Light.png} light units can move quickly, are trained quickly and cost little (cost: 2, hp: 4, at: 2).
-\item \textbf{Heavy:} \uniticon{images/Heavy.png} heavy units can move slowly are trained slowly and cost a lot, but have high at and hp (cost: 3, hp: 8, at: 4).
+\item \textbf{Heavy:} \uniticon{images/Heavy.png} heavy units can move slowly, are trained slowly and cost a lot, but have high at and hp (cost: 3, hp: 8, at: 4).
 \item \textbf{Ranged:} \uniticon{images/Ranged.png} ranged units have an attack range of 3 cells (cost: 2, hp: 1, at: 1).
 \end{itemize}
 Units of type worker, light, heavy and ranged can move one cell in one of four directions.
@@ -512,7 +512,7 @@ An important difference is that training with an opponent against which the Main
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer PFSP win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
 
 \paragraph{Implemented Prioritization Function.}
-To avoid prioritizing opponents that provide little learning signal, the following prioritization function was used for exploiters:
+To avoid prioritizing opponents that provide little learning signal, the following prioritization function was used for the Main Agents:
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
     \captionof{figure}{Prioritization function for the Main Agent in PFSP.}
@@ -794,7 +794,7 @@ droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWi
 guidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
 naiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
 \midrule
-overall & \WinRateCell{74.9} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
+overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
 \bottomrule
 \end{tabular*}
 \end{table*}
@@ -828,7 +828,7 @@ droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \
 guidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
 naiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
 \midrule
-overall & \LossRateCell{9.3} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
+overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
 \bottomrule
 \end{tabular*}
 \end{table*}
@@ -863,11 +863,9 @@ The total loss rate against all opponents excluding the Base Agent is decreased 
 
 % (TODO): Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
 
-% (TODO): replace all (???)
-
 \subsection{Discussion}
 LT improved the Main Agent’s win, draw and loss rates against a wide range of opponents, including the MicroRTS bots and the Base Agent used during training and generalized to other bots that were not used in training.
-LT can improve the Main Agent’s performance further than PPO could by itself, without the agent overfitting to the opponents used in training even after many different training sessions and further PPO training \cite{huft2023microrts}.
+Our results suggest that LT can improve the Main Agent’s performance further than the BC/PPO training was able to, without obvious signs of overfitting to the opponents used in training even after many different training sessions and further PPO training \cite{huft2023microrts}.
 Our interpretation is that pure PPO does not search for well-generalizing policies.
 Instead, the training optimizes performance against the limited set of training opponents.
 It therefore may pass only briefly through policies that generalize well, before continuing towards more specialized solutions.
@@ -1046,7 +1044,7 @@ In this thesis, we implemented a modified LT method from AlphaStar \cite{vinyals
 \break\break
 As shown in the results, LT improves the Main Agent's performance against a wide range of opponents, including most of the MicroRTS bots and the Base Agent.
 Furthermore, LT allows the Main Agent to generalize to other bots that were not used in training, while also improving the win rates against the bots used in the original training of the Base Agent.
-This suggests that the combination of LT and PPO is a effective approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
+This suggests that the combination of LT and PPO is an effective approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
 \break\break
 Finetuning the Main Agent with PPO after LT further improved the Main Agent's performance.
 \break\break
@@ -1643,7 +1641,7 @@ D\"usseldorf, den 31.03.2026
 
 \bigskip\bigskip\bigskip
 \noindent
-{Name!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}
+{Niklas Glaser}
 
 \newpage
 
