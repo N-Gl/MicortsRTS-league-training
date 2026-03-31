@@ -51,29 +51,29 @@
 \contentsline {subsection}{\numberline {4.1}\hskip -1em.~Hyperparameters}{11}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}\hskip -1em.~Evaluation}{11}{subsection.4.2}%
 \contentsline {paragraph}{Checkpoint and Reset Statistics.}{11}{section*.42}%
-\contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results}{11}{subsection.4.3}%
-\contentsline {paragraph}{Main Agent without Unit Focus Evaluation.}{12}{section*.43}%
-\contentsline {paragraph}{PPO Finetuning.}{12}{section*.44}%
+\contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results}{12}{subsection.4.3}%
+\contentsline {paragraph}{Main Agent without Unit Focus Evaluation.}{13}{section*.45}%
+\contentsline {paragraph}{PPO Finetuning.}{13}{section*.46}%
 \contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{13}{subsection.4.4}%
-\contentsline {paragraph}{PPO Finetuning.}{14}{section*.47}%
-\contentsline {paragraph}{Player 1 Priority.}{14}{section*.48}%
+\contentsline {paragraph}{PPO Finetuning.}{13}{section*.47}%
+\contentsline {paragraph}{Player 1 Priority.}{13}{section*.48}%
 \contentsline {paragraph}{Diversity Definition.}{14}{section*.49}%
 \contentsline {paragraph}{Diverse Sets of Agents.}{14}{section*.50}%
 \contentsline {paragraph}{Base Agent Strategy.}{14}{section*.51}%
 \contentsline {paragraph}{Base Agent Diversity.}{14}{section*.52}%
 \contentsline {paragraph}{Exploiter Diversity as the Main Limitation.}{14}{section*.53}%
-\contentsline {paragraph}{Why Different Strategies Are Harder to Reach.}{15}{section*.54}%
-\contentsline {paragraph}{Effects of New Initial Agents.}{15}{section*.55}%
+\contentsline {paragraph}{Why Different Strategies Are Harder to Reach.}{14}{section*.54}%
+\contentsline {paragraph}{Effects of New Initial Agents.}{14}{section*.55}%
 \contentsline {paragraph}{Remaining Diversity Limitations.}{15}{section*.56}%
 \contentsline {paragraph}{Comparison to AlphaStar.}{15}{section*.57}%
 \contentsline {paragraph}{Other Limitations.}{15}{section*.58}%
-\contentsline {paragraph}{Bot Environments.}{16}{section*.59}%
-\contentsline {subsection}{\numberline {4.5}\hskip -1em.~Future Work.}{16}{subsection.4.5}%
+\contentsline {paragraph}{Bot Environments.}{15}{section*.59}%
+\contentsline {subsection}{\numberline {4.5}\hskip -1em.~Future Work.}{15}{subsection.4.5}%
 \contentsline {paragraph}{Map Diversity.}{16}{section*.60}%
 \contentsline {paragraph}{Initial Agents.}{16}{section*.61}%
 \contentsline {paragraph}{MicroRTS efficiency.}{16}{section*.62}%
 \contentsline {paragraph}{Production Exploration Bonus.}{16}{section*.63}%
 \contentsline {paragraph}{Unit Bonus.}{16}{section*.64}%
 \contentsline {paragraph}{Unit Bonus Distribution.}{16}{section*.65}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion.}{17}{section.5}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion.}{16}{section.5}%
 \contentsline {section}{Erkl\"arung}{25}{section*.75}%

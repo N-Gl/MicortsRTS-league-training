@@ -735,11 +735,12 @@ All hyperparameters used are listed in Table~\ref{tab:league_hyperparameter}.
 \subsection{Evaluation}
 We evaluated the Main Agent against the MicroRTS bots and the Base Agent, across at least 100 games per opponent.
 The opponents against which the evaluation is conducted include the MicroRTS built-in bots consisting of passiveAI, workerRushAI, lightRushAI, randomAI and randomBiasedAI.
+Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} below give a compact overview of the win rates and loss rates of the evaluated agents against all bot opponents.
 The detailed evaluation results of the Base Agent are listed below in Table~\ref{tab:base_agent_evaluation} for comparison.
 The results vary from those reported in the thesis of M. Huft \cite{huft2023microrts} because the original Base Agent from the prior work could not be found.
 Therefore a different version of the Base Agent provided by M. Huft, but trained using the same procedure, was used.
 The detailed evaluation results of the Main Agent are presented below in Table~\ref{tab:main_agent_evaluation}.
-Table~\ref{tab:all_bot_overview_comparison} later gives a compact overview of the win rates and loss rates of the evaluated agents against all bot opponents.
+
 
 % (TODO): auch eine Range geben? (z.B.: von 50% bis 100%)
 \paragraph{Checkpoint and Reset Statistics.}
@@ -748,12 +749,81 @@ Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for eac
 
 
 
+% TODO: nach oben verschieben (über \FloatBarrier)
+\begin{table*}[t]
+\centering
+\small
+\caption{Comparison of win rates against all bot opponents. All values are given in \%. Higher values are better.}
+\label{tab:all_bot_winrate_comparison}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
+\toprule
+Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
+\midrule
+\multicolumn{5}{l}{\textit{bots used in training}} \\
+coacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+\midrule
+\multicolumn{5}{l}{\textit{Built-in bots}} \\
+workerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
+passiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+lightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+randomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+randomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
+\midrule
+\multicolumn{5}{l}{\textit{Other bots}} \\
+rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+mixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
+izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
+tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
+droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
+guidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
+naiveMCTSAI & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
+\midrule
+overall & \WinRateCell{74.9} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Comparison of loss rates against all bot opponents. All values are given in \%. Lower values are better.}
+\label{tab:all_bot_lossrate_comparison}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
+\toprule
+Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
+\midrule
+\multicolumn{5}{l}{\textit{bots used in training}} \\
+coacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+\midrule
+\multicolumn{5}{l}{\textit{Built-in bots}} \\
+workerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+passiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+lightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+randomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+randomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+\midrule
+\multicolumn{5}{l}{\textit{Other bots}} \\
+rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+mixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
+izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
+tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
+droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
+guidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+naiveMCTSAI & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+\midrule
+overall & \LossRateCell{9.3} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
 \FloatBarrier
 \subsection{Results}
 The agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often leaves the base undefended while attacking.
 % (TODO): The Main Agent also learned to use a wider variety of units, including ranged units, which were mostly used in edge cases in which ranged units are so effective that even one ranged unit can make a difference (e. g. when the opponent has only workers or when only a small number of units remain and avoid the Agent in order to force a draw).
-As shown in Tables~\ref{tab:base_agent_evaluation} and~\ref{tab:main_agent_evaluation}, LT improves the agent’s performance against almost all evaluated opponents.
-The differences between the win rates are listed in Table~\ref{tab:diff_main_agent_evaluation} for better comparison.
+As shown in the evaluation results in Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison}, LT improves the agent’s performance against almost all evaluated opponents.
+The detailed differences between the win rates are listed in Table~\ref{tab:diff_main_agent_evaluation} for better comparison.
 The win rates against the bots used in training reach 100\%, which is a major improvement over the Base Agent, which achieves a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
 The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
 However, the Main Agent still shows improvement over the results reported in that thesis, which report a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
@@ -771,6 +841,7 @@ This shows that the Main Agent still has weaknesses that were not found.
 
 \paragraph{Main Agent without Unit Focus Evaluation.}
 The detailed evaluation results below in Table~\ref{tab:main_agent_evaluation_no_worker_focus} show an example evaluation for a Main Agent trained without unit focus.
+The compact Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} also include most of these results for better comparison.
 As can be seen in the table, the Main Agent with unit focus performs better in all matchups.
 The biggest differences are the win rates against Droplet, which improve with the unit focus from 45\% to 62\% and GuidedRojoA3N, which improves from 64\% to 87\%.
 
@@ -788,78 +859,6 @@ After LT and PPO finetuning, this averaged win rate increases to 86\%, which is 
 This averaged win rate for the reported results of the Base Agent in the thesis of M. Huft \cite{huft2023microrts} is 79\%, which means that the Main Agent after LT and PPO finetuning still shows an improvement of 7\% over the results reported in that thesis.
 If we also exclude the bots workerRushAI and passiveAI, for which the Base Agent already has a win rate of approximately 100\%, the averaged win rate against the remaining opponents increases from 73\% to 83\%, which is an improvement of almost 10\%.
 The total loss rate against all opponents excluding the Base Agent is decreased from 8\% to 3\%.
-Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} summarize the win rates and loss rates against all bot opponents for the Base Agent, the Main Agent without unit focus, the Main Agent after LT and the Main Agent after PPO finetuning.
-
-\begin{table*}[t]
-\centering
-\small
-\caption{Comparison of win rates against all bot opponents. All values are given in \%. Higher values are better.}
-\label{tab:all_bot_winrate_comparison}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
-\toprule
-Opponent & Base Agent & \shortstack{Main Agent\\without unit focus} & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
-\midrule
-\multicolumn{5}{l}{\textit{bots used in training}} \\
-coacAI & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-mayari & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-\midrule
-\multicolumn{5}{l}{\textit{Built-in bots}} \\
-workerRushAI & \BestWinRateCell{100.0} & \WinRateCell{31.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
-passiveAI & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-lightRushAI & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-randomAI & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-randomBiasedAI & \WinRateCell{79.0} & \WinRateCell{91.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
-\midrule
-\multicolumn{5}{l}{\textit{Other bots}} \\
-rojo & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-mixedBot & \WinRateCell{43.3} & \WinRateCell{45.0} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
-izanagi & \WinRateCell{71.7} & \WinRateCell{68.0} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
-tiamat & \WinRateCell{93.0} & \WinRateCell{94.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
-droplet & \WinRateCell{67.7} & \WinRateCell{45.0} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
-guidedRojoA3N & \WinRateCell{74.7} & \WinRateCell{64.0} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
-naiveMCTSAI & \WinRateCell{0.7} & \WinRateCell{0.0} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
-\midrule
-overall & \WinRateCell{76.5} & \WinRateCell{74.9} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
-\bottomrule
-\end{tabular*}
-\end{table*}
-
-\begin{table*}[t]
-\centering
-\small
-\caption{Comparison of loss rates against all bot opponents. All values are given in \%. Lower values are better.}
-\label{tab:all_bot_lossrate_comparison}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
-\toprule
-Opponent & Base Agent & \shortstack{Main Agent\\without unit focus} & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
-\midrule
-\multicolumn{5}{l}{\textit{bots used in training}} \\
-coacAI & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-mayari & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-\midrule
-\multicolumn{5}{l}{\textit{Built-in bots}} \\
-workerRushAI & \BestLossRateCell{0.0} & \LossRateCell{63.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
-passiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-lightRushAI & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-randomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-randomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-\midrule
-\multicolumn{5}{l}{\textit{Other bots}} \\
-rojo & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-mixedBot & \LossRateCell{34.3} & \LossRateCell{33.0} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
-izanagi & \LossRateCell{16.3} & \LossRateCell{15.0} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
-tiamat & \LossRateCell{7.0} & \LossRateCell{6.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
-droplet & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
-guidedRojoA3N & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-naiveMCTSAI & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-\midrule
-overall & \LossRateCell{7.7} & \LossRateCell{9.3} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
-\bottomrule
-\end{tabular*}
-\end{table*}
-
-\FloatBarrier
-
 
 
 % (TODO): zeige unit pro Spiel ende (sind alle in ihrem Strategie type geblieben?)?
@@ -868,6 +867,7 @@ overall & \LossRateCell{7.7} & \LossRateCell{9.3} & \LossRateCell{7.5} & \BestLo
 
 % (TODO): replace all (???)
 
+% TODO: As shown in the evaluation results in the Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison}, the trained agent is already strong against bots that use heavy units.
 % TODO: kurzen? 50% nur wichtige details
 \subsection{Discussion}
 LT improved the Main Agent’s win, draw and loss rates against a wide range of opponents, including the MicroRTS bots and the Base Agent used during training and generalized to other bots that were not used in training.
@@ -926,7 +926,7 @@ However, the Base Agent itself is not diverse in the sense defined above in \ref
 
 \paragraph{Exploiter Diversity as the Main Limitation.}
 The exploiters are therefore less likely to cover those weaknesses that are exploitable from strategies different from their initial agents' policies.
-As shown in the evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus}, the trained agent is already strong against bots that use heavy units.
+As shown in the evaluation results in the Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison}, the trained agent is already strong against bots that use heavy units.
 We can also see that the exploiters only used very few other units.
 The agents are mostly trained against other agents that are initialized from the same Base Agent.
 We presume the limited diversity of the Base Agents to be the reason why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
@@ -1155,16 +1155,13 @@ In summary, this thesis demonstrates the effectiveness of LT for improving the p
 
 
 % TODO: rates in %?
-% TODO: Tabelle 3, 4 nach oben, wo man sie bespricht
-
-
 \begin{table*}[t]
 \centering
 \caption{Base Agent evaluation}
 \label{tab:base_agent_evaluation}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
-Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Loss rate $\downarrow$ \\
 \midrule
 \multicolumn{8}{l}{\textit{bots used in training}} \\
 \csvreader[
@@ -1201,14 +1198,13 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{table*}
 
 
-% TODO: Tabelle 3, 4 nach oben, wo man sie bespricht
 \begin{table*}[t]
 \centering
 \caption{Main Agent evaluation}
 \label{tab:main_agent_evaluation}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
-Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Loss rate $\downarrow$ \\
 \midrule
 \multicolumn{8}{l}{\textit{bots used in training}} \\
 \csvreader[
@@ -1245,19 +1241,13 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \end{table*}
 
 
-
-
-% TODO: was heißt hier -? verschlechtern?
-% TODO: Pfeile nach oben bei winrate, nach unten bei loss rate?
-% TODO: Tabelle 3, 4 lieber Farblich kodieren
-% TODO: eine Tabelle, die Tabelle 3, 4, 5 zusammenfasst
 \begin{table*}[t]
 \centering
-\caption{Difference in evaluation results between the Main Agent and the Base Agent}
+\caption{Difference in evaluation results between the Main Agent and the Base Agent (e. g. 0.04 means the Main Agent increases the win rate by 4\% in comparison to the Base Agent).}
 \label{tab:diff_main_agent_evaluation}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c@{}}
 \toprule
-Opponent & Win rate & Draw rate & Loss rate \\
+Opponent & Win rate $\uparrow$ & Draw rate & Loss rate $\downarrow$ \\
 \midrule
 \multicolumn{4}{l}{\textit{bots used in training}} \\
 \csvreader[
@@ -1294,7 +1284,7 @@ Opponent & Win rate & Draw rate & Loss rate \\
 % \label{tab:main_agent_no_unit_focus_evaluation}
 % \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 % \toprule
-% Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+% Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Loss rate $\downarrow$ \\
 % \midrule
 % \multicolumn{8}{l}{\textit{bots used in training}} \\
 % \csvreader[
@@ -1338,7 +1328,7 @@ Opponent & Win rate & Draw rate & Loss rate \\
 \label{tab:main_agent_evaluation_no_worker_focus}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
-Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Loss rate $\downarrow$ \\
 \midrule
 \multicolumn{8}{l}{\textit{bots used in training}} \\
 \csvreader[
@@ -1381,7 +1371,7 @@ Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
 \label{tab:ppo_finetuning_evaluation}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c c c c@{}}
 \toprule
-Opponent & Games & Wins & Draws & Losses & Win rate & Draw rate & Loss rate \\
+Opponent & Games & Wins & Draws & Losses & Win rate $\uparrow$ & Draw rate & Loss rate $\downarrow$ \\
 \midrule
 \multicolumn{8}{l}{\textit{bots used in training}} \\
 \csvreader[
@@ -1658,8 +1648,8 @@ PPO Exploiter & \texttt{exploiter\_vf\_coef} & 0{,}1 & Weight of the value loss 
 
 \bigskip\bigskip
 \noindent
-Diese Bachelor-Arbeit wurde teilweise mit Hilfe von ChatGPT zur Unterstützung bei Formulierungen, Rechtschreibung, Grammatik und Übersetzungen erstellt.
-Im Code wurde teilweise ChatGPT benutzt. % TODO: als implementierung für meine Ideen.
+Diese Bachelor-Arbeit wurde teilweise unter Verwendung von ChatGPT zur Unterstützung bei Formulierungen, Rechtschreibung, Grammatik und Übersetzungen benutzt.
+Für die Implementierung eigener Ideen wurde im Code teilweise ChatGPT benutzt.
 Diese Inhalte wurde eigenständig geprüft und überarbeitet.
 Hiermit versichere ich, dass ich die Bachelor-Arbeit selbstst\"andig verfasst und keine
 anderen als die angegebenen Quellen und Hilfsmittel benutzt habe.
