@@ -280,7 +280,6 @@ Huang et~al.\ considered two action representations:
     \item \textbf{GridNet:} GridNet predicts an action for each cell on the map. 
     This means that GridNet executes its large action space in a single step, but this also simplifies the training \cite{huang2021gym, pmlr-v97-han19a}.
 \end{itemize}
-% TODO: schreibe das unten in PPO finetuning rein 84\% with GridNet (nur mit MPALA-CNN)
 Against the same evaluation bots, the PPO implementation with invalid action masking and IMPALA-CNN achieves an average win rate of 91\% with UAS and 84\% with GridNet. 
 Ultimately, the decision was made to focus on GridNet, since its lower complexity and its higher compatibility with SP (and LT) \cite{huang2021gym}.
 SP was also evaluated in the work.
@@ -365,13 +364,13 @@ Therefore, the maximum number of steps is set to 2000.
 The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in figure~\ref{Figure 1}.
 This symmetric map starts each player with one base, five resources, two workers and 50 resources located near the base \cite{goodfriend2024raisocketai}.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=1\linewidth]{images/16x16.png}
+    \includegraphics[width=0.95\linewidth]{images/16x16.png}
     \caption{Screenshot \texttt{basesWorkers16x16A} map \cite{huft2023microrts}.}
     \label{Figure 1}
 \end{figure}
-\break\break
+
 \begin{itemize}
     \item \textbf{PassiveAI:} \texttt{PassiveAI} does not act.
     \item \textbf{WorkerRushAI and LightRushAI:} These bots build their corresponding units as quickly as possible and rush the opponent with them.
@@ -384,7 +383,7 @@ This symmetric map starts each player with one base, five resources, two workers
     It tries to keep the opponent at a distance and to attack with ranged units, while the heavy units protect the ranged units from close combat.
     \item \textbf{Mayari:} \texttt{Mayari} is another strong scripted competition bot and is used together with \texttt{CoacAI} in Base-Agent training, LT bot environments and finetuning.
     This bot primarily uses heavy units, to rush the opponent.
-\item \textbf{Rojo:} \texttt{rojo} is a bot that tries to build many worker units and attack strategically with them.
+    \item \textbf{Rojo:} \texttt{rojo} is a bot that tries to build many worker units and attack strategically with them.
     \item \textbf{MixedBot, Izanagi, Tiamat, Droplet, GuidedRojoA3N and NaiveMCTS:} These are additional stronger competition bots that are used for evaluation in order to test generalization for stronger bots.
     These bots are too slow to be used for training.
 \end{itemize}
@@ -445,7 +444,7 @@ In this thesis, the same approach with some adjustments is used to implement SP,
 
 \paragraph{Solutions.}
 FSP/PFSP (\ref{sec:PFSP}) are used to stabilize training and reduce cyclical learning.
-To address the second problem, the observations for player 2 are transformed by rotating them along by 180 degrees.
+To address the second problem, the observations for player 2 are transformed by rotating them by 180 degrees.
 From the agent’s perspective, player 2 also starts at the top-left of the map.
 This makes the observations for player 1 and player 2 more similar and therefore makes SP with a pre-trained Base Agent possible, even though the Base Agent was exclusively trained as player 1 (figure~\ref{fig:adjust_obs}).
 Actions are transformed accordingly, as a result the environment still executes the intended actions for player 2.
@@ -457,12 +456,10 @@ This includes a position component that is added before masking, since masking r
 
 \subsection{Fictitious Self-Play (FSP)}
 To address the instabilities of pure SP, in FSP the agent is trained not exclusively against the current policy, but against a uniformly sampled pool of the agent’s historical policies \cite{vinyals2019alphastar}.
+In the implementation of this thesis, this means that instead of player 2 always using the current policy, player 2 is sampled uniformly from a pool of Historical Agents (i. e. snapshots of the Main Agent at different training stages).
 This results in the learning-agent learning an effective response to the averaged opponent strategy, reducing cyclical learning.
 Under standard assumptions, FSP can converge towards an approximate Nash equilibrium in two-player zero-sum games (with respect to the average strategies).
 Heinrich et~al.\ also demonstrate this empirically in poker experiments \cite{heinrich2015fsp}.
-
-\paragraph{Implementation.} 
-The implementation is similar to SP, but instead of player 2 always using the current policy, player 2 is sampled uniformly from a pool of Historical Agents (i. e. snapshots of the Main Agent at different training stages).
 
 \paragraph{Problem with the Implementation.} 
 In the described implementation, player 1 has priority in conflict resolution (e. g. when both players want to move to the same cell).
@@ -515,7 +512,7 @@ An important difference is that training with an opponent against which the Main
 % Durch diese Spielsituation verlangsammt sich das Training, deshalb werden in dieser Arbeit Gegner mit einer PFSP win rate die kleiner als 0.5 ist mehr priorisiert als 0.5.
 
 \paragraph{Implemented Prioritization Function.}
-To avoid prioritizing opponents that provide little learning signal, the following prioritization functions was used for exploiters:
+To avoid prioritizing opponents that provide little learning signal, the following prioritization function was used for exploiters:
 \begin{center}
     \includegraphics[width=\linewidth,height=1\textheight,keepaspectratio]{images/focused_strong_boosted_with_draws.pdf}
     \captionof{figure}{Prioritization function for the Main Agent in PFSP.}
@@ -526,7 +523,8 @@ That is because most of our matchups are very draw-heavy.
 Therefore, it is likely that the win rate (without draws) is close to 0\%, when the PFSP win rate is below 50\%.
 As a result, such opponents would otherwise be selected more frequently despite providing only a very weak learning signal.
 Furthermore, opponents with a PFSP win rate of 0\% are prioritized over those with a PFSP win rate of 100\%, since there is substantial learning potential for an opponent with a PFSP win rate of 0\%, whereas a PFSP win rate of 100\% usually means that the agent already defeats the opponent reliably.
-In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.% (für letzten Run (26_03)) (TODO): , by initializing every Agent with an Draw for every opponent.
+In this thesis PFSP was modified in a way that all agents have a non-zero probability of being selected.
+% (für letzten Run (26_03)) (TODO): , by initializing every Agent with an Draw for every opponent.
 % (TODO): This means, that the win rate is never exactly 100\%, ensuring that every opponent has a non-zero probability of being selected.
 This ensures that no opponent is completely ignored because it lost all initial games (yielding a 100\% PFSP win rate for the learning agent), since these initial results may have been outliers.
 
@@ -554,7 +552,7 @@ Similar to AlphaStar \cite{vinyals2019alphastar}, the league in this thesis cons
 \end{itemize}
 Historical Agents are the only league agent type that is not a learning agent.
 The main differences between the roles are the opponent-sampling distribution and the hyperparameters.
-All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm, but they are trained with role-specific hyperparameters (e. g. learning rate and PFSP prioritization function).
+All agents share the same observation/action representation (GridNet with invalid action masking) and use the same underlying PPO algorithm.
 
 
 \paragraph{Training Loop and Snapshot Management.}
@@ -566,8 +564,7 @@ LT iterates through cycles consisting of the following phases:
     \item \textbf{Update statistics:} periodically evaluate against a subset of league members to update win rate estimates used by PFSP,
     \item \textbf{Add snapshots:} at predefined intervals (or when performance criteria are met), store a frozen copy of the current agent as a new Historical Agent.
 \end{itemize}
-A phase of the training loop is considered completed only after every league agent type (Main Agent, Main Exploiters, League Exploiters) has completed the phase.
-For example, the Main Agent only proceeds to the next phase after all Main Exploiters and League Exploiters have completed the current phase.
+An agent proceeds to the next phase only after every league agent type (Main Agent, Main Exploiters, League Exploiters) has completed the current phase.
 
 \paragraph{Bot Environments.}
 Bot environments are added to the league to stabilize training by continuing the PPO training against the bots CoacAI and Mayari, which the Base Agent was trained against.
@@ -692,7 +689,7 @@ The attack bonus was removed for our training and we adjusted the per-step delta
 We use the Base Agent from the prior work of M. Huft \cite{huft2023microrts}, which was trained by using a combination of BC and PPO, as the initial agent in this thesis unless otherwise specified.
 The map used is \texttt{basesWorkers16x16A}, a symmetrical map also used in related work such as \cite{huang2021gym, huft2023microrts, goodfriend2024raisocketai}.
 We evaluate a version of the Main Agent, which was not trained for the full amount of total steps.
-Our Main Agent is trained in LT with 4 Main Exploiters, 1 League Exploiter, with 25 environments each, for approximately 130000000 total steps, 1600 updates over 100 hours.
+Our Main Agent is trained in LT with 4 Main Exploiters, 1 League Exploiter, with 25 environments each, for approximately 130000000 total steps and 1600 updates over 100 hours.
 The Main Agent played around 4500 games against the bots CoacAI and Mayari.
 During the training, win rates against both bots over the global training steps were monitored and shown in figure~\ref{fig:bot_Winrate_with_draw_0_5}.
 In the training, the bot environments were evenly split between the two bots, with a maximum of 10 and a minimum of 5 environments for both bots combined.
@@ -700,7 +697,7 @@ The number of bot environments throughout training is shown in figure~\ref{fig:n
 This results in a total of 160 parallel environments for LT when all bot environments are active.
 It requires a lot of computational resources, especially since the observations are not purely boolean and therefore required more memory.
 The peak memory usage increases by approximately 2500 MiB for an agent with 25 parallel environments.
-However, it is important to keep the number of environments per agent above a certain threshold, because the number of environments affects the rollout size and a too small rollout can lead to unstable training.
+However, it is important to keep the number of environments per agent above a certain threshold, because it affects the rollout size and a too small rollout can lead to unstable training.
 
 
 \begin{figure}[h]
@@ -718,11 +715,11 @@ However, it is important to keep the number of environments per agent above a ce
 \end{figure}
 
 
-
+\FloatBarrier
 \subsection{Hyperparameters}
 Notable hyperparameters for the Main Agent include a higher learning rate of $5e\text{-}5$ than the Base Agent, namely $2.5e\text{-}5$, as well as higher value function coefficients of 0.15 for the Main Agent and 0.1 for the exploiters.
 An annealed entropy coefficient is used, starting at 0.025 and ending at 0.0075.
-The annealed entropy coefficient for exploiters is often reset in the exploiter resets, as explained in \ref{par:annealed_entropy_coefficient}.
+The annealed entropy coefficient for exploiters is reset when the exploiter resets, as explained in \ref{par:annealed_entropy_coefficient}.
 After sufficient steps, the entropy coefficient for exploiters remains high because of repeated resets, which helps them find exploits faster, while the annealing helps them retain and further improve these exploits.
 % (TODO): The Main Agent’s entropy coefficient starts lower to keep the Agent closer to the already strong Base Agent, but is annealed to further improve the Main Agent’s performance in the later stages of training.
 The entropy coefficient is very high in comparison to that of the Base Agent, which uses a constant coefficient of 0.005.
@@ -747,8 +744,27 @@ In total there are 7 checkpoints for the Main Agent, 9 checkpoints for the Main 
 Table~\ref{tab:checkpoint_statistics} presents the number of checkpoints for each initial agent type and the approximate total games that exploiters trained with them.
 
 
+\subsection{Results}
+The agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often leaves the base undefended while attacking.
+% (TODO): The Main Agent also learned to use a wider variety of units, including ranged units, which were mostly used in edge cases in which ranged units are so effective that even one ranged unit can make a difference (e. g. when the opponent has only workers or when only a small number of units remain and avoid the Agent in order to force a draw).
+As shown in the evaluation results in Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison}, LT improves the agent’s performance against almost all evaluated opponents.
+The detailed differences between the win rates are listed in Table~\ref{tab:diff_main_agent_evaluation} for better comparison.
+The win rates against the bots used in training reach 100\%, which is a major improvement over the Base Agent, which achieves a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
+The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
+However, the Main Agent still shows improvement over the results reported in that thesis, which report a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
+The trained Main Agent also performs well against the Base Agent against which it was trained, achieving a win rate of 89\%.
+The win rate against RandomBiasedAI is another major improvement, increasing from 79\% to 97\%.
+This indicates that, in comparison to the Base Agent, the trained Agent performs substantially better against bots that try to draw the game instead of win the game.
+The agents in the section "Other Bots" are considerably stronger against the Base Agent than the built-in bots, which is reflected in the lower win rates against them.
+However, the Main Agent still shows improvements over the Base Agent against most of these opponents.
+Highlights include the win rate against Rojo, which improves from 81\% to 100\%, while the win rate against MixedBot also increases from 43\% to 57\%.
+The win rate against Izanagi falls from 72\% to 70\%, however the loss rate improves from 16\% to 7\%, suggesting that the Main Agent defends the base more effectively while attacking.
+% (TODO): stimmt das noch?
+WorkerRushAI is the only opponent against which the Main Agent performs notably worse than the Base Agent.
+This shows that the Main Agent still has weaknesses that were not found.
 
-% TODO: nach oben verschieben (über \FloatBarrier)
+
+
 \begin{table*}[t]
 \centering
 \small
@@ -818,30 +834,12 @@ overall & \LossRateCell{9.3} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLo
 \end{table*}
 
 \FloatBarrier
-\subsection{Results}
-The agent learned to keep the base defended, even while attacking with other units, which is a clear improvement over the Base Agent, which often leaves the base undefended while attacking.
-% (TODO): The Main Agent also learned to use a wider variety of units, including ranged units, which were mostly used in edge cases in which ranged units are so effective that even one ranged unit can make a difference (e. g. when the opponent has only workers or when only a small number of units remain and avoid the Agent in order to force a draw).
-As shown in the evaluation results in Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison}, LT improves the agent’s performance against almost all evaluated opponents.
-The detailed differences between the win rates are listed in Table~\ref{tab:diff_main_agent_evaluation} for better comparison.
-The win rates against the bots used in training reach 100\%, which is a major improvement over the Base Agent, which achieves a 96\% win rate against CoacAI, but only a 67\% win rate against Mayari.
-The results of our Base Agent differ substantially from the results reported in the thesis of M. Huft \cite{huft2023microrts}.
-However, the Main Agent still shows improvement over the results reported in that thesis, which report a 96\% win rate against CoacAI and a 95\% win rate against Mayari.
-The trained Main Agent also performs well against the Base Agent against which it was trained, achieving a win rate of 89\%.
-The win rate against RandomBiasedAI is another major improvement, increasing from 79\% to 97\%.
-This indicates that, in comparison to the Base Agent, the trained Agent performs substantially better against bots that try to draw the game instead of win the game.
-The agents in the section "Other Bots" are considerably stronger against the Base Agent than the built-in bots, which is reflected in the lower win rates against them.
-However, the Main Agent still shows improvements over the Base Agent against most of these opponents.
-Highlights include the win rate against Rojo, which improves from 81\% to 100\%, while the win rate against MixedBot also increases from 43\% to 57\%.
-The win rate against Izanagi falls from 72\% to 70\%, however the loss rate improves from 16\% to 7\%, suggesting that the Main Agent defends the base more effectively while attacking.
-% (TODO): stimmt das noch?
-WorkerRushAI is the only opponent against which the Main Agent performs notably worse than the Base Agent.
-This shows that the Main Agent still has weaknesses that were not found.
 
 
 \paragraph{Main Agent without Unit Focus Evaluation.}
-The detailed evaluation results below in Table~\ref{tab:main_agent_evaluation_no_worker_focus} show an example evaluation for a Main Agent trained without unit focus.
+The detailed evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus} show an example evaluation for a Main Agent trained without unit focus.
 The compact Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} also include most of these results for better comparison.
-As can be seen in the table, the Main Agent with unit focus performs better in all matchups.
+As can be seen in the table, the Main Agent with unit focus performs better or similar in all matchups.
 The biggest differences are the win rates against Droplet, which improve with the unit focus from 45\% to 62\% and GuidedRojoA3N, which improves from 64\% to 87\%.
 
 
@@ -852,6 +850,7 @@ After the LT training, the Main Agent was further trained with PPO for approxima
 The 25 environments were evenly split between CoacAI, Mayari and WorkerRushAI.
 The learning rate was set to 1.5e-6, the entropy coefficient was set to 0.005 and no exploiters were used during this finetuning phase.
 The detailed results over 200 evaluation games per opponent are presented below in Table~\ref{tab:ppo_finetuning_evaluation}.
+The compact Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} also show most of these results.
 After finetuning, the win rate against WorkerRushAI is now almost 100\% and most other win rates also improved.
 The averaged win rate against all evaluation opponents excluding the Base Agent is 77\% for the Base Agent.
 After LT and PPO finetuning, this averaged win rate increases to 86\%, which is a substantial improvement of 9\%.
@@ -926,7 +925,6 @@ This can be seen in the high win rates against e. g. Tiamat, which is a bot usin
 % We can also see that the exploiters only used very few other units.
 The agents are mostly trained against other agents that are initialized from the same Base Agent.
 We presume the limited diversity of the Base Agents to be the reason why the exploiters and the Main Agent tend to encounter similar opponents and therefore exhibit mostly similar games and strategies against each other.
-Figure~\ref{fig:exploiter_diversity_schematic} summarizes this relation schematically.
 This suggests a main limitation of the training approach is that, because of the limited diversity of the Base Agent (\ref{par:limited_base_agent_diversity}), the diversity of the set of historical Main Exploiters is also limited unless very long training times and a high degree of exploration are used.
 Some weaknesses of the Main Agent that can be exploited by strategies for different unit types are therefore very difficult to represent with historical Main Exploiters.
 Such strategies are difficult to discover through LT alone, because they are far from the Base Agent's default heavy-rush behavior and often require first unlearning fundamental parts of the initial strategy before a substantially different strategy can be learned.
@@ -937,17 +935,9 @@ In a complex environment such as MicroRTS, there are likely many more weaknesses
 % The exploiter only receives a positive reward if the full strategy succeeds within the same game.
 % In comparison, if the exploiter can find a weakness that does not require almost entirely stopping its current strategy, for example because it uses the same units, it can receive a positive reward for exploiting this weakness and gradually change its strategy even if it does not fully succeed in exploiting the Main Agent, which makes it easier to find such weaknesses.
 
-\begin{figure*}[t]
-    \centering
-    \resizebox{0.96\textwidth}{!}{\input{images/exploiter_diversity_schematic.tex}}
-    \caption{Illustration of our hypothesis about how the diversity of the Base Agent and initial agents affects exploiter diversity and the Main Agent's generalization during LT.}
-    \label{fig:exploiter_diversity_schematic}
-\end{figure*}
 
-
-\FloatBarrier
 \paragraph{Effects of New Initial Agents.}
-It was more difficult than expected to generate diverse exploiters because of the long transitions without reward between strategies for different unit types, which is why the introduction of new initial agents was particularly important.
+For this reason, the introduction of new initial agents was particularly important for better win rates against diverse opponents.
 We hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters and possibly more important than the initial agents' win rate.
 This is why the new initial agents, with a focus on different unit types, were implemented, allowing the exploiters to find exploits related to different unit types without first having to unlearn the strategy for the unit type favored by the Base Agent.
 The new initial agents contributed to generalization across diverse opponents.
@@ -960,13 +950,28 @@ At the same time, figure~\ref{fig:number-units-after-game} for the worker focuse
 This suggests that with the new initial agents focused on different unit types, the historical exploiter set is diverse enough to cover many relevant strategy variations and improve the performance of the Main Agent, even against many other agents that were not included in the training or evaluation.
 However, the result against WorkerRushAI suggests that more diverse exploiters could further improve the Main Agent's performance.
 
+Figure~\ref{fig:exploiter_diversity_schematic} summarizes this relation schematically.
+\begin{figure}[ht]
+    \centering
+    \resizebox{0.95\linewidth}{!}{\input{images/exploiter_diversity_schematic.tex}}
+    \caption{Illustration of our hypothesis about how the diversity of the Base Agent and initial agents affects exploiter diversity and the Main Agent's generalization during LT.}
+    \label{fig:exploiter_diversity_schematic}
+\end{figure}
 
+\FloatBarrier
 \paragraph{Comparison to AlphaStar.}
 This diversity limitation was probably less problematic in AlphaStar \cite{vinyals2019alphastar}, because its initial policy was pre-trained by imitation learning on human replay data, which covered a much broader range of strategies.
-As a consequence, the initial policy was likely competent across a broader range of strategies than the Base Agent used in this thesis, which was trained with BC and PPO against only two bots and was therefore biased towards a comparatively narrow strategy set.
+Therefore, the initial policy was likely competent across a broader range of strategies than the Base Agent used in this thesis, which was trained with BC and PPO against only two bots and was therefore biased towards a comparatively narrow strategy set.
 This broader initialization presumably made it easier for exploiters to reach and exploit a more diverse set of strategies.
 The diversity of our Base Agent is further constrained in comparison to AlphaStar by the fact that, during BC and PPO, some possible opponents must be excluded from training in order to obtain a more robust evaluation, while many strong agents are too slow to be practical training opponents.
 
+
+\paragraph{Bot Environments.} 
+The additional bot environments for the Main Agent are particularly important in the initial phase of LT, in which the Main Exploiters have not yet found weaknesses in the Main Agent.
+In this LT phase, the Main Agent can only train against the historical Main Agents and itself.
+The bots provide additional opponents that are not based on the Main Agent’s current strategy, hence reducing the risk of overfitting.
+After this initial LT phase, the bot environments are less important.
+That is why the number of bot environments is dynamic over the course of training, and often relatively low as shown in figure~\ref{fig:num_bot_envs}.
 
 \paragraph{Other Limitations.}
 Despite the improved diversity and general performance of the Main Agent, there are still some limitations of the training approach:
@@ -980,16 +985,10 @@ Despite the improved diversity and general performance of the Main Agent, there 
     This is a very specific setting.
 \end{itemize}
 
-\paragraph{Bot Environments.} 
-The additional bot environments for the Main Agent are particularly important in the initial phase of LT, in which the Main Exploiters have not yet found weaknesses in the Main Agent.
-In this LT phase, the Main Agent can only train against the historical Main Agents and itself.
-The bots provide additional opponents that are not based on the Main Agent’s current strategy, hence reducing the risk of overfitting.
-After this initial LT phase, the bot environments are less important.
-That is why the number of bot environments is dynamic over the course of training, and often relatively low as shown in figure~\ref{fig:num_bot_envs}.
-
 
 \subsection{Future Work.}
 Future work could focus on multiple different maps and on fog of war.
+Decreasing the computational cost of training is also an important direction for future work.
 Another possibility is to improve the diversity of the exploiters, which is a crucial factor for the performance of the Main Agent.
 This can be done by increasing diversity in either the initial agents, the Base Agents, or in the training itself.
 
@@ -1035,7 +1034,7 @@ Unit bonus distribution is an improved method for increasing the diversity of ex
 The idea is to continue training the agent with an additional input feature for the agent that specifies the unit bonus sampled from a distribution that is updated every game.
 \break\break
 The unit bonus distribution allows the trained agent to be used as an exploiter with a static bonus or a distribution-based bonus, resulting in an exploiter with definable tendencies toward different unit types.
-This also allows the retraining of the BC and PPO phases with the unit bonus, because only one agent needs to be trained instead of multiple agents with different fixed unit bonuses, which would be very time-consuming.
+This also allows the retraining of the PPO phase with the unit bonus, because only one agent needs to be trained instead of multiple agents with different fixed unit bonuses, which would be very time-consuming.
 Retraining the agent from scratch with the unit bonus distribution showed promising results.
 However, the training was not continued long enough to evaluate the effect of the unit bonus distribution on the diversity of the exploiters, since training with the unit bonus distribution is very time-consuming because the BC phase did not work with the current implementation and therefore had to be skipped.
 Starting the LT with the Base Agent and the unit bonus distribution instead showed the same problem as training with the unit bonus.
@@ -1043,35 +1042,24 @@ Starting the LT with the Base Agent and the unit bonus distribution instead show
 
 \section{Conclusion.}
 \label{sec:conclusion}
-In this thesis, we implemented a modified LT method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters, to improve the Main Agent's win, draw and loss rate against various opponents.
-By rotating the observations, actions and masks, as well as switching the sides of the learning agents to circumvent priority, we were able to implement SP with a Base Agent only trained as player 1, which is a requirement for the LT method.
-One goal of using exploiters was to mitigate the need for many different bot agents to achieve generalized performance by using exploiters to create a diverse set of opponents for the Main Agent.
-However, the results suggest that the diversity of the exploiters is still a crucial factor for the performance of the Main Agent.
-\break\break
-We also adjusted the PFSP prioritization functions to better fit the MicroRTS environment, because our training is very draw-heavy.
-Furthermore, we added environments for the Main Agent against two bots, which stabilize the training especially in the early stages, when the exploiters have not yet created many opponents for the Main Agent to train against.
+In this thesis, we implemented a modified LT method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters.
 \break\break
 As shown in the results, LT improves the Main Agent's performance against a wide range of opponents, including most of the MicroRTS bots and the Base Agent.
 Furthermore, LT allows the Main Agent to generalize to other bots that were not used in training, while also improving the win rates against the bots used in the original training of the Base Agent.
-This suggests that the combination of LT and PPO is a viable approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
-Finetuning the Main Agent with PPO after LT further improved the Main Agent's performance, especially when training against WorkerRushAI, which exploited a significant weakness of the Base Agent.
-In LT, the Main Agent improved not only its win rate, but also its loss rate, which suggests that it learned to defend the base more effectively while attacking.
-This can also be observed when viewing evaluation replays.
+This suggests that the combination of LT and PPO is a effective approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
+\break\break
+Finetuning the Main Agent with PPO after LT further improved the Main Agent's performance.
+\break\break
 However, the diversity of the exploiters' initial agents seems to be a crucial factor, which we were able to partially address by introducing new initial agents with different unit type focuses.
 This solution has its own limitations, such as not guaranteeing that all relevant clusters in the reward landscape are covered by the initial agents and complicating the training process by requiring the training of multiple initial agents.
-Furthermore, this means that in our approach, diverse bot agents for BC and PPO training are still just as important, or even more important, for the performance of the Main Agent.
-While exploiters can provide some diversity and mitigate the need for many variations of bot agents with different but similar strategies, they cannot fully replace the need for diverse bot agents in this training approach.
-This is because more diverse strategies are likely to be more difficult to find for the exploiters and therefore may not be represented.
+In our approach, diverse bot agents for BC and PPO training therefore remain very important for the performance of the Main Agent.
+While exploiters can provide some diversity and reduce the need for many bot agents with similar strategies, they cannot fully replace diverse bot agents in this training approach.
+This is because substantially different strategies from the Base Agent are more difficult for exploiters to discover and therefore may not be represented.
+\break\break
 This also suggests that starting LT from a BC-pretrained agent may be suboptimal, especially when BC is based on only a small set of experts, because the BC phase can bias the initial agent toward a narrow set of strategies.
 As a result, it may become more difficult for the exploiters to discover strategically diverse responses, which can in turn limit the Main Agent's robustness and generalization.
-However, these results suggest that replacing our current BC and PPO approach with an approach that focuses on learning diverse strategies from the start could further increase the Main Agent's performance, especially its generalization and robustness against a wider range of opponents.
-This would also reduce the need for many different bot agents for training.
+Replacing our current BC and PPO approach with an approach that focuses on learning diverse strategies from the start could therefore further increase the Main Agent's performance and generalization, while also reducing the need for many different bot agents for training.
 \break\break
-% besser mit diversen initialen Agenten.  --> MicroRTS spezifischer Workaround: neue initiale Agenten --> ist nicht perfekt (wenn nicht alle Clusters von lokalen Maxima abgedeckt sind)
-%                                         --> heißt auch: leider braucht man mit dieser thesis immer noch so viele diverse bot agenten, wie möglich (gehofft: nicht mehr so wichtig, da Exploiter diversität bieten)
-% --> lieber human imitation learning, wie in AlphaStar (wenn überhaupt möglich), um die vielfältigkeit der initailen Agenten zu erhöhen
-% oder von anfang an auf diversität abzielen, statt ein Agenten zu benutzen, der hohe Winrates erreichen soll. --> ohne neue initiale Agenten?
-% sehr kurze Zusammenfassung der Ergebnisse, Methoden (LT)
 In summary, this thesis demonstrates the effectiveness of LT for improving the performance of an agent trained on BC and PPO in MicroRTS, while also highlighting the importance of the diversity of the exploiters' initial agents.
 
 

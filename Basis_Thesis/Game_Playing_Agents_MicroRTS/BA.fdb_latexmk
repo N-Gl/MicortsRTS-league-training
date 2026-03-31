@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex BA"] 1774969978.35825 "BA.aux" "BA.bbl" "BA" 1774970478.76569 0
+["bibtex BA"] 1774980933.68514 "BA.aux" "BA.bbl" "BA" 1774980951.43559 0
   "./references.bib" 1774967651.6688 13042 221277ab4ea35f162c61883a60adcf52 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "BA.aux" 1774970478.70084 28905 1086421fa5a7aee66c67bf4672bedee9 "pdflatex"
+  "BA.aux" 1774980951.36923 28798 a7ea43c9ddaa51e8eb9d588d5b2601c8 "pdflatex"
   (generated)
   "BA.bbl"
   "BA.blg"
   (rewritten before read)
-["pdflatex"] 1774970463.04403 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1774970478.76582 0
+["pdflatex"] 1774980933.69966 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1774980951.43569 0
   "/etc/texmf/web2c/texmf.cnf" 1770636971.26796 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1774970447.55959 117921 03c831a74346ee4c04d4e6e8aaa105dc ""
+  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1774980891.37917 115371 2bde7ea279755c917e1a358ae3fe94ea ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -211,12 +211,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770636977.92702 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770636989 7277872 ffab420a662be251f461743f3256ccdd ""
-  "BA.aux" 1774970478.70084 28905 1086421fa5a7aee66c67bf4672bedee9 "pdflatex"
-  "BA.bbl" 1774969978.36284 4498 01912933fc76493dfac67e01010edbef "bibtex BA"
-  "BA.brf" 1774970478.70474 4103 fe488eb19f3acd0f4c3fad9527d52eb2 "pdflatex"
-  "BA.out" 1774970478.70474 3623 32cfaedcd00626e243dc57ace4af1edd "pdflatex"
-  "BA.tex" 1774970447.55959 117921 03c831a74346ee4c04d4e6e8aaa105dc ""
-  "BA.toc" 1774970478.70474 5683 2f6e13f753d55bccdf094b0872fd73f3 "pdflatex"
+  "BA.aux" 1774980951.36923 28798 a7ea43c9ddaa51e8eb9d588d5b2601c8 "pdflatex"
+  "BA.bbl" 1774980933.69076 4498 01912933fc76493dfac67e01010edbef "bibtex BA"
+  "BA.brf" 1774980951.37308 4098 1194aec4d29ab69fd0d93e5b5810ff31 "pdflatex"
+  "BA.out" 1774980951.37308 3623 19c76cb872b52a35d3c3cfe40e04d9e9 "pdflatex"
+  "BA.tex" 1774980891.37917 115371 2bde7ea279755c917e1a358ae3fe94ea ""
+  "BA.toc" 1774980951.37308 5622 5437ae1352ee51c5c830299afdc68d0a "pdflatex"
   "hhu_logo.png" 1770636797.59944 8264 c1f1bd10a1563342031d75de2fe3fc15 ""
   "images/16x16.png" 1770636797.60726 5264 3bfdf6f174daeff65e05470c243d5d81 ""
   "images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv" 1774970065.23977 586 c69f9707e0ad2aaba9e9eecfcb9d4428 ""
@@ -235,7 +235,7 @@
   "images/adjust_obs.pdf" 1774354611.22154 116168 bfcacadf52044556822fa4b15c73c40e ""
   "images/bot_win_rates_no_draw.png" 1774441200.82457 505356 eb837d6da924eb4789e268e69b165212 ""
   "images/diff.csv" 1774970065.23977 406 6858436ebc677a3806620c97c811719d ""
-  "images/exploiter_diversity_schematic.tex" 1774961634.86364 1531 b8bd1c4d7c922169dc6d5cf470019250 ""
+  "images/exploiter_diversity_schematic.tex" 1774975451.76201 1513 4fac93e83e14260275a3d449facc9506 ""
   "images/exploiter_reset.pdf" 1774889169.99923 19578 00d64e59da780b6518fa2917acc694c0 ""
   "images/focused_strong_boosted_with_draws.pdf" 1773067519.5298 30368 ba5cf7e72835b04d8e982128e0c17220 ""
   "images/initial_pos_basesWorkers16x16A.png" 1774879113.82095 3797 00e249ea8c52060ece54c514152e9dc3 ""
