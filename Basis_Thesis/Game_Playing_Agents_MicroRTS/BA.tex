@@ -16,6 +16,7 @@
 \usepackage{graphicx}
 \usepackage[table]{xcolor}
 \usepackage{float}
+\usepackage{stfloats}
 \usepackage{placeins}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -292,7 +293,6 @@ Against the same evaluation bots, the PPO implementation with invalid action mas
 Ultimately, the decision was made to focus on GridNet, since its lower complexity and its higher compatibility with SP (and LT) \cite{huang2021gym}.
 SP was also evaluated in the work.
 However, there was a bug in the code that likely affected the results for SP \cite{goodfriend2024raisocketai}.
-\vspace{10pt}
 
 \subsubsection{RAISocketAI}
 In 2023 RAISocketAI was the first DRL agent which won the IEEE MicroRTS Competition. 
@@ -302,11 +302,9 @@ According to Goodfriend \cite{goodfriend2024raisocketai}, this likely caused SP 
 The RAISocketAI implementation of FSP achieved an average win rate of 91\% against the same MicroRTS bots as in MicroRTS-Py, which is significantly higher than 84\% in the previous implementation. 
 However, FSP achieved only a 20\% win rate against CoacAI, whereas the best previous implementations were almost always able to defeat CoacAI. 
 With fine-tuning on CoacAI and Mayari, the average win rate against the MicroRTS bots was increased to 98\% \cite{goodfriend2024raisocketai}.
-\vspace{10pt}
 
 \subsubsection{BeClone}
 BeClone demonstrated the effectiveness of BC with DRL fine-tuning in MicroRTS-Py using a two-phase training strategy for RTS agents: first, an initial policy is learned from experts via BC, and subsequently an RL fine-tuning is performed using Advantage Actor-Critic (A2C) \cite{martin2021beclone}.
-\vspace{10pt}
 
 \subsubsection{AlphaStar}
 AlphaStar is a DRL agent for the complex RTS game StarCraft II, which was developed by DeepMind \cite{vinyals2019alphastar}.
@@ -366,18 +364,18 @@ Units of type worker, light, heavy and ranged can move one cell in one of four d
 Units of player 1 are displayed with a blue outline, whereas units of player 2 are outlined in red.
 Movement is visualized with a gray line, attacking with a red line and gathering with a green line.
 
-\paragraph{Game Setup.}
-Most games are decided within 2000 steps.
-Therefore, the maximum number of steps is set to 2000.
-The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in figure~\ref{Figure 1}.
-This symmetric map starts each player with one base, five resources, two workers and 50 resources located near the base \cite{goodfriend2024raisocketai}.
-
-\begin{figure}[t]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.95\linewidth]{images/16x16.png}
     \caption{Screenshot \texttt{basesWorkers16x16A} map \cite{huft2023microrts}.}
     \label{Figure 1}
 \end{figure}
+
+\paragraph{Game Setup.}
+Most games are decided within 2000 steps.
+Therefore, the maximum number of steps is set to 2000.
+The experiments in this thesis were conducted using the RAISocketAI re-implementation of MicroRTS and the map \texttt{basesWorkers16x16A}, which is shown in figure~\ref{Figure 1}.
+This symmetric map starts each player with one base, five resources, two workers and 50 resources located near the base \cite{goodfriend2024raisocketai}.
 
 \begin{itemize}
     \item \textbf{PassiveAI:} \texttt{PassiveAI} does not act.
@@ -769,19 +767,23 @@ However, the Main Agent still shows improvements over the Base Agent against mos
 Highlights include the win rate against Rojo, which improves from 81\% to 100\%, while the win rate against MixedBot also increases from 43\% to 57\%.
 The win rate against Izanagi falls from 72\% to 70\%, however the loss rate improves from 16\% to 7\%, suggesting that the Main Agent defends the base more effectively while attacking.
 % (TODO): stimmt das noch?
-WorkerRushAI is the only opponent against which the Main Agent performs notably worse than the Base Agent.
-This shows that the Main Agent still has weaknesses that were not found.
+The Main Agent performs notably worse against WorkerRushAI than the Base Agent.
+This shows that the Main Agent still has weaknesses that were not identified by the exploiters.
 
+\paragraph{Main Agent without Unit Focus Evaluation.}
+The detailed evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus} show an example evaluation for a Main Agent trained without unit focus.
+The compact Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} also include most of these results for better comparison.
+As can be seen in the table, the Main Agent with unit focus performs better or similar in all matchups.
+The biggest differences are the win rates against Droplet, which improve with the unit focus from 45\% to 62\% and GuidedRojoA3N, which improves from 64\% to 87\%.
 
-
-\begin{table*}[t]
+\begin{table*}[!b]
 \centering
 \small
 \caption{Comparison of win rates against all bot opponents. All values are given in \%. Higher values are better.}
 \label{tab:all_bot_winrate_comparison}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
 \toprule
-Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
+Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
 \midrule
 \multicolumn{5}{l}{\textit{bots used in training}} \\
 CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
@@ -815,7 +817,7 @@ overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWi
 \label{tab:all_bot_lossrate_comparison}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
 \toprule
-Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
+Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
 \midrule
 \multicolumn{5}{l}{\textit{bots used in training}} \\
 CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
@@ -843,13 +845,6 @@ overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLo
 \end{table*}
 
 \FloatBarrier
-
-
-\paragraph{Main Agent without Unit Focus Evaluation.}
-The detailed evaluation results in Table~\ref{tab:main_agent_evaluation_no_worker_focus} show an example evaluation for a Main Agent trained without unit focus.
-The compact Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} also include most of these results for better comparison.
-As can be seen in the table, the Main Agent with unit focus performs better or similar in all matchups.
-The biggest differences are the win rates against Droplet, which improve with the unit focus from 45\% to 62\% and GuidedRojoA3N, which improves from 64\% to 87\%.
 
 
 % ppo_finetuning (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/pnrtw3ui?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/league_training/groups/PPO_finetuning/runs/cr1dcfyo?nw=nwuserglaspaul244)
@@ -1057,7 +1052,7 @@ LT improved the Main Agent's performance against most evaluated opponents, inclu
 Furthermore, LT enabled the Main Agent to generalize to most evaluated bots that were not used in training, while also improving the win rates against the bots used in the original training of the Base Agent.
 This suggests that the combination of LT and PPO can be an effective approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
 \break\break
-Finetuning the Main Agent with PPO after LT further improved the Main Agent's performance.
+Fine-tuning the Main Agent with PPO after LT further improved the Main Agent's performance.
 \break\break
 However, the diversity of the exploiters' initial agents seems to be a crucial factor, which we were able to partially address by introducing new initial agents with different unit type focuses.
 This solution has its own limitations, such as not guaranteeing that all relevant clusters in the reward landscape are covered by the initial agents and complicating the training process by requiring the training of multiple initial agents.
@@ -1072,7 +1067,8 @@ Replacing our current BC and PPO approach with an approach that focuses on learn
 In summary, this thesis shows that LT improves the performance of an agent trained on BC and PPO in MicroRTS, while also highlighting the importance of the diversity of the exploiters' initial agents.
 The following repository contains the implementation used in this thesis \url{https://github.com/N-Gl/MicortsRTS-league-training.git}.
 
-
+\newpage
+\appendix
 \begin{figure*}[t]
     \centering
     \begin{minipage}[t]{0.48\textwidth}

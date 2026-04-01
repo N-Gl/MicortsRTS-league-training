@@ -1,9 +1,0 @@
-\contentsline {section}{\numberline {1}\hskip -1em.~Einleitung}{1}{section.1}%
-\contentsline {section}{\numberline {2}\hskip -1em.~Related Work}{2}{section.2}%
-\contentsline {section}{\numberline {3}\hskip -1em.~Methoden}{4}{section.3}%
-\contentsline {subsection}{\numberline {3.1}\hskip -1em.~MicroRTS-Umgebung}{4}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}\hskip -1em.~Training Pipeline}{5}{subsection.3.2}%
-\contentsline {paragraph}{ScalarEncoder}{6}{section*.5}%
-\contentsline {section}{\numberline {4}\hskip -1em.~Experimente}{6}{section.4}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion}{7}{section.5}%
-\contentsline {section}{Erkl\"arung}{9}{section*.10}%

@@ -32,8 +32,8 @@
 \backcite {espeholt2018impala, vinyals2019alphastar}{{4}{2.0.5}{section*.14}}
 \backcite {vinyals2019alphastar}{{4}{2.0.5}{section*.14}}
 \backcite {suttonbarto1998rl}{{4}{2.0.5}{section*.14}}
-\backcite {huft2023microrts}{{5}{2}{figure.caption.16}}
-\backcite {goodfriend2024raisocketai}{{5}{3.1}{section*.15}}
+\backcite {huft2023microrts}{{5}{2}{figure.caption.15}}
+\backcite {goodfriend2024raisocketai}{{5}{3.1}{section*.16}}
 \backcite {huang2021gym}{{5}{3.1}{section*.17}}
 \backcite {pmlr-v97-han19a}{{5}{3.1}{section*.17}}
 \backcite {huang2021gym}{{5}{3.1}{section*.17}}
@@ -63,8 +63,8 @@
 \backcite {huang2021gym, huft2023microrts, goodfriend2024raisocketai}{{10}{4}{section.4}}
 \backcite {huft2023microrts}{{11}{4.2}{subsection.4.2}}
 \backcite {huft2023microrts}{{11}{4.3}{subsection.4.3}}
-\backcite {huft2023microrts}{{14}{4.3}{section*.44}}
-\backcite {vinyals2019alphastar}{{16}{4.4}{section*.53}}
+\backcite {huft2023microrts}{{13}{4.3}{section*.44}}
+\backcite {vinyals2019alphastar}{{15}{4.4}{section*.53}}
 \backcite {huft2023microrts}{{16}{4.4}{section*.55}}
 \backcite {huft2023microrts}{{16}{4.4}{section*.55}}
 \backcite {vinyals2019alphastar}{{17}{5}{section.5}}
