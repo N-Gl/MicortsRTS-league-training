@@ -3,14 +3,14 @@
 \contentsline {paragraph}{Bots.}{2}{section*.4}%
 \contentsline {paragraph}{Self-Play-Based Approaches.}{2}{section*.5}%
 \contentsline {paragraph}{League Training (LT).}{2}{section*.6}%
-\contentsline {paragraph}{Thesis Outline.}{2}{section*.7}%
+\contentsline {paragraph}{Research Question and Contributions.}{2}{section*.7}%
 \contentsline {section}{\numberline {2}\hskip -1em.~Related Work.}{2}{section.2}%
 \contentsline {subsubsection}{\numberline {2.0.1}Game-Playing Agents in MicroRTS}{2}{subsubsection.2.0.1}%
 \contentsline {paragraph}{Results and Limitations.}{3}{section*.8}%
 \contentsline {subsubsection}{\numberline {2.0.2}MicroRTS-Py (Gym-$\mu $RTS)}{3}{subsubsection.2.0.2}%
 \contentsline {paragraph}{Proximal Policy Optimization (PPO) Training.}{3}{section*.10}%
 \contentsline {paragraph}{GridNet.}{3}{section*.11}%
-\contentsline {subsubsection}{\numberline {2.0.3}RAISocketAI}{3}{subsubsection.2.0.3}%
+\contentsline {subsubsection}{\numberline {2.0.3}RAISocketAI}{4}{subsubsection.2.0.3}%
 \contentsline {subsubsection}{\numberline {2.0.4}BeClone}{4}{subsubsection.2.0.4}%
 \contentsline {subsubsection}{\numberline {2.0.5}AlphaStar}{4}{subsubsection.2.0.5}%
 \contentsline {paragraph}{Pre-League Training.}{4}{section*.12}%
@@ -26,7 +26,7 @@
 \contentsline {paragraph}{Problems.}{6}{section*.20}%
 \contentsline {paragraph}{Solutions.}{6}{section*.21}%
 \contentsline {subsection}{\numberline {3.3}\hskip -1em.~Fictitious Self-Play (FSP)}{6}{subsection.3.3}%
-\contentsline {paragraph}{Problem with the Implementation.}{6}{section*.22}%
+\contentsline {paragraph}{Problem with the Implementation.}{7}{section*.22}%
 \contentsline {paragraph}{Example.}{7}{section*.23}%
 \contentsline {paragraph}{Relevance for LT.}{7}{section*.24}%
 \contentsline {paragraph}{Solutions.}{7}{section*.26}%
@@ -37,7 +37,7 @@
 \contentsline {paragraph}{League Composition and Roles.}{8}{section*.29}%
 \contentsline {paragraph}{Training Loop and Snapshot Management.}{8}{section*.30}%
 \contentsline {paragraph}{Bot Environments.}{8}{section*.31}%
-\contentsline {paragraph}{Number of Parallel Bot Environment Instances.}{8}{section*.32}%
+\contentsline {paragraph}{Number of Parallel Bot Environment Instances.}{9}{section*.32}%
 \contentsline {paragraph}{Summary: Opponent Selection.}{9}{section*.33}%
 \contentsline {paragraph}{Resetting Exploiters.}{9}{section*.34}%
 \contentsline {paragraph}{AlphaStar LT Pseudocode.}{9}{section*.35}%
@@ -51,25 +51,25 @@
 \contentsline {subsection}{\numberline {4.2}\hskip -1em.~Evaluation}{11}{subsection.4.2}%
 \contentsline {paragraph}{Checkpoint and Reset Statistics.}{11}{section*.40}%
 \contentsline {subsection}{\numberline {4.3}\hskip -1em.~Results}{11}{subsection.4.3}%
-\contentsline {paragraph}{Main Agent without Unit Focus Evaluation.}{12}{section*.43}%
-\contentsline {paragraph}{PPO Fine-Tuning.}{13}{section*.44}%
-\contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{13}{subsection.4.4}%
-\contentsline {paragraph}{PPO Fine-Tuning.}{13}{section*.45}%
-\contentsline {paragraph}{Player 1 Priority.}{13}{section*.46}%
-\contentsline {paragraph}{Diversity Definition.}{13}{section*.47}%
-\contentsline {paragraph}{Base Agent Strategy.}{13}{section*.48}%
-\contentsline {paragraph}{Base Agent Diversity.}{13}{section*.49}%
-\contentsline {paragraph}{Exploiter Diversity as the Main Limitation.}{14}{section*.50}%
-\contentsline {paragraph}{Effects of New Initial Agents.}{14}{section*.51}%
-\contentsline {paragraph}{Comparison to AlphaStar.}{15}{section*.53}%
-\contentsline {paragraph}{Bot Environments.}{15}{section*.54}%
-\contentsline {paragraph}{Other Limitations.}{15}{section*.55}%
-\contentsline {subsection}{\numberline {4.5}\hskip -1em.~Future Work.}{15}{subsection.4.5}%
-\contentsline {paragraph}{Map Diversity.}{15}{section*.56}%
-\contentsline {paragraph}{Initial Agents.}{16}{section*.57}%
-\contentsline {paragraph}{MicroRTS efficiency.}{16}{section*.58}%
-\contentsline {paragraph}{Production Exploration Bonus.}{16}{section*.59}%
-\contentsline {paragraph}{Unit Bonus.}{16}{section*.60}%
-\contentsline {paragraph}{Unit Bonus Distribution.}{16}{section*.61}%
-\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion.}{16}{section.5}%
-\contentsline {section}{Erkl\"arung}{25}{section*.71}%
+\contentsline {paragraph}{Main Agent without Unit Focus Evaluation.}{13}{section*.43}%
+\contentsline {paragraph}{PPO Fine-Tuning.}{14}{section*.44}%
+\contentsline {subsection}{\numberline {4.4}\hskip -1em.~Discussion}{14}{subsection.4.4}%
+\contentsline {paragraph}{PPO Fine-Tuning.}{14}{section*.45}%
+\contentsline {paragraph}{Player 1 Priority.}{14}{section*.46}%
+\contentsline {paragraph}{Diversity Definition.}{14}{section*.47}%
+\contentsline {paragraph}{Base Agent Strategy.}{14}{section*.48}%
+\contentsline {paragraph}{Base Agent Diversity.}{14}{section*.49}%
+\contentsline {paragraph}{Exploiter Diversity as the Main Limitation.}{15}{section*.50}%
+\contentsline {paragraph}{Effects of New Initial Agents.}{15}{section*.51}%
+\contentsline {paragraph}{Comparison to AlphaStar.}{16}{section*.53}%
+\contentsline {paragraph}{Bot Environments.}{16}{section*.54}%
+\contentsline {paragraph}{Other Limitations.}{16}{section*.55}%
+\contentsline {subsection}{\numberline {4.5}\hskip -1em.~Future Work.}{16}{subsection.4.5}%
+\contentsline {paragraph}{Map Diversity.}{16}{section*.56}%
+\contentsline {paragraph}{Initial Agents.}{17}{section*.57}%
+\contentsline {paragraph}{MicroRTS efficiency.}{17}{section*.58}%
+\contentsline {paragraph}{Production Exploration Bonus.}{17}{section*.59}%
+\contentsline {paragraph}{Unit Bonus.}{17}{section*.60}%
+\contentsline {paragraph}{Unit Bonus Distribution.}{17}{section*.61}%
+\contentsline {section}{\numberline {5}\hskip -1em.~Conclusion.}{17}{section.5}%
+\contentsline {section}{Erkl\"arung}{26}{section*.71}%

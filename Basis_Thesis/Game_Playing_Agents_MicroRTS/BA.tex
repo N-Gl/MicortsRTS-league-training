@@ -200,8 +200,8 @@ LT further stabilizes training by exposing the agent to a league of diverse oppo
 This promotes robustness across a broader set of strategies.
 
 % gut
-\paragraph{Thesis Outline.}
-Despite the theoretical advantages, the practical implementation of LT in complex environments such as MicroRTS is associated with significant challenges, that need to be addressed. 
+\paragraph{Research Question and Contributions.}
+Despite the theoretical advantages, the practical implementation of LT in complex environments such as MicroRTS is associated with significant challenges that need to be addressed. 
 These include
 \begin{itemize}
     % TODO: füge weitere hinzu
@@ -211,8 +211,16 @@ These include
     \item ensuring opponent diversity through sufficient exploration and preventing overfitting to specific opponents or strategies.
 %\item assessing the actual generalization capability of the trained agents.
 \end{itemize}
-In addition, we will compare and evaluate the results empirically. 
-In particular, we will analyze the strategic diversity and robustness for the LT approach and the effects of the initial agent used for the training.
+The central research question of this thesis is:
+\begin{quote}
+How effective is League Training with PPO in improving the robustness and generalization of a BC/PPO-pretrained MicroRTS agent, and to what extent is this effectiveness affected by the diversity of initial agents and BC experts?
+\end{quote}
+To answer this question, this thesis makes the following main contributions:
+\begin{itemize}
+    \item It implements an LT-based training setup with PPO in the modified RAISocketAI/MicroRTS codebase, starting from a BC/PPO-pretrained Base Agent.
+    \item It empirically evaluates the resulting agents against a diverse set of scripted and search-based opponents and analyzes generalization and robustness within the considered evaluation setting.
+    \item It investigates how the diversity of initial agents and BC experts affects exploiter diversity and LT performance.
+\end{itemize}
 
 
 
@@ -251,13 +259,13 @@ CoacAI           & 0 & 8 & 96 \\
 Mayari           & 0 & 5 & 95 \\
 RandomAI         & 52 & 95 & 99\\
 RandomBiasedAI   & 18 & 68 & 86\\
-rojo             & 0 & 34& 84 \\
-mixedBot         & 4 & 44 & 59 \\
-izanagi          & 0& 62& 61\\
-tiamat           & 11 & 78& 84 \\
-droplet          & 0& 31& 59\\
-guidedRojoA3N    & 4 & 42& 75 \\
-naiveMCTS        & 0 & 5& 3 \\
+Rojo             & 0 & 34& 84 \\
+MixedBot         & 4 & 44 & 59 \\
+Izanagi          & 0& 62& 61\\
+Tiamat           & 11 & 78& 84 \\
+Droplet          & 0& 31& 59\\
+GuidedRojoA3N    & 4 & 42& 75 \\
+NaiveMCTS        & 0 & 5& 3 \\
 \hline
 \end{tabular}
 \end{table}
@@ -729,7 +737,8 @@ All hyperparameters used are listed in Table~\ref{tab:league_hyperparameter}.
 
 
 \subsection{Evaluation}
-We evaluated the Main Agent against the MicroRTS bots and the Base Agent, across at least 100 games per opponent.
+We evaluated the Base Agent, the Main Agent after LT, and the Main Agent after PPO fine-tuning against the MicroRTS bots, across 300, 100 and 200 games per opponent, respectively.
+The two Main Agent variants were also evaluated against the Base Agent.
 The opponents against which the evaluation is conducted include the MicroRTS built-in bots consisting of PassiveAI, WorkerRushAI, LightRushAI, RandomAI and RandomBiasedAI.
 Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} below give a compact overview of the win rates and loss rates of the evaluated agents against all bot opponents.
 The detailed evaluation results of the Base Agent are listed below in Table~\ref{tab:base_agent_evaluation} for comparison.
@@ -775,24 +784,24 @@ This shows that the Main Agent still has weaknesses that were not found.
 Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
 \midrule
 \multicolumn{5}{l}{\textit{bots used in training}} \\
-coacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+Mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
 \midrule
 \multicolumn{5}{l}{\textit{Built-in bots}} \\
-workerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
-passiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-lightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-randomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-randomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
+WorkerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
+PassiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+LightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+RandomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+RandomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
 \midrule
 \multicolumn{5}{l}{\textit{Other bots}} \\
-rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-mixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
-izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
-tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
-droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
-guidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
-naiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
+Rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+MixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
+Izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
+Tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
+Droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
+GuidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
+NaiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
 \midrule
 overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
 \bottomrule
@@ -809,24 +818,24 @@ overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWi
 Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Finetuning} \\
 \midrule
 \multicolumn{5}{l}{\textit{bots used in training}} \\
-coacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+Mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
 \midrule
 \multicolumn{5}{l}{\textit{Built-in bots}} \\
-workerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
-passiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-lightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-randomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-randomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+WorkerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+PassiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+LightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+RandomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+RandomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
 \midrule
 \multicolumn{5}{l}{\textit{Other bots}} \\
-rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-mixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
-izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
-tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
-droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
-guidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-naiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+Rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+MixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
+Izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
+Tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
+Droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
+GuidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+NaiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
 \midrule
 overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
 \bottomrule
@@ -864,21 +873,21 @@ The total loss rate against all opponents excluding the Base Agent is decreased 
 % (TODO): Vergleiche LT, FSP, SP? (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/w60nv9cu?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/saozsbra?nw=nwuserglaspaul244)
 
 \subsection{Discussion}
-LT improved the Main Agent’s win, draw and loss rates against a wide range of opponents, including the MicroRTS bots and the Base Agent used during training and generalized to other bots that were not used in training.
-Our results suggest that LT can improve the Main Agent’s performance further than the BC/PPO training was able to, without obvious signs of overfitting to the opponents used in training even after many different training sessions and further PPO training \cite{huft2023microrts}.
-Our interpretation is that pure PPO does not search for well-generalizing policies.
-Instead, the training optimizes performance against the limited set of training opponents.
-It therefore may pass only briefly through policies that generalize well, before continuing towards more specialized solutions.
+LT improved the Main Agent’s win, draw and loss rates against a wide range of evaluated opponents, including the MicroRTS bots and the Base Agent used during training, and it also improved performance against several bots that were not used during training.
+Our results suggest that LT can improve the Main Agent’s performance beyond the BC/PPO training pipeline, without clear evidence of strong overfitting to the training opponents.
+We hypothesize that pure PPO does not consistently search for well-generalizing policies.
+Instead, the training objective is to optimize performance against the limited set of training opponents.
+It may therefore pass only briefly through policies that generalize well, before continuing towards more specialized solutions.
 In contrast, LT changes the training opponent distribution such that robust performance against diverse opponents becomes part of the optimization target itself.
 This makes it more likely that training explores and retains a broader range of policies with good generalization.
-The results show that LT was able to discover policies that generalize well while also outperforming the Base Agent even against its original training opponents despite being trained against a larger set of opponents.
+The results show that LT discovered policies that generalized better to the evaluated opponents while also outperforming the Base Agent against its original training opponents, despite being trained against a larger set of opponents.
 
 
 \paragraph{PPO Fine-Tuning.}
 After LT, additional PPO fine-tuning further improved the Main Agent’s performance, especially when training against WorkerRushAI.
-WorkerRushAI probably exploited a weakness of the Main Agent that was not found during LT.
+The evaluation results show that WorkerRushAI exposes a weakness of the Main Agent that LT did not sufficiently address.
 That is presumably the reason for the win rate against the other opponents improving after fine-tuning, since the agent learned to defend against this exploit.
-These improvements also show that the fine-tuning did not overfit to the training opponents and instead generalized to other opponents.
+These improvements also show that the fine-tuning did not overfit to the training opponents within our evaluated opponent set and instead generalized to other evaluated opponents.
 The lower loss rate suggests that the agent improved not only in attacking the opponent, but also at defending the base.
 
 
@@ -935,10 +944,12 @@ In a complex environment such as MicroRTS, there are likely many more weaknesses
 
 
 \paragraph{Effects of New Initial Agents.}
-For this reason, the introduction of new initial agents was particularly important for better win rates against diverse opponents.
-We hypothesize that the diversity of the initial agents is crucial for the diversity of the exploiters and possibly more important than the initial agents' win rate.
+For this reason, the introduction of new initial agents was particularly important for higher win rates against diverse opponents.
+In our setup, we hypothesize that the diversity of the initial agents is a major factor for the diversity of the exploiters and may be more important than the initial agents' win rate.
 This is why the new initial agents, with a focus on different unit types, were implemented, allowing the exploiters to find exploits related to different unit types without first having to unlearn the strategy for the unit type favored by the Base Agent.
-The new initial agents contributed to generalization across diverse opponents.
+The new initial agents contributed to generalization across the evaluated opponents.
+Because BC establishes the agent’s initial strategy repertoire and PPO mainly refines it, the diversity of the BC experts likely has a strong influence on exploiter diversity.
+Since BC can only learn strategies that are represented in the expert data, limited diversity of the BC experts likely limits the diversity of the resulting initial agents and, consequently, of the exploiters.
 Tables~\ref{tab:all_bot_winrate_comparison} and~\ref{tab:all_bot_lossrate_comparison} show that performance improved against a wider range of opponents compared to the previous evaluation that did not use the new initial agents.
 One example is the win rate against Droplet, which improves from 45\% to 62\%, while the win rate against GuidedRojoA3N improves from 64\% to 87\%.
 \break\break
@@ -980,7 +991,7 @@ Despite the improved diversity and general performance of the Main Agent, there 
     This causes a much higher memory usage and long training times.
     \item \textbf{Map constraints.}
     This thesis, just like the thesis for the Base Agent \cite{huft2023microrts}, only uses one map (\texttt{basesWorkers16x16A}), with full observability of all units and resources.
-    This is a very specific setting.
+    This is a specific setting, so claims about robustness and generalization should be interpreted within this evaluated scenario and opponent set.
 \end{itemize}
 
 
@@ -1042,9 +1053,9 @@ Starting the LT with the Base Agent and the unit bonus distribution instead show
 \label{sec:conclusion}
 In this thesis, we implemented a modified LT method from AlphaStar \cite{vinyals2019alphastar} in combination with PPO in the MicroRTS environment, using a Base Agent trained on BC and PPO as the initial agent for the Main Agent and the exploiters.
 \break\break
-As shown in the results, LT improves the Main Agent's performance against a wide range of opponents, including most of the MicroRTS bots and the Base Agent.
-Furthermore, LT allows the Main Agent to generalize to other bots that were not used in training, while also improving the win rates against the bots used in the original training of the Base Agent.
-This suggests that the combination of LT and PPO is an effective approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
+LT improved the Main Agent's performance against most evaluated opponents, including most MicroRTS bots and the Base Agent.
+Furthermore, LT enabled the Main Agent to generalize to most evaluated bots that were not used in training, while also improving the win rates against the bots used in the original training of the Base Agent.
+This suggests that the combination of LT and PPO can be an effective approach for improving the performance of a Base Agent trained on BC and PPO in MicroRTS.
 \break\break
 Finetuning the Main Agent with PPO after LT further improved the Main Agent's performance.
 \break\break
@@ -1058,7 +1069,8 @@ This also suggests that starting LT from a BC-pre-trained agent may be suboptima
 As a result, it may become more difficult for the exploiters to discover strategically diverse responses, which can in turn limit the Main Agent's robustness and generalization.
 Replacing our current BC and PPO approach with an approach that focuses on learning diverse strategies from the start could therefore further increase the Main Agent's performance and generalization, while also reducing the need for many different bot agents for training.
 \break\break
-In summary, this thesis demonstrates the effectiveness of LT for improving the performance of an agent trained on BC and PPO in MicroRTS, while also highlighting the importance of the diversity of the exploiters' initial agents.
+In summary, this thesis shows that LT improves the performance of an agent trained on BC and PPO in MicroRTS, while also highlighting the importance of the diversity of the exploiters' initial agents.
+The following repository contains the implementation used in this thesis \url{https://github.com/N-Gl/MicortsRTS-league-training.git}.
 
 
 \begin{figure*}[t]
@@ -1437,7 +1449,7 @@ Training & \texttt{total\_timesteps} & 200\,000\,000 & Total number of training 
 % Training & \texttt{checkpoint\_frequency} & 3 & Frequency of regular checkpoints \\
 Training & \texttt{checkpoint\_end\_buffer\_steps} & $3 \cdot 10^6$ & Exploiters cannot checkpoint \texttt{checkpoint\_end\_buffer\_steps} steps before reaching \texttt{total\_timesteps} \\
 % Training & \texttt{early\_updates} & false & No early updates are used \\
-% Training & \texttt{seed} & not set & No explicit seed is specified \\
+Training & \texttt{seed} & 1773839151 & training seed \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Reward Function}} \\
 \midrule
