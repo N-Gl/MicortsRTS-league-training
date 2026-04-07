@@ -123,7 +123,7 @@
 
 \begin{frame}{Motivation and Research Question}
     \begin{block}{Starting point}
-        The existing Base Agent trained with Behavioral Cloning (BC) and PPO is already strong, but it still has weaknesses against several opponents and a limited strategic repertoire.
+        The existing Base Agent trained with Behavioral Cloning (BC) and Proximal Policy Optimization (PPO) is already strong, but it still has weaknesses against several opponents and a limited strategic repertoire.
     \end{block}
     \begin{block}{Goal}
         Improve robustness and generalization beyond a fixed set of training bots by adding Self-Play and League Training (LT).
@@ -161,11 +161,13 @@
         \textbf{LT} & add role-based agents: Main Agent, Historical Agents, Main Exploiters and League Exploiters \\
     \end{tabularx}
     \vspace{0.8em}
+    % TODO: verbessere den Satz:
     \begin{block}{Why LT?}
         LT does not only preserve diversity through historical snapshots, it also creates diversity through exploiters that actively search for weaknesses of the current policy.
     \end{block}
 \end{frame}
 
+% TODO: oben intigrieren? (Key idea auch oben schreiben)
 \begin{frame}{League Training Design}
     % TODO (sagen): The different roles mainly differ in who they train against and when they are checkpointed or reset.
     \begin{itemize}
@@ -195,10 +197,12 @@
     % TODO (sagen): These were the main engineering changes needed to make LT work reliably in this codebase.
     \begin{itemize}
         \item dynamic bot environments for CoacAI and Mayari to stabilize the early LT phase
+        % TODO: warum nur MA bot envs bekommt
         \item observation adjustment for player 2 in self-play by flipping GridNet observations
         \item delta score reward to provide denser learning signals in MicroRTS
         \item annealed entropy coefficient to increase early exploration, especially for exploiters
         \item new initial exploiter agents with different unit-type focuses to improve diversity
+        \item % entfernen?
         \item corrected exploiter reset and checkpoint logic compared to the AlphaStar pseudocode
     \end{itemize}
 \end{frame}
