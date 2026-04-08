@@ -202,11 +202,12 @@
         \item delta score reward to provide denser learning signals in MicroRTS
         \item annealed entropy coefficient to increase early exploration, especially for exploiters
         \item new initial exploiter agents with different unit-type focuses to improve diversity
-        \item % entfernen?
+        % TODO: entfernen?
         \item corrected exploiter reset and checkpoint logic compared to the AlphaStar pseudocode
     \end{itemize}
 \end{frame}
 
+% TODO: ganz entfernen?
 \begin{frame}{Observation Adjustment for Self-Play}
     % TODO (sagen): The Base Agent was trained only as player 1, so we had to transform player-2 observations to make self-play compatible. (also for learning efficiency)
     % TODO (sagen): Explain Graph
@@ -342,47 +343,56 @@
     \end{tabular*}
 \end{frame}
 
-% TODO: alles in den Results sagen?
+
 \begin{frame}{Interpretation of the Results}
+    % TODO: alles in den Results sagen?
     % TODO (sagen): The important point is that LT improves not only training matchups, but also many unseen evaluation matchups.
+    % \begin{itemize}
+    %     \item LT improves performance not only against training bots, but also against many unseen evaluation opponents.
+    %     \item The Main Agent learned stronger defensive behavior while maintaining offensive pressure.
+    %     \item Fine-tuning after LT largely removes the WorkerRushAI weakness and improves the overall average further.
+    %     % TODO: \item The results suggest that pure PPO alone does not reliably keep well-generalizing policies once found.
+    % \end{itemize}
+
+hypothesis:
     \begin{itemize}
-        \item LT improves performance not only against training bots, but also against many unseen evaluation opponents.
-        \item The Main Agent learned stronger defensive behavior while maintaining offensive pressure.
-        \item Fine-tuning after LT largely removes the WorkerRushAI weakness and improves the overall average further.
-        % TODO: \item The results suggest that pure PPO alone does not reliably keep well-generalizing policies once found.
+        \item LT turns robustness against diverse opponents into part of the optimization target
+        % TODO: für FT eher: Fine-tuning repaired a concrete exploit without hurting generalization on the evaluated opponent set. --> better local optimum
+        \item LT helps to find a better local optimum that is then further improved by fine-tuning, while pure PPO often gets stuck in not as generalized local optima.
     \end{itemize}
 \end{frame}
 
 % TODO: alles in den Results sagen?
-\begin{frame}{Qualitative Findings}
-    % TODO (sagen): The Main Agent keeps the base defended much more reliably than the Base Agent while still attacking.
-    % TODO (sagen): Unit focus mattered: Droplet improved from 45 to 62 and GuidedRojoA3N from 64 to 87.
-    % TODO (sagen): Ranged units are mostly used in reaction to pressure or in edge-case situations.
-    \begin{itemize}
-        \item LT improves more than just the average score; it changes the learned behavior.
-        % steht schon oben: \item The Main Agent defends the base more consistently while keeping offensive pressure.
-        \item It performs better against draw-oriented or awkward opponents such as RandomBiasedAI.
-        \item The unit-focused Main Agent is consistently better than the variant without unit focus.
-    \end{itemize}
-\end{frame}
+% \begin{frame}{Qualitative Findings}
+%     % TODO (sagen): The Main Agent keeps the base defended much more reliably than the Base Agent while still attacking.
+%     % TODO (sagen): Unit focus mattered: Droplet improved from 45 to 62 and GuidedRojoA3N from 64 to 87.
+%     % TODO (sagen): Ranged units are mostly used in reaction to pressure or in edge-case situations.
+%     \begin{itemize}
+%         \item LT improves more than just the average score; it changes the learned behavior.
+%         % steht schon oben: \item The Main Agent defends the base more consistently while keeping offensive pressure.
+%         \item It performs better against draw-oriented or awkward opponents such as RandomBiasedAI.
+%         \item The unit-focused Main Agent is consistently better than the variant without unit focus.
+%     \end{itemize}
+% \end{frame}
 
-\begin{frame}{Why Fine-Tuning Helps}
-    % TODO (sagen): WorkerRushAI is weakness that exploiters did not sufficiently expose during LT
-    % TODO (sagen): Fine-tuning was a short final phase after LT, not a replacement for LT.
-    % TODO (sagen): Fine-tuning used about 9 million PPO steps with CoacAI, Mayari and WorkerRushAI as opponents.
-    % TODO (sagen): The learning rate was 1.5e-6, the entropy coefficient 0.005 and no exploiters were used.
-    \begin{block}{Problem left after LT}
-        WorkerRushAI remained the clearest exploitable weakness of the Main Agent after LT.
-    \end{block}
-    \begin{itemize}
-        \item win rate against WorkerRushAI after LT: \textbf{35.0\%}
-        \item win rate after PPO fine-tuning: \textbf{99.5\%}
-        \item the overall win rate also increases further from \textbf{79.2\%} to \textbf{85.7\%}
-    \end{itemize}
-    \begin{block}{Interpretation}
-        Fine-tuning repaired a concrete exploit without hurting generalization on the evaluated opponent set.
-    \end{block}
-\end{frame}
+% TODO: alles in den Results gesagt?
+% \begin{frame}{Why Fine-Tuning Helps}
+%     % TODO (sagen): WorkerRushAI is weakness that exploiters did not sufficiently expose during LT
+%     % TODO (sagen): Fine-tuning was a short final phase after LT, not a replacement for LT.
+%     % TODO (sagen): Fine-tuning used about 9 million PPO steps with CoacAI, Mayari and WorkerRushAI as opponents.
+%     % TODO (sagen): The learning rate was 1.5e-6, the entropy coefficient 0.005 and no exploiters were used.
+%     \begin{block}{Problem left after LT}
+%         WorkerRushAI remained the clearest exploitable weakness of the Main Agent after LT.
+%     \end{block}
+%     \begin{itemize}
+%         \item win rate against WorkerRushAI after LT: \textbf{35.0\%}
+%         \item win rate after PPO fine-tuning: \textbf{99.5\%}
+%         \item the overall win rate also increases further from \textbf{79.2\%} to \textbf{85.7\%}
+%     \end{itemize}
+%     \begin{block}{Interpretation}
+%         Fine-tuning repaired a concrete exploit without hurting generalization on the evaluated opponent set.
+%     \end{block}
+% \end{frame}
 
 \section{Discussion}
 
@@ -427,7 +437,7 @@
     \vspace{0.6em}
     \centering
     \scriptsize
-    If the PDF viewer does not open the movie object, open \texttt{images/MictoRTS\_BaseAgent\_vs\_BaseAgent\_edited.mp4} manually.
+    % If the PDF viewer does not open the movie object, open \texttt{images/MictoRTS\_BaseAgent\_vs\_BaseAgent\_edited.mp4} manually.
 \end{frame}
 
 \begin{frame}{Main Limitation: Diversity}
@@ -437,37 +447,42 @@
                 \item Exploiters initialized from similar policies tend to discover similar weaknesses.
                 \item Some strategically different exploits are hard to reach because they require first unlearning the Base Agent's preferred behavior.
                 % TODO (sagen): WorkerRushAI Example
-                \item New initial agents with different unit focuses improved exploiter diversity and generalization.
+                \item New initial agents with focuses on different unit types to improve exploiter diversity and Main Agent generalization.
+                \item Hypothesis: LT therefore depends strongly on the diversity already present at initialization
             \end{itemize}
         \end{column}
         % TODO: entfernen?
-        \begin{column}{0.4\textwidth}
-            \includegraphics[width=\linewidth]{numberHeavyAfterGame.png}
-        \end{column}
+        % \begin{column}{0.4\textwidth}
+        %     \includegraphics[width=\linewidth]{numberHeavyAfterGame.png}
+        % \end{column}
     \end{columns}
 \end{frame}
 
-\begin{frame}{Why New Initial Agents Matter}
-    % TODO (sagen): The diversity of the initial agents matters more than just their raw strength.
-    % TODO (sagen): New initial agents let exploiters search from different strategic starting points instead of always from the same heavy-rush bias.
-    \begin{itemize}
-        \item exploiters initialized from similar agents tend to find similar weaknesses
-        \item new initial agents focused on different unit types broaden the exploiter set
-        \item this improves generalization against a wider range of opponents
-        \item LT therefore depends strongly on the diversity already present at initialization
-    \end{itemize}
-    % TODO: add the exploiter diversity schematic from BA?
-\end{frame}
+% TODO: schon gesagt?
+% \begin{frame}{Why New Initial Agents Matter}
+%     % TODO (sagen): The diversity of the initial agents matters more than just their raw strength.
+%     % TODO (sagen): New initial agents let exploiters search from different strategic starting points instead of always from the same heavy-rush bias.
+%     \begin{itemize}
+%         \item exploiters initialized from similar agents tend to find similar weaknesses
+%         \item new initial agents focused on different unit types broaden the exploiter set
+%         \item this improves generalization against a wider range of opponents
+%         \item LT therefore depends strongly on the diversity already present at initialization
+%     \end{itemize}
+%     % TODO: add the exploiter diversity schematic from BA?
+% \end{frame}
 
 \begin{frame}{Scope and Remaining Limitations}
     % TODO (sagen): Claims about robustness and generalization should be interpreted within this concrete scenario.
     % TODO (sagen): In the previous work, pure PPO used only 24 parallel environments; LT is much more expensive.
     \begin{itemize}
+        % TODO: nur die evaluation?
         \item evaluation is limited to one map: \texttt{basesWorkers16x16A}
         \item the setting uses full observability and no fog of war
         \item LT requires substantially more computation than pure PPO
+        \item computation
         \item exploiter diversity is still the main bottleneck
     \end{itemize}
+    % TODO: entfernen?
     \begin{block}{Takeaway}
         The method works, but the strength of the final result depends strongly on the diversity and cost of the training setup.
     \end{block}
@@ -481,11 +496,12 @@
         League Training with PPO improves the robustness and generalization of the MicroRTS Base Agent. Additional PPO fine-tuning improves the final agent even further.
     \end{block}
     \begin{block}{Key takeaway}
-        The effectiveness of LT depends strongly on exploiter diversity,5 which in turn depends on the diversity of the initial agents and BC experts.
+        The effectiveness of LT depends strongly on exploiter diversity, which in turn depends on the diversity of the initial agents and BC experts.
     \end{block}
     \begin{itemize}
         \item LT improves most matchups and the overall performance
         \item fine-tuning further improves the final agent
+        % TODO: schon oben klar
         \item diversity of initial agents is the critical practical factor
     \end{itemize}
 \end{frame}

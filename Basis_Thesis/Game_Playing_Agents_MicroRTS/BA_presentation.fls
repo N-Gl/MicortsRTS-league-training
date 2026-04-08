@@ -438,10 +438,6 @@ INPUT ./images/abstract_total_winrate_comparison.pdf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssbx10.tfm
 INPUT ./images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
 INPUT ./images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
-INPUT ./images/numberHeavyAfterGame.png
-INPUT ./images/numberHeavyAfterGame.png
-INPUT ./images/numberHeavyAfterGame.png
-INPUT ./images/numberHeavyAfterGame.png
 OUTPUT BA_presentation.nav
 OUTPUT BA_presentation.toc
 OUTPUT BA_presentation.snm
