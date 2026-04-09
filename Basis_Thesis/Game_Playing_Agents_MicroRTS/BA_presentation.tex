@@ -92,18 +92,31 @@
 
 \section{Motivation}
 
-\begin{frame}{Problem Setting}
+\begin{frame}{Goals and Research Question}
+    \begin{block}{Starting point}
+        The existing Base Agent trained with Behavioral Cloning (BC) and Proximal Policy Optimization (PPO) is already strong, but it still has weaknesses against several opponents and a limited strategic repertoire.
+    \end{block}
+    \begin{block}{Goal}
+        Improve robustness and generalization beyond a fixed set of training bots by adding Self-Play (SP) and League Training (LT).
+    \end{block}
+    \begin{alertblock}{Research question}
+        How effective is League Training with PPO in improving the robustness and generalization of a BC/PPO-pretrained MicroRTS agent, and how strongly does this depend on the diversity of the initial agents and BC experts?
+    \end{alertblock}
+\end{frame}
+
+
+\begin{frame}{Setting}
     \small
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
-            \begin{block}{Why MicroRTS?}
+            \begin{block}{MicroRTS}
                 \begin{itemize}
                     \item simplified RTS environment for RL research
                     \item still contains resource management, unit production and combat
                     \item supports controlled and repeatable experiments
                 \end{itemize}
             \end{block}
-            \begin{block}{Main challenge}
+            \begin{block}{Main RL challenges}
                 \begin{itemize}
                     \item large combinatorial action space
                     \item simultaneous decisions
@@ -121,17 +134,6 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Motivation and Research Question}
-    \begin{block}{Starting point}
-        The existing Base Agent trained with Behavioral Cloning (BC) and Proximal Policy Optimization (PPO) is already strong, but it still has weaknesses against several opponents and a limited strategic repertoire.
-    \end{block}
-    \begin{block}{Goal}
-        Improve robustness and generalization beyond a fixed set of training bots by adding Self-Play and League Training (LT).
-    \end{block}
-    \begin{alertblock}{Research question}
-        How effective is League Training with PPO in improving the robustness and generalization of a BC/PPO-pretrained MicroRTS agent, and how strongly does this depend on the diversity of the initial agents and BC experts?
-    \end{alertblock}
-\end{frame}
 
 \section{Approach}
 
@@ -150,7 +152,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{From Self-Play to League Training}
+\begin{frame}{From SP to LT}
     % TODO (sagen): The methods build on each other; each step addresses a concrete limitation of the previous one.
     \small
     \renewcommand{\arraystretch}{1.15}
@@ -175,7 +177,7 @@
         \item \textbf{Historical Agents:} frozen snapshots for stability
         \item \textbf{Main Exploiters:} exploit weaknesses of historical Main Agents
         \item \textbf{League Exploiters:} search for broader league weaknesses
-        \item \textbf{PFSP:} opponent sampling based on current win rates
+        % \item \textbf{PFSP:} opponent sampling based on current win rates
     \end{itemize}
     \vspace{0.6em}
     \begin{block}{Key idea}
@@ -183,40 +185,55 @@
     \end{block}
 \end{frame}
 
-\begin{frame}{League Training Matchmaking}
-    % TODO (sagen): Explain dashed boxes, fixed sampling probabilities and why PFSP is applied only on specific opponent subsets.
-    \begin{center}
-        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{Matchmaking.pdf}
-    \end{center}
-    \vspace{-0.4em}
-    \centering
-    \scriptsize Matchmaking and opponent sampling in the League Training setup.
+\begin{frame}{Bot Environments}
+    \begin{columns}[T]
+        \begin{column}{0.52\textwidth}
+            \begin{itemize}
+                \item additional dynamic bot environments (CoacAI and Mayari)% to stabilize the early LT phase
+                \item scripted bots: CoacAI, Mayari, WorkerRushAI, PassiveAI, LightRushAI, RandomAI and RandomBiasedAI
+                \item MCTS based bots: Rojo, MixedBot, Izanagi, Tiamat, Droplet, GuidedRojoA3N and NaiveMCTS
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \includegraphics[width=\linewidth]{num_parallel_bot_envs.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-\begin{frame}{Important Implementation Changes}
-    % TODO (sagen): These were the main engineering changes needed to make LT work reliably in this codebase.
-    \begin{itemize}
-        \item dynamic bot environments for CoacAI and Mayari to stabilize the early LT phase
-        % TODO: warum nur MA bot envs bekommt
-        \item observation adjustment for player 2 in self-play by flipping GridNet observations
-        \item delta score reward to provide denser learning signals in MicroRTS
-        \item annealed entropy coefficient to increase early exploration, especially for exploiters
-        \item new initial exploiter agents with different unit-type focuses to improve diversity
-        % TODO: entfernen?
-        \item corrected exploiter reset and checkpoint logic compared to the AlphaStar pseudocode
-    \end{itemize}
-\end{frame}
-
-% TODO: ganz entfernen?
-\begin{frame}{Observation Adjustment for Self-Play}
+\begin{frame}{Observation Adjustment for SP}
     % TODO (sagen): The Base Agent was trained only as player 1, so we had to transform player-2 observations to make self-play compatible. (also for learning efficiency)
     % TODO (sagen): Explain Graph
     \makebox[\linewidth][c]{%
         \includegraphics[width=1.05\linewidth,height=1\textheight,keepaspectratio]{adjust_obs_presentation.pdf}%
     }
     \centering
-    \scriptsize Player-2 observations are transformed so that self-play remains compatible with a Base Agent trained only as player 1.
+    \scriptsize Player 2 observations are transformed so SP remains compatible with a Base Agent only trained as Player 1.
 \end{frame}
+
+\begin{frame}{LT Matchmaking}
+    % TODO (sagen): Explain dashed boxes, fixed sampling probabilities and why PFSP is applied only on specific opponent subsets.
+    \begin{center}
+        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{Matchmaking.pdf}
+    \end{center}
+    \vspace{-0.4em}
+    \centering
+    \scriptsize Matchmaking and opponent sampling in the LT setup.
+\end{frame}
+
+\begin{frame}{Other Implementation Changes}
+    % TODO (sagen): These were the main engineering changes needed to make LT work reliably in this codebase.
+    % TODO: numerieren statt bullets?
+    \begin{itemize}
+        % only Player 2 rotation
+        % \item flipping GridNet observations % observation adjustment for player 2 in SP by flipping GridNet observations
+        \item delta score
+        \item annealed entropy coefficient
+        \item new initial agents
+        % TODO: entfernen?
+        % \item corrected exploiter reset and checkpoint logic compared to the AlphaStar pseudocode
+    \end{itemize}
+\end{frame}
+
 
 \section{Experiments}
 
@@ -225,8 +242,8 @@
     % TODO (sagen): The Main Agent played around 4500 games against CoacAI and Mayari during LT.
     % TODO (sagen): dynamic bot environments espacialy stabilize the early phase (Graph)
     % TODO (sagen): bot performance is monitored throughout LT (Graph)
-    % TODO (sagen): Peak memory usage increases by approximately 2500 MiB for one agent with 25 environments.
-    % TODO (sagen): Keeping enough environments per agent matters because too small rollouts make PPO updates unstable.
+    % TODO (sagen) (in Remaining Limitations): Peak memory usage increases by approximately 2500 MiB for one agent with 25 environments.
+    % TODO (sagen) (in Remaining Limitations): Keeping enough environments per agent matters because too small rollouts make PPO updates unstable.
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
             \begin{itemize}
@@ -237,11 +254,12 @@
                 \item approximately 130 million LT steps
                 \item training time: about 100 hours
                 \item maximum setup size: 160 parallel environments
-                \item high memory cost, CPU bottleneck
+                \item evaluations over at least 100 games against 12 opponents after LT and after fine-tuning
+                % \item high memory cost, CPU bottleneck
             \end{itemize}
         \end{column}
         \begin{column}{0.45\textwidth}
-            \includegraphics[width=\linewidth]{num_parallel_bot_envs.png}
+            % \includegraphics[width=\linewidth]{num_parallel_bot_envs.png}
             \includegraphics[width=\linewidth]{bot_win_rates_no_draw.png}
         \end{column}
     \end{columns}
@@ -258,8 +276,8 @@
         \begin{column}{0.38\textwidth}
             \small
             \begin{itemize}
-                \item overall win rate improves from \textbf{76.5\%} to \textbf{79.2\%} after LT
-                \item after PPO fine-tuning it reaches \textbf{85.7\%}
+                % \item overall win rate improves from \textbf{76.5\%} to \textbf{79.2\%} after LT
+                % \item after PPO fine-tuning it reaches \textbf{85.7\%}
                 \item overall loss rate drops from \textbf{7.7\%} to \textbf{2.2\%}
             \end{itemize}
         \end{column}
@@ -281,7 +299,7 @@
     \renewcommand{\arraystretch}{1.02}
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
         \toprule
-        Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
+        Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
         \midrule
         \multicolumn{5}{l}{\textit{bots used in training}} \\
         CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
@@ -316,7 +334,7 @@
     \renewcommand{\arraystretch}{1.02}
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
         \toprule
-        Opponent & \shortstack{Main Agent\\without unit focus} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
+        Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
         \midrule
         \multicolumn{5}{l}{\textit{bots used in training}} \\
         CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
@@ -418,6 +436,7 @@ hypothesis:
     \scriptsize
     \end{frame}
 
+% TODO: linksbündig
 \begin{frame}{Main Limitation: Diversity}
     % TODO (sagen): The Base Agent strongly favors a heavy-rush strategy.
     % TODO (sagen): Sometimes Worker Range (reaction to opponent)
@@ -478,9 +497,9 @@ hypothesis:
         % TODO: nur die evaluation?
         \item evaluation is limited to one map: \texttt{basesWorkers16x16A}
         \item the setting uses full observability and no fog of war
-        \item LT requires substantially more computation than pure PPO
-        \item computation
-        \item exploiter diversity is still the main bottleneck
+        % \item LT requires substantially more computation than pure PPO
+        \item high computational cost
+        \item exploiter diversity
     \end{itemize}
     % TODO: entfernen?
     \begin{block}{Takeaway}
@@ -490,10 +509,23 @@ hypothesis:
 
 \section{Conclusion}
 
+% TODO: entfernen? alles in Scope and Remaining Limitations sagen?
+\begin{frame}{Future Work}
+    % TODO (sagen): The most promising directions are map diversity and stronger diverse initial agents.
+    % TODO (sagen): Another practical direction is a faster environment implementation, ideally on the GPU.
+    \begin{itemize}
+        \item train on multiple maps and with fog of war
+        \item improve the diversity and strength of initial agents
+        \item reduce computational cost of MicroRTS training
+        \item investigate stronger diversity mechanisms for exploiters
+    \end{itemize}
+\end{frame}
+
+
 \begin{frame}{Conclusion}
     % TODO (sagen): A narrow BC expert set may be a suboptimal starting point for LT because it narrows the strategic repertoire too early.
     \begin{block}{Conclusion}
-        League Training with PPO improves the robustness and generalization of the MicroRTS Base Agent. Additional PPO fine-tuning improves the final agent even further.
+        LT with PPO improves the robustness and generalization of the MicroRTS Base Agent. Additional PPO fine-tuning improves the final agent even further.
     \end{block}
     \begin{block}{Key takeaway}
         The effectiveness of LT depends strongly on exploiter diversity, which in turn depends on the diversity of the initial agents and BC experts.
@@ -506,16 +538,6 @@ hypothesis:
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Future Work}
-    % TODO (sagen): The most promising directions are map diversity and stronger diverse initial agents.
-    % TODO (sagen): Another practical direction is a faster environment implementation, ideally on the GPU.
-    \begin{itemize}
-        \item train on multiple maps and with fog of war
-        \item improve the diversity and strength of initial agents
-        \item reduce computational cost of MicroRTS training
-        \item investigate stronger diversity mechanisms for exploiters
-    \end{itemize}
-\end{frame}
 
 \begin{frame}{Thank you}
     \begin{center}
