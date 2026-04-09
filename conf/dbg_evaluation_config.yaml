@@ -10,14 +10,14 @@ ExperimentConfig:
 
   model_path: 
   evaluation_model_paths: [
-                          "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt",
+                          "saved_models/23_03_2026__PPO_finetuning_update_730.pt",
                           # "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt"
                           ]
   names: [
-          "finished_PPO_Basis_thesis",
+          "23_03_2026__PPO_finetuning_update_730",
           # "finished_PPO_Basis_Thesis"
          ]
-  exp_name: "finished_PPO_Basis_thesis"
+  exp_name: "23_03_2026__PPO_finetuning_update_730"
   wandb_project_name: new_Evaluation
   # wandb_group_name: test_evaluation
   wandb_group_name: temp
@@ -33,6 +33,6 @@ ExperimentConfig:
   render: true
   render_all: false
 
-  num_eval_episodes: 100
-  num_parallel_eval_envs: 100
+  num_eval_episodes: 25
+  num_parallel_eval_envs: 25
   num_parallel_selfplay_eval_games: 25        # Number of parallel environments 1 == 2 Selfplay envs

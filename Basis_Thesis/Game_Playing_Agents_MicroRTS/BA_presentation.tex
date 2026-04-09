@@ -9,7 +9,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{colortbl}
-\usepackage{multimedia}
+\usepackage{movie15}
 \usepackage{tikz}
 \usepackage{amsmath}
 
@@ -92,15 +92,28 @@
 
 \section{Motivation}
 
+
+
 \begin{frame}{Goals and Research Question}
-    \begin{block}{Starting point}
-        The existing Base Agent trained with Behavioral Cloning (BC) and Proximal Policy Optimization (PPO) is already strong, but it still has weaknesses against several opponents and a limited strategic repertoire.
+    \small
+    \begin{block}{Base Agent}
+        \begin{itemize}
+            \item combination of Behavioral Cloning (BC) and Proximal Policy Optimization (PPO)
+            \item strong baseline, but weaknesses against several opponents
+        \end{itemize}
     \end{block}
     \begin{block}{Goal}
-        Improve robustness and generalization beyond a fixed set of training bots by adding Self-Play (SP) and League Training (LT).
+        \begin{itemize}
+            \item improve the Base Agent with League Training (LT)
+            \item training against a more diverse set of opponents
+            \item focus on robustness and generalization
+        \end{itemize}
     \end{block}
-    \begin{alertblock}{Research question}
-        How effective is League Training with PPO in improving the robustness and generalization of a BC/PPO-pretrained MicroRTS agent, and how strongly does this depend on the diversity of the initial agents and BC experts?
+    \begin{alertblock}{Research Question}
+        \begin{itemize}
+            \item How much does LT with PPO improve robustness and generalization of the BC/PPO-pretrained agent?
+            \item How strongly does this depend on the diversity of initial agents and BC experts?
+        \end{itemize}
     \end{alertblock}
 \end{frame}
 
@@ -126,10 +139,12 @@
             \end{block}
         \end{column}
         \begin{column}{0.45\textwidth}
-            \includegraphics[width=0.94\linewidth]{initial_pos_basesWorkers16x16A.png}
+            \movie[showcontrols]{
+                \includegraphics[width=0.94\linewidth]{initial_pos_basesWorkers16x16A.png}
+            }{images/MicroRTS_example.mp4}
             \vspace{0.2em}
 
-            \scriptsize Initial state of the \texttt{basesWorkers16x16A} map.
+            \scriptsize Click the play area in Foxit Reader to start the embedded MicroRTS example video.
         \end{column}
     \end{columns}
 \end{frame}
