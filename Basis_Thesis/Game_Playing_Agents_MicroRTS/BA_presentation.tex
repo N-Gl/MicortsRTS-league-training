@@ -12,11 +12,28 @@
 \usepackage{movie15}
 \usepackage{tikz}
 \usepackage{amsmath}
+\usetikzlibrary{positioning,shapes.symbols}
 
 \graphicspath{{images/}}
 
 \definecolor{HHUBlue}{RGB}{0,61,124}
 \definecolor{HHULight}{RGB}{235,242,249}
+\definecolor{LTGreen}{RGB}{52,160,119}
+\definecolor{LTLight}{RGB}{232,245,238}
+\newcommand{\TrainingPipelineCardWidth}{0.98\linewidth}
+\newcommand{\TrainingPipelineBoxHeight}{1.35cm}
+\newcommand{\TrainingPipelineCard}[4]{%
+    \begingroup
+    \setbeamercolor{pipeline title}{bg=#1,fg=white}%
+    \setbeamercolor{pipeline body}{bg=#2,fg=black}%
+    \centering
+    \begin{beamerboxesrounded}[upper=pipeline title,lower=pipeline body,shadow=true,width=\TrainingPipelineCardWidth]{#3}
+        \parbox[t][\TrainingPipelineBoxHeight][t]{0.94\linewidth}{%
+            \raggedright\small #4%
+        }
+    \end{beamerboxesrounded}
+    \endgroup
+}
 
 \newcommand{\WinRateCellText}[2]{%
     \begingroup
@@ -154,50 +171,212 @@
 
 \begin{frame}{Training Pipeline}
     % TODO (sagen): The first three phases already existed in the previous work; LT is the main extension of this thesis.
-    \begin{center}
-        \Large
-        BC $\rightarrow$ BC-FT $\rightarrow$ PPO $\rightarrow$ LT $\rightarrow$ PPO fine-tuning
-    \end{center}
-    \vspace{1em}
-    \begin{itemize}
-        \item \textbf{BC / BC-FT:} imitate strong scripted opponents to obtain a competent initial policy
-        \item \textbf{PPO:} refine the policy through exploration
-        \item \textbf{LT:} train against a population of evolving opponents instead of only bots or pure self-play
-        \item \textbf{Fine-tuning:} fix remaining weaknesses after LT, especially against WorkerRushAI
-    \end{itemize}
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.16cm,
+        stage/.style={
+            draw=HHUBlue,
+            fill=HHULight,
+            text=HHUBlue,
+            signal,
+            signal from=west,
+            signal to=east,
+            line width=0.8pt,
+            minimum height=0.92cm,
+            inner xsep=4pt,
+            align=center,
+            font=\bfseries\footnotesize
+        },
+        focusstage/.style={
+            stage,
+            draw=LTGreen,
+            fill=LTGreen,
+            text=white
+        }
+    ]
+        \node[stage, minimum width=2.00cm] (bc) {BC};
+        \node[stage, minimum width=2.00cm, right=of bc] (bcft) {BC-FT};
+        \node[stage, minimum width=2.00cm, right=of bcft] (ppo) {PPO};
+        \node[focusstage, minimum width=2.00cm, right=of ppo] (lt) {LT};
+        \node[stage, minimum width=2.00cm, right=of lt] (ft) {PPO fine-tuning};
+    \end{tikzpicture}
+
+    \vspace{0.9em}
+
+    \noindent
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{BC and BC-FT}{
+            \begin{itemize}
+                \item imitate experts
+                \item BC-FT: only winning replays
+            \end{itemize}
+            }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{PPO}{
+            \begin{itemize}
+                \item iteratively update policy
+                \item refine the policy through exploration
+            \end{itemize}
+            }
+    \end{minipage}
+
+    \vspace{0.2em}
+
+    \noindent
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{LTGreen}{LTLight}{LT}{
+            \begin{itemize}
+                \item train against an evolving opponent population
+                \item add exploiters
+            \end{itemize}
+        }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{PPO fine-tuning}{
+            \begin{itemize}
+                \item repair the main remaining weakness after LT
+                \item add WorkerRushAI as opponent
+            \end{itemize}
+            }
+    \end{minipage}
 \end{frame}
 
 \begin{frame}{From SP to LT}
     % TODO (sagen): The methods build on each other; each step addresses a concrete limitation of the previous one.
-    \small
-    \renewcommand{\arraystretch}{1.15}
-    \begin{tabularx}{\linewidth}{lX}
-        \textbf{SP} & train against the current version of the agent; simple, but prone to overfitting or cyclical strategies \\
-        \textbf{FSP} & train against a set of past policies; reduces forgetting, but opponent choice is still crude \\
-        \textbf{PFSP} & sample opponents based on current win rates; focuses on informative and non-trivial matchups \\
-        \textbf{LT} & add role-based agents: Main Agent, Historical Agents, Main Exploiters and League Exploiters \\
-    \end{tabularx}
-    \vspace{0.8em}
-    % TODO: verbessere den Satz:
-    \begin{block}{Why LT?}
-        LT does not only preserve diversity through historical snapshots, it also creates diversity through exploiters that actively search for weaknesses of the current policy.
-    \end{block}
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.45cm,
+        method/.style={
+            draw=HHUBlue,
+            fill=HHULight,
+            text=HHUBlue,
+            rounded corners=2pt,
+            line width=0.8pt,
+            minimum width=1.65cm,
+            minimum height=0.72cm,
+            inner xsep=6pt,
+            align=center,
+            font=\bfseries\footnotesize
+        },
+        focusmethod/.style={
+            method,
+            draw=LTGreen,
+            fill=LTLight,
+            text=LTGreen
+        },
+        addlabel/.style={
+            font=\scriptsize,
+            align=center,
+            text=HHUBlue
+        }
+    ]
+        \node[addlabel, text=black!65] at (3.3,0.85) {};
+        \node[method] (sp) {SP};
+        \node[method, right=of sp] (fsp) {FSP};
+        \node[method, right=of fsp] (pfsp) {PFSP};
+        \node[focusmethod, right=of pfsp] (lt) {LT};
+
+        \draw[->, line width=0.8pt, HHUBlue] (sp.east) -- node[addlabel, above] {+ snapshots} (fsp.west);
+        \draw[->, line width=0.8pt, HHUBlue] (fsp.east) -- node[addlabel, above] {+ win-rate\\sampling} (pfsp.west);
+        \draw[->, line width=0.8pt, LTGreen] (pfsp.east) -- node[addlabel, above, text=LTGreen] {SP + PFSP and\\exploiters} (lt.west);
+    \end{tikzpicture}
+
+    \vspace{0.45em}
+
+    {
+    \renewcommand{\TrainingPipelineBoxHeight}{3.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.40\textwidth}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{cyclical learning of SP}{
+                \begin{center}
+                    \begin{tikzpicture}[scale=0.9, every node/.style={font=\small}]
+                        \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (a) at (0,1.2) {\textbf{A}};
+                        \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (b) at (-1.0,-0.45) {\textbf{B}};
+                        \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (c) at (1.0,-0.45) {\textbf{C}};
+                        \draw[->, line width=1pt, HHUBlue] (a) to[out=220,in=95] (b);
+                        \draw[->, line width=1pt, HHUBlue] (b) to[out=345,in=195] (c);
+                        \draw[->, line width=1pt, HHUBlue] (c) to[out=85,in=320] (a);
+                        \node[font=\scriptsize, text=black!70, align=center] at (0,-1.15) {directions the learning agent trains towards};
+                    \end{tikzpicture}
+                \end{center}
+            }
+        \end{column}
+        \begin{column}{0.58\textwidth}
+            \TrainingPipelineCard{LTGreen}{LTLight}{Why LT helps}{
+                \begin{itemize}
+                    \setlength{\itemsep}{0.22em}
+                    \item improves stability by identifying and exploiting weaknesses
+                    \item creates diverse set of opponents without the main agent having to find them through exploration
+                \end{itemize}
+            }
+        \end{column}
+    \end{columns}
+    }
 \end{frame}
 
-% TODO: oben intigrieren? (Key idea auch oben schreiben)
-\begin{frame}{League Training Design}
-    % TODO (sagen): The different roles mainly differ in who they train against and when they are checkpointed or reset.
-    \begin{itemize}
-        \item \textbf{Main Agent:} primary policy
-        \item \textbf{Historical Agents:} frozen snapshots for stability
-        \item \textbf{Main Exploiters:} exploit weaknesses of historical Main Agents
-        \item \textbf{League Exploiters:} search for broader league weaknesses
-        % \item \textbf{PFSP:} opponent sampling based on current win rates
-    \end{itemize}
-    \vspace{0.6em}
-    \begin{block}{Key idea}
-        LT turns robustness against diverse opponents into part of the optimization target.
-    \end{block}
+\begin{frame}{LT Design}
+    \noindent
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{Main Agent}{
+            \begin{itemize}
+                \item primary policy
+                \item resulting agent
+            \end{itemize}
+            }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{Historical Agents}{
+            \begin{itemize}
+                \item frozen checkpoints kept in the opponent pool
+                \item created by all other league agent types
+            \end{itemize}
+            }
+    \end{minipage}
+
+    \vspace{0.2em}
+
+    \noindent
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{Main Exploiters}{
+            \begin{itemize}
+                \item exploit weaknesses of the Main Agents
+                \item resets, when checkpointing
+            \end{itemize}
+        }
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \TrainingPipelineCard{HHUBlue}{HHULight}{League Exploiters}{
+            \begin{itemize}
+                \item exploit broader weaknesses across the league
+                \item has a chance of resetting when checkpointing
+            \end{itemize}
+            }
+    \end{minipage}
+
+    \vspace{0.15em}
+
+    {
+        \begin{block}{Key idea}
+            LT turns the robustness against diverse opponents into part of the optimization target.
+        \end{block}
+    }
+\end{frame}
+
+\begin{frame}{LT Main Agent Matchmaking}
+    \begin{columns}[T]
+        \begin{column}{0.52\textwidth}
+            \begin{center}
+                \vspace{-1em}
+                \includegraphics[width=\linewidth,height=0.9\textheight,keepaspectratio]{diagram_with_obs_only_MA.pdf}
+            \end{center}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \begin{center}
+                \includegraphics[width=\linewidth,height=0.9\textheight,keepaspectratio]{focused_strong_boosted_with_draws.pdf}
+            \end{center}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Bot Environments}
@@ -223,16 +402,6 @@
     }
     \centering
     \scriptsize Player 2 observations are transformed so SP remains compatible with a Base Agent only trained as Player 1.
-\end{frame}
-
-\begin{frame}{LT Matchmaking}
-    % TODO (sagen): Explain dashed boxes, fixed sampling probabilities and why PFSP is applied only on specific opponent subsets.
-    \begin{center}
-        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{Matchmaking.pdf}
-    \end{center}
-    \vspace{-0.4em}
-    \centering
-    \scriptsize Matchmaking and opponent sampling in the LT setup.
 \end{frame}
 
 \begin{frame}{Other Implementation Changes}
@@ -558,6 +727,43 @@ hypothesis:
     \begin{center}
         \Large Questions?
     \end{center}
+\end{frame}
+
+
+
+
+\begin{frame}{Main Agent vs League Exploiter}
+    \begin{itemize}
+        \item League Exploiter resets
+        \item different Hyperparameters
+        \item Historical League Exploiter are not included as Main Exploiter opponents.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Why adjust the observations for SP?}
+    \begin{itemize}
+        \item Gym-MicroRTS: Toward affordable full game real-time strategy games research with deep reinforcement learning implemented SP and concluded that a likely reason for worse performance of SP was that SP also has to train, to start as Player 2, while pure PPO only trained as Player 1.
+        \item difficulties retrainig the Base Agent.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Why are the win rates against NativeMCTS low?}
+    \begin{itemize}
+        \item it is one of the only opponents that give up winning the game and focus on staying far away from all opponents.
+        \item This results in many draws and few losses.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Full LT Matchmaking}
+    % TODO (sagen): Explain dashed boxes, fixed sampling probabilities and why PFSP is applied only on specific opponent subsets.
+    \begin{center}
+        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{diagram_with_obs_presentation.pdf}
+    \end{center}
+    \vspace{-0.4em}
+    \centering
+    \scriptsize Matchmaking and opponent sampling in the LT setup.
 \end{frame}
 
 \end{document}
