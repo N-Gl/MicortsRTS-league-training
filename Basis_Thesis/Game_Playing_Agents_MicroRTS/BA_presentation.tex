@@ -633,81 +633,81 @@
 
 \appendix
 
-% TODO: \begin{frame}[noframenumbering]{Detailed Evaluation Results: Win Rates}
-% TODO:     \centering
-% TODO:     \scriptsize
-% TODO:     \setlength{\tabcolsep}{3pt}
-% TODO:     \renewcommand{\arraystretch}{1.02}
-% TODO:     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
-% TODO:         \toprule
-% TODO:         Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
-% TODO:         \midrule
-% TODO:         \multicolumn{5}{l}{\textit{bots used in training}} \\
-% TODO:         CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-% TODO:         Mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-% TODO:         \midrule
-% TODO:         \multicolumn{5}{l}{\textit{scripted bots}} \\
-% TODO:         WorkerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
-% TODO:         PassiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-% TODO:         LightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-% TODO:         RandomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-% TODO:         RandomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
-% TODO:         \midrule
-% TODO:         \multicolumn{5}{l}{\textit{MCTS based bots}} \\
-% TODO:         Rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-% TODO:         MixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
-% TODO:         Izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
-% TODO:         Tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
-% TODO:         Droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
-% TODO:         GuidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
-% TODO:         NaiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
-% TODO:         \midrule
-% TODO:         overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
-% TODO:         \bottomrule
-% TODO:     \end{tabular*}
-% TODO: \end{frame}
-% TODO: 
-% TODO: \begin{frame}[noframenumbering]{Detailed Evaluation Results: Loss Rates}
-% TODO:     \centering
-% TODO:     \scriptsize
-% TODO:     \setlength{\tabcolsep}{3pt}
-% TODO:     \renewcommand{\arraystretch}{1.02}
-% TODO:     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
-% TODO:         \toprule
-% TODO:         Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
-% TODO:         \midrule
-% TODO:         \multicolumn{5}{l}{\textit{bots used in training}} \\
-% TODO:         CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         Mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         \midrule
-% TODO:         \multicolumn{5}{l}{\textit{scripted bots}} \\
-% TODO:         WorkerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
-% TODO:         PassiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         LightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         RandomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         RandomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         \midrule
-% TODO:         \multicolumn{5}{l}{\textit{MCTS based bots}} \\
-% TODO:         Rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         MixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
-% TODO:         Izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
-% TODO:         Tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
-% TODO:         Droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
-% TODO:         GuidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         NaiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-% TODO:         \midrule
-% TODO:         overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
-% TODO:         \bottomrule
-% TODO:     \end{tabular*}
-% TODO: \end{frame}
-% TODO: 
-% TODO: \begin{frame}[noframenumbering]{Main Agent vs League Exploiter}
-% TODO:     \begin{itemize}
-% TODO:         \item the League Exploiter resets
-% TODO:         \item different hyperparameters
-% TODO:         \item historical League Exploiters are not included as Main Exploiter opponents
-% TODO:     \end{itemize}
-% TODO: \end{frame}
+\begin{frame}[noframenumbering]{Detailed Evaluation Results: Win Rates}
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.02}
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
+        \toprule
+        Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
+        \midrule
+        \multicolumn{5}{l}{\textit{bots used in training}} \\
+        CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+        Mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+        \midrule
+        \multicolumn{5}{l}{\textit{scripted bots}} \\
+        WorkerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
+        PassiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+        LightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+        RandomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+        RandomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
+        \midrule
+        \multicolumn{5}{l}{\textit{MCTS based bots}} \\
+        Rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+        MixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
+        Izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
+        Tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
+        Droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
+        GuidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
+        NaiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
+        \midrule
+        overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
+        \bottomrule
+    \end{tabular*}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Detailed Evaluation Results: Loss Rates}
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.02}
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
+        \toprule
+        Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
+        \midrule
+        \multicolumn{5}{l}{\textit{bots used in training}} \\
+        CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        Mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        \midrule
+        \multicolumn{5}{l}{\textit{scripted bots}} \\
+        WorkerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+        PassiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        LightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        RandomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        RandomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        \midrule
+        \multicolumn{5}{l}{\textit{MCTS based bots}} \\
+        Rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        MixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
+        Izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
+        Tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
+        Droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
+        GuidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        NaiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+        \midrule
+        overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
+        \bottomrule
+    \end{tabular*}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Main Agent vs League Exploiter}
+    \begin{itemize}
+        \item the League Exploiter resets
+        \item different hyperparameters
+        \item historical League Exploiters are not included as Main Exploiter opponents
+    \end{itemize}
+\end{frame}
 
 
 \begin{frame}[noframenumbering]{Why adjust the observations for SP?}
