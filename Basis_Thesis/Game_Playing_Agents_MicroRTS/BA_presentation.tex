@@ -113,17 +113,17 @@
 
 \begin{frame}{Goals and Research Question}
     \small
-    \begin{block}{Base Agent}
-        \begin{itemize}
-            \item combination of Behavioral Cloning (BC) and Proximal Policy Optimization (PPO)
-            \item strong baseline, but weaknesses against several opponents
-        \end{itemize}
-    \end{block}
     \begin{block}{Goal}
         \begin{itemize}
             \item improve the Base Agent with League Training (LT)
             \item training against a more diverse set of opponents
             \item focus on robustness and generalization
+        \end{itemize}
+    \end{block}
+    \begin{block}{Base Agent}
+        \begin{itemize}
+            \item combination of Behavioral Cloning (BC) and Proximal Policy Optimization (PPO)
+            \item strong baseline, but weaknesses against several opponents
         \end{itemize}
     \end{block}
     \begin{alertblock}{Research Question}
@@ -169,7 +169,6 @@
 \section{Approach}
 
 \begin{frame}{Training Pipeline}
-    % TODO (sagen): The first three phases already existed in the previous work; LT is the main extension of this thesis.
     \centering
     \begin{tikzpicture}[
         node distance=0.16cm,
@@ -242,7 +241,6 @@
 \end{frame}
 
 \begin{frame}{From SP to LT}
-    % TODO (sagen): The methods build on each other; each step addresses a concrete limitation of the previous one.
     \centering
     \begin{tikzpicture}[
         node distance=1.45cm,
@@ -405,8 +403,6 @@
 \end{frame}
 
 \begin{frame}{Observation Adjustment for SP}
-    % TODO (sagen): The Base Agent was trained only as player 1, so we had to transform player-2 observations to make self-play compatible. (also for learning efficiency)
-    % TODO (sagen): Explain Graph
     \makebox[\linewidth][c]{%
         \includegraphics[width=1.05\linewidth,height=1\textheight,keepaspectratio]{adjust_obs_presentation.pdf}%
     }
@@ -415,16 +411,12 @@
 \end{frame}
 
 \begin{frame}{Other Implementation Changes}
-    % TODO (sagen): These were the main engineering changes needed to make LT work reliably in this codebase.
-    % TODO: numerieren statt bullets?
     \begin{itemize}
         % only Player 2 rotation
         % \item flipping GridNet observations % observation adjustment for player 2 in SP by flipping GridNet observations
         \item delta score
         \item annealed entropy coefficient
         \item new initial agents
-        % TODO: entfernen?
-        % \item corrected exploiter reset and checkpoint logic compared to the AlphaStar pseudocode
     \end{itemize}
 \end{frame}
 
@@ -432,12 +424,6 @@
 \section{Experiments}
 
 \begin{frame}{Experiment Setup}
-    % TODO (sagen): This is already substantially more expensive than the original PPO setup from the previous work.
-    % TODO (sagen): The Main Agent played around 4500 games against CoacAI and Mayari during LT.
-    % TODO (sagen): dynamic bot environments espacialy stabilize the early phase (Graph)
-    % TODO (sagen): bot performance is monitored throughout LT (Graph)
-    % TODO (sagen) (in Remaining Limitations): Peak memory usage increases by approximately 2500 MiB for one agent with 25 environments.
-    % TODO (sagen) (in Remaining Limitations): Keeping enough environments per agent matters because too small rollouts make PPO updates unstable.
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
             \begin{itemize}
@@ -462,7 +448,6 @@
 \section{Results}
 
 \begin{frame}{Main Quantitative Result}
-    % TODO (sagen): This is the highest-level summary slide; the following tables give the detailed opponent-wise breakdown.
     \begin{columns}[T]
         \begin{column}{0.58\textwidth}
             \includegraphics[width=\linewidth]{abstract_total_winrate_comparison.pdf}
@@ -479,14 +464,6 @@
 \end{frame}
 
 \begin{frame}{Evaluation Results}
-    % TODO (sagen): LT clearly improves robustness against most evaluated opponents.
-    % TODO (sagen): WorkerRushAI remains a major weakness after LT and motivates the final PPO fine-tuning phase.
-    % TODO (sagen): Win rates in percent. Higher values are better.
-    % TODO: neue Folie?
-    % TODO (sagen): Main Agent (LT) weakness (WorkerRushAI) --> PPO fine-tuning phase.
-    % TODO (sagen): 9 million steps.
-    % TODO (sagen): The 25 environments were evenly split between CoacAI, Mayari and WorkerRushAI.
-    % TODO (sagen): The learning rate was set to 1.5e-6, the entropy coefficient was set to 0.005 and no exploiters were used during this fine-tuning phase.
     \centering
     \scriptsize
     \setlength{\tabcolsep}{3pt}
@@ -521,7 +498,6 @@
 \end{frame}
 
 \begin{frame}{Evaluation Results}
-    % TODO (sagen): Loss rates in percent. Lower values are better.
     \centering
     \scriptsize
     \setlength{\tabcolsep}{3pt}
@@ -556,15 +532,8 @@
 \end{frame}
 
 
+% TODO: weniger Text?
 \begin{frame}{Interpretation of the Results}
-    % TODO: alles in den Results sagen?
-    % TODO (sagen): The important point is that LT improves not only training matchups, but also many unseen evaluation matchups.
-    % \begin{itemize}
-    %     \item LT improves performance not only against training bots, but also against many unseen evaluation opponents.
-    %     \item The Main Agent learned stronger defensive behavior while maintaining offensive pressure.
-    %     \item Fine-tuning after LT largely removes the WorkerRushAI weakness and improves the overall average further.
-    %     % TODO: \item The results suggest that pure PPO alone does not reliably keep well-generalizing policies once found.
-    % \end{itemize}
 
 hypothesis:
     \begin{itemize}
@@ -574,43 +543,10 @@ hypothesis:
     \end{itemize}
 \end{frame}
 
-% TODO: alles in den Results sagen?
-% \begin{frame}{Qualitative Findings}
-%     % TODO (sagen): The Main Agent keeps the base defended much more reliably than the Base Agent while still attacking.
-%     % TODO (sagen): Unit focus mattered: Droplet improved from 45 to 62 and GuidedRojoA3N from 64 to 87.
-%     % TODO (sagen): Ranged units are mostly used in reaction to pressure or in edge-case situations.
-%     \begin{itemize}
-%         \item LT improves more than just the average score; it changes the learned behavior.
-%         % steht schon oben: \item The Main Agent defends the base more consistently while keeping offensive pressure.
-%         \item It performs better against draw-oriented or awkward opponents such as RandomBiasedAI.
-%         \item The unit-focused Main Agent is consistently better than the variant without unit focus.
-%     \end{itemize}
-% \end{frame}
-
-% TODO: alles in den Results gesagt?
-% \begin{frame}{Why Fine-Tuning Helps}
-%     % TODO (sagen): WorkerRushAI is weakness that exploiters did not sufficiently expose during LT
-%     % TODO (sagen): Fine-tuning was a short final phase after LT, not a replacement for LT.
-%     % TODO (sagen): Fine-tuning used about 9 million PPO steps with CoacAI, Mayari and WorkerRushAI as opponents.
-%     % TODO (sagen): The learning rate was 1.5e-6, the entropy coefficient 0.005 and no exploiters were used.
-%     \begin{block}{Problem left after LT}
-%         WorkerRushAI remained the clearest exploitable weakness of the Main Agent after LT.
-%     \end{block}
-%     \begin{itemize}
-%         \item win rate against WorkerRushAI after LT: \textbf{35.0\%}
-%         \item win rate after PPO fine-tuning: \textbf{99.5\%}
-%         \item the overall win rate also increases further from \textbf{79.2\%} to \textbf{85.7\%}
-%     \end{itemize}
-%     \begin{block}{Interpretation}
-%         Fine-tuning repaired a concrete exploit without hurting generalization on the evaluated opponent set.
-%     \end{block}
-% \end{frame}
-
 \section{Discussion}
 
+% TODO: weniger Text?
 \begin{frame}{Player 1 Priority}
-    % TODO (sagen): The environment gives player 1 action priority, so self-play could (and has) exploited that asymmetry.
-    % TODO (sagen): Especially important for LT, because it combines SP and PFSP --> the agent plays against itself --> has direct feedback on how it plays as the opponent --> wants to play bad as opponent
     \begin{block}{Observation}
         MicroRTS gives player 1 action priority, so a potential concern is that self-play style training could accidentally favor player-1-specific behavior.
     \end{block}
@@ -630,11 +566,7 @@ hypothesis:
     \scriptsize
     \end{frame}
 
-% TODO: linksbündig
 \begin{frame}{Main Limitation: Diversity}
-    % TODO (sagen): The Base Agent strongly favors a heavy-rush strategy.
-    % TODO (sagen): Sometimes Worker Range (reaction to opponent)
-    % TODO (sagen): (against Heavy Rush --> Heavy Rush) --> against similar Agents as itself --> similar strategies
     \begin{center}
         \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}{\beamergotobutton{Open Base Agent Example Video}}
     \end{center}
@@ -644,70 +576,31 @@ hypothesis:
     % If the PDF viewer does not open the movie object, open \texttt{images/MictoRTS\_BaseAgent\_vs\_BaseAgent\_edited.mp4} manually.
 \end{frame}
 
+% TODO: weniger Text?
 \begin{frame}{Main Limitation: Diversity}
-    \begin{columns}[T]
-        \begin{column}{0.55\textwidth}
-            \begin{itemize}
-                \item Exploiters initialized from similar policies tend to discover similar weaknesses.
-                \item Some strategically different exploits are hard to reach because they require first unlearning the Base Agent's preferred behavior.
-                % TODO (sagen): WorkerRushAI Example
-                \item New initial agents with focuses on different unit types to improve exploiter diversity and Main Agent generalization.
-                \item Hypothesis: LT therefore depends strongly on the diversity already present at initialization
-            \end{itemize}
-        \end{column}
-        % TODO: entfernen?
-        % \begin{column}{0.4\textwidth}
-        %     \includegraphics[width=\linewidth]{numberHeavyAfterGame.png}
-        % \end{column}
-    \end{columns}
+    \begin{itemize}
+        \item Exploiters initialized from similar policies tend to discover similar weaknesses.
+        \item Some strategically different exploits are hard to reach because they require first unlearning the Base Agent's preferred behavior.
+        \item New initial agents with focuses on different unit types to improve exploiter diversity and Main Agent generalization.
+        \item Hypothesis: LT therefore depends strongly on the diversity already present at initialization
+    \end{itemize}
 \end{frame}
 
-% TODO: schon gesagt?
-% \begin{frame}{Why New Initial Agents Matter}
-%     % TODO (sagen): The diversity of the initial agents matters more than just their raw strength.
-%     % TODO (sagen): New initial agents let exploiters search from different strategic starting points instead of always from the same heavy-rush bias.
-%     \begin{itemize}
-%         \item exploiters initialized from similar agents tend to find similar weaknesses
-%         \item new initial agents focused on different unit types broaden the exploiter set
-%         \item this improves generalization against a wider range of opponents
-%         \item LT therefore depends strongly on the diversity already present at initialization
-%     \end{itemize}
-%     % TODO: add the exploiter diversity schematic from BA?
-% \end{frame}
 
-\begin{frame}{Scope and Remaining Limitations}
-    % TODO (sagen): Claims about robustness and generalization should be interpreted within this concrete scenario.
-    % TODO (sagen): In the previous work, pure PPO used only 24 parallel environments; LT is much more expensive.
+\begin{frame}{Remaining Limitations and Future Work}
     \begin{itemize}
-        % TODO: nur die evaluation?
-        \item evaluation is limited to one map: \texttt{basesWorkers16x16A}
+        \item thesis is limited to one map: \texttt{basesWorkers16x16A}
         \item the setting uses full observability and no fog of war
-        % \item LT requires substantially more computation than pure PPO
         \item high computational cost
+        \item investigate stronger diversity mechanisms
     \end{itemize}
-    % TODO: entfernen?
-    \begin{block}{Takeaway}
-        The method works, but the strength of the final result depends strongly on the diversity and cost of the training setup.
-    \end{block}
 \end{frame}
 
 \section{Conclusion}
 
-% TODO: entfernen? alles in Scope and Remaining Limitations sagen?
-\begin{frame}{Future Work}
-    % TODO (sagen): The most promising directions are map diversity and stronger diverse initial agents.
-    % TODO (sagen): Another practical direction is a faster environment implementation, ideally on the GPU.
-    \begin{itemize}
-        \item train on multiple maps and with fog of war
-        \item improve the diversity and strength of initial agents
-        \item reduce computational cost of MicroRTS training
-        \item investigate stronger diversity mechanisms for exploiters
-    \end{itemize}
-\end{frame}
 
 
 \begin{frame}{Conclusion}
-    % TODO (sagen): A narrow BC expert set may be a suboptimal starting point for LT because it narrows the strategic repertoire too early.
     \begin{block}{Conclusion}
         LT with PPO improves the robustness and generalization of the MicroRTS Base Agent. Additional PPO fine-tuning improves the final agent even further.
     \end{block}
@@ -717,7 +610,6 @@ hypothesis:
     \begin{itemize}
         \item LT improves most matchups and the overall performance
         \item fine-tuning further improves the final agent
-        % TODO: schon oben klar
         \item diversity of initial agents is the critical practical factor
     \end{itemize}
 \end{frame}
@@ -757,7 +649,6 @@ hypothesis:
 
 
 \begin{frame}{Full LT Matchmaking}
-    % TODO (sagen): Explain dashed boxes, fixed sampling probabilities and why PFSP is applied only on specific opponent subsets.
     \begin{center}
         \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{diagram_with_obs_presentation.pdf}
     \end{center}
