@@ -326,7 +326,7 @@
 \begin{frame}{LT Design}
     \noindent
     \begin{minipage}[t]{0.49\textwidth}
-        \TrainingPipelineCard{HHUBlue}{HHULight}{Main Agent}{
+        \TrainingPipelineCard{HHUBlue}{HHULight}{Main Agent (MA)}{
             \begin{itemize}
                 \item primary policy
                 \item resulting agent
@@ -334,7 +334,7 @@
             }
     \end{minipage}\hfill
     \begin{minipage}[t]{0.49\textwidth}
-        \TrainingPipelineCard{HHUBlue}{HHULight}{Historical Agents}{
+        \TrainingPipelineCard{HHUBlue}{HHULight}{Historical Agents (HA)}{
             \begin{itemize}
                 \item frozen checkpoints kept in the opponent pool
                 \item created by all other league agent types
@@ -346,43 +346,41 @@
 
     \noindent
     \begin{minipage}[t]{0.49\textwidth}
-        \TrainingPipelineCard{HHUBlue}{HHULight}{Main Exploiters}{
+        \TrainingPipelineCard{HHUBlue}{HHULight}{Main Exploiters (ME)}{
             \begin{itemize}
-                \item exploit weaknesses of the Main Agents
-                \item resets, when checkpointing
+                \item exploit weaknesses of the MA
+                \item reset when checkpointed
             \end{itemize}
         }
     \end{minipage}\hfill
     \begin{minipage}[t]{0.49\textwidth}
-        \TrainingPipelineCard{HHUBlue}{HHULight}{League Exploiters}{
+        \TrainingPipelineCard{HHUBlue}{HHULight}{League Exploiters (LE)}{
             \begin{itemize}
                 \item exploit broader weaknesses across the league
-                \item has a chance of resetting when checkpointing
+                \item can reset when checkpointed
             \end{itemize}
             }
     \end{minipage}
-
-    \vspace{0.15em}
-
-    {
-        \begin{block}{Key idea}
-            LT turns the robustness against diverse opponents into part of the optimization target.
-        \end{block}
-    }
 \end{frame}
 
-\begin{frame}{LT Main Agent Matchmaking}
+\begin{frame}{LT MA Matchmaking}
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
             \begin{center}
-                \vspace{-1em}
-                \includegraphics[width=\linewidth,height=0.9\textheight,keepaspectratio]{diagram_with_obs_only_MA.pdf}
+                \includegraphics[width=\linewidth,height=0.74\textheight,keepaspectratio]{diagram_with_obs_only_MA.pdf}
             \end{center}
         \end{column}
         \begin{column}{0.45\textwidth}
             \begin{center}
-                \includegraphics[width=\linewidth,height=0.9\textheight,keepaspectratio]{focused_strong_boosted_with_draws.pdf}
+                \includegraphics[width=\linewidth,height=0.42\textheight,keepaspectratio]{focused_strong_boosted_with_draws.pdf}
             \end{center}
+            \small
+            \begin{itemize}
+                \item 35\% self-play
+                \item 50\% PFSP over HAs
+                \item 15\% PFSP over HMEs if win rate is low
+                \item PFSP prioritizes unresolved matchups
+            \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
@@ -403,20 +401,24 @@
 \end{frame}
 
 \begin{frame}{Observation Adjustment for SP}
-    \makebox[\linewidth][c]{%
-        \includegraphics[width=1.05\linewidth,height=1\textheight,keepaspectratio]{adjust_obs_presentation.pdf}%
-    }
-    \centering
-    \scriptsize Player 2 observations are transformed so SP remains compatible with a Base Agent only trained as Player 1.
+    \small
+    \begin{itemize}
+        \item Base Agent only trained as Player 1
+        \item flip Player-2 GridNet observations
+        \item flip masks and action directions
+    \end{itemize}
+    \begin{center}
+        \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{adjust_obs_präsentation.pdf}
+    \end{center}
 \end{frame}
 
-\begin{frame}{Other Implementation Changes}
+\begin{frame}{Implementation Changes}
+    \small
     \begin{itemize}
         % only Player 2 rotation
-        % \item flipping GridNet observations % observation adjustment for player 2 in SP by flipping GridNet observations
-        \item delta score
-        \item annealed entropy coefficient
-        \item new initial agents
+        \item delta score reward: denser signal in sparse-reward games
+        \item annealed entropy coefficient: more exploration early, less later
+        \item new initial agents: new start points for exploiters
     \end{itemize}
 \end{frame}
 
@@ -426,20 +428,18 @@
 \begin{frame}{Experiment Setup}
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
+            \small
             \begin{itemize}
-                \item map: \texttt{basesWorkers16x16A}
-                \item LT setup: 1 Main Agent, 4 Main Exploiters, 1 League Exploiter
-                \item 25 environments per learning agent
-                \item 5 to 10 additional dynamic bot environments
-                \item approximately 130 million LT steps
-                \item training time: about 100 hours
-                \item maximum setup size: 160 parallel environments
-                \item evaluations over at least 100 games against 12 opponents after LT and after fine-tuning
-                % \item high memory cost, CPU bottleneck
+                \item 1 map: \texttt{basesWorkers16x16A}
+                \item 1 MA, 4 ME, 1 LE
+                \item for each 25 environments
+                \item 5 to 10 dynamic bot environments
+                \item \(\sim\)130M LT steps, \(\sim\)100 h
+                \item max: 160 parallel environments
+                \item eval: at least 100 games vs 12 opponents
             \end{itemize}
         \end{column}
         \begin{column}{0.45\textwidth}
-            % \includegraphics[width=\linewidth]{num_parallel_bot_envs.png}
             \includegraphics[width=\linewidth]{bot_win_rates_no_draw.png}
         \end{column}
     \end{columns}
@@ -449,151 +449,164 @@
 
 \begin{frame}{Main Quantitative Result}
     \begin{columns}[T]
-        \begin{column}{0.58\textwidth}
+        \begin{column}{0.68\textwidth}
             \includegraphics[width=\linewidth]{abstract_total_winrate_comparison.pdf}
         \end{column}
-        \begin{column}{0.38\textwidth}
+        \begin{column}{0.28\textwidth}
             \small
             \begin{itemize}
-                % \item overall win rate improves from \textbf{76.5\%} to \textbf{79.2\%} after LT
-                % \item after PPO fine-tuning it reaches \textbf{85.7\%}
-                \item overall loss rate drops from \textbf{7.7\%} to \textbf{2.2\%}
+                \item loss rate: \textbf{7.7\%} \(\rightarrow\) \textbf{2.2\%}
+                \item different Base Agent version than in the prior work
             \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
 
-\begin{frame}{Evaluation Results}
-    \centering
-    \scriptsize
-    \setlength{\tabcolsep}{3pt}
-    \renewcommand{\arraystretch}{1.02}
-    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
-        \toprule
-        Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
-        \midrule
-        \multicolumn{5}{l}{\textit{bots used in training}} \\
-        CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-        Mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-        \midrule
-        \multicolumn{5}{l}{\textit{scripted bots}} \\
-        WorkerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
-        PassiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-        LightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-        RandomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-        RandomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
-        \midrule
-        \multicolumn{5}{l}{\textit{MCTS based bots}} \\
-        Rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-        MixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
-        Izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
-        Tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
-        Droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
-        GuidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
-        NaiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
-        \midrule
-        overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
-        \bottomrule
-    \end{tabular*}
+\begin{frame}{Evaluation Results (Win Rate)}
+    \begin{columns}[T]
+        \begin{column}{0.60\textwidth}
+            \centering
+            \scriptsize
+            \setlength{\tabcolsep}{4pt}
+            \renewcommand{\arraystretch}{1.05}
+            \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c@{}}
+                \toprule
+                Opponent & Base & LT & LT + FT \\
+                \midrule
+                CoacAI & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+                Mayari & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+                \midrule
+                WorkerRushAI (FT) & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
+                RandomBiasedAI & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
+                MixedBot & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
+                GuidedRojoA3N & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
+                Tiamat & \WinRateCell{93.0} & \WinRateCell{99.0} & \BestWinRateCell{99.0} \\
+                Droplet & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
+                \midrule
+                overall & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
+                \bottomrule
+            \end{tabular*}
+        \end{column}
+        \begin{column}{0.36\textwidth}
+            \small
+            \begin{itemize}
+                \item training bots: CoacAI and Mayari in LT, WorkerRushAI in FT
+                \item RBAI: better against drawing bots
+                \item WRAI: clear LT weakness, then FT training opponent
+                \item LT gains stay after FT
+                \item all MCTS win rates improve after FT
+                % TODO: \item without new initial agents overall win rate: \textbf{74.1\%} 
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-\begin{frame}{Evaluation Results}
-    \centering
-    \scriptsize
-    \setlength{\tabcolsep}{3pt}
-    \renewcommand{\arraystretch}{1.02}
-    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
-        \toprule
-        Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
-        \midrule
-        \multicolumn{5}{l}{\textit{bots used in training}} \\
-        CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        Mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        \midrule
-        \multicolumn{5}{l}{\textit{scripted bots}} \\
-        WorkerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
-        PassiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        LightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        RandomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        RandomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        \midrule
-        \multicolumn{5}{l}{\textit{MCTS based bots}} \\
-        Rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        MixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
-        Izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
-        Tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
-        Droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
-        GuidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        NaiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
-        \midrule
-        overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
-        \bottomrule
-    \end{tabular*}
+\begin{frame}{Evaluation Results (Loss Rate)}
+    \begin{columns}[T]
+        \begin{column}{0.60\textwidth}
+            \centering
+            \scriptsize
+            \setlength{\tabcolsep}{4pt}
+            \renewcommand{\arraystretch}{1.05}
+            \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c@{}}
+                \toprule
+                Opponent & Base & LT & LT + FT \\
+                \midrule
+                WorkerRushAI (FT) & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+                MixedBot & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
+                Izanagi & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
+                \midrule
+                overall & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
+                \bottomrule
+            \end{tabular*}
+        \end{column}
+        \begin{column}{0.36\textwidth}
+            \small
+            \begin{itemize}
+                \item overall loss rate: less than \textbf{1/3} of the Base Agent
+                \item better base defense while attacking
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-
-% TODO: weniger Text?
 \begin{frame}{Interpretation of the Results}
-
-hypothesis:
+    \small
     \begin{itemize}
-        \item LT turns robustness against diverse opponents into part of the optimization target
+        \item robustness against diverse opponents becomes part of the optimization target
         % TODO: für FT eher: Fine-tuning repaired a concrete exploit without hurting generalization on the evaluated opponent set. --> better local optimum
-        \item LT helps to find a better local optimum that is then further improved by fine-tuning, while pure PPO often gets stuck in not as generalized local optima.
+        \item LT finds a better local optimum
+        \item FT improves this local optimum further
+        % TODO: \item exploiter diversity determines which weaknesses LT can discover
+        \item MA after LT vs Base Agent: \textbf{89\%} win, \textbf{9\%} draw, \textbf{2\%} loss
     \end{itemize}
 \end{frame}
 
 \section{Discussion}
 
-% TODO: weniger Text?
-\begin{frame}{Player 1 Priority}
-    \begin{block}{Observation}
-        MicroRTS gives player 1 action priority, so a potential concern is that self-play style training could accidentally favor player-1-specific behavior.
-    \end{block}
-    \begin{block}{Result from the thesis}
-        In one self-match evaluation of the same agent over 200 games, player 1 achieved 38\% wins, 28\% draws and player 2 achieved 34\% wins.
-    \end{block}
+\begin{frame}{Player 1 (P1) Priority}
+    \small
     \begin{itemize}
-        \item only small effect on evaluations
-        \item alternating the learning side to prevent the agent from exploiting player-1-specific priority
+        \item P1 is prioritized in conflicts
+        \item self-match over 200 games: P1 \textbf{38\%}, draw \textbf{28\%}, P2 \textbf{34\%}
+        \item visible effect, but small
+        \item alternating the learning side prevents P1-specific behavior
     \end{itemize}
-    \vspace{0.6em}
-    \begin{center}
-        \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_almost_100.mp4}{\beamergotobutton{Open Player 1 Priority Example Video}}
-    \end{center}
     \vspace{0.4em}
-    \centering
-    \scriptsize
-    \end{frame}
-
-\begin{frame}{Main Limitation: Diversity}
     \begin{center}
-        \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}{\beamergotobutton{Open Base Agent Example Video}}
+        \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_almost_100.mp4}{\beamergotobutton{Open Example Video}}
     \end{center}
-    \vspace{0.6em}
-    \centering
-    \scriptsize
-    % If the PDF viewer does not open the movie object, open \texttt{images/MictoRTS\_BaseAgent\_vs\_BaseAgent\_edited.mp4} manually.
 \end{frame}
 
-% TODO: weniger Text?
 \begin{frame}{Main Limitation: Diversity}
-    \begin{itemize}
-        \item Exploiters initialized from similar policies tend to discover similar weaknesses.
-        \item Some strategically different exploits are hard to reach because they require first unlearning the Base Agent's preferred behavior.
-        \item New initial agents with focuses on different unit types to improve exploiter diversity and Main Agent generalization.
-        \item Hypothesis: LT therefore depends strongly on the diversity already present at initialization
-    \end{itemize}
+    \begin{columns}[T]
+        \begin{column}{0.58\textwidth}
+            \small
+            \begin{itemize}
+                \item not diverse exploiters discover weaknesses with similar exploits
+                \item strategically different exploits require unlearning Base Agents fundamental behavior first
+                \item long transitions, bad rewards
+                \item new initial agents \(\rightarrow\) more exploiter diversity
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \small
+            \textbf{Hypothesis}
+            \begin{itemize}
+                \item LT depends strongly on the diversity already present at initialization
+            \end{itemize}
+            \begin{center}
+                \vspace{0.6em}
+                \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}{\beamergotobutton{Open Example Video}}
+            \end{center}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 
 \begin{frame}{Remaining Limitations and Future Work}
-    \begin{itemize}
-        \item thesis is limited to one map: \texttt{basesWorkers16x16A}
-        \item the setting uses full observability and no fog of war
-        \item high computational cost
-        \item investigate stronger diversity mechanisms
-    \end{itemize}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \small
+            \textbf{Remaining limitations}
+            \begin{itemize}
+                \item 1 map
+                \item full observability, no fog of war
+                \item high memory and computation cost
+                \item 160 LT envs vs 24 for pure PPO
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \small
+            \textbf{Future work}
+            \begin{itemize}
+                \item more maps
+                \item fog of war
+                \item MicroRTS on GPU
+                \item stronger diversity mechanisms
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \section{Conclusion}
@@ -601,16 +614,13 @@ hypothesis:
 
 
 \begin{frame}{Conclusion}
-    \begin{block}{Conclusion}
-        LT with PPO improves the robustness and generalization of the MicroRTS Base Agent. Additional PPO fine-tuning improves the final agent even further.
-    \end{block}
-    \begin{block}{Key takeaway}
-        The effectiveness of LT depends strongly on exploiter diversity, which in turn depends on the diversity of the initial agents and BC experts.
-    \end{block}
+    \small
     \begin{itemize}
-        \item LT improves most matchups and the overall performance
-        \item fine-tuning further improves the final agent
-        \item diversity of initial agents is the critical practical factor
+        \item LT + PPO improves robustness and generalization of the MA
+        \item PPO fine-tuning further improves the final agent
+        \item LT improves training and evaluation matchups
+        \item effectiveness of LT depends on exploiter diversity
+        \item exploiter diversity depends on initial agents and BC experts
     \end{itemize}
 \end{frame}
 
@@ -621,36 +631,103 @@ hypothesis:
     \end{center}
 \end{frame}
 
+\appendix
+
+% TODO: \begin{frame}[noframenumbering]{Detailed Evaluation Results: Win Rates}
+% TODO:     \centering
+% TODO:     \scriptsize
+% TODO:     \setlength{\tabcolsep}{3pt}
+% TODO:     \renewcommand{\arraystretch}{1.02}
+% TODO:     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
+% TODO:         \toprule
+% TODO:         Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
+% TODO:         \midrule
+% TODO:         \multicolumn{5}{l}{\textit{bots used in training}} \\
+% TODO:         CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+% TODO:         Mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+% TODO:         \midrule
+% TODO:         \multicolumn{5}{l}{\textit{scripted bots}} \\
+% TODO:         WorkerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
+% TODO:         PassiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+% TODO:         LightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+% TODO:         RandomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+% TODO:         RandomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
+% TODO:         \midrule
+% TODO:         \multicolumn{5}{l}{\textit{MCTS based bots}} \\
+% TODO:         Rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+% TODO:         MixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
+% TODO:         Izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
+% TODO:         Tiamat & \WinRateCell{94.0} & \WinRateCell{93.0} & \BestWinRateCell{99.0} & \BestWinRateCell{99.0} \\
+% TODO:         Droplet & \WinRateCell{45.0} & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
+% TODO:         GuidedRojoA3N & \WinRateCell{64.0} & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
+% TODO:         NaiveMCTS & \WinRateCell{0.0} & \WinRateCell{0.7} & \WinRateCell{2.0} & \BestWinRateCell{6.5} \\
+% TODO:         \midrule
+% TODO:         overall & \WinRateCell{74.1} & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
+% TODO:         \bottomrule
+% TODO:     \end{tabular*}
+% TODO: \end{frame}
+% TODO: 
+% TODO: \begin{frame}[noframenumbering]{Detailed Evaluation Results: Loss Rates}
+% TODO:     \centering
+% TODO:     \scriptsize
+% TODO:     \setlength{\tabcolsep}{3pt}
+% TODO:     \renewcommand{\arraystretch}{1.02}
+% TODO:     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c c@{}}
+% TODO:         \toprule
+% TODO:         Opponent & \shortstack{Main Agent\\without new initial agents} & Base Agent & Main Agent (LT) & \shortstack{Main Agent +\\Fine-tuning} \\
+% TODO:         \midrule
+% TODO:         \multicolumn{5}{l}{\textit{bots used in training}} \\
+% TODO:         CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         Mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         \midrule
+% TODO:         \multicolumn{5}{l}{\textit{scripted bots}} \\
+% TODO:         WorkerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+% TODO:         PassiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         LightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         RandomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         RandomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         \midrule
+% TODO:         \multicolumn{5}{l}{\textit{MCTS based bots}} \\
+% TODO:         Rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         MixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
+% TODO:         Izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
+% TODO:         Tiamat & \LossRateCell{6.0} & \LossRateCell{7.0} & \LossRateCell{1.0} & \BestLossRateCell{0.5} \\
+% TODO:         Droplet & \LossRateCell{22.0} & \BestLossRateCell{9.0} & \LossRateCell{22.0} & \LossRateCell{10.5} \\
+% TODO:         GuidedRojoA3N & \BestLossRateCell{0.0} & \LossRateCell{1.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         NaiveMCTS & \BestLossRateCell{0.0} & \LossRateCell{2.7} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
+% TODO:         \midrule
+% TODO:         overall & \LossRateCell{9.9} & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
+% TODO:         \bottomrule
+% TODO:     \end{tabular*}
+% TODO: \end{frame}
+% TODO: 
+% TODO: \begin{frame}[noframenumbering]{Main Agent vs League Exploiter}
+% TODO:     \begin{itemize}
+% TODO:         \item the League Exploiter resets
+% TODO:         \item different hyperparameters
+% TODO:         \item historical League Exploiters are not included as Main Exploiter opponents
+% TODO:     \end{itemize}
+% TODO: \end{frame}
 
 
-
-\begin{frame}{Main Agent vs League Exploiter}
-    \begin{itemize}
-        \item League Exploiter resets
-        \item different Hyperparameters
-        \item Historical League Exploiter are not included as Main Exploiter opponents.
-    \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Why adjust the observations for SP?}
+\begin{frame}[noframenumbering]{Why adjust the observations for SP?}
     \begin{itemize}
         \item Gym-MicroRTS: Toward affordable full game real-time strategy games research with deep reinforcement learning implemented SP and concluded that a likely reason for worse performance of SP was that SP also has to train, to start as Player 2, while pure PPO only trained as Player 1.
         \item difficulties retrainig the Base Agent.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Why are the win rates against NativeMCTS low?}
+\begin{frame}[noframenumbering]{Why are the win rates against NaiveMCTS low?}
     \begin{itemize}
-        \item it is one of the only opponents that give up winning the game and focus on staying far away from all opponents.
+        \item It is one of the few opponents that often gives up on winning and instead stays far away from the agent's units.
         \item This results in many draws and few losses.
     \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Full LT Matchmaking}
+\begin{frame}[noframenumbering]{Full LT Matchmaking}
     \begin{center}
-        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{diagram_with_obs_presentation.pdf}
+        \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{diagram_with_obs_presentation.pdf}
     \end{center}
     \vspace{-0.4em}
     \centering
@@ -659,8 +736,7 @@ hypothesis:
 
 
 
-
-\begin{frame}{New Initial Agents}
+\begin{frame}[noframenumbering]{New Initial Agents}
     \small
     \centering
     \textbf{1 agent per unit type}\par
@@ -680,7 +756,7 @@ hypothesis:
             \TrainingPipelineCard{HHUBlue}{HHULight}{Light focused}{
                 \begin{itemize}\setlength{\itemsep}{0.2em}
                     \item 9 epochs of BC with LightRushAI as the expert
-                    \item opponents for BC: mayari, workerRushAI, lightRushAI
+                    \item opponents for BC: Mayari, WorkerRushAI, LightRushAI
                 \end{itemize}
             }
         \end{column}
@@ -693,7 +769,7 @@ hypothesis:
             \TrainingPipelineCard{HHUBlue}{HHULight}{Worker focused}{
                 \begin{itemize}\setlength{\itemsep}{0.2em}
                     \item 8 epochs of BC with WorkerRushAI as the expert
-                    \item opponents for BC: mayari, workerRushAI, lightRushAI
+                    \item opponents for BC: Mayari, WorkerRushAI, LightRushAI
                 \end{itemize}
             }
         \end{column}
@@ -702,7 +778,7 @@ hypothesis:
                 \begin{itemize}\setlength{\itemsep}{0.2em}
                     \item 6 epochs of BC with CoacAI as the expert
                     \item 180 updates of PPO against the Base Agent, CoacAI and Mayari
-                    \item opponents for BC: workerRush, lightRushAI, mayari, coacAI
+                    \item opponents for BC: WorkerRushAI, LightRushAI, Mayari and CoacAI
                 \end{itemize}
             }
         \end{column}
@@ -712,11 +788,11 @@ hypothesis:
 \end{frame}
 
 
-\begin{frame}{Why Not Less Environments?}
+\begin{frame}[noframenumbering]{Why Not Fewer Environments?}
     \begin{itemize}
-        \item Environments effect rollout size
-        \item smaller rollouts make PPO updates unstable, because of less knowladge of where to update to
-        \item More steps per rollout have the same problems as more environments.
+        \item The number of environments affects rollout size.
+        \item Smaller rollouts make PPO updates more unstable because they provide less information about the update direction.
+        \item More steps per rollout create similar tradeoffs to adding more environments.
     \end{itemize}
 \end{frame}
 
