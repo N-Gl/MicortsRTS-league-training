@@ -387,11 +387,6 @@ INPUT ./images/initial_pos_basesWorkers16x16A.png
 INPUT ./images/initial_pos_basesWorkers16x16A.png
 INPUT ./images/initial_pos_basesWorkers16x16A.png
 INPUT ./images/initial_pos_basesWorkers16x16A.png
-INPUT ./images/MicroRTS_example.mp4
-INPUT ./images/MicroRTS_example.mp4
-INPUT ./images/MicroRTS_example.mp4
-INPUT ./images/MicroRTS_example.mp4
-INPUT images/MicroRTS_example.mp4
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssbx10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssbx10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssbx10.tfm
@@ -435,14 +430,6 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssi8.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssi8.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssbx10.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmssi10.tfm
-INPUT ./images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
-INPUT ./images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
-INPUT ./images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
-INPUT ./images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
-INPUT images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4
 INPUT ./images/diagram_with_obs_presentation.pdf
 INPUT ./images/diagram_with_obs_presentation.pdf
 INPUT ./images/diagram_with_obs_presentation.pdf

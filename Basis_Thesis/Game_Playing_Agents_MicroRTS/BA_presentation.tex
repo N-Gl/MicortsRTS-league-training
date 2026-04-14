@@ -154,14 +154,13 @@
                     \item robustness against diverse opponents
                 \end{itemize}
             \end{block}
+            \vspace{0.4em}
+            \begin{center}
+                \href{run:images/MicroRTS_example.mp4}{\beamergotobutton{Open MicroRTS Example Video}}
+            \end{center}
         \end{column}
         \begin{column}{0.45\textwidth}
-            \movie[showcontrols]{
-                \includegraphics[width=0.94\linewidth]{initial_pos_basesWorkers16x16A.png}
-            }{images/MicroRTS_example.mp4}
-            \vspace{0.2em}
-
-            \scriptsize Click the play area in Foxit Reader to start the embedded MicroRTS example video.
+            \includegraphics[width=0.94\linewidth]{initial_pos_basesWorkers16x16A.png}
         \end{column}
     \end{columns}
 \end{frame}
@@ -285,19 +284,30 @@
     \vspace{0.45em}
 
     {
-    \renewcommand{\TrainingPipelineBoxHeight}{3.15cm}
+    \renewcommand{\TrainingPipelineBoxHeight}{3.85cm}
     \begin{columns}[T,onlytextwidth]
         \begin{column}{0.40\textwidth}
             \TrainingPipelineCard{HHUBlue}{HHULight}{cyclical learning of SP}{
                 \begin{center}
-                    \begin{tikzpicture}[scale=0.9, every node/.style={font=\small}]
+                    \begin{tikzpicture}[
+                        scale=0.9,
+                        every node/.style={font=\small},
+                        learnarrow/.style={->, line width=1pt, HHUBlue, shorten <=4pt, shorten >=4pt},
+                        goodagainst/.style={->, line width=1pt, red!75!black}
+                    ]
                         \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (a) at (0,1.2) {\textbf{A}};
                         \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (b) at (-1.0,-0.45) {\textbf{B}};
                         \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (c) at (1.0,-0.45) {\textbf{C}};
-                        \draw[->, line width=1pt, HHUBlue] (a) to[out=220,in=95] (b);
-                        \draw[->, line width=1pt, HHUBlue] (b) to[out=345,in=195] (c);
-                        \draw[->, line width=1pt, HHUBlue] (c) to[out=85,in=320] (a);
-                        \node[font=\scriptsize, text=black!70, align=center] at (0,-1.15) {directions the learning agent trains towards};
+                        \draw[learnarrow] (a) -- (b);
+                        \draw[learnarrow] (b) -- (c);
+                        \draw[learnarrow] (c) -- (a);
+                        \draw[goodagainst] (b) to[out=120,in=180,looseness=1.35] (a);
+                        \draw[goodagainst] (a) to[out=0,in=60,looseness=1.35] (c);
+                        \draw[goodagainst] (c) .. controls (0.55,-1.02) and (-0.55,-1.02) .. (b);
+                        \node[font=\scriptsize, text=black!70, align=center, text width=3.9cm] at (0,-1.68) {%
+                            {\color{HHUBlue}Blue arrows}: learning direction\\
+                            {\color{red!75!black}Red arrows}: policies the current policy performs well against%
+                        };
                     \end{tikzpicture}
                 \end{center}
             }
@@ -489,14 +499,14 @@
         CoacAI & \BestWinRateCell{100.0} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
         Mayari & \BestWinRateCell{100.0} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
         \midrule
-        \multicolumn{5}{l}{\textit{Built-in bots}} \\
+        \multicolumn{5}{l}{\textit{scripted bots}} \\
         WorkerRushAI & \WinRateCell{31.0} & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
         PassiveAI & \BestWinRateCell{100.0} & \WinRateCell{99.7} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
         LightRushAI & \BestWinRateCell{100.0} & \WinRateCell{98.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
         RandomAI & \BestWinRateCell{100.0} & \WinRateCell{99.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
         RandomBiasedAI & \WinRateCell{91.0} & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
         \midrule
-        \multicolumn{5}{l}{\textit{Other bots}} \\
+        \multicolumn{5}{l}{\textit{MCTS based bots}} \\
         Rojo & \BestWinRateCell{100.0} & \WinRateCell{81.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
         MixedBot & \WinRateCell{45.0} & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
         Izanagi & \WinRateCell{68.0} & \WinRateCell{71.7} & \WinRateCell{70.0} & \BestWinRateCell{72.5} \\
@@ -524,14 +534,14 @@
         CoacAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         Mayari & \BestLossRateCell{0.0} & \LossRateCell{27.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         \midrule
-        \multicolumn{5}{l}{\textit{Built-in bots}} \\
+        \multicolumn{5}{l}{\textit{scripted bots}} \\
         WorkerRushAI & \LossRateCell{63.0} & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
         PassiveAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         LightRushAI & \BestLossRateCell{0.0} & \LossRateCell{2.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         RandomAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         RandomBiasedAI & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         \midrule
-        \multicolumn{5}{l}{\textit{Other bots}} \\
+        \multicolumn{5}{l}{\textit{MCTS based bots}} \\
         Rojo & \BestLossRateCell{0.0} & \LossRateCell{5.3} & \BestLossRateCell{0.0} & \BestLossRateCell{0.0} \\
         MixedBot & \LossRateCell{33.0} & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
         Izanagi & \LossRateCell{15.0} & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
@@ -608,7 +618,7 @@ hypothesis:
         In one self-match evaluation of the same agent over 200 games, player 1 achieved 38\% wins, 28\% draws and player 2 achieved 34\% wins.
     \end{block}
     \begin{itemize}
-        \item minimal effect onevaluations
+        \item only small effect on evaluations
         \item alternating the learning side to prevent the agent from exploiting player-1-specific priority
     \end{itemize}
     \vspace{0.6em}
@@ -626,16 +636,7 @@ hypothesis:
     % TODO (sagen): Sometimes Worker Range (reaction to opponent)
     % TODO (sagen): (against Heavy Rush --> Heavy Rush) --> against similar Agents as itself --> similar strategies
     \begin{center}
-        \movie[externalviewer]{
-            \fbox{
-                \parbox[c][0.52\textheight][c]{0.82\linewidth}{
-                    \centering
-                    \Large Base Agent vs Base Agent\\[0.9em]
-                    \normalsize Video example for the Base Agent's preferred strategy\\[1.2em]
-                    \beamergotobutton{Open Video}
-                }
-            }
-        }{images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}
+        \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}{\beamergotobutton{Open Base Agent Example Video}}
     \end{center}
     \vspace{0.6em}
     \centering
@@ -683,7 +684,6 @@ hypothesis:
         \item the setting uses full observability and no fog of war
         % \item LT requires substantially more computation than pure PPO
         \item high computational cost
-        \item exploiter diversity
     \end{itemize}
     % TODO: entfernen?
     \begin{block}{Takeaway}
@@ -764,6 +764,69 @@ hypothesis:
     \vspace{-0.4em}
     \centering
     \scriptsize Matchmaking and opponent sampling in the LT setup.
+\end{frame}
+
+
+
+
+\begin{frame}{New Initial Agents}
+    \small
+    \centering
+    \textbf{1 agent per unit type}\par
+    \vspace{0.45em}
+
+    {
+    \renewcommand{\TrainingPipelineBoxHeight}{2.55cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Heavy focused}{
+                \begin{itemize}\setlength{\itemsep}{0.2em}
+                    \item Base Agent
+                \end{itemize}
+            }
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Light focused}{
+                \begin{itemize}\setlength{\itemsep}{0.2em}
+                    \item 9 epochs of BC with LightRushAI as the expert
+                    \item opponents for BC: mayari, workerRushAI, lightRushAI
+                \end{itemize}
+            }
+        \end{column}
+    \end{columns}
+
+    \vspace{0.35em}
+
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Worker focused}{
+                \begin{itemize}\setlength{\itemsep}{0.2em}
+                    \item 8 epochs of BC with WorkerRushAI as the expert
+                    \item opponents for BC: mayari, workerRushAI, lightRushAI
+                \end{itemize}
+            }
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Ranged focused}{
+                \begin{itemize}\setlength{\itemsep}{0.2em}
+                    \item 6 epochs of BC with CoacAI as the expert
+                    \item 180 updates of PPO against the Base Agent, CoacAI and Mayari
+                    \item opponents for BC: workerRush, lightRushAI, mayari, coacAI
+                \end{itemize}
+            }
+        \end{column}
+    \end{columns}
+    }
+
+\end{frame}
+
+
+\begin{frame}{Why Not Less Environments?}
+    \begin{itemize}
+        \item Environments effect rollout size
+        \item smaller rollouts make PPO updates unstable, because of less knowladge of where to update to
+        \item More steps per rollout have the same problems as more environments.
+    \end{itemize}
 \end{frame}
 
 \end{document}
