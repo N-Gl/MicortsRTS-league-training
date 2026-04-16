@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex BA"] 1775732378.16076 "BA.aux" "BA.bbl" "BA" 1775732394.38712 0
+["bibtex BA"] 1776340305.34114 "BA.aux" "BA.bbl" "BA" 1776340321.70534 0
   "./references.bib" 1774967651.6688 13042 221277ab4ea35f162c61883a60adcf52 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "BA.aux" 1775732394.31757 28828 01994a5903c689a7a51ed99118285b62 "pdflatex"
+  "BA.aux" 1776340321.63666 28828 01994a5903c689a7a51ed99118285b62 "pdflatex"
   (generated)
   "BA.bbl"
   "BA.blg"
   (rewritten before read)
-["pdflatex"] 1775732378.17359 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1775732394.38723 0
+["pdflatex"] 1776340305.35366 "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" "BA.pdf" "BA" 1776340321.70547 0
   "/etc/texmf/web2c/texmf.cnf" 1770636971.26796 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1775732360.75007 116746 2cc95738d9785e6c32d1bbfc15047547 ""
+  "/home/cookiekiller100/Programme/BA/MicortsRTS-league-training/Basis_Thesis/Game_Playing_Agents_MicroRTS/BA.tex" 1776340286.34667 116859 24949b8ce0e59203075cc1351bf839da ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -212,12 +212,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770636977.92702 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770636989 7277872 ffab420a662be251f461743f3256ccdd ""
-  "BA.aux" 1775732394.31757 28828 01994a5903c689a7a51ed99118285b62 "pdflatex"
-  "BA.bbl" 1775732378.17036 4498 01912933fc76493dfac67e01010edbef "bibtex BA"
-  "BA.brf" 1775732394.32163 4046 ca40d0872e353ce5321881e0ad4052c7 "pdflatex"
-  "BA.out" 1775732394.32163 3620 885d720e949eb892d65246cd7c706abf "pdflatex"
-  "BA.tex" 1775732360.75007 116746 2cc95738d9785e6c32d1bbfc15047547 ""
-  "BA.toc" 1775732394.32163 5645 f9df788cf98ed910d2123a5d08921b53 "pdflatex"
+  "BA.aux" 1776340321.63666 28828 01994a5903c689a7a51ed99118285b62 "pdflatex"
+  "BA.bbl" 1776340305.34523 4498 01912933fc76493dfac67e01010edbef "bibtex BA"
+  "BA.brf" 1776340321.63666 4046 ca40d0872e353ce5321881e0ad4052c7 "pdflatex"
+  "BA.out" 1776340321.63666 3620 885d720e949eb892d65246cd7c706abf "pdflatex"
+  "BA.tex" 1776340286.34667 116859 24949b8ce0e59203075cc1351bf839da ""
+  "BA.toc" 1776340321.63666 5645 f9df788cf98ed910d2123a5d08921b53 "pdflatex"
   "hhu_logo.png" 1770636797.59944 8264 c1f1bd10a1563342031d75de2fe3fc15 ""
   "images/16x16.png" 1770636797.60726 5264 3bfdf6f174daeff65e05470c243d5d81 ""
   "images/18_03_2026__finished_PPO_Basis_thesis__league_training_4__BC_focus_3_update_1674.csv" 1775032798.2945 586 041852cd327ed1a3406d06d40643d8b0 ""

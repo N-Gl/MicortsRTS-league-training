@@ -1,3 +1,12 @@
+
+
+
+% ppo_finetuning (https://wandb.ai/glaspaul244-hhu/new_Evaluation/runs/pnrtw3ui?nw=nwuserglaspaul244, https://wandb.ai/glaspaul244-hhu/league_training/groups/PPO_finetuning/runs/cr1dcfyo?nw=nwuserglaspaul244)
+% benutzter LT run: https://wandb.ai/glaspaul244-hhu/league_training/runs/8536rmu6?nw=nwuserglaspaul244
+% benutzter FT run: 23_03_2026__PPO_finetuning_update_730
+
+
+
 \documentclass[aspectratio=169,10pt]{beamer}
 
 \usetheme{Madrid}
@@ -840,6 +849,167 @@
 \end{frame}
 
 \appendix
+
+\begin{frame}[noframenumbering]{Evidence}
+    \small
+    \begin{block}{Is the improvement really caused by LT, or just by more training?}
+        \begin{itemize}
+            \item LT alone improves the overall win rate from \textbf{76.5\%} to \textbf{79.2\%}.
+            \item The final agent reaches \textbf{85.7\%} after PPO fine-tuning.
+            \item A same-compute PPO baseline would be the cleanest additional control.
+        \end{itemize}
+    \end{block}
+    \begin{block}{What is the strongest evidence that LT changes the policy?}
+        \begin{itemize}
+            \item MA after LT beats the Base Agent: \textbf{89\%} win, \textbf{9\%} draw, \textbf{2\%} loss.
+            \item Large gains against Mayari, RandomBiasedAI, Rojo and GuidedRojoA3N.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{WorkerRushAI}
+    \small
+    \begin{block}{Why does LT perform worse against WorkerRushAI?}
+        \begin{itemize}
+            \item WorkerRushAI exposes a weakness not sufficiently found by the exploiters.
+            \item The Base Agent is biased toward a heavy-rush strategy.
+            \item The worker-focused initial agent for the exploiters wasn't strong enough to find it. Both of the HA created got stuch in a local optimum of drawing the Game instead.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Why does PPO fine-tuning repair it?}
+        \begin{itemize}
+            \item WorkerRushAI is added as a direct training opponent.
+            \item The win rate recovers from \textbf{35.0\%} after LT to \textbf{99.5\%}.
+            \item Other results mostly remain stable or improve, so no strong overfitting is visible in the evaluated set.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: Generalization}
+    \small
+    \begin{block}{Can we call this generalization with only one map?}
+        \begin{itemize}
+            \item Only within the evaluated setting: one map, full observability and fixed rules.
+            \item Generalization is tested across opponent types, not across maps.
+            \item Several improved opponents were not used in LT training, especially MCTS-based bots.
+        \end{itemize}
+    \end{block}
+    \begin{block}{What would be needed for a stronger claim?}
+        \begin{itemize}
+            \item evaluation on multiple maps
+            \item fog of war
+            \item multiple training seeds
+            \item same-compute PPO and ablation baselines
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: PPO and AlphaStar}
+    \small
+    \begin{block}{Why use PPO instead of AlphaStar's V-trace setup?}
+        \begin{itemize}
+            \item PPO was already available in the MicroRTS/RAISocketAI training pipeline.
+            \item It made LT practical to implement within the scope of this thesis.
+            \item V-trace would likely scale better in a large distributed setup, but is more complex.
+        \end{itemize}
+    \end{block}
+    \begin{block}{What is different from AlphaStar?}
+        \begin{itemize}
+            \item smaller environment and much smaller league
+            \item PPO instead of off-policy actor-critic with V-trace
+            \item initial policy from BC/PPO bots, not from broad human replay data
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: Diversity}
+    \small
+    \begin{block}{Why is exploiter diversity the main limitation?}
+        \begin{itemize}
+            \item Exploiters initialized from the same Base Agent tend to find similar weaknesses.
+            \item The Base Agent strongly favors heavy-rush behavior.
+            \item Different strategy clusters, such as worker or ranged strategies, are hard to discover from that start point.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Why add new initial agents?}
+        \begin{itemize}
+            \item They give exploiters different strategic starting points.
+            \item This improved difficult matchups, e. g. Droplet and GuidedRojoA3N.
+            \item It supports the hypothesis that BC expert diversity strongly affects LT performance.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: Bot Environments}
+    \small
+    \begin{block}{Why keep CoacAI and Mayari during LT?}
+        \begin{itemize}
+            \item They stabilize the early LT phase before exploiters find useful weaknesses.
+            \item They prevent the Main Agent from drifting away from already strong behavior.
+            \item The number of bot environments is dynamic, so they become less dominant later.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Does this make the evaluation unfair?}
+        \begin{itemize}
+            \item CoacAI and Mayari are training opponents, so they are not the main generalization evidence.
+            \item The stronger evidence comes from opponents not used for LT training.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: Player Side}
+    \small
+    \begin{block}{Why adjust observations for Player 2?}
+        \begin{itemize}
+            \item The Base Agent was trained only as Player 1.
+            \item Player-2 observations, action masks and action directions are flipped.
+            \item This lets the same policy play both sides without relearning the map orientation from scratch.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Does Player 1 priority bias the results?}
+        \begin{itemize}
+            \item It is a potential bias in conflict resolution.
+            \item Self-match evaluation: P1 \textbf{38\%}, draw \textbf{28\%}, P2 \textbf{34\%}.
+            \item Alternating the learning side prevents purely P1-specific behavior.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: Draws and NaiveMCTS}
+    \small
+    \begin{block}{Why are win rates against NaiveMCTS so low?}
+        \begin{itemize}
+            \item NaiveMCTS often avoids losing instead of actively trying to win.
+            \item This creates many draws and few losses.
+            \item Therefore the loss rate is important for interpreting this matchup.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Why use loss rate in addition to win rate?}
+        \begin{itemize}
+            \item Draw-heavy opponents can hide defensive improvements in the win rate.
+            \item The final loss rate drops from \textbf{7.7\%} to \textbf{2.2\%}.
+            \item This suggests more robust defense, not only stronger attacks.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Expected Questions: Statistical Reliability}
+    \small
+    \begin{block}{Are the improvements statistically reliable?}
+        \begin{itemize}
+            \item Large gains are unlikely to be explained only by evaluation noise.
+            \item Small differences, e. g. overall LT vs Base Agent, should be interpreted cautiously.
+            \item Only one LT training seed was used because training was expensive.
+        \end{itemize}
+    \end{block}
+    \begin{block}{What is the cleanest future experiment?}
+        \begin{itemize}
+            \item same compute budget for PPO, LT and LT + FT
+            \item several random seeds
+            \item ablations for new initial agents, bot environments, delta score and entropy annealing
+        \end{itemize}
+    \end{block}
+\end{frame}
 
 \begin{frame}[noframenumbering]{Detailed Evaluation Results: Win Rates}
     \centering
