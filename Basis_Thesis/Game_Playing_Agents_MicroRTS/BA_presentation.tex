@@ -855,14 +855,15 @@
     \begin{block}{Is the improvement really caused by LT, or just by more training?}
         \begin{itemize}
             \item LT alone improves the overall win rate from \textbf{76.5\%} to \textbf{79.2\%}.
-            \item The final agent reaches \textbf{85.7\%} after PPO fine-tuning.
-            \item A same-compute PPO baseline would be the cleanest additional control.
+            \item LT + FT reaches \textbf{85.7\%}.
+            \item As a PPO-only reference, the prior BC/PPO thesis reached about \textbf{79\%} and reported no improvement from further PPO training.
         \end{itemize}
     \end{block}
     \begin{block}{What is the strongest evidence that LT changes the policy?}
         \begin{itemize}
             \item MA after LT beats the Base Agent: \textbf{89\%} win, \textbf{9\%} draw, \textbf{2\%} loss.
             \item Large gains against Mayari, RandomBiasedAI, Rojo and GuidedRojoA3N.
+            \item In the render of the evaluations the MA has at least 1 heavy unit actively blocking the opponent's Units in front of the Base.
         \end{itemize}
     \end{block}
 \end{frame}
@@ -885,13 +886,13 @@
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: Generalization}
+\begin{frame}[noframenumbering]{Generalization, Reliability}
     \small
     \begin{block}{Can we call this generalization with only one map?}
         \begin{itemize}
             \item Only within the evaluated setting: one map, full observability and fixed rules.
-            \item Generalization is tested across opponent types, not across maps.
-            \item Several improved opponents were not used in LT training, especially MCTS-based bots.
+            \item It is generalization across opponent types, not across maps.
+            \item Several strong opponents were not used in training, (e. g. all MCTS-based bots).
         \end{itemize}
     \end{block}
     \begin{block}{What would be needed for a stronger claim?}
@@ -904,43 +905,48 @@
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: PPO and AlphaStar}
+\begin{frame}[noframenumbering]{PPO and AlphaStar}
     \small
     \begin{block}{Why use PPO instead of AlphaStar's V-trace setup?}
         \begin{itemize}
-            \item PPO was already available in the MicroRTS/RAISocketAI training pipeline.
-            \item It made LT practical to implement within the scope of this thesis.
+            \item availability
+            \item scope of this thesis
             \item V-trace would likely scale better in a large distributed setup, but is more complex.
         \end{itemize}
     \end{block}
     \begin{block}{What is different from AlphaStar?}
         \begin{itemize}
-            \item smaller environment and much smaller league
+            \item compute budget and scale
             \item PPO instead of off-policy actor-critic with V-trace
-            \item initial policy from BC/PPO bots, not from broad human replay data
+            \item initial policy: BC/PPO bots, not from broad human replay data
         \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: Diversity}
+\begin{frame}[noframenumbering]{Diversity}
     \small
     \begin{block}{Why is exploiter diversity the main limitation?}
         \begin{itemize}
-            \item Exploiters initialized from the same Base Agent tend to find similar weaknesses.
-            \item The Base Agent strongly favors heavy-rush behavior.
-            \item Different strategy clusters, such as worker or ranged strategies, are hard to discover from that start point.
+            \item LT can only improve weaknesses that exploiters actually find.
+            \item Most league agents start with the Base Agent policy.
+            \item The Base Agent is strong, but biased toward a heavy-rush strategy.
+            \item Very different exploits require first unlearning this default behavior to be explored.
+            \item During this transition the exploiter performs poorly, so PPO gets weak learning signals.
+            \item Therefore exploiters tend to find similar weaknesses instead of covering all relevant strategies.
+            \item WorkerRushAI shows that some important weaknesses were not found by the exploiters.
         \end{itemize}
     \end{block}
     \begin{block}{Why add new initial agents?}
         \begin{itemize}
             \item They give exploiters different strategic starting points.
-            \item This improved difficult matchups, e. g. Droplet and GuidedRojoA3N.
+            \item This improves the exploiters ability, to reach the MAs weaknesses that are only exploitable with very different strategies as the Base Agents.
+            \item From prior runs we saw, that reaching strategies of different unit types has seemingly the biggest difficulties.
             \item It supports the hypothesis that BC expert diversity strongly affects LT performance.
         \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: Bot Environments}
+\begin{frame}[noframenumbering]{Bot Environments}
     \small
     \begin{block}{Why keep CoacAI and Mayari during LT?}
         \begin{itemize}
@@ -952,16 +958,19 @@
     \begin{block}{Does this make the evaluation unfair?}
         \begin{itemize}
             \item CoacAI and Mayari are training opponents, so they are not the main generalization evidence.
-            \item The stronger evidence comes from opponents not used for LT training.
+            \item stronger evidence comes from opponents not used in training.
+            \item The prior work showed that improving against CoacAI and Mayari with pure PPO is difficult.
         \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: Player Side}
+\begin{frame}[noframenumbering]{Player Side}
     \small
     \begin{block}{Why adjust observations for Player 2?}
         \begin{itemize}
             \item The Base Agent was trained only as Player 1.
+            \item Gym-MicroRTS: Toward affordable full game real-time strategy games research with deep reinforcement learning implemented SP and concluded that a likely reason for worse performance of SP was that SP also has to train, to start as Player 2, while pure PPO only trained as Player 1.
+            \item difficulties retrainig the Base Agent.
             \item Player-2 observations, action masks and action directions are flipped.
             \item This lets the same policy play both sides without relearning the map orientation from scratch.
         \end{itemize}
@@ -969,21 +978,15 @@
     \begin{block}{Does Player 1 priority bias the results?}
         \begin{itemize}
             \item It is a potential bias in conflict resolution.
-            \item Self-match evaluation: P1 \textbf{38\%}, draw \textbf{28\%}, P2 \textbf{34\%}.
-            \item Alternating the learning side prevents purely P1-specific behavior.
+            \item Evaluations of the Base Agent had the same bias making the comparison fair.
+            \item P1: LT-FT against P2: Base Agent over 100 games: win rate 85\%, draw rate 15\%, loss rate 0\%
+            \item P2: LT-FT against P1: Base Agent over 100 games: win rate 89\%, draw rate 11\%, loss rate 0\%
         \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: Draws and NaiveMCTS}
+\begin{frame}[noframenumbering]{Draws}
     \small
-    \begin{block}{Why are win rates against NaiveMCTS so low?}
-        \begin{itemize}
-            \item NaiveMCTS often avoids losing instead of actively trying to win.
-            \item This creates many draws and few losses.
-            \item Therefore the loss rate is important for interpreting this matchup.
-        \end{itemize}
-    \end{block}
     \begin{block}{Why use loss rate in addition to win rate?}
         \begin{itemize}
             \item Draw-heavy opponents can hide defensive improvements in the win rate.
@@ -993,20 +996,13 @@
     \end{block}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Expected Questions: Statistical Reliability}
+\begin{frame}[noframenumbering]{Statistical Reliability}
     \small
     \begin{block}{Are the improvements statistically reliable?}
         \begin{itemize}
             \item Large gains are unlikely to be explained only by evaluation noise.
             \item Small differences, e. g. overall LT vs Base Agent, should be interpreted cautiously.
-            \item Only one LT training seed was used because training was expensive.
-        \end{itemize}
-    \end{block}
-    \begin{block}{What is the cleanest future experiment?}
-        \begin{itemize}
-            \item same compute budget for PPO, LT and LT + FT
-            \item several random seeds
-            \item ablations for new initial agents, bot environments, delta score and entropy annealing
+            \item most of the multiple training runs with slightly different hyperparameters showed similar improvements from LT, but the exact values varied.
         \end{itemize}
     \end{block}
 \end{frame}
@@ -1088,12 +1084,6 @@
 \end{frame}
 
 
-\begin{frame}[noframenumbering]{Why adjust the observations for SP?}
-    \begin{itemize}
-        \item Gym-MicroRTS: Toward affordable full game real-time strategy games research with deep reinforcement learning implemented SP and concluded that a likely reason for worse performance of SP was that SP also has to train, to start as Player 2, while pure PPO only trained as Player 1.
-        \item difficulties retrainig the Base Agent.
-    \end{itemize}
-\end{frame}
 
 \begin{frame}[noframenumbering]{Why are the win rates against NaiveMCTS low?}
     \begin{itemize}
@@ -1174,13 +1164,6 @@
     \end{itemize}
 \end{frame}
 
-
-\begin{frame}[noframenumbering]{win rates against Base Agent as player 2}
-    \begin{itemize}
-        \item P1: LT-FT against P2: Base Agent: win rate 85\%, draw rate 15\%, loss rate 0\%
-        \item P2: LT-FT against P1: Base Agent: win rate 89\%, draw rate 11\%, loss rate 0\%
-    \end{itemize}
-\end{frame}
 
 
 \end{document}
