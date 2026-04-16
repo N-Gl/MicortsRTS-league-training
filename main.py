@@ -570,7 +570,7 @@ def main(cfg: ExperimentConfig):
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_4_1_update_1140.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_3_update_2253.pt", None, False],
             # ["22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253", agent_model.Agent, "saved_models/22_02_2026__finished_PPO_Basis_thesis__args_working_main_5_3_4_update_2253.pt", None, False],
-            # ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
+            ["finished_PPO_Basis_thesis", agent_model.Agent, "models/finished_PPO_Basis_Thesis/finished_PPO_Basis_thesis.pt", None, False],
             # ["Base_Agent_vs_Base_Agent_almost_100_update_890", agent_model.Agent, "saved_models/Base_Agent_vs_Base_Agent_almost_100_update_890.pt", None, False],
             # ["23_03_2026__PPO_finetuning_update_730", agent_model.Agent, "saved_models/23_03_2026__PPO_finetuning_update_730.pt", None, False],
             # ["worker_focus", agent_model.Agent, "models/used_models/BC_workerRush_train_epoch_8_agent.pt", None, False],
@@ -585,20 +585,20 @@ def main(cfg: ExperimentConfig):
 
 
         default_bot_opponents: Sequence[Tuple[str, Any]] = [
-            # ("coacAI", microrts_ai.coacAI),
-            # ("mayari", microrts_ai.mayari),
-            # ("passiveAI", microrts_ai.passiveAI),
-            # ("workerRushAI", microrts_ai.workerRushAI),
+            ("coacAI", microrts_ai.coacAI),
+            ("mayari", microrts_ai.mayari),
+            ("passiveAI", microrts_ai.passiveAI),
+            ("workerRushAI", microrts_ai.workerRushAI),
             ("lightRushAI", microrts_ai.lightRushAI),
-            # ("randomAI", microrts_ai.randomAI),
-            # ("randomBiasedAI", microrts_ai.randomBiasedAI),
-            # ("rojo", microrts_ai.rojo),
-            # ("mixedBot", microrts_ai.mixedBot),
-            # ("izanagi", microrts_ai.izanagi), 
-            # ("tiamat", microrts_ai.tiamat),
-            # ("droplet", microrts_ai.droplet),
-            # ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
-            # ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
+            ("randomAI", microrts_ai.randomAI),
+            ("randomBiasedAI", microrts_ai.randomBiasedAI),
+            ("rojo", microrts_ai.rojo),
+            ("mixedBot", microrts_ai.mixedBot),
+            ("izanagi", microrts_ai.izanagi), 
+            ("tiamat", microrts_ai.tiamat),
+            ("droplet", microrts_ai.droplet),
+            ("guidedRojoA3N", microrts_ai.guidedRojoA3N),
+            ("naiveMCTSAI", microrts_ai.naiveMCTSAI),
         ]
 
         if args.model_path:

@@ -20,6 +20,16 @@
 \definecolor{HHULight}{RGB}{235,242,249}
 \definecolor{LTGreen}{RGB}{52,160,119}
 \definecolor{LTLight}{RGB}{232,245,238}
+\definecolor{WinRateExcellent}{rgb}{0.86,0.93,0.86}
+\definecolor{WinRateGood}{rgb}{0.91,0.96,0.91}
+\definecolor{WinRateMedium}{rgb}{0.97,0.98,0.90}
+\definecolor{WinRateLow}{rgb}{0.99,0.95,0.88}
+\definecolor{WinRateWeak}{rgb}{0.98,0.90,0.90}
+\definecolor{WinRateExcellentMark}{RGB}{57,156,102}
+\definecolor{WinRateGoodMark}{RGB}{141,190,87}
+\definecolor{WinRateMediumMark}{RGB}{231,202,77}
+\definecolor{WinRateLowMark}{RGB}{230,140,59}
+\definecolor{WinRateWeakMark}{RGB}{211,79,73}
 \newcommand{\TrainingPipelineCardWidth}{0.98\linewidth}
 \newcommand{\TrainingPipelineBoxHeight}{1.35cm}
 \newcommand{\TrainingPipelineCard}[4]{%
@@ -34,22 +44,29 @@
     \end{beamerboxesrounded}
     \endgroup
 }
+\newcommand{\SizedTrainingPipelineCard}[6]{%
+    \begingroup
+    \renewcommand{\TrainingPipelineCardWidth}{#1}%
+    \renewcommand{\TrainingPipelineBoxHeight}{#2}%
+    \TrainingPipelineCard{#3}{#4}{#5}{#6}%
+    \endgroup
+}
 
 \newcommand{\WinRateCellText}[2]{%
     \begingroup
     \ifdim #1pt > 94.9pt
-        \cellcolor[rgb]{0.86,0.93,0.86}#2%
+        \cellcolor{WinRateExcellent}#2%
     \else
         \ifdim #1pt > 84.9pt
-            \cellcolor[rgb]{0.91,0.96,0.91}#2%
+            \cellcolor{WinRateGood}#2%
         \else
             \ifdim #1pt > 69.9pt
-                \cellcolor[rgb]{0.97,0.98,0.90}#2%
+                \cellcolor{WinRateMedium}#2%
             \else
                 \ifdim #1pt > 49.9pt
-                    \cellcolor[rgb]{0.99,0.95,0.88}#2%
+                    \cellcolor{WinRateLow}#2%
                 \else
-                    \cellcolor[rgb]{0.98,0.90,0.90}#2%
+                    \cellcolor{WinRateWeak}#2%
                 \fi
             \fi
         \fi
@@ -58,6 +75,51 @@
 }
 \newcommand{\WinRateCell}[1]{\WinRateCellText{#1}{#1}}
 \newcommand{\BestWinRateCell}[1]{\WinRateCellText{#1}{\textbf{#1}}}
+\newcommand{\WinRateMarkWidth}{3.8em}
+\newcommand{\WinRateMarkHeight}{2.45ex}
+\newcommand<>{\WinRateValueMark}[2]{%
+    \makebox[\WinRateMarkWidth][c]{%
+        \alt#3{%
+            \tikz[baseline=(winratemark.base)]{%
+                \node[
+                    draw=#1!65!black,
+                    fill=#1,
+                    fill opacity=0.45,
+                    text opacity=1,
+                    line width=0.8pt,
+                    rounded corners=1pt,
+                    minimum width=\WinRateMarkWidth,
+                    minimum height=\WinRateMarkHeight,
+                    inner sep=0pt,
+                    text height=1.55ex,
+                    text depth=0.45ex,
+                    outer sep=0pt
+                ] (winratemark) {\strut #2};%
+            }%
+        }{\strut #2}%
+    }%
+}
+\newcommand<>{\MarkedWinRateCellText}[2]{%
+    \begingroup
+    \ifdim #1pt > 94.9pt
+        \cellcolor{WinRateExcellent}\WinRateValueMark#3{WinRateExcellentMark}{#2}%
+    \else
+        \ifdim #1pt > 84.9pt
+            \cellcolor{WinRateGood}\WinRateValueMark#3{WinRateGoodMark}{#2}%
+        \else
+            \ifdim #1pt > 69.9pt
+                \cellcolor{WinRateMedium}\WinRateValueMark#3{WinRateMediumMark}{#2}%
+            \else
+                \ifdim #1pt > 49.9pt
+                    \cellcolor{WinRateLow}\WinRateValueMark#3{WinRateLowMark}{#2}%
+                \else
+                    \cellcolor{WinRateWeak}\WinRateValueMark#3{WinRateWeakMark}{#2}%
+                \fi
+            \fi
+        \fi
+    \fi
+    \endgroup
+}
 \newcommand{\LossRateCellText}[2]{%
     \begingroup
     \ifdim #1pt < 2.1pt
@@ -77,18 +139,57 @@
 }
 \newcommand{\LossRateCell}[1]{\LossRateCellText{#1}{#1}}
 \newcommand{\BestLossRateCell}[1]{\LossRateCellText{#1}{\textbf{#1}}}
+\newcommand<>{\ResultMark}[1]{%
+    \alt#2{%
+        \tikz[baseline=(resultmark.base)]{%
+            \node[
+                draw=LTGreen,
+                fill=LTGreen!18,
+                line width=0.7pt,
+                rounded corners=1.5pt,
+                inner xsep=1.8pt,
+                inner ysep=0.9pt,
+                text height=1.55ex,
+                text depth=0.45ex,
+                outer sep=0pt
+            ] (resultmark) {\strut #1};%
+        }%
+    }{#1}%
+}
+\newcommand<>{\WarningMark}[1]{%
+    \alt#2{%
+        \tikz[baseline=(warningmark.base)]{%
+            \node[
+                draw=orange!85!black,
+                fill=orange!18,
+                line width=0.7pt,
+                rounded corners=1.5pt,
+                inner xsep=1.8pt,
+                inner ysep=0.9pt,
+                text height=1.55ex,
+                text depth=0.45ex,
+                outer sep=0pt
+            ] (warningmark) {\strut #1};%
+        }%
+    }{#1}%
+}
+\newcommand<>{\MarkedOpponent}[1]{\ResultMark#2{#1}}
+\newcommand<>{\MarkedWinRateCell}[1]{\MarkedWinRateCellText#2{#1}{#1}}
+\newcommand<>{\MarkedBestWinRateCell}[1]{\MarkedWinRateCellText#2{#1}{\textbf{#1}}}
+\newcommand<>{\WarningWinRateCell}[1]{\MarkedWinRateCellText#2{#1}{#1}}
+\newcommand<>{\WarningBestWinRateCell}[1]{\MarkedWinRateCellText#2{#1}{\textbf{#1}}}
 
 \setbeamercolor{structure}{fg=HHUBlue}
 \setbeamercolor{palette primary}{bg=HHUBlue,fg=white}
 \setbeamercolor{palette secondary}{bg=HHUBlue,fg=white}
 \setbeamercolor{palette tertiary}{bg=HHUBlue,fg=white}
-\setbeamercolor{title}{fg=HHUBlue}
+\setbeamercolor{title}{fg=white,bg=HHUBlue}
+\setbeamercolor{subtitle}{fg=white}
 \setbeamercolor{frametitle}{fg=HHUBlue,bg=HHULight}
 \setbeamercolor{block title}{bg=HHUBlue,fg=white}
 \setbeamercolor{block body}{bg=HHULight,fg=black}
 
 \title[League Training in MicroRTS]{Implementation and evaluation of the reinforcement learning methods\\Self-Play and League Training in the MicroRTS environment}
-\subtitle{Presentation for the bachelor thesis}
 \author{Niklas Glaser}
 \institute{Heinrich-Heine-Universit\"at D\"usseldorf}
 \date{April 2026}
@@ -103,9 +204,9 @@
     \end{center}
 \end{frame}
 
-\begin{frame}{Overview}
-    \tableofcontents
-\end{frame}
+% \begin{frame}{Overview}
+%     \tableofcontents
+% \end{frame}
 
 \section{Motivation}
 
@@ -388,11 +489,13 @@
 \begin{frame}{Bot Environments}
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
-            \begin{itemize}
-                \item additional dynamic bot environments (CoacAI and Mayari)% to stabilize the early LT phase
-                \item scripted bots: CoacAI, Mayari, WorkerRushAI, PassiveAI, LightRushAI, RandomAI and RandomBiasedAI
-                \item MCTS based bots: Rojo, MixedBot, Izanagi, Tiamat, Droplet, GuidedRojoA3N and NaiveMCTS
-            \end{itemize}
+            \SizedTrainingPipelineCard{\linewidth}{2.05cm}{HHUBlue}{HHULight}{Bot environments}{%
+                \begin{itemize}
+                    \item additional dynamic bot environments (CoacAI and Mayari)% to stabilize the early LT phase
+                    \item scripted bots: CoacAI, Mayari, WorkerRushAI, PassiveAI, LightRushAI, RandomAI and RandomBiasedAI
+                    \item MCTS based bots: Rojo, MixedBot, Izanagi, Tiamat, Droplet, GuidedRojoA3N and NaiveMCTS
+                \end{itemize}
+            }
         \end{column}
         \begin{column}{0.45\textwidth}
             \includegraphics[width=\linewidth]{num_parallel_bot_envs.png}
@@ -401,25 +504,30 @@
 \end{frame}
 
 \begin{frame}{Observation Adjustment for SP}
-    \small
-    \begin{itemize}
-        \item Base Agent only trained as Player 1
-        \item flip Player-2 GridNet observations
-        \item flip masks and action directions
-    \end{itemize}
-    \begin{center}
-        \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{adjust_obs_präsentation.pdf}
-    \end{center}
+    \SizedTrainingPipelineCard{0.78\linewidth}{1.45cm}{HHUBlue}{HHULight}{Observation adjustment}{%
+        \begin{itemize}
+            \item Base Agent only trained as Player 1
+            \item flip Player-2 GridNet observations
+            \item flip masks and action directions
+        \end{itemize}
+    }
+    \vspace{0.1em}
+    {\centering
+        \includegraphics[width=\linewidth,height=0.53\textheight,keepaspectratio]{adjust_obs_präsentation.pdf}
+        \par
+    }
 \end{frame}
 
 \begin{frame}{Implementation Changes}
-    \small
-    \begin{itemize}
-        % only Player 2 rotation
-        \item delta score reward: denser signal in sparse-reward games
-        \item annealed entropy coefficient: more exploration early, less later
-        \item new initial agents: new start points for exploiters
-    \end{itemize}
+    \centering
+    \SizedTrainingPipelineCard{0.82\linewidth}{1.55cm}{HHUBlue}{HHULight}{Key changes}{%
+        \begin{itemize}
+            % only Player 2 rotation
+            \item delta score reward: denser signal in sparse-reward games
+            \item annealed entropy coefficient: more exploration early, less later
+            \item new initial agents: new start points for exploiters
+        \end{itemize}
+    }
 \end{frame}
 
 
@@ -428,16 +536,17 @@
 \begin{frame}{Experiment Setup}
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
-            \small
-            \begin{itemize}
-                \item 1 map: \texttt{basesWorkers16x16A}
-                \item 1 MA, 4 ME, 1 LE
-                \item for each 25 environments
-                \item 5 to 10 dynamic bot environments
-                \item \(\sim\)130M LT steps, \(\sim\)100 h
-                \item max: 160 parallel environments
-                \item eval: at least 100 games vs 12 opponents
-            \end{itemize}
+            \SizedTrainingPipelineCard{\linewidth}{3.55cm}{HHUBlue}{HHULight}{Setup}{%
+                \begin{itemize}
+                    \item 1 map: \texttt{basesWorkers16x16A}
+                    \item 1 MA, 4 ME, 1 LE
+                    \item for each 25 environments
+                    \item 5 to 10 dynamic bot environments
+                    \item \(\sim\)130M LT steps, \(\sim\)100 h
+                    \item max: 160 parallel environments
+                    \item eval: at least 100 games vs 12 opponents
+                \end{itemize}
+            }
         \end{column}
         \begin{column}{0.45\textwidth}
             \includegraphics[width=\linewidth]{bot_win_rates_no_draw.png}
@@ -453,11 +562,12 @@
             \includegraphics[width=\linewidth]{abstract_total_winrate_comparison.pdf}
         \end{column}
         \begin{column}{0.28\textwidth}
-            \small
-            \begin{itemize}
-                \item loss rate: \textbf{7.7\%} \(\rightarrow\) \textbf{2.2\%}
-                \item different Base Agent version than in the prior work
-            \end{itemize}
+            \SizedTrainingPipelineCard{\linewidth}{2.25cm}{HHUBlue}{HHULight}{Loss rate}{%
+                \begin{itemize}
+                    \item loss rate: \textbf{7.7\%} \(\rightarrow\) \textbf{2.2\%}
+                    \item different Base Agent version than in the prior work
+                \end{itemize}
+            }
         \end{column}
     \end{columns}
 \end{frame}
@@ -473,85 +583,141 @@
                 \toprule
                 Opponent & Base & LT & LT + FT \\
                 \midrule
-                CoacAI & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
-                Mayari & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+                \MarkedOpponent<2>{CoacAI} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
+                \MarkedOpponent<2>{Mayari} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
                 \midrule
-                WorkerRushAI (FT) & \BestWinRateCell{100.0} & \WinRateCell{35.0} & \WinRateCell{99.5} \\
-                RandomBiasedAI & \WinRateCell{79.0} & \WinRateCell{97.0} & \BestWinRateCell{97.5} \\
-                MixedBot & \WinRateCell{43.3} & \WinRateCell{57.0} & \BestWinRateCell{60.5} \\
-                GuidedRojoA3N & \WinRateCell{74.7} & \WinRateCell{87.0} & \BestWinRateCell{88.5} \\
-                Tiamat & \WinRateCell{93.0} & \WinRateCell{99.0} & \BestWinRateCell{99.0} \\
-                Droplet & \WinRateCell{67.7} & \WinRateCell{62.0} & \BestWinRateCell{75.5} \\
+                \MarkedOpponent<2>{\WarningMark<4>{WorkerRushAI (FT)}} & \MarkedBestWinRateCell<4>{100.0} & \WarningWinRateCell<4>{35.0} & \MarkedWinRateCell<4>{99.5} \\
+                \MarkedOpponent<5>{RandomBiasedAI} & \MarkedWinRateCell<5>{79.0} & \MarkedWinRateCell<5>{97.0} & \MarkedBestWinRateCell<5>{97.5} \\
+                \MarkedOpponent<6>{MixedBot} & \WarningWinRateCell<3,6>{43.3} & \MarkedWinRateCell<6>{57.0} & \MarkedBestWinRateCell<3,6>{60.5} \\
+                \MarkedOpponent<6>{GuidedRojoA3N} & \MarkedWinRateCell<3,6>{74.7} & \MarkedWinRateCell<6>{87.0} & \MarkedBestWinRateCell<3,6>{88.5} \\
+                \MarkedOpponent<6>{Tiamat} & \MarkedWinRateCell<6>{93.0} & \MarkedBestWinRateCell<6>{99.0} & \MarkedBestWinRateCell<6>{99.0} \\
+                Droplet & \MarkedWinRateCell<3>{67.7} & \WinRateCell{62.0} & \MarkedBestWinRateCell<3>{75.5} \\
                 \midrule
-                overall & \WinRateCell{76.5} & \WinRateCell{79.2} & \BestWinRateCell{85.7} \\
+                overall & \WinRateCell{76.5} & \WinRateCell{79.2} & \WinRateCell{85.7} \\
                 \bottomrule
             \end{tabular*}
         \end{column}
         \begin{column}{0.36\textwidth}
-            \small
-            \begin{itemize}
-                \item training bots: CoacAI and Mayari in LT, WorkerRushAI in FT
-                \item RBAI: better against drawing bots
-                \item WRAI: clear LT weakness, then FT training opponent
-                \item LT gains stay after FT
-                \item all MCTS win rates improve after FT
-                % TODO: \item without new initial agents overall win rate: \textbf{74.1\%} 
-            \end{itemize}
+            \begin{overlayarea}{\linewidth}{0.58\textheight}
+                \only<1>{%
+                    \SizedTrainingPipelineCard{\linewidth}{2.25cm}{HHUBlue}{HHULight}{How to read}{%
+                        \scriptsize
+                        \begin{itemize}
+                            \item values are win rates in \%
+                            \item higher is better
+                            \item bold: best value per opponent
+                            \item color: relative strength
+                        \end{itemize}
+                    }
+                }
+                \only<2>{%
+                    \SizedTrainingPipelineCard{\linewidth}{2.25cm}{HHUBlue}{HHULight}{Training opponents}{%
+                        \scriptsize
+                        \begin{itemize}
+                            \item CoacAI and Mayari in LT
+                            \item WorkerRushAI in FT
+                        \end{itemize}
+                    }
+                }
+                \only<3>{%
+                    \SizedTrainingPipelineCard{\linewidth}{2.05cm}{HHUBlue}{HHULight}{Notable MCTS gains}{%
+                        \scriptsize
+                        \begin{itemize}
+                            \item MixedBot: \(43.3 \rightarrow 60.5\)
+                            \item GuidedRojoA3N: \(74.7 \rightarrow 88.5\)
+                            \item Droplet: \(67.7 \rightarrow 75.5\)
+                        \end{itemize}
+                    }
+                }
+                \only<4>{%
+                    \SizedTrainingPipelineCard{\linewidth}{2.25cm}{HHUBlue}{HHULight}{WorkerRushAI exploit}{%
+                        \scriptsize
+                        \begin{itemize}
+                            \item LT drops to \(35.0\%\)
+                            \item FT trains against WRAI
+                            \item repaired to \(99.5\%\)
+                        \end{itemize}
+                    }
+                }
+                \only<5>{%
+                    \SizedTrainingPipelineCard{\linewidth}{2.05cm}{HHUBlue}{HHULight}{RandomBiasedAI}{%
+                        \scriptsize
+                        \begin{itemize}
+                            \item LT gains remain after repair
+                            \item better against drawing behavior
+                            \item \(79.0 \rightarrow 97.0\) after LT
+                            \item retained after FT: \(97.5\)
+                        \end{itemize}
+                    }
+                }
+                \only<6>{%
+                    \SizedTrainingPipelineCard{\linewidth}{2.35cm}{HHUBlue}{HHULight}{Robustness after FT}{%
+                        \scriptsize
+                        \begin{itemize}
+                            \item Other examples: MixedBot, GuidedRojoA3N and Tiamat 
+                        \end{itemize}
+                    }
+                }
+            \end{overlayarea}
         \end{column}
     \end{columns}
 \end{frame}
 
-\begin{frame}{Evaluation Results (Loss Rate)}
-    \begin{columns}[T]
-        \begin{column}{0.60\textwidth}
-            \centering
-            \scriptsize
-            \setlength{\tabcolsep}{4pt}
-            \renewcommand{\arraystretch}{1.05}
-            \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c@{}}
-                \toprule
-                Opponent & Base & LT & LT + FT \\
-                \midrule
-                WorkerRushAI (FT) & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
-                MixedBot & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
-                Izanagi & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
-                \midrule
-                overall & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
-                \bottomrule
-            \end{tabular*}
-        \end{column}
-        \begin{column}{0.36\textwidth}
-            \small
-            \begin{itemize}
-                \item overall loss rate: less than \textbf{1/3} of the Base Agent
-                \item better base defense while attacking
-            \end{itemize}
-        \end{column}
-    \end{columns}
-\end{frame}
+% \begin{frame}{Evaluation Results (Loss Rate)}
+%     \begin{columns}[T]
+%         \begin{column}{0.60\textwidth}
+%             \centering
+%             \scriptsize
+%             \setlength{\tabcolsep}{4pt}
+%             \renewcommand{\arraystretch}{1.05}
+%             \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l c c c@{}}
+%                 \toprule
+%                 Opponent & Base & LT & LT + FT \\
+%                 \midrule
+%                 WorkerRushAI (FT) & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+%                 MixedBot & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
+%                 Izanagi & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
+%                 \midrule
+%                 overall & \LossRateCell{7.7} & \LossRateCell{7.5} & \BestLossRateCell{2.2} \\
+%                 \bottomrule
+%             \end{tabular*}
+%         \end{column}
+%         \begin{column}{0.36\textwidth}
+%             \SizedTrainingPipelineCard{\linewidth}{1.35cm}{HHUBlue}{HHULight}{Loss rate}{%
+%                 \small
+%                 \begin{itemize}
+%                     \item overall loss rate: less than \textbf{1/3} of the Base Agent
+%                     \item better base defense while attacking
+%                 \end{itemize}
+%             }
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
 \begin{frame}{Interpretation of the Results}
-    \small
-    \begin{itemize}
-        \item robustness against diverse opponents becomes part of the optimization target
-        % TODO: für FT eher: Fine-tuning repaired a concrete exploit without hurting generalization on the evaluated opponent set. --> better local optimum
-        \item LT finds a better local optimum
-        \item FT improves this local optimum further
-        % TODO: \item exploiter diversity determines which weaknesses LT can discover
-        \item MA after LT vs Base Agent: \textbf{89\%} win, \textbf{9\%} draw, \textbf{2\%} loss
-    \end{itemize}
+    \centering
+    \SizedTrainingPipelineCard{0.86\linewidth}{2.1cm}{HHUBlue}{HHULight}{Interpretation}{%
+        \begin{itemize}
+            \item robustness against diverse opponents becomes part of the optimization target
+            \item LT finds a better local optimum
+            \item FT improves this local optimum further
+            \item MA after LT vs Base Agent: \textbf{89\%} win, \textbf{9\%} draw, \textbf{2\%} loss
+        \end{itemize}
+    }
 \end{frame}
 
 \section{Discussion}
 
 \begin{frame}{Player 1 (P1) Priority}
-    \small
-    \begin{itemize}
-        \item P1 is prioritized in conflicts
-        \item self-match over 200 games: P1 \textbf{38\%}, draw \textbf{28\%}, P2 \textbf{34\%}
-        \item visible effect, but small
-        \item alternating the learning side prevents P1-specific behavior
-    \end{itemize}
+    \centering
+    \SizedTrainingPipelineCard{0.86\linewidth}{1.9cm}{HHUBlue}{HHULight}{Effect}{%
+        \begin{itemize}
+            \item P1 is prioritized in conflicts
+            \item self-match over 200 games: P1 \textbf{38\%}, draw \textbf{28\%}, P2 \textbf{34\%}
+            \item visible effect, but small
+            \item alternating the learning side prevents P1-specific behavior
+        \end{itemize}
+    }
     \vspace{0.4em}
     \begin{center}
         \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_almost_100.mp4}{\beamergotobutton{Open Example Video}}
@@ -561,20 +727,22 @@
 \begin{frame}{Main Limitation: Diversity}
     \begin{columns}[T]
         \begin{column}{0.58\textwidth}
-            \small
-            \begin{itemize}
-                \item not diverse exploiters discover weaknesses with similar exploits
-                \item strategically different exploits require unlearning Base Agents fundamental behavior first
-                \item long transitions, bad rewards
-                \item new initial agents \(\rightarrow\) more exploiter diversity
-            \end{itemize}
+            \SizedTrainingPipelineCard{\linewidth}{2.75cm}{HHUBlue}{HHULight}{Diversity bottleneck}{%
+                \begin{itemize}
+                    \item not diverse exploiters discover weaknesses with similar exploits
+                    \item strategically different exploits require unlearning Base Agents fundamental behavior first
+                    \item long transitions, bad rewards
+                    \item new initial agents \(\rightarrow\) more exploiter diversity
+                \end{itemize}
+            }
         \end{column}
         \begin{column}{0.38\textwidth}
-            \small
-            \textbf{Hypothesis}
-            \begin{itemize}
-                \item LT depends strongly on the diversity already present at initialization
-            \end{itemize}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Hypothesis}{
+                \small
+                \begin{itemize}
+                    \item LT depends strongly on the diversity already present at initialization
+                \end{itemize}
+            }
             \begin{center}
                 \vspace{0.6em}
                 \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}{\beamergotobutton{Open Example Video}}
@@ -585,26 +753,29 @@
 
 
 \begin{frame}{Remaining Limitations and Future Work}
+    \renewcommand{\TrainingPipelineBoxHeight}{2.1cm}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \small
-            \textbf{Remaining limitations}
-            \begin{itemize}
-                \item 1 map
-                \item full observability, no fog of war
-                \item high memory and computation cost
-                \item 160 LT envs vs 24 for pure PPO
-            \end{itemize}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Remaining limitations}{
+                \small
+                \begin{itemize}
+                    \item 1 map
+                    \item full observability, no fog of war
+                    \item high memory and computation cost
+                    \item 160 LT envs vs 24 for pure PPO
+                \end{itemize}
+            }
         \end{column}
         \begin{column}{0.48\textwidth}
-            \small
-            \textbf{Future work}
-            \begin{itemize}
-                \item more maps
-                \item fog of war
-                \item MicroRTS on GPU
-                \item stronger diversity mechanisms
-            \end{itemize}
+            \TrainingPipelineCard{HHUBlue}{HHULight}{Future work}{
+                \small
+                \begin{itemize}
+                    \item more maps
+                    \item fog of war
+                    \item MicroRTS on GPU
+                    \item stronger diversity mechanisms
+                \end{itemize}
+            }
         \end{column}
     \end{columns}
 \end{frame}
@@ -614,14 +785,16 @@
 
 
 \begin{frame}{Conclusion}
-    \small
-    \begin{itemize}
-        \item LT + PPO improves robustness and generalization of the MA
-        \item PPO fine-tuning further improves the final agent
-        \item LT improves training and evaluation matchups
-        \item effectiveness of LT depends on exploiter diversity
-        \item exploiter diversity depends on initial agents and BC experts
-    \end{itemize}
+    \centering
+    \SizedTrainingPipelineCard{0.82\linewidth}{2.85cm}{LTGreen}{LTLight}{Conclusion}{%
+        \begin{itemize}
+            \item LT + PPO improves robustness and generalization of the MA
+            \item PPO fine-tuning further improves the final agent
+            \item LT improves training and evaluation matchups
+            \item effectiveness of LT depends on exploiter diversity
+            \item exploiter diversity depends on initial agents and BC experts
+        \end{itemize}
+    }
 \end{frame}
 
 
@@ -795,5 +968,14 @@
         \item More steps per rollout create similar tradeoffs to adding more environments.
     \end{itemize}
 \end{frame}
+
+
+\begin{frame}[noframenumbering]{win rates against Base Agent as player 2}
+    \begin{itemize}
+        \item P1: LT-FT against P2: Base Agent: win rate 85\%, draw rate 15\%, loss rate 0\%
+        \item P2: LT-FT against P1: Base Agent: win rate 89\%, draw rate 11\%, loss rate 0\%
+    \end{itemize}
+\end{frame}
+
 
 \end{document}
