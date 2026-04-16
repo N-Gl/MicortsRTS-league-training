@@ -489,7 +489,7 @@
 \begin{frame}{Bot Environments}
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
-            \SizedTrainingPipelineCard{\linewidth}{2.05cm}{HHUBlue}{HHULight}{Bot environments}{%
+            \SizedTrainingPipelineCard{\linewidth}{3.5cm}{HHUBlue}{HHULight}{Bot environments}{%
                 \begin{itemize}
                     \item additional dynamic bot environments (CoacAI and Mayari)% to stabilize the early LT phase
                     \item scripted bots: CoacAI, Mayari, WorkerRushAI, PassiveAI, LightRushAI, RandomAI and RandomBiasedAI
@@ -586,7 +586,7 @@
                 \MarkedOpponent<2>{CoacAI} & \WinRateCell{96.0} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
                 \MarkedOpponent<2>{Mayari} & \WinRateCell{67.3} & \BestWinRateCell{100.0} & \BestWinRateCell{100.0} \\
                 \midrule
-                \MarkedOpponent<2>{\WarningMark<4>{WorkerRushAI (FT)}} & \MarkedBestWinRateCell<4>{100.0} & \WarningWinRateCell<4>{35.0} & \MarkedWinRateCell<4>{99.5} \\
+                \MarkedOpponent<2>{\WarningMark<4>{WorkerRushAI}} & \MarkedBestWinRateCell<4>{100.0} & \WarningWinRateCell<4>{35.0} & \MarkedWinRateCell<4>{99.5} \\
                 \MarkedOpponent<5>{RandomBiasedAI} & \MarkedWinRateCell<5>{79.0} & \MarkedWinRateCell<5>{97.0} & \MarkedBestWinRateCell<5>{97.5} \\
                 \MarkedOpponent<6>{MixedBot} & \WarningWinRateCell<3,6>{43.3} & \MarkedWinRateCell<6>{57.0} & \MarkedBestWinRateCell<3,6>{60.5} \\
                 \MarkedOpponent<6>{GuidedRojoA3N} & \MarkedWinRateCell<3,6>{74.7} & \MarkedWinRateCell<6>{87.0} & \MarkedBestWinRateCell<3,6>{88.5} \\
@@ -674,7 +674,7 @@
 %                 \toprule
 %                 Opponent & Base & LT & LT + FT \\
 %                 \midrule
-%                 WorkerRushAI (FT) & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
+%                 WorkerRushAI & \BestLossRateCell{0.0} & \LossRateCell{55.0} & \LossRateCell{0.5} \\
 %                 MixedBot & \LossRateCell{34.3} & \LossRateCell{20.0} & \BestLossRateCell{13.5} \\
 %                 Izanagi & \LossRateCell{16.3} & \LossRateCell{7.0} & \BestLossRateCell{6.0} \\
 %                 \midrule
@@ -710,7 +710,7 @@
 
 \begin{frame}{Player 1 (P1) Priority}
     \centering
-    \SizedTrainingPipelineCard{0.86\linewidth}{1.9cm}{HHUBlue}{HHULight}{Effect}{%
+    \SizedTrainingPipelineCard{0.86\linewidth}{2cm}{HHUBlue}{HHULight}{Effect}{%
         \begin{itemize}
             \item P1 is prioritized in conflicts
             \item self-match over 200 games: P1 \textbf{38\%}, draw \textbf{28\%}, P2 \textbf{34\%}
@@ -725,7 +725,7 @@
 \end{frame}
 
 \begin{frame}{Main Limitation: Diversity}
-    \begin{columns}[T]
+    \begin{columns}[c]
         \begin{column}{0.58\textwidth}
             \SizedTrainingPipelineCard{\linewidth}{2.75cm}{HHUBlue}{HHULight}{Diversity bottleneck}{%
                 \begin{itemize}
@@ -737,14 +737,49 @@
             }
         \end{column}
         \begin{column}{0.38\textwidth}
-            \TrainingPipelineCard{HHUBlue}{HHULight}{Hypothesis}{
-                \small
-                \begin{itemize}
-                    \item LT depends strongly on the diversity already present at initialization
-                \end{itemize}
-            }
+            \centering
+            \begin{tikzpicture}[
+                node distance=0.36cm,
+                bottleneck/.style={
+                    draw=HHUBlue,
+                    fill=HHULight,
+                    text=HHUBlue,
+                    rounded corners=2pt,
+                    line width=0.8pt,
+                    minimum width=0.94\linewidth,
+                    minimum height=0.72cm,
+                    inner xsep=5pt,
+                    align=center,
+                    font=\scriptsize
+                },
+                bottleneckfocus/.style={
+                    bottleneck,
+                    draw=LTGreen,
+                    fill=LTLight,
+                    text=LTGreen
+                },
+                flowarrow/.style={
+                    ->,
+                    line width=0.9pt,
+                    HHUBlue
+                }
+            ]
+                \node[
+                    font=\bfseries\small,
+                    text=HHUBlue,
+                    align=center
+                ] (title) {Hypothesis};
+                \node[bottleneck, below=0.28cm of title] (experts) {limited diversity\\of BC experts};
+                \node[bottleneck, below=of experts] (base) {limited diversity\\of the Base Agent};
+                \node[bottleneck, below=of base] (exploiters) {limited diversity\\for Exploiters};
+                \node[bottleneckfocus, below=of exploiters] (ma) {less generalized\\MA};
+
+                \draw[flowarrow] (experts) -- (base);
+                \draw[flowarrow] (base) -- (exploiters);
+                \draw[flowarrow, LTGreen] (exploiters) -- (ma);
+            \end{tikzpicture}
             \begin{center}
-                \vspace{0.6em}
+                \vspace{0.3em}
                 \href{run:images/MictoRTS_BaseAgent_vs_BaseAgent_edited.mp4}{\beamergotobutton{Open Example Video}}
             \end{center}
         \end{column}
