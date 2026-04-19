@@ -223,20 +223,24 @@
 
 \begin{frame}{Goals and Research Question}
     \small
-    \begin{block}{Goal}
+    \begin{block}{Goals}
         \begin{itemize}
             \item improve the Base Agent with League Training (LT)
             \item training against a more diverse set of opponents
             \item focus on robustness and generalization
         \end{itemize}
     \end{block}
-    \begin{block}{Base Agent}
+    \vspace{0.4em}
+    \begin{minipage}{0.94\linewidth}
+        \footnotesize
+        \textbf{Context: Base Agent}
         \begin{itemize}
             \item combination of Behavioral Cloning (BC) and Proximal Policy Optimization (PPO)
             \item strong baseline, but weaknesses against several opponents
         \end{itemize}
-    \end{block}
-    \begin{alertblock}{Research Question}
+    \end{minipage}
+    \vspace{0.2em}
+    \begin{alertblock}{Research Questions}
         \begin{itemize}
             \item How much does LT with PPO improve robustness and generalization of the BC/PPO-pretrained agent?
             \item How strongly does this depend on the diversity of initial agents and BC experts?
@@ -532,7 +536,7 @@
     \SizedTrainingPipelineCard{0.82\linewidth}{1.55cm}{HHUBlue}{HHULight}{Key changes}{%
         \begin{itemize}
             % only Player 2 rotation
-            \item delta score reward: denser signal in sparse-reward games
+            \item MicroRTS score: denser signal in sparse-reward games
             \item annealed entropy coefficient: more exploration early, less later
             \item new initial agents: new start points for exploiters
         \end{itemize}
@@ -553,7 +557,7 @@
                     \item 5 to 10 dynamic bot environments
                     \item \(\sim\)130M LT steps, \(\sim\)100 h
                     \item max: 160 parallel environments
-                    \item eval: at least 100 games vs 12 opponents
+                    \item eval: at least 100 games vs 14 opponents
                 \end{itemize}
             }
         \end{column}
