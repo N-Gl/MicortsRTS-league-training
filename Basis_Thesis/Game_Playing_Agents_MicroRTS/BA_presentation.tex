@@ -396,40 +396,149 @@
     \vspace{0.45em}
 
     {
-    \renewcommand{\TrainingPipelineBoxHeight}{3.85cm}
+    \renewcommand{\TrainingPipelineBoxHeight}{4.05cm}
     \begin{columns}[T,onlytextwidth]
         \begin{column}{0.40\textwidth}
-            \TrainingPipelineCard{HHUBlue}{HHULight}{cyclical learning of SP}{
+            \TrainingPipelineCard{HHUBlue}{HHULight}{cyclical training}{
                 \begin{center}
                     \begin{tikzpicture}[
-                        scale=0.9,
+                        scale=0.88,
                         every node/.style={font=\small},
-                        learnarrow/.style={->, line width=1pt, HHUBlue, shorten <=4pt, shorten >=4pt},
-                        goodagainst/.style={->, line width=1pt, red!75!black}
+                        policy/.style={
+                            circle,
+                            draw=HHUBlue,
+                            fill=white,
+                            line width=1pt,
+                            minimum size=0.72cm,
+                            inner sep=0pt,
+                            font=\bfseries\small,
+                            text=HHUBlue
+                        },
+                        learnarrow/.style={->, line width=1pt, HHUBlue, shorten <=5pt, shorten >=5pt},
+                        learnfocus/.style={->, line width=1.8pt, LTGreen, shorten <=5pt, shorten >=5pt},
+                        learnblocked/.style={->, line width=1.4pt, orange!85!black, dashed, shorten <=5pt, shorten >=5pt},
+                        goodagainst/.style={->, line width=1.05pt, red!75!black, shorten <=5pt, shorten >=5pt},
+                        goodfocus/.style={->, line width=1.8pt, red!75!black, shorten <=5pt, shorten >=5pt},
+                        policyring/.style={circle, line width=1.7pt, minimum size=0.86cm, inner sep=0pt},
+                        note/.style={font=\scriptsize, align=center, fill=white, inner sep=1pt}
                     ]
-                        \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (a) at (0,1.2) {\textbf{A}};
-                        \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (b) at (-1.0,-0.45) {\textbf{B}};
-                        \node[circle, draw=HHUBlue, line width=1pt, minimum size=0.7cm, inner sep=0pt] (c) at (1.0,-0.45) {\textbf{C}};
-                        \draw[learnarrow] (a) -- (b);
-                        \draw[learnarrow] (b) -- (c);
-                        \draw[learnarrow] (c) -- (a);
-                        \draw[goodagainst] (b) to[out=120,in=180,looseness=1.35] (a);
-                        \draw[goodagainst] (a) to[out=0,in=60,looseness=1.35] (c);
-                        \draw[goodagainst] (c) .. controls (0.55,-1.02) and (-0.55,-1.02) .. (b);
-                        \node[font=\scriptsize, text=black!70, align=center, text width=3.9cm] at (0,-1.68) {%
-                            {\color{HHUBlue}Blue arrows}: learning direction\\
-                            {\color{red!75!black}Red arrows}: policies the current policy performs well against%
-                        };
+                        \path[use as bounding box] (-2.05,-2.05) rectangle (2.05,1.92);
+                        \node[policy] (a) at (0,1.2) {A};
+                        \node[policy] (b) at (-1.0,-0.45) {B};
+                        \node[policy] (c) at (1.0,-0.45) {C};
+
+                        \only<2->{%
+                            \draw[goodagainst] (b) to[out=120,in=180,looseness=1.35] (a);
+                            \draw[goodagainst] (a) to[out=0,in=60,looseness=1.35] (c);
+                            \draw[goodagainst] (c) to[out=-115,in=-65,looseness=1.25] (b);
+                        }
+
+                        \only<3>{%
+                            \draw[learnfocus] (a) -- (b);
+                            \node[policyring, draw=HHUBlue] at (a) {};
+                            \node[policyring, draw=LTGreen] at (b) {};
+                        }
+
+                        \only<4>{%
+                            \draw[learnblocked] (b) -- (c);
+                            \draw[goodfocus] (a) to[out=0,in=60,looseness=1.35] node[note, right] {A $>$ C} (c);
+                            \node[policyring, draw=HHUBlue] at (b) {};
+                            \node[policyring, draw=orange!85!black] at (c) {};
+                        }
+
+                        \only<5>{%
+                            \draw[learnfocus] (b) -- (c);
+                            \node[policyring, draw=HHUBlue] at (b) {};
+                            \node[policyring, draw=LTGreen] at (c) {};
+                        }
+
+                        \only<6>{%
+                            \draw[learnfocus] (c) -- (a);
+                            \node[policyring, draw=HHUBlue] at (c) {};
+                            \node[policyring, draw=LTGreen] at (a) {};
+                        }
+
+                        \only<7->{%
+                            \draw[learnarrow] (a) -- (b);
+                            \draw[learnarrow] (b) -- (c);
+                            \draw[learnarrow] (c) -- (a);
+                        }
+
+                        \only<1>{%
+                            \node[font=\scriptsize, text=black!70, align=center, text width=3.9cm] at (0,-1.82) {A, B and C are policies};
+                        }
+                        \only<2->{%
+                            \node[font=\scriptsize, text=black!70, align=center, text width=3.9cm] at (0,-1.82) {%
+                                {\color{red!75!black}Red}: policy strength\\
+                                {\color{HHUBlue}Blue}: possible SP cycle%
+                            };
+                        }
                     \end{tikzpicture}
                 \end{center}
             }
         \end{column}
         \begin{column}{0.58\textwidth}
-            \TrainingPipelineCard{LTGreen}{LTLight}{Why LT helps}{
+            \SizedTrainingPipelineCard{\linewidth}{1.8cm}{LTGreen}{LTLight}{Step shown in the cycle}{%
+                \scriptsize
+                \begin{overlayarea}{\linewidth}{1.15cm}
+                    \only<1>{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item A, B and C: example policies
+                        \end{itemize}
+                    }
+                    \only<2>{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item \(B > A,\ C > B,\ A > C\)
+                        \end{itemize}
+                    }
+                    \only<3>{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item FSP starts from A
+                            \item likely trains toward B
+                        \end{itemize}
+                    }
+                    \only<4>{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item FSP opponents: A and B
+                            \item A makes C less rewarding
+                            \item cycle less likely
+                        \end{itemize}
+                    }
+                    \only<5>{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item in case of SP
+                            \item SP current policy: B
+                            \item likely trains toward C
+                        \end{itemize}
+                    }
+                    \only<6>{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item SP current policy: C
+                            \item likely trains toward A
+                        \end{itemize}
+                    }
+                    \only<7->{%
+                        \begin{itemize}
+                            \setlength{\itemsep}{0.08em}
+                            \item training cycle can repeat
+                            \item \(A \rightarrow B \rightarrow C \rightarrow A \rightarrow \cdots\)
+                        \end{itemize}
+                    }
+                \end{overlayarea}
+            }
+            \vspace{0.12em}
+            \SizedTrainingPipelineCard{\linewidth}{1.35cm}{LTGreen}{LTLight}{Why LT helps}{%
+                \scriptsize
                 \begin{itemize}
-                    \setlength{\itemsep}{0.22em}
-                    \item improves stability by identifying and exploiting weaknesses
-                    \item creates diverse set of opponents without the main agent having to find them through exploration
+                    \setlength{\itemsep}{0.08em}
+                    \item improves stability by identifying weaknesses
+                    \item creates diverse opponents through exploiters
                 \end{itemize}
             }
         \end{column}
