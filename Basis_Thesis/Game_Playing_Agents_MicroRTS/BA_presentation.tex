@@ -429,8 +429,10 @@
 
                         \only<2->{%
                             \draw[goodagainst] (b) to[out=120,in=180,looseness=1.35] (a);
-                            \draw[goodagainst] (a) to[out=0,in=60,looseness=1.35] (c);
                             \draw[goodagainst] (c) to[out=-115,in=-65,looseness=1.25] (b);
+                        }
+                        \only<2-3,5->{%
+                            \draw[goodagainst] (a) to[out=0,in=60,looseness=1.35] (c);
                         }
 
                         \only<3>{%
@@ -441,7 +443,7 @@
 
                         \only<4>{%
                             \draw[learnblocked] (b) -- (c);
-                            \draw[goodfocus] (a) to[out=0,in=60,looseness=1.35] node[note, right] {A $>$ C} (c);
+                            \draw[goodfocus] (a) to[out=0,in=60,looseness=1.35] (c);
                             \node[policyring, draw=HHUBlue] at (b) {};
                             \node[policyring, draw=orange!85!black] at (c) {};
                         }
